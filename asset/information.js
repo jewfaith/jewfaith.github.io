@@ -1,1 +1,82 @@
-'use strict';const _0x4fe21a=_0x2969;(function(_0x4b9ff4,_0x121011){const _0x312456=_0x2969,_0x5aba5e=_0x4b9ff4();while(!![]){try{const _0x174536=-parseInt(_0x312456(0x16d))/0x1*(-parseInt(_0x312456(0x154))/0x2)+parseInt(_0x312456(0x165))/0x3+-parseInt(_0x312456(0x14d))/0x4*(parseInt(_0x312456(0x15c))/0x5)+parseInt(_0x312456(0x160))/0x6+parseInt(_0x312456(0x163))/0x7+parseInt(_0x312456(0x161))/0x8*(-parseInt(_0x312456(0x151))/0x9)+-parseInt(_0x312456(0x157))/0xa;if(_0x174536===_0x121011)break;else _0x5aba5e['push'](_0x5aba5e['shift']());}catch(_0x5a2f58){_0x5aba5e['push'](_0x5aba5e['shift']());}}}(_0x1082,0xf1578));emailjs['init'](_0x4fe21a(0x168));const SERVICE_ID=_0x4fe21a(0x164),TEMPLATE_ID=_0x4fe21a(0x16f);function _0x1082(){const _0x472052=['subject','reset','textContent','12069711qyfxba','target','Invalid\x20email','2FSxiZn','className','Invalid\x20name','21448010sodukV','name','test','Invalid\x20message','getElementById','832360ruLmkO','querySelector','get','Complete\x20fields','790290ZgBrbj','8qYKvBO','.advice','10880863IQcPIm','service_z6setbs','5608617mWiizp','error','Email\x20error:','gmHYV6xS-j71vAGl9','mail','advice','send','value','1085225BbIfdv','preventDefault','template_yr4jt0e','Invalid\x20subject','message','4TPHlCd'];_0x1082=function(){return _0x472052;};return _0x1082();}async function sendEmail(_0x144cff,_0x58f1cb,_0x4b8a00,_0x4ac5e3){const _0x40c074=_0x4fe21a,_0x53341d={'name':_0x144cff,'mail':_0x58f1cb,'subject':_0x4b8a00,'message':_0x4ac5e3};try{return await emailjs[_0x40c074(0x16b)](SERVICE_ID,TEMPLATE_ID,_0x53341d),!![];}catch(_0x358578){return console[_0x40c074(0x166)](_0x40c074(0x167),_0x358578),![];}}async function submitForm(_0x1f6745){const _0x2a3227=_0x4fe21a;_0x1f6745[_0x2a3227(0x16e)]();const _0xde6133=_0x1f6745[_0x2a3227(0x152)],_0x4c553a=new FormData(_0xde6133),_0xa3ad22=_0x4c553a[_0x2a3227(0x15e)](_0x2a3227(0x158)),_0x190a3a=_0x4c553a['get'](_0x2a3227(0x169)),_0x5d0576=_0x4c553a[_0x2a3227(0x15e)](_0x2a3227(0x14e)),_0x3c13a3=_0x4c553a['get'](_0x2a3227(0x14c));if(!validateFormInputs(_0xa3ad22,_0x190a3a,_0x5d0576,_0x3c13a3))return;const _0x1be7b5=await sendEmail(_0xa3ad22,_0x190a3a,_0x5d0576,_0x3c13a3);showFeedback(_0x1be7b5?'Operation\x20successful':'Operation\x20failed','error'),_0x1be7b5&&_0xde6133[_0x2a3227(0x14f)]();}function showFeedback(_0x3725a2,_0x483ba4){const _0x3d510b=_0x4fe21a,_0x4d2a77=document[_0x3d510b(0x15d)](_0x3d510b(0x162));_0x4d2a77[_0x3d510b(0x150)]=_0x3725a2,_0x4d2a77[_0x3d510b(0x155)]='advice\x20'+_0x483ba4,setTimeout(()=>{const _0x2b941e=_0x3d510b;_0x4d2a77[_0x2b941e(0x150)]='',_0x4d2a77[_0x2b941e(0x155)]=_0x2b941e(0x16a);},0x1388);}function _0x2969(_0x140f31,_0x48c296){const _0x108222=_0x1082();return _0x2969=function(_0x296987,_0x18645d){_0x296987=_0x296987-0x14c;let _0x35f5a0=_0x108222[_0x296987];return _0x35f5a0;},_0x2969(_0x140f31,_0x48c296);}function validateFormInputs(_0x5c99ef,_0x10748d,_0x5e79b2,_0x43a61c){const _0x35578c=_0x4fe21a,_0x59012a=/[<>;"'/()%&]/,_0x3835f8=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;if(!_0x5c99ef||!_0x10748d||!_0x5e79b2||!_0x43a61c)return showFeedback(_0x35578c(0x15f),'error'),![];if(_0x59012a['test'](_0x5c99ef))return showFeedback(_0x35578c(0x156),_0x35578c(0x166)),document[_0x35578c(0x15b)](_0x35578c(0x158))[_0x35578c(0x16c)]='',![];if(!_0x3835f8[_0x35578c(0x159)](_0x10748d)||_0x59012a[_0x35578c(0x159)](_0x10748d))return showFeedback(_0x35578c(0x153),'error'),document[_0x35578c(0x15b)]('mail')[_0x35578c(0x16c)]='',![];if(_0x59012a[_0x35578c(0x159)](_0x5e79b2))return showFeedback(_0x35578c(0x170),_0x35578c(0x166)),document[_0x35578c(0x15b)](_0x35578c(0x14e))['value']='',![];if(_0x59012a[_0x35578c(0x159)](_0x43a61c))return showFeedback(_0x35578c(0x15a),_0x35578c(0x166)),document[_0x35578c(0x15b)](_0x35578c(0x14c))[_0x35578c(0x16c)]='',![];return!![];}
+'use strict';
+emailjs.init("gmHYV6xS-j71vAGl9");
+
+const SERVICE_ID = "service_z6setbs";
+const TEMPLATE_ID = "template_yr4jt0e";
+
+async function sendEmail(name, mail, subject, message) {
+    const templateParams = { name, mail, subject, message };
+    try {
+        await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
+        return true;
+    } catch (error) {
+        console.error("Email error:", error);
+        return false;
+    }
+}
+
+async function submitForm(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const name = formData.get("name");
+    const mail = formData.get("mail");
+    const subject = formData.get("subject");
+    const message = formData.get("message");
+
+    if (!validateFormInputs(name, mail, subject, message)) return;
+
+    const result = await sendEmail(name, mail, subject, message);
+    showFeedback(result ? "Operation successful" : "Operation failed", "error");
+
+    if (result) {
+        form.reset();
+    }
+}
+
+function showFeedback(message, type) {
+    const advice = document.querySelector(".advice");
+    advice.textContent = message;
+    advice.className = `advice ${type}`;
+
+    setTimeout(() => {
+        advice.textContent = "";
+        advice.className = "advice";
+    }, 5000);
+}
+
+function validateFormInputs(name, mail, subject, message) {
+    const suspiciousChars = /[<>;"'/()%&]/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!name || !mail || !subject || !message) {
+        showFeedback("Complete fields", "error");
+        return false;
+    }
+
+    if (suspiciousChars.test(name)) {
+        showFeedback("Invalid name", "error");
+        document.getElementById("name").value = "";
+        return false;
+    }
+
+    if (!emailRegex.test(mail) || suspiciousChars.test(mail)) {
+        showFeedback("Invalid email", "error");
+        document.getElementById("mail").value = "";
+        return false;
+    }
+
+    if (suspiciousChars.test(subject)) {
+        showFeedback("Invalid subject", "error");
+        document.getElementById("subject").value = "";
+        return false;
+    }
+
+    if (suspiciousChars.test(message)) {
+        showFeedback("Invalid message", "error");
+        document.getElementById("message").value = "";
+        return false;
+    }
+
+    return true;
+}
