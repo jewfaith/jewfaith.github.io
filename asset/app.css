@@ -30,18 +30,9 @@
     color: #3b763a;
 }
 
-.overview {
+body {
     background: #e8f5e9;
     color: #1b5e20;
-}
-
-.information {
-    background: #b2e0b2;
-    color: #1b5e20;
-}
-
-.overview,
-.information {
     padding: 10vh 10vw;
     display: flex;
     justify-content: center;
