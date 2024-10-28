@@ -111,48 +111,6 @@ p {
     text-align: justify;
 }
 
-.error {
-    border: 2px solid #d32f2f;
-    width: 100%;
-    padding: 16px;
-    margin: 8px 0;
-    font-size: 18px;
-    color: #d32f2f;
-    background: #ffcdd2;
-    border-radius: 5px;
-    font-style: oblique;
-    box-sizing: border-box;
-    outline: none;
-}
-
-form input,
-form textarea {
-    width: 100%;
-    padding: 16px;
-    margin: 8px 0;
-    font-size: 18px;
-    border-radius: 5px;
-    box-sizing: border-box;
-    border: 2px solid #4caf50;
-}
-
-form textarea {
-    min-height: 240px;
-    resize: vertical;
-}
-
-button {
-    width: 100%;
-    font-weight: bolder;
-    cursor: pointer;
-    padding: 16px;
-    font-size: 18px;
-    border-radius: 5px;
-    color: #ffffff;
-    background: #388e3c;
-    box-sizing: border-box;
-}
-
 @media (max-width: 530px) {
     .row {
         flex-wrap: wrap;
