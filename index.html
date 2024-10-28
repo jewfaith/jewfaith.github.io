@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Optimized systems with robust security">
+    <meta name="author" content="David Ruivo">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://nogk.pt">
+    
+    <meta property="og:title" content="Nogk">
+    <meta property="og:description" content="Optimized systems with robust security">
+    <meta property="og:image" content="https://nogk.pt/asset/favicon.ico">
+    <meta property="og:url" content="https://nogk.pt">
+    <meta property="og:type" content="website">
+
+    <link rel="icon" type="image/x-icon" href="https://nogk.pt/asset/favicon.ico">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://nogk.pt/asset/app.css">
+
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="referrer" content="no-referrer">
+    <meta name="permissions-policy" content="geolocation=(self), microphone=(), camera=(), fullscreen=(self)">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Resource-Policy" content="same-origin">
+    <meta http-equiv="Expect-CT" content="enforce, max-age=31536000">
+    <meta name="Referrer-Policy" content="strict-origin-when-cross-origin">
+    
+    <title>Nogk</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://nogk.pt/asset/information.js" defer></script>
+</head>
+
+<body>
+    <main>
+        <section class="overview">
+            <div class="row">
+                <img src="asset/nogk.webp" loading="lazy" alt="Nogk Overview">
+                <div class="container">
+                    <h2>Overview</h2>
+                    <div class="social">
+                        <a href="https://tinyurl.com/ymbjpvxj" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="https://tinyurl.com/yc2xrn4m" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i></a>
+                        <a href="https://tinyurl.com/4bvy2xta" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                    <div class="text">
+                        <p>Hello, I'm David Ruivo, a dedicated full-stack developer with a passion for technology and programming. I specialize in system optimization and have a solid foundation in technical support, system management, and software integration.</p>
+                        <p>My expertise includes creating scalable solutions and improving system performance. I have experience in backend and frontend development, as well as database management, which allows me to deliver complete projects from start to finish. I enjoy solving challenges creatively and strive to provide efficient, high-quality services.</p>
+                        <p>I am fully committed to your success, focusing on every detail in each project. Together, we can transform your ideas into reality and achieve excellence in the digital world.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="information">
+            <div class="row">
+                <div class="container">
+                    <h2>Information</h2>
+                    <div class="advice"></div>
+                    <form onsubmit="submitForm(event)" method="post">
+                        <input type="text" name="name" id="name" placeholder="Name" maxlength="128" required>
+                        <input type="email" name="mail" id="mail" placeholder="Email" maxlength="128" required>
+                        <input type="text" name="subject" id="subject" placeholder="Subject" maxlength="128" required>
+                        <textarea name="message" id="message" placeholder="Message" maxlength="1024" required></textarea>
+                        <div class="g-recaptcha" data-sitekey="6Lc99ksqAAAAAAbNEGyLv0Zll93sIT2PnNLm1T49"></div>
+                        <button class="btn" type="submit">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
