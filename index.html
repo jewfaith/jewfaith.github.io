@@ -3,49 +3,130 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nogk</title>
-
-    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta http-equiv="Expect-CT" content="enforce, max-age=31536000">
-    <meta name="Referrer-Policy" content="no-referrer">
-    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
-    <meta http-equiv="Cross-Origin-Resource-Policy" content="same-origin">
-    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
-    <meta name="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'sha256-Base64HashHere'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'self';upgrade-insecure-requests">
-    <meta name="permissions-policy"
-        content="accelerometer=(),autoplay=(),camera=(),geolocation=(),gyroscope=(),magnetometer=(),microphone=(),payment=(),usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Expect-CT" content="max-age=86400, enforce">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
+    <meta http-equiv="Referrer-Policy" content="no-referrer">
     <meta name="robots" content="noindex, nofollow">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" type="image/x-icon" href="https://nogk.pt/asset/favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
-        integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://nogk.pt/asset/app.css">
-</head>
+    <meta name="referrer" content="no-referrer">
+    <title>Nogk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        integrity="sha512-XsGlKI1rzhcEqiYp1Xl/gsHd5POYwJ7iWGp49XEruLdtNbGHbPRuxTYhX13gIG98zMNpYKLME6mfAUUZ2c+d9w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="icon" type="image/x-icon" href="asset/favicon.ico">
+    <style>
+            body {
+                background: #000000;
+                color: #000000;
+                display: flex;
+                font-size: 27px;
+                justify-content: center;
+                align-items: center;
+                min-height: 100dvh;
+            }
+
+            .logos-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-wrap: wrap;
+                width: 100%;
+                gap: 8px;
+                max-width: 320px;
+                transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+            }
+
+            .logo {
+                width: 80px;
+                height: 80px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 12px;
+                background-color: #ffffff;
+                transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+                cursor: pointer;
+            }
+
+            .logo svg {
+                width: 32px;
+                height: 32px;
+                fill: #0a3cff;
+                transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+            }
+
+            .logo:hover {
+                color: #ffffff;
+                background-color: #0a3cff;
+                box-shadow:
+                    0rem 6px 13px rgba(10, 60, 255, 0.1),
+                    0rem 24px 24px rgba(10, 60, 255, 0.09),
+                    0rem 55px 33px rgba(10, 60, 255, 0.05),
+                    0rem 97px 39px rgba(10, 60, 255, 0.01),
+                    0rem 152px 43px rgba(10, 60, 255, 0);
+            }
+
+            .logo:hover svg {
+                fill: #ffffff;
+            }
+
+            .logos-container:hover .logo:not(:hover) {
+                transform: scale(0.88);
+                opacity: 0.5;
+                filter: grayscale(1);
+            }
+
+            a {
+                text-decoration: none;
+                color: #000000;
+            }
+        </style>
+    </head>
 
 <body>
-    <div class="wrapper">
-        <img src="https://nogk.pt/asset/nogk.webp">
-        <div class="container">
-            <header>
-                <span>David Ruivo</span>
-                <nav>
-                    <a href="mailto:geral@nogk.pt"><i class="fa-solid fa-square-envelope"></i></a>
-                    <a href="https://drive.google.com/file/d/1y3H4VlVs69i5A-eY15ramqqEDgyOZ5Z7/view?usp=sharing"><i class="fa-solid fa-square-up-right"></i></a>
-                </nav>
-            </header>
-            <section>
-                <p>Passionate specialist developer with expertise. I specialize in creating scalable and efficient web
-                    applications, leveraging modern frameworks and tools. My focus is on delivering high-quality,
-                    optimized solutions while staying up-to-date with the latest industry trends and best practices.</p>
-            </section>
-        </div>
+
+    <div class="logos-container">
+        <a href="https://abre.ai/nbj8">
+            <div class="logo">
+                <i class="fa-brands fa-youtube"></i>
+            </div>
+        </a>
+
+        <a href="https://abre.ai/nbjX">
+            <div class="logo">
+                <i class="fa-brands fa-discord"></i>
+            </div>
+        </a>
+
+        <a href="https://abre.ai/nbj3">
+            <div class="logo">
+                <i class="fa-brands fa-instagram"></i>
+            </div>
+        </a>
+
+        <a href="https://abre.ai/nbj0">
+            <div class="logo">
+                <i class="fa-brands fa-spotify"></i>
+            </div>
+        </a>
+
+        <a href="https://abre.ai/nbjY">
+            <div class="logo">
+                <i class="fa-brands fa-whatsapp"></i>
+            </div>
+        </a>
+
+        <a href="https://abre.ai/nbj6">
+            <div class="logo">
+                <i class="fa-brands fa-google"></i>
+            </div>
+        </a>
     </div>
 </body>
 
