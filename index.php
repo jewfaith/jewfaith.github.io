@@ -146,7 +146,22 @@ if (isset($_GET['lat'], $_GET['lon'])) {
 <head>
   <meta charset="UTF-8">
   <title>Info Judaica</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Expect-CT" content="max-age=86400, enforce">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
+    <meta http-equiv="Referrer-Policy" content="no-referrer">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        integrity="sha512-XsGlKI1rzhcEqiYp1Xl/gsHd5POYwJ7iWGp49XEruLdtNbGHbPRuxTYhX13gIG98zMNpYKLME6mfAUUZ2c+d9w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
   <style>
     :root {
       --bg: #f5f6fa;
