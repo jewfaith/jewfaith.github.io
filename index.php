@@ -90,10 +90,8 @@ if (isset($_GET['lat'], $_GET['lon'])) {
       }
     }
   }
-
-  // ======================================================
-  // --- LOCALIZAÇÃO REAL (CORRIGIDO, 100% FUNCIONAL)
-  // ======================================================
+  
+  // --- geocodificação reversa para cidade e país
   $cidade = "-";
   $pais   = "-";
 
@@ -111,7 +109,7 @@ if (isset($_GET['lat'], $_GET['lon'])) {
   if ($geo !== false) {
     $g = json_decode($geo, true);
 
-    // ordem de prioridade correta
+    // --- ordem de prioridade correta
     $cidade = $g['address']['town']
       ?? $g['address']['city']
       ?? $g['address']['village']
@@ -191,9 +189,9 @@ if (isset($_GET['lat'], $_GET['lon'])) {
 
     .wrapper {
       width: 100%;
-      max-width: 1300px;
+      max-width: 800px;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 20px;
     }
 
@@ -212,13 +210,13 @@ if (isset($_GET['lat'], $_GET['lon'])) {
     }
 
     .icon {
-      font-size: 32px;
+      font-size: 40px;
       margin-bottom: 10px;
       opacity: 0.85;
     }
 
     .label {
-      font-size: 13px;
+      font-size: 21px;
       color: var(--label);
       text-transform: uppercase;
       letter-spacing: 1.2px;
@@ -295,14 +293,14 @@ if (isset($_GET['lat'], $_GET['lon'])) {
 
   <script>
     async function obter() {
-      // reset UI
+      // --- pedir geolocalização
       document.getElementById("local").textContent = "A obter...";
 
       try {
         const pos = await new Promise((resolve, reject) =>
           navigator.geolocation.getCurrentPosition(resolve, reject, {
             enableHighAccuracy: true,
-            timeout: 10000, // 10 seg
+            timeout: 10000, // --- 10 segundos
             maximumAge: 0
           })
         );
