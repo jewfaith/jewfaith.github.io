@@ -181,7 +181,7 @@ async function fetchHebcalData(lat, lon) {
             const holidayDate = formatDate(nextHoliday.date);
             const holidaySunsetInfo = calculateSunsetForDate(holidayDate, lat, lon);
 
-            document.getElementById('holiday-label').textContent = isToday ? "Festividade hoje" : "Próxima festa";
+            document.getElementById('holiday-label').textContent = isToday ? "Festividade hoje" : "Proxima festa";
             document.getElementById('holiday-name').textContent = translateText(nextHoliday.title);
             document.getElementById('holiday-date').textContent = holidaySunsetInfo;
         } else {
@@ -221,3 +221,4 @@ function init() {
 }
 
 init();
+
