@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Painel Completo</title>
+    <script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <main class="container">
+        <section class="grid">
+
+            <div class="card">
+                <div class="label">Local atual</div>
+                <div class="value" id="location">-</div>
+                <div class="sub-value" id="coords">-</div>
+            </div>
+
+            <div class="card">
+                <div class="label">Sol poente</div>
+                <div class="value" id="sunset">-</div>
+                <div class="sub-value" id="sunset-sub-value">-</div>
+            </div>
+
+            <div class="card">
+                <div class="label">Data hebraica</div>
+                <div class="value" id="hebrew-date">-</div>
+                <div class="sub-value" id="hebrew-text">-</div>
+            </div>
+
+            <div class="card">
+                <div class="label" id="holiday-label">Proxima festa</div>
+                <div class="value" id="holiday-name">-</div>
+                <div class="sub-value" id="holiday-date">-</div>
+            </div>
+
+            <div class="card">
+                <div class="label">Parashat semanal</div>
+                <div class="value" id="parasha">-</div>
+                <div class="sub-value" id="parasha-date">-</div>
+            </div>
+
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>
