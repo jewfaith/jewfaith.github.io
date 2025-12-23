@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Or HaZman | Luz do Tempo</title>
+    <meta name="description" content="Dashboard de calendário judaico com horários de Shabat, Parashat e festividades">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="cosmic-bg"></div>
+
+    <!-- Main Container -->
+    <div class="app-container">
+
+
+        <!-- Loading -->
+        <div id="loading" class="loading-screen">
+            <div class="spinner"></div>
+            <p data-i18n="loading.text">Sincronizando com os astros...</p>
+        </div>
+
+        <!-- Error -->
+        <div id="error-view" class="error-screen hidden">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2 data-i18n="error.title">Ops!</h2>
+            <p id="error-msg" data-i18n="error.generic">Erro ao carregar dados</p>
+            <button onclick="location.reload()" class="retry-btn" data-i18n="btn.retry">Tentar Novamente</button>
+        </div>
+
+        <!-- Dashboard -->
+        <main id="dashboard" class="dashboard hidden">
+
+            <!-- Search Bar -->
+            <div class="search-card">
+                <button id="gps-btn" class="icon-btn" title="Usar minha localização"><i
+                        class="fas fa-location-crosshairs"></i></button>
+                <input type="text" id="city-search" placeholder="Pesquisar localização..."
+                    data-i18n="search.placeholder">
+                <button id="share-btn" class="share-btn" title="Compartilhar"><i
+                        class="fas fa-share-nodes"></i></button>
+            </div>
+
+            <!-- Data Grid -->
+            <section class="data-grid">
+
+                <!-- Location Card -->
+                <div class="data-card location-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <span class="card-label" data-i18n="label.location">Localização Atual</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="location-city" class="card-value long-value">--</h3>
+                        <p id="location-district" class="card-desc">--</p>
+                    </div>
+                </div>
+
+                <!-- Countdown Card -->
+                <div class="data-card countdown-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <span class="card-label" data-i18n="label.shabbat_in">Shabat Em</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="countdown" class="card-value">--:--:--</h3>
+                        <p class="card-desc" data-i18n="desc.countdown">Contagem Regressiva</p>
+                    </div>
+                </div>
+
+                <!-- Sunset Card (Today) -->
+                <div class="data-card sunset-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                        <span class="card-label" data-i18n="label.sunset">Sol Poente</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="sunset-time" class="card-value">--:--</h3>
+                        <p id="sunset-date" class="card-desc">--</p>
+                    </div>
+                </div>
+
+
+                <!-- Hebrew Date Card -->
+                <div class="data-card date-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-calendar-days"></i>
+                        </div>
+                        <span class="card-label" data-i18n="label.hebrew_date">Data Hebraica</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="hebrew-date" class="card-value long-value">--</h3>
+                        <p id="hebrew-year" class="card-desc" data-i18n="desc.hebrew_date">Ano Judaico</p>
+                    </div>
+                </div>
+
+                <!-- Parashah Card -->
+                <div class="data-card parashah-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-scroll"></i>
+                        </div>
+                        <span class="card-label" data-i18n="label.parashah">Porção Semanal</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="parashah-name" class="card-value long-value">--</h3>
+                        <p class="card-desc" data-i18n="desc.parashah">Leitura da Semana</p>
+                    </div>
+                </div>
+
+                <!-- Torah Card -->
+                <div class="data-card torah-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <span class="card-label" data-i18n="label.torah">Leitura Torá</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="torah-reading" class="card-value long-value">--</h3>
+                        <p class="card-desc" data-i18n="desc.torah">Passagem da Torá</p>
+                    </div>
+                </div>
+
+                <!-- Haftarah Card -->
+                <div class="data-card haftarah-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="card-label" data-i18n="label.prophets">Leitura Profetas</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="haftara-reading" class="card-value long-value">--</h3>
+                        <p class="card-desc" data-i18n="desc.haftarah">Passagem dos Profetas</p>
+                    </div>
+                </div>
+
+                <!-- Holiday Card -->
+                <div class="data-card holiday-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <span class="card-label" data-i18n="label.next_holiday">Próxima Festa</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="next-holiday-name" class="card-value long-value">--</h3>
+                        <p id="next-holiday-date" class="card-desc" data-i18n="desc.next_holiday">Data da Festa</p>
+                    </div>
+                </div>
+
+                <!-- Current Holiday Card (9th Card) -->
+                <div class="data-card current-holiday-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-glass-cheers"></i>
+                        </div>
+                        <span class="card-label" data-i18n="label.current_holiday">Festa De Hoje</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="current-holiday-name" class="card-value long-value">--</h3>
+                        <p id="current-holiday-desc" class="card-desc" data-i18n="desc.current_holiday">Celebração
+                            Atual</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
