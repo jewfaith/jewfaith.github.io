@@ -615,14 +615,14 @@ function getBookMapping() {
         // Prophets (Nevi'im) - Early
         "Joshua": "Yehoshua",
         "Judges": "Shoftim",
-        "I Samuel": "Shmuel Aleph",
-        "II Samuel": "Shmuel Bet",
-        "1 Samuel": "Shmuel Aleph",
-        "2 Samuel": "Shmuel Bet",
-        "I Kings": "Melachim Aleph",
-        "II Kings": "Melachim Bet",
-        "1 Kings": "Melachim Aleph",
-        "2 Kings": "Melachim Bet",
+        "I Samuel": "I Shmuel",
+        "II Samuel": "II Shmuel",
+        "1 Samuel": "I Shmuel",
+        "2 Samuel": "II Shmuel",
+        "I Kings": "I Melachim",
+        "II Kings": "II Melachim",
+        "1 Kings": "I Melachim",
+        "2 Kings": "II Melachim",
 
         // Prophets (Nevi'im) - Later
         "Isaiah": "Yeshayahu",
@@ -655,10 +655,10 @@ function getBookMapping() {
         "Daniel": "Daniel",
         "Ezra": "Ezra",
         "Nehemiah": "Nechemyah",
-        "I Chronicles": "Divrei HaYamim Aleph",
-        "II Chronicles": "Divrei HaYamim Bet",
-        "1 Chronicles": "Divrei HaYamim Aleph",
-        "2 Chronicles": "Divrei HaYamim Bet"
+        "I Chronicles": "I Divrei HaYamim",
+        "II Chronicles": "II Divrei HaYamim",
+        "1 Chronicles": "I Divrei HaYamim",
+        "2 Chronicles": "II Divrei HaYamim"
     };
 }
 
@@ -687,4 +687,5 @@ styleSheet.textContent = `
     }
 `;
 document.head.appendChild(styleSheet);
+
 
