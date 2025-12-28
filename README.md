@@ -14,7 +14,7 @@
 
 ---
 
-## � Sobre o Projeto
+## 🕯️ Sobre o Projeto
 
 **Or HaZman** (אור הזמן - "Luz do Tempo") é um dashboard judaico completo e elegante, projetado para fornecer informações precisas sobre horários halachicos (Zmanim), Shabbat, feriados e muito mais.
 
@@ -33,11 +33,12 @@
 | Recurso | Descrição |
 |---------|-----------|
 | 📍 **Localização** | GPS automático ou pesquisa manual de cidades |
-| 🕐 **Zmanim** | Alot, Netz, Shema, Tefillah, Chatzot, Shkiah, Tzeit |
+| 🕐 **Zmanim** | Horários de pôr do sol, velas e mais |
 | 🕯️ **Shabbat** | Horário de entrada, saída e contagem regressiva |
 | 📅 **Data Hebraica** | Dia, mês e ano no calendário judaico |
-| 📖 **Parashá** | Porção semanal da Torá |
-| 🎉 **Feriados** | Detecção automática de Yom Tov |
+| 📖 **Parashá** | Porção semanal da Torá e Haftará |
+| 🎉 **Feriados** | Detecção automática de Yom Tov e festas próximas |
+| 📋 **Cópia Rápida** | **Novo!** Copie qualquer informação clicando no ícone de copiar nos cards |
 | 🔗 **Compartilhar** | Botão para compartilhar o app facilmente |
 
 ---
@@ -75,11 +76,11 @@
 # Clone o repositório
 git clone https://github.com/seu-usuario/or-hazman.git
 
-# Abra o arquivo
-open index.html
+# Abra o arquivo index.html no seu navegador
+# Recomendado usar um servidor local (Live Server no VS Code, etc)
 ```
 
-> **Nota:** Por usar APIs externas, é recomendado rodar em um servidor local (ex: Live Server do VS Code)
+> **Nota:** Por usar APIs externas, algumas podem exigir que a origem seja segura (HTTPS) ou localhost para geolocalização funcionar corretamente.
 
 ---
 
@@ -89,27 +90,12 @@ open index.html
 or-hazman/
 ├── index.html          # Página principal
 ├── css/
-│   └── style.css       # Estilos e tema
+│   └── style.css       # Estilos, temas e animações
 ├── js/
-│   ├── app.js          # Lógica principal e Easter Eggs
-│   └── i18n.js         # Traduções (PT)
+│   ├── app.js          # Lógica principal, requisições e UI
+│   └── i18n.js         # Internacionalização (PT)
 └── README.md           # Documentação
 ```
-
----
-
-## 🎮 Easter Eggs
-
-O site contém **50 segredos judaicos** escondidos! Explore e descubra todos:
-
-| Dificuldade | Quantidade | Exemplo |
-|-------------|------------|---------|
-| 🟢 Fácil | 5 | Triple-click em cards |
-| 🟡 Médio | 10 | Digitar "shalom" |
-| 🟠 Difícil | 15 | Código Konami |
-| 🔴 Quase Impossível | 20 | Segredos de Gematria |
-
-> 💡 **Dica:** Explore, clique, digite palavras sagradas em hebraico...
 
 ---
 
