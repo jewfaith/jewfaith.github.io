@@ -28,10 +28,15 @@
 
         <!-- Error -->
         <div id="error-view" class="error-screen hidden">
-            <i class="fas fa-exclamation-triangle"></i>
-            <h2 data-i18n="error.title">Ops!</h2>
-            <p id="error-msg" data-i18n="error.generic">Erro ao carregar dados</p>
-            <button onclick="location.reload()" class="retry-btn" data-i18n="btn.retry">Tentar Novamente</button>
+            <div class="error-card">
+                <div class="icon-wrapper">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="pulse-ring"></div>
+                </div>
+                <h2 data-i18n="error.title">Ops!</h2>
+                <p id="error-msg" data-i18n="error.generic">Erro ao carregar dados</p>
+                <button onclick="location.reload()" class="retry-btn" data-i18n="btn.retry">Tentar Novamente</button>
+            </div>
         </div>
 
         <!-- Dashboard -->
