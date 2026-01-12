@@ -42,7 +42,7 @@ const translations = {
         "err.gps_generic": "📍 Não conseguimos saber onde estás.",
         "err.search_empty": "🔍 Escreve o nome de uma cidade para pesquisar!",
         "err.city_not_found": "🌍 Não encontrámos essa cidade. Verifica o nome!",
-        "err.network": "sem internet 📡 Parece que estás sem conexão. Verifica o Wi-Fi!",
+        "err.network": "📡 Parece que estás sem conexão. Verifica o Wi-Fi!",
         "err.generic_retry": "😅 Algo falhou. Tenta outra vez!",
         "err.generic_reload": "😅 Aconteceu algo inesperado. Recarrega a página!",
         "err.service_unavailable": "😴 O serviço está a descansar um pouco. Tenta daqui a segundos!"
