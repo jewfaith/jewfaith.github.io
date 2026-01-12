@@ -425,25 +425,55 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
     const todayStr = now.toISOString().split('T')[0]; // Keep true today for comparisons if needed
 
     // 1. Find and display Parashah (Next upcoming or today's)
-    // We look for the first parashah on or after the effective date
-    const parashah = items.find(i => i.category === 'parashat' && i.date >= effectiveDateStr);
-    if (parashah) {
-        const parashahName = parashah.title.replace('Parashat ', '');
-        updateDOM('parashah-name', parashahName);
+    // Handle Double Parashot (e.g. Matot-Masei) - they share the same DATE.
+    // Use 'parashat' as category (Hebcal standard)
+    const nextParashahItem = items.find(i => i.category === 'parashat' && i.date >= effectiveDateStr);
 
-        // Torah reading
-        if (parashah.leyning && parashah.leyning.torah) {
-            updateDOM('torah-reading', transliterateText(parashah.leyning.torah));
-        } else {
-            updateDOM('torah-reading', t("status.check_sefer"));
+    if (nextParashahItem) {
+        // Find ALL parashot on this date (in case of double portion)
+        const parashotOnDate = items.filter(i => i.category === 'parashat' && i.date === nextParashahItem.date);
+
+        // A. Combine Names
+        const combinedName = parashotOnDate
+            .map(p => p.title.replace('Parashat ', ''))
+            .join(' - ');
+
+        updateDOM('parashah-name', combinedName);
+
+        // B. Combine Torah Readings (Continuous Range)
+        const readings = parashotOnDate
+            .map(p => p.leyning && p.leyning.torah ? transliterateText(p.leyning.torah) : "")
+            .filter(t => t);
+
+        let finalTorahDisplay = "";
+        if (readings.length > 0) {
+            if (readings.length === 1) {
+                finalTorahDisplay = readings[0];
+            } else {
+                // Extract Start from First and End from Last
+                const first = readings[0];
+                const last = readings[readings.length - 1];
+
+                // Get everything before the first hyphen (or space)
+                const startPart = first.includes('-') ? first.split('-')[0].trim() : first;
+                // Get everything after the last hyphen
+                const endPart = last.includes('-') ? last.split('-').pop().trim() : last;
+
+                finalTorahDisplay = `${startPart} - ${endPart}`;
+            }
         }
 
-        // Haftarah reading
-        if (parashah.leyning && parashah.leyning.haftarah) {
-            updateDOM('haftara-reading', transliterateText(parashah.leyning.haftarah));
-        } else {
-            updateDOM('haftara-reading', t("status.check_sefer"));
-        }
+        updateDOM('torah-reading', finalTorahDisplay || t("status.check_sefer"));
+
+        // C. Combine Haftarah Readings
+        const haftarot = parashotOnDate
+            .map(p => p.leyning && p.leyning.haftarah ? transliterateText(p.leyning.haftarah) : "")
+            .filter(h => h);
+
+        // Join multiple haftarot with +
+        const uniqueHaftarot = [...new Set(haftarot)].join(' + ');
+
+        updateDOM('haftara-reading', uniqueHaftarot || t("status.check_sefer"));
     }
 
     // 2. Find and display candle lighting time OR Shabbat Status

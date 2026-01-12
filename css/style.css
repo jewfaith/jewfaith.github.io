@@ -478,12 +478,6 @@ body {
 }
 
 /* ========================================
-   HERO SECTION
-   ======================================== */
-
-/* Hero Section Removed */
-
-/* ========================================
    DATA GRID
    ======================================== */
 
@@ -493,12 +487,7 @@ body {
     grid-auto-rows: 1fr;
     gap: 1.5rem;
     margin-bottom: 3rem;
-    /* Specific Card Placements are removed to allow auto-flow, 
-       except keeping holiday card full width if needed */
 }
-
-/* Specific Card Placements are removed to allow auto-flow, 
-   except keeping holiday card full width if needed */
 
 /* Specific Card Placements are removed to allow auto-flow */
 /* .holiday-card grid-column rule removed to allow 3x3 grid flow */

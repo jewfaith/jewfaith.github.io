@@ -34,12 +34,12 @@
 |---------|-----------|
 | 📍 **Localização** | GPS automático ou pesquisa manual de cidades |
 | 🕐 **Zmanim** | Horários de pôr do sol, velas e mais |
-| 🕯️ **Shabbat** | Horário de entrada, saída e contagem regressiva |
+| 🕯️ **Shabbat** | Entrada (-20m) e Saída (+20m) ajustadas automaticamente |
 | 📅 **Data Hebraica** | Dia, mês e ano no calendário judaico |
-| 📖 **Parashá** | Porção semanal da Torá e Haftará |
-| 🎉 **Feriados** | Detecção automática de Yom Tov e festas próximas |
-| 📋 **Cópia Rápida** | **Novo!** Copie qualquer informação clicando no ícone de copiar nos cards |
-| 🔗 **Compartilhar** | Botão para compartilhar o app facilmente |
+| 📜 **Dupla Parashá** | Suporta parashot duplas (Vayakhel-Pekudei) com leituras unificadas |
+| 🎉 **Feriados** | Prioridade Haláquica (Torá > Tradição) e calendário de Israel (1 dia) |
+| 📋 **Cópia Rápida** | Copie qualquer informação clicando no ícone dos cards |
+| 🎨 **UI Premium** | Interface "Midnight Gold" estática e estável (Sem Zoom/Motion) |
 
 ---
 

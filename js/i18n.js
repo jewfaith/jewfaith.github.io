@@ -1,7 +1,7 @@
 const translations = {
     pt: {
         "app.title": "Luz do Tempo",
-        "meta.description": "Dashboard de calendário judaico com horários de Shabat, Parashat e festividades",
+        "meta.description": "Dashboard de calendário Judaico",
         "search.placeholder": "Pesquisar...",
         "loading.text": "Sincronizando...",
         "error.title": "Algo não correu bem...",
@@ -30,22 +30,22 @@ const translations = {
         "status.location_gps": "Tua Localização",
         "status.unknown_location": "Onde estás?",
         "status.check_sefer": "Verificar Sefer",
-        "share.message": "✡️ Or HaZman - Calendário Judaico Completo! Horários de Shabat, Festas e mais. Confira: ",
+        "share.message": "Or HaZman - Calendário Judaico Completo! Horários de Shabat, Festas e mais. Confira: ",
         "share.title": "Or HaZman - Luz do Tempo",
-        "share.text": "✡️ Calendário Judaico Completo! Horários de Shabat, Festas e mais.",
-        "msg.copied": "📋 Copiado! Podes colar onde quiseres.",
-        "msg.copied_short": "📋 Copiado!",
-        "msg.copied_item": "📋 {item} copiado!",
-        "err.gps_denied": "📍 Precisamos da tua permissão para saber onde estás e mostrar o horário certo.",
-        "err.gps_unavailable": "📍 Não conseguimos encontrar a tua localização agora.",
-        "err.gps_timeout": "⏱️ A busca pela localização demorou demasiado.",
-        "err.gps_generic": "📍 Não conseguimos saber onde estás.",
-        "err.search_empty": "🔍 Escreve o nome de uma cidade para pesquisar!",
-        "err.city_not_found": "🌍 Não encontrámos essa cidade. Verifica o nome!",
-        "err.network": "📡 Parece que estás sem conexão. Verifica o Wi-Fi!",
-        "err.generic_retry": "😅 Algo falhou. Tenta outra vez!",
-        "err.generic_reload": "😅 Aconteceu algo inesperado. Recarrega a página!",
-        "err.service_unavailable": "😴 O serviço está a descansar um pouco. Tenta daqui a segundos!"
+        "share.text": "Calendário Judaico Completo! Horários de Shabat, Festas e mais.",
+        "msg.copied": "Copiado! Podes colar onde quiseres.",
+        "msg.copied_short": "Copiado!",
+        "msg.copied_item": "{item} copiado!",
+        "err.gps_denied": "Precisamos da tua permissão para saber onde estás e mostrar o horário certo.",
+        "err.gps_unavailable": "Não conseguimos encontrar a tua localização agora.",
+        "err.gps_timeout": "A busca pela localização demorou demasiado.",
+        "err.gps_generic": "Não conseguimos saber onde estás.",
+        "err.search_empty": "Escreve o nome de uma cidade para pesquisar!",
+        "err.city_not_found": "Não encontrámos essa cidade. Verifica o nome!",
+        "err.network": "Parece que estás sem conexão. Verifica o Wi-Fi!",
+        "err.generic_retry": "Algo falhou. Tenta outra vez!",
+        "err.generic_reload": "Aconteceu algo inesperado. Recarrega a página!",
+        "err.service_unavailable": "O serviço está a descansar um pouco. Tenta daqui a segundos!"
     }
 };
 
