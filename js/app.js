@@ -63,15 +63,15 @@ function setupEventListeners() {
 
 // Share the app with message + URL
 function shareApp() {
-    const shareMessage = "✡️ Or HaZman - Calendário Judaico Completo! Horários de Shabat, Festas e mais. Confira: ";
+    const shareMessage = t("share.message");
     const shareUrl = window.location.href;
     const fullText = shareMessage + shareUrl;
 
     // Try native share first (mobile)
     if (navigator.share) {
         navigator.share({
-            title: 'Or HaZman - Luz do Tempo',
-            text: '✡️ Calendário Judaico Completo! Horários de Shabat, Festas e mais.',
+            title: t("share.title"),
+            text: t("share.text"),
             url: shareUrl
         }).catch(() => copyToClipboard(fullText));
     } else {
@@ -86,12 +86,12 @@ function copyToClipboard(text) {
 
     navigator.clipboard.writeText(text).then(() => {
         icon.className = 'fas fa-check';
-        showToast('📋 Mensagem copiada! Cole para compartilhar.');
+        showToast(t("msg.copied"));
         setTimeout(() => {
             icon.className = originalClass;
         }, 2000);
     }).catch(() => {
-        showToast('📋 Mensagem copiada!');
+        showToast(t("msg.copied_short"));
     });
 }
 
@@ -121,7 +121,7 @@ function setupCopyButtons() {
                 btn.style.background = 'var(--gold)';
                 btn.style.color = 'var(--cosmic-darker)';
 
-                showToast(`📋 ${label} copiado!`);
+                showToast(t("msg.copied_item").replace("{item}", label));
 
                 setTimeout(() => {
                     icon.className = originalClass;
@@ -147,7 +147,7 @@ async function getCurrentLocation() {
     gpsBtn.disabled = true;
 
     if (!navigator.geolocation) {
-        showError('🌍 GPS não disponível neste navegador');
+        showError(t("err.gps_denied")); // Using gps_denied as fallback or create new key for not supported
         icon.className = originalClass;
         gpsBtn.disabled = false;
         return;
@@ -194,16 +194,16 @@ async function getCurrentLocation() {
             let message;
             switch (err.code) {
                 case err.PERMISSION_DENIED:
-                    message = '📍 Permissão de localização negada. Por favor, permita o acesso.';
+                    message = t("err.gps_denied");
                     break;
                 case err.POSITION_UNAVAILABLE:
-                    message = '📍 Localização indisponível no momento.';
+                    message = t("err.gps_unavailable");
                     break;
                 case err.TIMEOUT:
-                    message = '⏱️ Tempo esgotado ao buscar localização.';
+                    message = t("err.gps_timeout");
                     break;
                 default:
-                    message = '📍 Não foi possível obter sua localização.';
+                    message = t("err.gps_generic");
             }
             showError(message);
             icon.className = originalClass;
@@ -219,9 +219,7 @@ async function getCurrentLocation() {
 
 async function searchLocation(query) {
     if (!query || query.trim() === '') {
-        showError(currentLang === 'pt'
-            ? '🔍 Digite o nome de uma cidade para começar!'
-            : '🔍 Type a city name to get started!');
+        showError(t("err.search_empty"));
         return;
     }
 
@@ -249,17 +247,11 @@ async function searchLocation(query) {
     } catch (e) {
         let friendlyMessage;
         if (e.message === 'NOT_FOUND') {
-            friendlyMessage = currentLang === 'pt'
-                ? '🌍 Não encontramos essa cidade. Tente outro nome!'
-                : '🌍 We couldn\'t find that city. Try another name!';
+            friendlyMessage = t("err.city_not_found");
         } else if (e.message === 'NETWORK' || e.message.includes('fetch')) {
-            friendlyMessage = currentLang === 'pt'
-                ? '📡 Sem internet! Verifique sua conexão.'
-                : '📡 No internet! Check your connection.';
+            friendlyMessage = t("err.network");
         } else {
-            friendlyMessage = currentLang === 'pt'
-                ? '😅 Algo deu errado. Tente novamente!'
-                : '😅 Something went wrong. Try again!';
+            friendlyMessage = t("err.generic_retry");
         }
         showError(friendlyMessage);
     }
@@ -336,7 +328,7 @@ async function fetchData(lat, lon, isManual = false) {
         endDate.setDate(endDate.getDate() + 180);
         const endDateStr = endDate.toISOString().split('T')[0];
 
-        const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=on&mod=on&nx=on&mf=on&ss=on&s=on`;
+        const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=on&mod=off&nx=on&mf=off&ss=off&s=on&i=on`;
         const zmanimUrl = `https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${dateStr}`;
 
         // 2a. Fetch standard calendar data
@@ -372,7 +364,7 @@ async function fetchData(lat, lon, isManual = false) {
         lastCountry = country;
 
         // Process and render data
-        processHebcalData(hebcalData, converterData);
+        processHebcalData(hebcalData, converterData, isAfterSunset, zmanimData);
         renderZmanim(zmanimData);
 
         // Show dashboard
@@ -384,17 +376,11 @@ async function fetchData(lat, lon, isManual = false) {
         console.error("Data Error:", e);
         let friendlyMessage;
         if (e.message && e.message.includes('fetch')) {
-            friendlyMessage = currentLang === 'pt'
-                ? '📡 Problema de conexão! Verifique sua internet.'
-                : '📡 Connection issue! Check your internet.';
+            friendlyMessage = t("err.network");
         } else if (e.message && e.message.includes('Hebcal')) {
-            friendlyMessage = currentLang === 'pt'
-                ? '⏱️ Serviço temporariamente indisponível. Tente em alguns segundos!'
-                : '⏱️ Service temporarily unavailable. Try in a few seconds!';
+            friendlyMessage = t("err.service_unavailable");
         } else {
-            friendlyMessage = currentLang === 'pt'
-                ? '😅 Algo inesperado aconteceu. Tente recarregar a página!'
-                : '😅 Something unexpected happened. Try reloading the page!';
+            friendlyMessage = t("err.generic_reload");
         }
         showError(friendlyMessage);
     }
@@ -424,7 +410,7 @@ function renderZmanim(data) {
 // DATA PROCESSING
 // ========================================
 
-function processHebcalData(data, converterData, isAfterSunset) {
+function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
     if (!data || !data.items) return;
 
     const items = data.items;
@@ -460,27 +446,48 @@ function processHebcalData(data, converterData, isAfterSunset) {
         }
     }
 
-    // 2. Find and display candle lighting time
-    // If it's Friday night after sunset, effectiveDate is Saturday.
-    // Candles for this Friday are in the past (< Saturday).
-    // So this will find NEXT week's candles. 
-    // If user wants "Shabbat Shalom" for Friday night, we might need special logic. 
-    // But for "Next Event", technically next candles is next week.
-    // Let's stick to effectiveDateStr to be consistent with "Next Event".
+    // 2. Find and display candle lighting time OR Shabbat Status
+    // Logic: 
+    // - If Friday after sunset: It is Shabbat.
+    // - If Saturday before Havdalah: It is Shabbat.
+    // - Otherwise: Show countdown to next candles.
+
     const candles = items.find(i => i.category === 'candles' && i.date >= effectiveDateStr);
+    const havdalah = items.find(i => i.category === 'havdalah' && i.date >= todayStr);
 
-    // Special case: If it is currently Friday night (after sunset), we might want to show "Shabbat Shalom"
-    // instead of jumping 7 days ahead.
-    // Let's check if there was a candle event TODAY (true today) that we just passed.
-    const passedCandles = items.find(i => i.category === 'candles' && i.date === todayStr);
+    let isShabbatNow = false;
+    const dayOfWeek = now.getDay(); // 5 = Friday, 6 = Saturday
 
-    if (passedCandles && isAfterSunset) {
-        // We are in Shabbat (presumably)
+    // Check Friday Night (Start 20 minutes BEFORE Sunset)
+    if (dayOfWeek === 5 && zmanimData && zmanimData.times.sunset) {
+        const sunsetTime = new Date(zmanimData.times.sunset);
+        const startTime = new Date(sunsetTime.getTime() - 20 * 60000); // Subtract 20 minutes
+
+        if (now >= startTime) {
+            isShabbatNow = true;
+        }
+    }
+    // Check Saturday (Until Sunset + 20 minutes)
+    else if (dayOfWeek === 6 && zmanimData && zmanimData.times.sunset) {
+        // User Request: Shabbat Shalom disappears 20min AFTER Saturday Sunset
+        const sunsetTime = new Date(zmanimData.times.sunset);
+        const cutoffTime = new Date(sunsetTime.getTime() + 20 * 60000); // Add 20 minutes
+
+        if (now < cutoffTime) {
+            isShabbatNow = true;
+        }
+    }
+
+    if (isShabbatNow) {
         updateDOM('countdown', "Shabbat Shalom");
-        updateDOM('label.shabbat_in', t("status.check_sefer")); // Optional: Change label?
+        updateDOM('label.shabbat_in', havdalah ? t("label.havdalah") : "Shabbat"); // Optional: Show "Havdalah" label?
+        // Clear countdown if running
+        if (countdownInterval) clearInterval(countdownInterval);
     } else if (candles) {
+        // Not Shabbat, show countdown
         const candleDate = new Date(candles.date);
         startCountdown(candleDate);
+        updateDOM('label.shabbat_in', t("label.shabbat_in"));
     }
 
     // 3. Display Hebrew date (from Converter API)
@@ -489,13 +496,41 @@ function processHebcalData(data, converterData, isAfterSunset) {
         updateDOM('hebrew-date', transliteratedDate);
     }
 
-    // 4. Find and display upcoming holidays
-    const holidays = items
-        .filter(i => i.category === 'holiday' && i.date >= effectiveDateStr)
-        .slice(0, 4);
+    // 4. Find and display upcoming holidays with Strict Priority
+    // Priority: Major (Torah) > Rosh Chodesh > Minor (Tradition)
+
+    // 4a. Filter all relevant events
+    const allEvents = items.filter(i =>
+        (i.category === 'holiday' || i.category === 'roshchodesh') &&
+        i.date >= effectiveDateStr
+    );
+
+    // 4b. Group by Date and Pick Best
+    const bestEventsMap = new Map();
+
+    allEvents.forEach(event => {
+        const date = event.date;
+        const currentBest = bestEventsMap.get(date);
+
+        if (!currentBest) {
+            bestEventsMap.set(date, event);
+        } else {
+            // Compare priorities
+            const pCurrent = getHolidayPriority(currentBest);
+            const pNew = getHolidayPriority(event);
+
+            if (pNew > pCurrent) {
+                bestEventsMap.set(date, event);
+            }
+        }
+    });
+
+    // 4c. Convert back to array and sort by date
+    const sortedHolidays = Array.from(bestEventsMap.values())
+        .sort((a, b) => a.date.localeCompare(b.date));
 
     // 4.1 Check for Current Holiday (using effective date)
-    const currentHoliday = items.find(i => i.category === 'holiday' && i.date === effectiveDateStr);
+    const currentHoliday = sortedHolidays.find(i => i.date === effectiveDateStr);
 
     if (currentHoliday) {
         updateDOM('current-holiday-name', currentHoliday.title);
@@ -505,15 +540,11 @@ function processHebcalData(data, converterData, isAfterSunset) {
         updateDOM('current-holiday-desc', t("msg.ordinary_day"));
     }
 
-    if (holidays.length > 0) {
-        // If the first upcoming holiday is the one currently happening (same day), skip to next? 
-        // Or show it as "Next" too? Usually we show the NEXT one distinct from current.
-        // If currentHoliday is set, we might want to show holidays[1] if holidays[0] is same.
-        let nextH = holidays[0];
-        if (currentHoliday && nextH.date === currentHoliday.date && holidays.length > 1) {
-            nextH = holidays[1];
-        }
+    // 4.2 Find Next Holiday (distinct from current)
+    const holidays = sortedHolidays.filter(i => i.date > effectiveDateStr).slice(0, 1);
 
+    if (holidays.length > 0) {
+        const nextH = holidays[0];
         const hDate = new Date(nextH.date);
         const dateStr = hDate.toLocaleDateString(currentLang === 'pt' ? 'pt-PT' : 'en-US', {
             day: 'numeric',
@@ -526,6 +557,19 @@ function processHebcalData(data, converterData, isAfterSunset) {
         updateDOM('next-holiday-name', t("msg.no_holidays"));
         updateDOM('next-holiday-date', t("msg.check_calendar"));
     }
+}
+
+// Helper: Determine priority of a holiday event
+function getHolidayPriority(item) {
+    // 1. Major Holidays (Torah) - Highest Priority
+    if (item.subcat === 'major') return 3;
+
+    // 2. Rosh Chodesh - Medium Priority
+    if (item.category === 'roshchodesh') return 2;
+
+    // 3. Minor Holidays (Hannukah, Purim) - Lowest Priority
+    // (item.subcat === 'minor' or undefined)
+    return 1;
 }
 
 
@@ -549,6 +593,7 @@ function startCountdown(targetDate) {
         if (diff <= 0) {
             el.textContent = "Shabbat Shalom";
             clearInterval(countdownInterval);
+            // Force refresh to update status if we just crossed into Shabbat
             return;
         }
 
