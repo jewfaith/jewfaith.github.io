@@ -62,38 +62,43 @@ function setupEventListeners() {
 }
 
 // Share the app with message + URL
+// Share the app with message + URL
 function shareApp() {
     const shareMessage = t("share.message");
     const shareUrl = window.location.href;
     const fullText = shareMessage + shareUrl;
 
-    // Try native share first (mobile)
+    // Always copy to clipboard
+    copyToClipboard(fullText);
+
+    // Try native share (mobile) if available, but don't rely on it for copy
     if (navigator.share) {
         navigator.share({
             title: t("share.title"),
             text: t("share.text"),
             url: shareUrl
-        }).catch(() => copyToClipboard(fullText));
-    } else {
-        copyToClipboard(fullText);
+        }).catch((e) => console.log('Share dismissed', e));
     }
 }
 
 function copyToClipboard(text) {
-    const shareBtn = document.getElementById('share-btn');
-    const icon = shareBtn.querySelector('i');
-    const originalClass = icon.className;
-
+    // Copy with visual feedback (icon only, no toast)
     navigator.clipboard.writeText(text).then(() => {
-        icon.className = 'fas fa-check';
-        showToast(t("msg.copied"));
+        const shareBtn = document.getElementById('share-btn');
+        if (!shareBtn) return; // Guard clause
+
+        const icon = shareBtn.querySelector('i');
+        const originalClass = icon.className;
+
+        icon.className = 'fas fa-circle-check';
         setTimeout(() => {
             icon.className = originalClass;
-        }, 2000);
+        }, 1500);
     }).catch(() => {
-        showToast(t("msg.copied_short"));
+        console.error("Failed to copy");
     });
 }
+
 
 // Setup copy buttons functionality
 function setupCopyButtons() {
@@ -111,26 +116,17 @@ function setupCopyButtons() {
             // Construct text to copy
             const textToCopy = `${label}: ${value}`;
 
-            // Copy logic
+            // Copy logic - Silent but with Icon Feedback
             navigator.clipboard.writeText(textToCopy).then(() => {
-                // Visual feedback
                 const icon = btn.querySelector('i');
                 const originalClass = icon.className;
 
-                icon.className = 'fas fa-check';
-                btn.style.background = 'var(--gold)';
-                btn.style.color = 'var(--cosmic-darker)';
-
-                showToast(t("msg.copied_item").replace("{item}", label));
+                icon.className = 'fas fa-circle-check';
 
                 setTimeout(() => {
                     icon.className = originalClass;
-                    btn.style.background = '';
-                    btn.style.color = '';
-                }, 2000);
-            }).catch(() => {
-                showToast('❌ Erro ao copiar');
-            });
+                }, 1500);
+            }).catch(err => console.error("Copy failed", err));
         });
     });
 }
@@ -399,10 +395,19 @@ function renderZmanim(data) {
         });
 
         updateDOM('sunset-time', timeStr);
-        updateDOM('sunset-date', sunsetDate.toLocaleDateString(currentLang === 'pt' ? 'pt-PT' : 'en-US', {
+
+        let dateStr = sunsetDate.toLocaleDateString(currentLang === 'pt' ? 'pt-PT' : 'en-US', {
             day: 'numeric',
             month: 'long'
-        }));
+        });
+
+        // Capitalize first letter of month if Portuguese, but keep "de" lowercase
+        if (currentLang === 'pt') {
+            dateStr = dateStr.replace(/\b\w/g, l => l.toUpperCase())
+                .replace(/\b(De|Da|Do)\b/g, t => t.toLowerCase());
+        }
+
+        updateDOM('sunset-date', dateStr);
     }
 }
 
@@ -565,9 +570,52 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
     if (currentHoliday) {
         updateDOM('current-holiday-name', currentHoliday.title);
         updateDOM('current-holiday-desc', t("desc.current_holiday"));
+
+        // Toggle Holiday Mode (Major Holidays only)
+        document.body.className = ''; // Reset classes
+        document.body.classList.add('cosmic-bg-enabled'); // Keep base background if needed or handle via CSS
+
+        if (currentHoliday) {
+            const hDate = currentHoliday.date; // YYYY-MM-DD
+            // We need Hebrew Date to be precise, but Hebcal event name/subcat is easier
+            // Mapping User Request to Hebcal Names/Dates roughly if possible, or using partial string match on title
+            const title = currentHoliday.title.toLowerCase();
+
+            // 1. Matzot (Passover) - 15 & 21 Nissan
+            // Hebcal: "Pesach I", "Pesach VII"
+            if (title.includes('pesach') || title.includes('matzot')) {
+                document.body.classList.add('theme-matzot');
+            }
+            // 2. Shavuot - 6 Sivan
+            else if (title.includes('shavuot')) {
+                document.body.classList.add('theme-shavuot');
+            }
+            // 3. Teruah (Rosh Hashana) - 1 Tishrei
+            else if (title.includes('rosh hashanah') || title.includes('teruah')) {
+                document.body.classList.add('theme-teruah');
+            }
+            // 4. Kippur (Yom Kippur) - 10 Tishrei
+            else if (title.includes('yom kippur')) {
+                document.body.classList.add('theme-kippur');
+            }
+            // 5. Sukkot - 15 Tishrei
+            else if (title.includes('sukkot')) {
+                document.body.classList.add('theme-sukkot');
+            }
+            // 6. Atzeret (Shemini Atzeret/Simchat Torah) - 22 Tishrei
+            else if (title.includes('shemini atzeret') || title.includes('simchat torah')) {
+                document.body.classList.add('theme-atzeret');
+            }
+            // Fallback for other majors
+            else if (currentHoliday.subcat === 'major') {
+                document.body.classList.add('holiday-mode');
+            }
+        }
+
     } else {
         updateDOM('current-holiday-name', t("msg.no_holiday_today"));
         updateDOM('current-holiday-desc', t("msg.ordinary_day"));
+        document.body.classList.remove('holiday-mode');
     }
 
     // 4.2 Find Next Holiday (distinct from current)
@@ -576,10 +624,16 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
     if (holidays.length > 0) {
         const nextH = holidays[0];
         const hDate = new Date(nextH.date);
-        const dateStr = hDate.toLocaleDateString(currentLang === 'pt' ? 'pt-PT' : 'en-US', {
+        let dateStr = hDate.toLocaleDateString(currentLang === 'pt' ? 'pt-PT' : 'en-US', {
             day: 'numeric',
             month: 'long'
         });
+
+        // Capitalize first letter of month if Portuguese, but keep "de" lowercase
+        if (currentLang === 'pt') {
+            dateStr = dateStr.replace(/\b\w/g, l => l.toUpperCase())
+                .replace(/\b(De|Da|Do)\b/g, t => t.toLowerCase());
+        }
 
         updateDOM('next-holiday-name', nextH.title);
         updateDOM('next-holiday-date', dateStr);
