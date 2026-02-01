@@ -6,25 +6,10 @@ document.addEventListener('DOMContentLoaded', initApp);
 
 // Global state
 let countdownInterval = null;
-let lastHebcalData = null;
-let lastZmanimData = null;
-let lastCityName = "";
-let lastDistrictName = "";
-let lastCountry = "";
-let lastIsManual = false;
 
-// Expose refresh function for i18n
-window.refreshApp = function () {
-    if (lastHebcalData) processHebcalData(lastHebcalData);
-    if (lastZmanimData) renderZmanim(lastZmanimData);
-    updateDOM('location-type', lastIsManual ? t("status.location_selected") : t("status.location_gps"));
-
-    // Refresh location card text if needed
-    if (lastCityName) {
-        updateDOM('location-city', lastCityName);
-        updateDOM('location-district', lastDistrictName || lastCountry);
-    }
-};
+// ========================================
+// INITIALIZATION
+// ========================================
 
 // ========================================
 // INITIALIZATION
@@ -110,11 +95,15 @@ function setupCopyButtons() {
             if (!card) return;
 
             // Get content
-            const label = card.querySelector('.card-label').textContent;
             const value = card.querySelector('.card-value').textContent;
 
-            // Construct text to copy
-            const textToCopy = `${label}: ${value}`;
+            // Determine label: Use data attribute if exists, otherwise NO label (just value)
+            const customLabel = btn.getAttribute('data-copy-label');
+
+            let textToCopy = value;
+            if (customLabel) {
+                textToCopy = `${customLabel}: ${value}`;
+            }
 
             // Copy logic - Silent but with Icon Feedback
             navigator.clipboard.writeText(textToCopy).then(() => {
@@ -168,7 +157,8 @@ async function getCurrentLocation() {
                 searchInput.value = cityName + (country ? ', ' + country : '');
 
                 // Trigger the search automatically
-                await fetchData(lat, lon, false);
+                await fetchData(lat, lon);
+
 
                 // Show success feedback
                 icon.className = 'fas fa-circle-check';
@@ -179,8 +169,9 @@ async function getCurrentLocation() {
             } catch (e) {
                 console.error('Geocode error:', e);
                 searchInput.value = 'Localização Atual';
-                await fetchData(lat, lon, false);
+                await fetchData(lat, lon);
                 icon.className = originalClass;
+
             }
 
             gpsBtn.disabled = false;
@@ -236,8 +227,9 @@ async function searchLocation(query) {
             const lat = parseFloat(data[0].lat);
             const lon = parseFloat(data[0].lon);
             localStorage.setItem('userCoords', JSON.stringify({ lat, lon }));
-            await fetchData(lat, lon, true);
+            await fetchData(lat, lon);
         } else {
+
             throw new Error('NOT_FOUND');
         }
     } catch (e) {
@@ -260,8 +252,9 @@ function requestLocation() {
                 const lat = pos.coords.latitude;
                 const lon = pos.coords.longitude;
                 localStorage.setItem('userCoords', JSON.stringify({ lat, lon }));
-                await fetchData(lat, lon, false);
+                await fetchData(lat, lon);
             },
+
             async (err) => {
                 console.warn("GPS Denied or Error:", err);
 
@@ -270,33 +263,34 @@ function requestLocation() {
                 if (savedCoords) {
                     try {
                         const { lat, lon } = JSON.parse(savedCoords);
-                        await fetchData(lat, lon, false);
+                        await fetchData(lat, lon);
                         return;
+
                     } catch (e) {
                         console.error("Saved coords invalid", e);
                     }
                 }
 
                 console.warn("Using Jerusalem as fallback");
-                await fetchData(31.7683, 35.2137, false);
+                await fetchData(31.7683, 35.2137);
             }
         );
     } else {
-        fetchData(31.7683, 35.2137, false);
+        fetchData(31.7683, 35.2137);
     }
 }
+
 
 // ========================================
 // DATA FETCHING
 // ========================================
 
-async function fetchData(lat, lon, isManual = false) {
+async function fetchData(lat, lon) {
     try {
         showLoading();
-        lastIsManual = isManual;
 
         // Update location type indicator
-        updateDOM('location-type', isManual ? t("status.location_selected") : t("status.location_gps"));
+        // updateDOM('location-type', isManual ? t("status.location_selected") : t("status.location_gps"));
 
         // 1. Get city name from coordinates (BigDataCloud)
         const cityRes = await fetch(
@@ -310,8 +304,9 @@ async function fetchData(lat, lon, isManual = false) {
 
         updateDOM('location-name', districtName ? `${cityName}, ${districtName}` : cityName);
         updateDOM('location-city', cityName);
-        updateDOM('location-district', districtName || country);
         updateDOM('lat-long', `${lat.toFixed(4)}, ${lon.toFixed(4)}`);
+
+
 
         // 2. Fetch Jewish calendar data
         const today = new Date();
@@ -352,14 +347,8 @@ async function fetchData(lat, lon, isManual = false) {
         const converterRes = await fetch(converterUrl);
         const converterData = await converterRes.json();
 
-        // Save state
-        lastHebcalData = hebcalData;
-        lastZmanimData = zmanimData;
-        lastCityName = cityName;
-        lastDistrictName = districtName;
-        lastCountry = country;
-
         // Process and render data
+
         processHebcalData(hebcalData, converterData, isAfterSunset, zmanimData);
         renderZmanim(zmanimData);
 
@@ -396,20 +385,12 @@ function renderZmanim(data) {
 
         updateDOM('sunset-time', timeStr);
 
-        let dateStr = sunsetDate.toLocaleDateString(currentLang === 'pt' ? 'pt-PT' : 'en-US', {
-            day: 'numeric',
-            month: 'long'
-        });
 
-        // Capitalize first letter of month if Portuguese, but keep "de" lowercase
-        if (currentLang === 'pt') {
-            dateStr = dateStr.replace(/\b\w/g, l => l.toUpperCase())
-                .replace(/\b(De|Da|Do)\b/g, t => t.toLowerCase());
-        }
-
-        updateDOM('sunset-date', dateStr);
     }
 }
+
+
+
 
 // ========================================
 // DATA PROCESSING
@@ -441,7 +422,8 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
         // A. Combine Names
         const combinedName = parashotOnDate
             .map(p => p.title.replace('Parashat ', ''))
-            .join(' - ');
+            .join(t("msg.sep_torah"));
+
 
         updateDOM('parashah-name', combinedName);
 
@@ -464,9 +446,10 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
                 // Get everything after the last hyphen
                 const endPart = last.includes('-') ? last.split('-').pop().trim() : last;
 
-                finalTorahDisplay = `${startPart} - ${endPart}`;
+                finalTorahDisplay = `${startPart}${t("msg.sep_torah")}${endPart}`;
             }
         }
+
 
         updateDOM('torah-reading', finalTorahDisplay || t("status.check_sefer"));
 
@@ -475,8 +458,9 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
             .map(p => p.leyning && p.leyning.haftarah ? transliterateText(p.leyning.haftarah) : "")
             .filter(h => h);
 
-        // Join multiple haftarot with +
-        const uniqueHaftarot = [...new Set(haftarot)].join(' + ');
+        // Join multiple haftarot with separator
+        const uniqueHaftarot = [...new Set(haftarot)].join(t("msg.sep_haftarah"));
+
 
         updateDOM('haftara-reading', uniqueHaftarot || t("status.check_sefer"));
     }
@@ -514,9 +498,10 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
     }
 
     if (isShabbatNow) {
-        updateDOM('countdown', "Shabbat Shalom");
-        updateDOM('label.shabbat_in', havdalah ? t("label.havdalah") : "Shabbat"); // Optional: Show "Havdalah" label?
+        updateDOM('countdown', t("msg.shabbat_shalom"));
+        updateDOM('label.shabbat_in', havdalah ? t("label.havdalah") : t("msg.shabbat")); // Optional: Show "Havdalah" label?
         // Clear countdown if running
+
         if (countdownInterval) clearInterval(countdownInterval);
     } else if (candles) {
         // Not Shabbat, show countdown
@@ -568,8 +553,10 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
     const currentHoliday = sortedHolidays.find(i => i.date === effectiveDateStr);
 
     if (currentHoliday) {
-        updateDOM('current-holiday-name', currentHoliday.title);
-        updateDOM('current-holiday-desc', t("desc.current_holiday"));
+        updateDOM('current-holiday-name', translateHoliday(currentHoliday.title));
+
+
+
 
         // Toggle Holiday Mode (Major Holidays only)
         document.body.className = ''; // Reset classes
@@ -614,8 +601,9 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
 
     } else {
         updateDOM('current-holiday-name', t("msg.no_holiday_today"));
-        updateDOM('current-holiday-desc', t("msg.ordinary_day"));
         document.body.classList.remove('holiday-mode');
+
+
     }
 
     // 4.2 Find Next Holiday (distinct from current)
@@ -632,10 +620,11 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
         // Capitalize first letter of month if Portuguese, but keep "de" lowercase
         if (currentLang === 'pt') {
             dateStr = dateStr.replace(/\b\w/g, l => l.toUpperCase())
-                .replace(/\b(De|Da|Do)\b/g, t => t.toLowerCase());
+                .replace(/\b(De|Da|Do)\b/g, t => t.toLowerCase())
+                .replace(' de ', ' '); // Remove 'de' for strict 2-word style (e.g. "15 Abril")
         }
 
-        updateDOM('next-holiday-name', nextH.title);
+        updateDOM('next-holiday-name', translateHoliday(nextH.title));
         updateDOM('next-holiday-date', dateStr);
     } else {
         updateDOM('next-holiday-name', t("msg.no_holidays"));
@@ -675,8 +664,9 @@ function startCountdown(targetDate) {
         const diff = targetDate - now;
 
         if (diff <= 0) {
-            el.textContent = "Shabbat Shalom";
+            el.textContent = t("msg.shabbat_shalom");
             clearInterval(countdownInterval);
+
             // Force refresh to update status if we just crossed into Shabbat
             return;
         }
@@ -789,6 +779,43 @@ function getBookMapping() {
         "1 Chronicles": "I Divrei HaYamim",
         "2 Chronicles": "II Divrei HaYamim"
     };
+}
+
+function translateHoliday(text) {
+    if (!text) return text;
+
+    // Direct replacements for major terms
+    const mapping = {
+        "Rosh Hashana": "Rosh Hashaná",
+        "Yom Kippur": "Yom Kipur",
+        "Sukkot": "Sucot",
+        "Shmini Atzeret": "Shemini Atzeret",
+        "Simchat Torah": "Simchat Torá",
+        "Chanukah": "Hanucá",
+        "Tu BiShvat": "Tu B'Shevat",
+        "Purim": "Purim",
+        "Pesach": "Pessach",
+        "Shavuot": "Shavuot",
+        "Tish'a B'Av": "Tish'á BeAv",
+        "Rosh Chodesh": "Rosh Chodesh", // Usually kept or "Lua Nova"
+        "Erev": "Véspera de",
+        "Havdalah": "Havdalá",
+        "Candle lighting": "Acendimento das Velas",
+        "Lag BaOmer": "Lag Baômer",
+        "Yom HaShoah": "Dia do Holocausto",
+        "Yom HaZikaron": "Dia da Memória",
+        "Yom HaAtzma'ut": "Dia da Independência",
+        "Jerusalem Day": "Dia de Jerusalém"
+    };
+
+    let newText = text;
+    Object.keys(mapping).forEach(eng => {
+        // Simple replace - can be enhanced with regex if needed for strict boundaries
+        // Using replaceAll to cover everything
+        newText = newText.split(eng).join(mapping[eng]);
+    });
+
+    return newText;
 }
 
 // ========================================
