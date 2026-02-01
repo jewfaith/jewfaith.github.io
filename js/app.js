@@ -46,12 +46,10 @@ function setupEventListeners() {
     setupCopyButtons();
 }
 
-// Share the app with message + URL
-// Share the app with message + URL
+// Share the app URL
 function shareApp() {
-    const shareMessage = t("share.message");
     const shareUrl = window.location.href;
-    const fullText = shareMessage + shareUrl;
+    const fullText = shareUrl;
 
     // Always copy to clipboard
     copyToClipboard(fullText);
@@ -59,8 +57,6 @@ function shareApp() {
     // Try native share (mobile) if available, but don't rely on it for copy
     if (navigator.share) {
         navigator.share({
-            title: t("share.title"),
-            text: t("share.text"),
             url: shareUrl
         }).catch((e) => console.log('Share dismissed', e));
     }
