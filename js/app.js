@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', initApp);
 
 // Global state
 let countdownInterval = null;
+let nextHolidayInterval = null;
 
 // ========================================
 // INITIALIZATION
@@ -329,23 +330,39 @@ async function fetchData(lat, lon) {
         const hebcalData = await hebcalRes.json();
         const zmanimData = await zmanimRes.json();
 
-        // 2b. Calculate afterSunset status
+        // 2b. Calculate afterSunset status & Shabbat Start Status (20 min before)
         let isAfterSunset = false;
+        let isAfterShabbatStart = false; // Effectively "Is it Holiday Mode?" (20 min before sunset)
+
         if (zmanimData.times && zmanimData.times.sunset) {
             const sunsetTime = new Date(zmanimData.times.sunset);
+
             if (new Date() > sunsetTime) {
                 isAfterSunset = true;
+            }
+
+            // Calculate "Shabbat/Holiday Start" threshold (Strict Sunset now)
+            // This syncs with the countdown end time.
+            const holidayStartTime = sunsetTime;
+            if (new Date() >= holidayStartTime) {
+                isAfterShabbatStart = true;
             }
         }
 
         // 2c. Fetch accurate Hebrew Date (with sunset logic)
-        const converterUrl = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${today.getDate()}&g2h=1&strict=1${isAfterSunset ? '&gs=on' : ''}`;
+        // Note: Hebcal converter uses strict sunset or manual 'gs' param.
+        // We probably want strict sunset for the DATE itself (e.g. 13 Nissan vs 14 Nissan),
+        // but for SHOWING the holiday card, we want the "Early Start".
+        // Let's keep strict sunset for the general date, but override for Holiday display.
+
+        // SYNC FIX: Ensure Hebrew Date flips EXACTLY when the Holiday Logic flips (isAfterShabbatStart)
+        const shouldUseNextDay = isAfterSunset || isAfterShabbatStart;
+        const converterUrl = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${today.getDate()}&g2h=1&strict=1${shouldUseNextDay ? '&gs=on' : ''}`;
         const converterRes = await fetch(converterUrl);
         const converterData = await converterRes.json();
 
         // Process and render data
-
-        processHebcalData(hebcalData, converterData, isAfterSunset, zmanimData);
+        processHebcalData(hebcalData, converterData, isAfterSunset, zmanimData, isAfterShabbatStart);
         renderZmanim(zmanimData);
 
         // Show dashboard
@@ -392,15 +409,18 @@ function renderZmanim(data) {
 // DATA PROCESSING
 // ========================================
 
-function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
+function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAfterShabbatStart = false) {
     if (!data || !data.items) return;
 
     const items = data.items;
 
-    // Calculate effective date (switch to tomorrow if after sunset)
+    // Calculate effective date (switch to tomorrow if after sunset OR after holiday start threshold)
+    // We want the holiday to appear AS SOON as the countdown ends (20 min before sunset).
     const now = new Date();
     const effectiveDate = new Date(now);
-    if (isAfterSunset) {
+
+    // Use the broader "Holiday Start" definition for fetching today's events
+    if (isAfterShabbatStart || isAfterSunset) {
         effectiveDate.setDate(effectiveDate.getDate() + 1);
     }
     const effectiveDateStr = effectiveDate.toISOString().split('T')[0];
@@ -473,20 +493,20 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
     let isShabbatNow = false;
     const dayOfWeek = now.getDay(); // 5 = Friday, 6 = Saturday
 
-    // Check Friday Night (Start 20 minutes BEFORE Sunset)
+    // Check Friday Night (Start at Sunset)
     if (dayOfWeek === 5 && zmanimData && zmanimData.times.sunset) {
         const sunsetTime = new Date(zmanimData.times.sunset);
-        const startTime = new Date(sunsetTime.getTime() - 20 * 60000); // Subtract 20 minutes
+        const startTime = sunsetTime; // Strict Sunset
 
         if (now >= startTime) {
             isShabbatNow = true;
         }
     }
-    // Check Saturday (Until Sunset + 20 minutes)
+    // Check Saturday (Until Sunset)
     else if (dayOfWeek === 6 && zmanimData && zmanimData.times.sunset) {
-        // User Request: Shabbat Shalom disappears 20min AFTER Saturday Sunset
+        // User Request: Shabbat Shalom disappears at Saturday Sunset
         const sunsetTime = new Date(zmanimData.times.sunset);
-        const cutoffTime = new Date(sunsetTime.getTime() + 20 * 60000); // Add 20 minutes
+        const cutoffTime = sunsetTime; // Strict Sunset
 
         if (now < cutoffTime) {
             isShabbatNow = true;
@@ -497,12 +517,22 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
         updateDOM('countdown', t("msg.shabbat_shalom"));
         updateDOM('label.shabbat_in', havdalah ? t("label.havdalah") : t("msg.shabbat")); // Optional: Show "Havdalah" label?
         // Clear countdown if running
-
         if (countdownInterval) clearInterval(countdownInterval);
+
     } else if (candles) {
         // Not Shabbat, show countdown
-        const candleDate = new Date(candles.date);
-        startCountdown(candleDate);
+        let targetDate = new Date(candles.date);
+
+        // SYNC FIX: If the candle event is TODAY, use strict Sunset time to match the Transition Trigger
+        // This avoids the 18-minute gap (Countdown ends at 18:42, but Shabbat starts at 19:00)
+        const candleDay = targetDate.toISOString().split('T')[0];
+        const todayStr = now.toISOString().split('T')[0];
+
+        if (candleDay === todayStr && zmanimData && zmanimData.times.sunset) {
+            targetDate = new Date(zmanimData.times.sunset);
+        }
+
+        startCountdown(targetDate);
         updateDOM('label.shabbat_in', t("label.shabbat_in"));
     }
 
@@ -607,23 +637,49 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData) {
 
     if (holidays.length > 0) {
         const nextH = holidays[0];
-        const hDate = new Date(nextH.date);
-        let dateStr = hDate.toLocaleDateString(currentLang === 'pt' ? 'pt-PT' : 'en-US', {
-            day: 'numeric',
-            month: 'long'
-        });
+        updateDOM('next-holiday-name', translateHoliday(nextH.title));
 
-        // Capitalize first letter of month if Portuguese, but keep "de" lowercase
-        if (currentLang === 'pt') {
-            dateStr = dateStr.replace(/\b\w/g, l => l.toUpperCase())
-                .replace(/\b(De|Da|Do)\b/g, t => t.toLowerCase())
-                .replace(' de ', ' '); // Remove 'de' for strict 2-word style (e.g. "15 Abril")
+        // Calculate Target Time (Start of the Holiday)
+        // Default: Sunset (approx 18:00) of the *previous* day (Erev)
+        const parts = nextH.date.split('-'); // ["YYYY", "MM", "DD"]
+        const year = parseInt(parts[0]);
+        const month = parseInt(parts[1]) - 1;
+        const day = parseInt(parts[2]);
+
+        // Erev is day - 1, set to 18:00 local time -> Adjust to strict 18:00 or Sunset if available
+        let targetTime = new Date(year, month, day - 1, 18, 0, 0);
+
+        // Try to find official candle lighting on Erev
+        // Hebcal candle events usually use ISO string with time
+        // We construct the Erev date string YYYY-MM-DD to match
+        const erevCheck = new Date(year, month, day - 1);
+        const erevStr = erevCheck.toISOString().split('T')[0];
+
+        const candleEvent = items.find(i => i.category === 'candles' && i.date.startsWith(erevStr));
+
+        if (candleEvent) {
+            targetTime = new Date(candleEvent.date);
+            // Standard candles logic (no extra offset)
+
+            // SYNC FIX: If target is TODAY, use strict Sunset to avoid gap
+            const tDay = targetTime.toISOString().split('T')[0];
+            // We need 'now' which is available in processHebcalData scope? No, need to re-get or assume today from context
+            // Actually 'date' passed to fetching zmanimData was 'today'.
+            // So if tDay === todayStr...
+            // We can pass zmanimData to here if we refactor, but better: 
+            // Logic is inside processHebcalData, so we have access to zmanimData!
+
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (tDay === todayStr && zmanimData && zmanimData.times.sunset) {
+                targetTime = new Date(zmanimData.times.sunset);
+            }
         }
 
-        updateDOM('next-holiday-name', translateHoliday(nextH.title));
-        updateDOM('next-holiday-date', dateStr);
+        startNextHolidayCountdown(targetTime);
+
     } else {
         updateDOM('next-holiday-name', t("msg.no_holidays"));
+        if (nextHolidayInterval) clearInterval(nextHolidayInterval);
         updateDOM('next-holiday-date', t("msg.check_calendar"));
     }
 }
@@ -664,18 +720,75 @@ function startCountdown(targetDate) {
             clearInterval(countdownInterval);
 
             // Force refresh to update status if we just crossed into Shabbat
+            console.log("Shabbat started! Refreshing...");
+            setTimeout(() => location.reload(), 1000); // Small buffer then reload
             return;
         }
 
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        el.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        el.textContent = formatCountdownDuration(diff, false);
     }
 
     tick();
     countdownInterval = setInterval(tick, 1000);
+}
+
+function startNextHolidayCountdown(targetDate) {
+    const el = document.getElementById('next-holiday-date');
+    if (!el) return;
+
+    if (nextHolidayInterval) clearInterval(nextHolidayInterval);
+
+    function tick() {
+        const now = new Date();
+        const diff = targetDate - now;
+
+        if (diff <= 0) {
+            clearInterval(nextHolidayInterval);
+            // Auto refresh - Holiday Started
+            console.log("Holiday started! Refreshing...");
+
+            const savedCoords = localStorage.getItem('userCoords');
+            if (savedCoords) {
+                try {
+                    const { lat, lon } = JSON.parse(savedCoords);
+                    fetchData(lat, lon);
+                } catch (e) {
+                    location.reload();
+                }
+            } else {
+                location.reload();
+            }
+            return;
+        }
+
+        el.textContent = formatCountdownDuration(diff, true);
+    }
+
+    tick();
+    nextHolidayInterval = setInterval(tick, 1000);
+}
+
+/**
+ * Formats a duration (ms) into DD:HH:MM (if > 24h) or HH:MM:SS (if < 24h)
+ * @param {number} diff - Time difference in milliseconds
+ * @param {boolean} usePrefix - Whether to prepend "Falta"/"Faltam"
+ * @returns {string} Formatted time string
+ */
+function formatCountdownDuration(diff, usePrefix = true) {
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / (3600 * 24));
+    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = Math.floor(totalSeconds % 60);
+
+    const prefix = usePrefix ? ((days > 1 || (days === 0 && hours !== 1)) ? t("msg.countdown_prefix_plural") : t("msg.countdown_prefix")) : "";
+
+    // Logic: DD:HH:MM if > 24h, HH:MM:SS if < 24h
+    if (days > 0) {
+        return `${prefix}${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    } else {
+        return `${prefix}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
 }
 
 // ========================================

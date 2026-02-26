@@ -29,6 +29,8 @@ const translations = {
         "msg.no_holiday_today": "Sem Festividade",
         "msg.shabbat": "Shabbat",
         "msg.shabbat_shalom": "Shabbat Shalom",
+        "msg.countdown_prefix": "Falta ",
+        "msg.countdown_prefix_plural": "Faltam ",
         "msg.sep_torah": " - ",
         "msg.sep_haftarah": " + ",
         "status.unknown_location": "Onde estás?",
