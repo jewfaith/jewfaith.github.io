@@ -6,6 +6,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <title>Calendário Judaico</title>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -78,22 +79,7 @@
 
                 </div>
 
-                <!-- Countdown Card -->
-                <div class="data-card countdown-card">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-hourglass-half"></i>
-                        </div>
-                        <span class="card-label" data-i18n="label.shabbat_in"></span>
-                    </div>
-                    <div class="card-content">
-                        <h3 id="countdown" class="card-value"></h3>
-                        <p class="card-desc" data-i18n="desc.countdown"></p>
 
-                    </div>
-                    <button class="copy-btn" data-copy-label="Shabbat"><i class="far fa-copy"></i></button>
-
-                </div>
 
                 <!-- Sunset Card (Today) -->
                 <div class="data-card sunset-card">
@@ -178,6 +164,23 @@
 
                     </div>
                     <button class="copy-btn" data-copy-label="Haftará"><i class="far fa-copy"></i></button>
+
+                </div>
+
+                <!-- Ketuvim Card -->
+                <div class="data-card ketuvim-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-feather-alt"></i>
+                        </div>
+                        <span class="card-label" data-i18n="label.writings"></span>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="ketuvim-reading" class="card-value long-value"></h3>
+                        <p class="card-desc" data-i18n="desc.writings"></p>
+
+                    </div>
+                    <button class="copy-btn" data-copy-label="Ketuvim"><i class="far fa-copy"></i></button>
 
                 </div>
 

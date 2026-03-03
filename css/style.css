@@ -83,13 +83,12 @@ body.holiday-mode .card-icon {
     /* Gold Icons for Festivity */
     background: linear-gradient(135deg, #fbbf24, #b45309) !important;
     color: white !important;
-    box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
 }
 
 body.holiday-mode .search-container {
     background: rgba(30, 27, 75, 0.8);
-    border-color: var(--gold);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.15);
+    border-color: var(--glass-border);
+    box-shadow: var(--shadow-xl);
 }
 
 /* Add a badge/indicator for the mode */
@@ -348,7 +347,6 @@ body.theme-roshchodesh {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    overflow-x: hidden;
     /* Prevent scrollbars from 100vw */
 }
 
@@ -391,7 +389,7 @@ body.theme-roshchodesh {
     display: flex;
     align-items: center;
     gap: 1rem;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-xl);
     transition: all 0.3s ease;
     width: 100%;
     /* Ensure it adapts to smaller screens */
@@ -414,6 +412,15 @@ body.theme-roshchodesh {
 
 .search-container input::placeholder {
     color: var(--text-muted);
+}
+
+/* Evitar fundo branco do preenchimento automático (autofill) no Chrome/Safari */
+.search-container input:-webkit-autofill,
+.search-container input:-webkit-autofill:hover,
+.search-container input:-webkit-autofill:focus,
+.search-container input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: var(--text-primary) !important;
 }
 
 .search-container button {
@@ -789,6 +796,14 @@ body.theme-roshchodesh {
 
 .haftarah-card .card-icon {
     background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.ketuvim-card .card-icon {
+    background: linear-gradient(135deg, #8b5cf6, #5b21b6);
+}
+
+.aliyah-card .card-icon {
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
 }
 
 .holiday-card .card-icon {

@@ -15,7 +15,8 @@ const translations = {
         "desc.next_holiday": "Próxima Ocorrência",
         "label.current_holiday": "Festa Atual",
         "label.prophets": "Olhar Profético",
-        "label.torah": "Leitura Biblica",
+        "label.torah": "Leitura Bíblica",
+        "label.writings": "Palavra Viva",
         "desc.current_holiday": "Momento Litúrgico",
         "desc.countdown": "Contagem Regressiva",
         "desc.sunset": "Ocaso Solar",
@@ -23,14 +24,17 @@ const translations = {
         "desc.parashah": "Ciclo Anual",
         "desc.torah": "Lei Escrita",
         "desc.haftarah": "Lição Anexa",
+        "desc.writings": "Sabedoria Poética",
         "msg.loading": "A preparar tudo...",
-        "msg.no_holidays": "Nenhuma festividade próxima",
+        "msg.no_holidays": "Nenhuma festividade",
         "msg.check_calendar": "Consulte o tempo completo",
         "msg.no_holiday_today": "Sem Festividade",
-        "msg.shabbat": "Shabbat",
-        "msg.shabbat_shalom": "Shabbat Shalom",
+        "msg.shabbat": "Repouso",
+        "msg.shabbat_shalom": "Chag Sameach",
+        "msg.chag_sameach": "Chag Sameach",
         "msg.countdown_prefix": "Falta ",
         "msg.countdown_prefix_plural": "Faltam ",
+        "msg.coming_soon": "Em breve",
         "msg.sep_torah": " - ",
         "msg.sep_haftarah": " + ",
         "status.unknown_location": "Onde estás?",
@@ -48,27 +52,39 @@ const translations = {
     }
 };
 
-const currentLang = 'pt';
+let currentLang = 'pt';
 
 function t(key) {
-    return translations.pt[key] || key;
+    return translations[currentLang]?.[key] || key;
 }
 
 function updateTexts() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (translations.pt[key]) {
-            if (el.tagName === 'INPUT') {
-                el.placeholder = translations.pt[key];
+        const translatedText = translations[currentLang]?.[key];
+
+        if (translatedText) {
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.placeholder = translatedText;
             } else {
-                el.textContent = translations.pt[key];
+                el.textContent = translatedText;
             }
         }
     });
 }
 
+function setLanguage(lang) {
+    if (translations[lang]) {
+        currentLang = lang;
+        updateDirection();
+        updateTexts();
+    } else {
+        console.warn(`Language '${lang}' not found.`);
+    }
+}
+
 function updateDirection() {
-    document.documentElement.lang = 'pt-PT';
+    document.documentElement.lang = currentLang === 'pt' ? 'pt-PT' : currentLang;
 }
 
 // Initialize

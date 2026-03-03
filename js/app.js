@@ -50,14 +50,16 @@ function setupEventListeners() {
 // Share the app URL
 function shareApp() {
     const shareUrl = window.location.href;
-    const fullText = shareUrl;
+    const pageTitle = document.title || "Calendário Judaico";
+    const fullText = `${pageTitle}\n${shareUrl}`;
 
     // Always copy to clipboard
     copyToClipboard(fullText);
 
-    // Try native share (mobile) if available, but don't rely on it for copy
+    // Try native share (mobile) if available
     if (navigator.share) {
         navigator.share({
+            title: "Calendário Judaico",
             url: shareUrl
         }).catch((e) => console.log('Share dismissed', e));
     }
@@ -306,14 +308,15 @@ async function fetchData(lat, lon) {
 
 
         // 2. Fetch Jewish calendar data
-        const today = new Date();
+        // VIAGEM NO TEMPO: Se houver uma data simulada, usamos essa em vez da real
+        const today = window.simulatedDate ? new Date(window.simulatedDate + "T12:00:00") : new Date();
         const year = today.getFullYear();
         const month = today.getMonth() + 1;
         const dateStr = today.toISOString().split('T')[0];
 
-        // Calculate end date (6 months from now) to ensure we always have upcoming holidays
+        // Calculate end date (8 months from now) to ensure we always have upcoming holidays
         const endDate = new Date(today);
-        endDate.setDate(endDate.getDate() + 180);
+        endDate.setDate(endDate.getDate() + 240);
         const endDateStr = endDate.toISOString().split('T')[0];
 
         const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=on&mod=off&nx=on&mf=off&ss=off&s=on&i=on`;
@@ -330,6 +333,9 @@ async function fetchData(lat, lon) {
         const hebcalData = await hebcalRes.json();
         const zmanimData = await zmanimRes.json();
 
+        // PERSISTÊNCIA: Guardar os dados globalmente para uso no party()
+        window.lastData = hebcalData;
+
         // 2b. Calculate afterSunset status & Shabbat Start Status (20 min before)
         let isAfterSunset = false;
         let isAfterShabbatStart = false; // Effectively "Is it Holiday Mode?" (20 min before sunset)
@@ -337,14 +343,15 @@ async function fetchData(lat, lon) {
         if (zmanimData.times && zmanimData.times.sunset) {
             const sunsetTime = new Date(zmanimData.times.sunset);
 
-            if (new Date() > sunsetTime) {
+            // Usa today em vez de new Date() solto para respeitar a simulação do Easter Egg
+            if (today > sunsetTime) {
                 isAfterSunset = true;
             }
 
             // Calculate "Shabbat/Holiday Start" threshold (Strict Sunset now)
             // This syncs with the countdown end time.
             const holidayStartTime = sunsetTime;
-            if (new Date() >= holidayStartTime) {
+            if (today >= holidayStartTime) {
                 isAfterShabbatStart = true;
             }
         }
@@ -416,7 +423,8 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
 
     // Calculate effective date (switch to tomorrow if after sunset OR after holiday start threshold)
     // We want the holiday to appear AS SOON as the countdown ends (20 min before sunset).
-    const now = new Date();
+    // VIAGEM NO TEMPO: Se houver uma data simulada, o relógio interno obedece
+    const now = window.simulatedDate ? new Date(window.simulatedDate + "T12:00:00") : new Date();
     const effectiveDate = new Date(now);
 
     // Use the broader "Holiday Start" definition for fetching today's events
@@ -443,102 +451,225 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
 
         updateDOM('parashah-name', combinedName);
 
-        // B. Combine Torah Readings (Continuous Range)
-        const readings = parashotOnDate
-            .map(p => p.leyning && p.leyning.torah ? transliterateText(p.leyning.torah) : "")
-            .filter(t => t);
+        const formatReadingList = (parts) => {
+            if (!parts || parts.length === 0) return "";
+            if (parts.length === 1) return parts[0];
 
-        let finalTorahDisplay = "";
-        if (readings.length > 0) {
-            if (readings.length === 1) {
-                finalTorahDisplay = readings[0];
-            } else {
-                // Extract Start from First and End from Last
-                const first = readings[0];
-                const last = readings[readings.length - 1];
+            const getBook = (s) => {
+                const match = s.match(/^(.+?)\s+\d+:/);
+                return match ? match[1].trim() : s.split(/\d/)[0].trim();
+            };
 
-                // Get everything before the first hyphen (or space)
-                const startPart = first.includes('-') ? first.split('-')[0].trim() : first;
-                // Get everything after the last hyphen
-                const endPart = last.includes('-') ? last.split('-').pop().trim() : last;
-
-                finalTorahDisplay = `${startPart}${t("msg.sep_torah")}${endPart}`;
+            const firstBook = getBook(parts[0]);
+            let allSameBook = true;
+            for (let i = 1; i < parts.length; i++) {
+                if (getBook(parts[i]) !== firstBook) {
+                    allSameBook = false;
+                    break;
+                }
             }
-        }
 
+            if (allSameBook) {
+                const firstPart = parts[0];
+                const lastPart = parts[parts.length - 1];
+                const start = firstPart.includes('-') ? firstPart.split('-')[0].trim() : firstPart;
+                const end = lastPart.includes('-') ? lastPart.split('-').pop().trim() : lastPart.replace(firstBook, '').trim();
+                return `${start}-${end}`;
+            }
+            return parts[0];
+        };
 
+        // B. Combine Torah Readings
+        const rawTorah = parashotOnDate
+            .map(p => p.leyning && p.leyning.torah ? transliterateText(p.leyning.torah) : "")
+            .filter(t => t)
+            .flatMap(t => t.split(';'))
+            .map(t => t.split('|')[0].trim())
+            .filter(t => t && !["Esther", "Rut", "Eicha", "Kohelet", "Shir HaShirim", "Tehillim", "Mishlei", "Iyov", "Daniel", "Ezra", "Nechemyah", "Divrei HaYamim"].some(book => t.startsWith(book)));
+
+        const finalTorahDisplay = formatReadingList(rawTorah);
         updateDOM('torah-reading', finalTorahDisplay || t("status.check_sefer"));
 
         // C. Combine Haftarah Readings
-        const haftarot = parashotOnDate
+        const rawHaftarah = parashotOnDate
             .map(p => p.leyning && p.leyning.haftarah ? transliterateText(p.leyning.haftarah) : "")
+            .filter(h => h)
+            .flatMap(h => h.split(';'))
+            .map(h => h.split('|')[0].trim())
             .filter(h => h);
 
-        // Join multiple haftarot with separator
-        const uniqueHaftarot = [...new Set(haftarot)].join(t("msg.sep_haftarah"));
+        const finalHaftarahDisplay = formatReadingList(rawHaftarah);
+        updateDOM('haftara-reading', finalHaftarahDisplay || t("status.check_sefer"));
 
+        // D. Combine Ketuvim Readings (Megillot)
+        const rawKetuvim = parashotOnDate
+            .map(p => p.leyning && p.leyning.megillah ? transliterateText(p.leyning.megillah) : "")
+            .filter(k => k)
+            .flatMap(k => k.split(';'))
+            .map(k => k.split('|')[0].trim())
+            .filter(k => k && ["Ester", "Rut", "Eicha", "Kohelet", "Shir HaShirim", "Tehillim", "Mishlei", "Iyov", "Daniel", "Ezra", "Nechemyah", "Divrei HaYamim"].some(book => k.startsWith(book) || k.startsWith("I " + book) || k.startsWith("II " + book)));
 
-        updateDOM('haftara-reading', uniqueHaftarot || t("status.check_sefer"));
+        const finalKetuvimDisplay = formatReadingList(rawKetuvim);
+
+        let displayKetuvim = finalKetuvimDisplay;
+        if (!displayKetuvim) {
+            // Ciclo Anual de Ketuvim para semanas normais
+            const ketuvimCycle = [
+                // Tehillim (15 partes)
+                "Tehillim 1-17",
+                "Tehillim 18-34",
+                "Tehillim 35-51",
+                "Tehillim 52-68",
+                "Tehillim 69-85",
+                "Tehillim 86-102",
+                "Tehillim 103-119",
+                "Tehillim 120-135",
+                "Tehillim 136-150",
+
+                // Mishlei (6 partes)
+                "Mishlei 1-5",
+                "Mishlei 6-10",
+                "Mishlei 11-15",
+                "Mishlei 16-20",
+                "Mishlei 21-25",
+                "Mishlei 26-31",
+
+                // Iyov (6 partes)
+                "Iyov 1-7",
+                "Iyov 8-14",
+                "Iyov 15-21",
+                "Iyov 22-28",
+                "Iyov 29-35",
+                "Iyov 36-42",
+
+                // Cinco Megillot
+                "Shir HaShirim 1-4",
+                "Shir HaShirim 5-8",
+                "Rut 1-2",
+                "Rut 3-4",
+                "Eicha 1-3",
+                "Eicha 4-5",
+                "Kohelet 1-6",
+                "Kohelet 7-12",
+                "Esther 1-5",
+                "Esther 6-10",
+
+                // Daniel (4 partes)
+                "Daniel 1-3",
+                "Daniel 4-6",
+                "Daniel 7-9",
+                "Daniel 10-12",
+
+                // Ezra (2 partes)
+                "Ezra 1-5",
+                "Ezra 6-10",
+
+                // Nechemyah (2 partes)
+                "Nechemyah 1-6",
+                "Nechemyah 7-13",
+
+                // Divrei HaYamim I (3 partes)
+                "I Divrei HaYamim 1-9",
+                "I Divrei HaYamim 10-18",
+                "I Divrei HaYamim 19-29",
+
+                // Divrei HaYamim II (4 partes)
+                "II Divrei HaYamim 1-12",
+                "II Divrei HaYamim 13-24",
+                "II Divrei HaYamim 25-34",
+                "II Divrei HaYamim 35-36"
+            ];
+
+            // Usar o nome da Parashá para gerar um índice único e consistente
+            if (parashotOnDate.length > 0) {
+                const combinedName = parashotOnDate.map(p => p.title.replace('Parashat ', '')).join("");
+                // Simple hash function para o nome da Parashá
+                let hash = 0;
+                for (let i = 0; i < combinedName.length; i++) {
+                    hash = combinedName.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                const index = Math.abs(hash) % ketuvimCycle.length;
+                displayKetuvim = ketuvimCycle[index];
+            } else {
+                displayKetuvim = t("status.check_sefer");
+            }
+        }
+
+        updateDOM('ketuvim-reading', displayKetuvim);
+
+        const ketuvimCard = document.querySelector('.ketuvim-card');
+        if (ketuvimCard) ketuvimCard.classList.remove('hidden');
+
     }
 
-    // 2. Find and display candle lighting time OR Shabbat Status
+    // 2. Find and display candle lighting time OR Holy Day Status (Shabbat/Yom Tov)
     // Logic: 
-    // - If Friday after sunset: It is Shabbat.
-    // - If Saturday before Havdalah: It is Shabbat.
-    // - Otherwise: Show countdown to next candles.
+    // - If sacred time (Shabbat/Yom Tov) is active: Show greeting (Shabbat Shalom / Chag Sameach).
+    // - Otherwise: Show countdown to next sacred event (candles).
 
-    const candles = items.find(i => i.category === 'candles' && i.date >= effectiveDateStr);
-    const havdalah = items.find(i => i.category === 'havdalah' && i.date >= todayStr);
+    // Determine if we are in a Sacred Period (Yom Tov or Shabbat)
+    // Sacred Time starts at sunset of Erev and ends at sunset of the last day.
 
-    let isShabbatNow = false;
-    const dayOfWeek = now.getDay(); // 5 = Friday, 6 = Saturday
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-    // Check Friday Night (Start at Sunset)
-    if (dayOfWeek === 5 && zmanimData && zmanimData.times.sunset) {
+    const yomTovToday = items.find(i => i.date === todayStr && i.category === 'holiday' && i.yomtov);
+    const yomTovTomorrow = items.find(i => i.date === tomorrowStr && i.category === 'holiday' && i.yomtov);
+
+    let isSacredTime = false;
+    let greeting = t("msg.shabbat_shalom"); // Default
+
+    if (zmanimData && zmanimData.times.sunset) {
         const sunsetTime = new Date(zmanimData.times.sunset);
-        const startTime = sunsetTime; // Strict Sunset
+        const dayOfWeek = now.getDay();
 
-        if (now >= startTime) {
-            isShabbatNow = true;
+        // A. SHABBAT CHECK
+        if (dayOfWeek === 5 && now >= sunsetTime) {
+            isSacredTime = true;
+        } else if (dayOfWeek === 6 && now < sunsetTime) {
+            isSacredTime = true;
+        }
+
+        // B. YOM TOV CHECK (Feriados que exigem repouso)
+        // Se amanhã é feriado e já passou o pôr-do-sol -> Começou a Véspera (Erev)
+        if (yomTovTomorrow && now >= sunsetTime) {
+            isSacredTime = true;
+            greeting = t("msg.chag_sameach");
+        }
+        // Se hoje é feriado e ainda não passou o pôr-do-sol -> Ainda estamos na festa
+        if (yomTovToday && now < sunsetTime) {
+            isSacredTime = true;
+            greeting = t("msg.chag_sameach");
         }
     }
-    // Check Saturday (Until Sunset)
-    else if (dayOfWeek === 6 && zmanimData && zmanimData.times.sunset) {
-        // User Request: Shabbat Shalom disappears at Saturday Sunset
-        const sunsetTime = new Date(zmanimData.times.sunset);
-        const cutoffTime = sunsetTime; // Strict Sunset
 
-        if (now < cutoffTime) {
-            isShabbatNow = true;
-        }
-    }
-
-    if (isShabbatNow) {
-        updateDOM('countdown', t("msg.shabbat_shalom"));
-        updateDOM('label.shabbat_in', havdalah ? t("label.havdalah") : t("msg.shabbat")); // Optional: Show "Havdalah" label?
-        // Clear countdown if running
+    // Final Status Check & Render
+    if (isSacredTime) {
+        updateDOM('countdown', greeting);
+        updateDOM('label.shabbat_in', yomTovToday ? translateHoliday(yomTovToday.title) : t("msg.shabbat"));
         if (countdownInterval) clearInterval(countdownInterval);
+    } else {
+        // Not in sacred time, find NEXT candle lighting
+        const nextCandles = items.find(i => i.category === 'candles' && i.date >= effectiveDateStr);
+        if (nextCandles) {
+            let targetDate = new Date(nextCandles.date);
+            const candleDay = targetDate.toISOString().split('T')[0];
 
-    } else if (candles) {
-        // Not Shabbat, show countdown
-        let targetDate = new Date(candles.date);
+            // SYNC FIX: If candles are today, use strict sunset
+            if (candleDay === todayStr && zmanimData && zmanimData.times.sunset) {
+                targetDate = new Date(zmanimData.times.sunset);
+            }
 
-        // SYNC FIX: If the candle event is TODAY, use strict Sunset time to match the Transition Trigger
-        // This avoids the 18-minute gap (Countdown ends at 18:42, but Shabbat starts at 19:00)
-        const candleDay = targetDate.toISOString().split('T')[0];
-        const todayStr = now.toISOString().split('T')[0];
-
-        if (candleDay === todayStr && zmanimData && zmanimData.times.sunset) {
-            targetDate = new Date(zmanimData.times.sunset);
+            startCountdown(targetDate);
+            updateDOM('label.shabbat_in', t("label.shabbat_in"));
         }
-
-        startCountdown(targetDate);
-        updateDOM('label.shabbat_in', t("label.shabbat_in"));
     }
 
     // 3. Display Hebrew date (from Converter API)
     if (converterData) {
-        const transliteratedDate = `${converterData.hd} ${converterData.hm} ${converterData.hy}`;
+        // Usa a data do conversor para garantir sincronia na simulação
+        const transliteratedDate = `${converterData.hd} ${converterData.hm}`;
         updateDOM('hebrew-date', transliteratedDate);
     }
 
@@ -548,7 +679,8 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
     // 4a. Filter all relevant events
     const allEvents = items.filter(i =>
         (i.category === 'holiday' || i.category === 'roshchodesh') &&
-        i.date >= effectiveDateStr
+        i.date >= effectiveDateStr &&
+        !i.title.toLowerCase().includes('shabbat')
     );
 
     // 4b. Group by Date and Pick Best
@@ -577,60 +709,136 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
 
     // 4.1 Check for Current Holiday (using effective date)
     const currentHoliday = sortedHolidays.find(i => i.date === effectiveDateStr);
-
     if (currentHoliday) {
         updateDOM('current-holiday-name', translateHoliday(currentHoliday.title));
 
+        let art = "";
+        let easterEggIcon = "";
+        let easterEggMsg = "";
 
+        const title = currentHoliday.title.toLowerCase();
 
+        if (title.includes('pessach') || title.includes('matzot')) {
+            art = "Chag HaMatzot";
+            easterEggIcon = "fa-bread-slice";
+            easterEggMsg = "Sem Fermento, Tudo Limpo!";
+        } else if (title.includes('shavuot')) {
+            art = "Chag Shavuot";
+            easterEggIcon = "fa-leaf";
+            easterEggMsg = "Monte Florido!";
+        } else if (title.includes('rosh hashanah') || title.includes('yom teruah') || title.includes('teruah')) {
+            art = "Shana Tova";
+            easterEggIcon = "fa-apple-alt";
+            easterEggMsg = "Doce como Mel!";
+        } else if (title.includes('yom kippur') || title.includes('kippur')) {
+            art = "Gmar Chatima Tova";
+            easterEggIcon = "fa-balance-scale";
+            easterEggMsg = "Livro da Vida Selado";
+        } else if (title.includes('sukkot')) {
+            art = "Chag Sukkot";
+            easterEggIcon = "fa-campground";
+            easterEggMsg = "Hora de ir para a Cabana!";
+        } else if (title.includes('shemini atzeret') || title.includes('simchat torah')) {
+            art = "Chag Sameach";
+            easterEggIcon = "fa-scroll";
+            easterEggMsg = "Rodas Livres e Torá Nova!";
+        }
 
-        // Toggle Holiday Mode (Major Holidays only)
-        document.body.className = ''; // Reset classes
-        document.body.classList.add('cosmic-bg-enabled'); // Keep base background if needed or handle via CSS
+        const holidayCard = document.getElementById('current-holiday-name');
+        const holidayDesc = document.getElementById('current-holiday-desc');
+        const holidayIcon = document.querySelector('.current-holiday-card .card-icon i');
 
-        if (currentHoliday) {
-            const hDate = currentHoliday.date; // YYYY-MM-DD
-            // We need Hebrew Date to be precise, but Hebcal event name/subcat is easier
-            // Mapping User Request to Hebcal Names/Dates roughly if possible, or using partial string match on title
-            const title = currentHoliday.title.toLowerCase();
-
-            // 1. Matzot (Passover) - 15 & 21 Nissan
-            // Hebcal: "Pesach I", "Pesach VII"
-            if (title.includes('pesach') || title.includes('matzot')) {
-                document.body.classList.add('theme-matzot');
+        if (art) {
+            if (holidayCard) {
+                holidayCard.innerHTML = `<span>${art}</span>`;
+                if (holidayDesc && easterEggMsg) {
+                    holidayDesc.innerHTML = `<strong>${easterEggMsg}</strong>`;
+                }
+                if (holidayIcon && easterEggIcon) {
+                    holidayIcon.className = `fas ${easterEggIcon}`;
+                    holidayIcon.style.transform = "scale(1.3)";
+                    holidayIcon.style.transition = "transform 0.5s";
+                }
             }
-            // 2. Shavuot - 6 Sivan
-            else if (title.includes('shavuot')) {
-                document.body.classList.add('theme-shavuot');
+        } else {
+            // Caso seja um feriado mas SEM Easter Egg (ex: Purim) -> Reset visual
+            if (holidayDesc) {
+                holidayDesc.innerHTML = `<span data-i18n="desc.current_holiday">${t("desc.current_holiday") || "Momento Litúrgico"}</span>`;
+                holidayDesc.style.color = "";
             }
-            // 3. Teruah (Rosh Hashana) - 1 Tishrei
-            else if (title.includes('rosh hashanah') || title.includes('teruah')) {
-                document.body.classList.add('theme-teruah');
-            }
-            // 4. Kippur (Yom Kippur) - 10 Tishrei
-            else if (title.includes('yom kippur')) {
-                document.body.classList.add('theme-kippur');
-            }
-            // 5. Sukkot - 15 Tishrei
-            else if (title.includes('sukkot')) {
-                document.body.classList.add('theme-sukkot');
-            }
-            // 6. Atzeret (Shemini Atzeret/Simchat Torah) - 22 Tishrei
-            else if (title.includes('shemini atzeret') || title.includes('simchat torah')) {
-                document.body.classList.add('theme-atzeret');
-            }
-            // Fallback for other majors
-            else if (currentHoliday.subcat === 'major') {
-                document.body.classList.add('holiday-mode');
+            if (holidayIcon) {
+                holidayIcon.className = "fas fa-glass-cheers";
+                holidayIcon.style.cssText = "";
             }
         }
 
     } else {
         updateDOM('current-holiday-name', t("msg.no_holiday_today"));
-        document.body.classList.remove('holiday-mode');
 
+        // Reset manual na ausência total de festa
+        const holidayDesc = document.getElementById('current-holiday-desc');
+        const holidayIcon = document.querySelector('.current-holiday-card .card-icon i');
 
+        if (holidayDesc) {
+            holidayDesc.innerHTML = `<span data-i18n="desc.current_holiday">${t("desc.current_holiday") || "Momento Litúrgico"}</span>`;
+            holidayDesc.style.color = "";
+        }
+        if (holidayIcon) {
+            holidayIcon.className = "fas fa-glass-cheers";
+            holidayIcon.style.cssText = "";
+        }
     }
+
+    // Comandos de Teste F12 (Global Functions)
+    window.party = function (holidayName) {
+        if (!holidayName) {
+            window.simulatedDate = null;
+            console.log("Simulação terminada. Regresso ao dia real.");
+            const savedCoords = localStorage.getItem('userCoords');
+            if (savedCoords) {
+                try {
+                    const { lat, lon } = JSON.parse(savedCoords);
+                    fetchData(lat, lon);
+                } catch (e) {
+                    fetchData(31.7683, 35.2137);
+                }
+            } else {
+                fetchData(31.7683, 35.2137);
+            }
+            return;
+        }
+
+        if (typeof holidayName !== 'string') {
+            console.log("Argumento inválido. Escreve o nome da festa, p. ex: party('sukkot')");
+            return;
+        }
+
+        if (!window.lastData || !window.lastData.items) {
+            console.log("Calendário inativo. Aguarda o carregamento.");
+            return;
+        }
+
+        let titleQuery = holidayName.toLowerCase();
+
+        const matchingHoliday = window.lastData.items.find(i =>
+            i.category === 'holiday' && i.title.toLowerCase().includes(titleQuery)
+        );
+
+        console.log(`A simular temporalmente: ${matchingHoliday.title} (${matchingHoliday.date})...`);
+        window.simulatedDate = matchingHoliday.date;
+
+        const savedCoords = localStorage.getItem('userCoords');
+        if (savedCoords) {
+            try {
+                const { lat, lon } = JSON.parse(savedCoords);
+                fetchData(lat, lon);
+            } catch (e) {
+                fetchData(31.7683, 35.2137);
+            }
+        } else {
+            fetchData(31.7683, 35.2137);
+        }
+    };
 
     // 4.2 Find Next Holiday (distinct from current)
     const holidays = sortedHolidays.filter(i => i.date > effectiveDateStr).slice(0, 1);
@@ -669,13 +877,52 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
             // We can pass zmanimData to here if we refactor, but better: 
             // Logic is inside processHebcalData, so we have access to zmanimData!
 
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = window.simulatedDate ? window.simulatedDate : new Date().toISOString().split('T')[0];
             if (tDay === todayStr && zmanimData && zmanimData.times.sunset) {
                 targetTime = new Date(zmanimData.times.sunset);
             }
         }
 
-        startNextHolidayCountdown(targetTime);
+        // REGRA DOS 98 DIAS E REGRA DOS 15 MINUTOS (Pós-Início/Fim): 
+        let shouldHideNextCountdown = false;
+
+        // 1. Regra dos 98 dias: Se a festa estiver muito longe, não mostramos o contador numérico
+        const diffMs = targetTime - now;
+        const daysToNext = diffMs / (1000 * 60 * 60 * 24);
+        if (daysToNext > 98) {
+            shouldHideNextCountdown = true;
+        }
+
+        if (zmanimData && zmanimData.times.sunset) {
+            const sunsetTime = new Date(zmanimData.times.sunset);
+
+            // 2. Regra dos 15 min (Pós-Início): Festa/Shabbat começou agora (estamos no Sacred Time)
+            if (isSacredTime) {
+                const minutesSinceStart = (now - sunsetTime) / (1000 * 60);
+                if (minutesSinceStart >= 0 && minutesSinceStart <= 15) {
+                    shouldHideNextCountdown = true;
+                }
+            }
+
+            // 3. Regra dos 15 min (Pós-Fim): Festa/Shabbat acabou de terminar (estamos fora do Sacred Time)
+            if (!isSacredTime) {
+                const minutesSinceEnd = (now - sunsetTime) / (1000 * 60);
+                if (minutesSinceEnd >= 0 && minutesSinceEnd <= 15) {
+                    // Verificamos se hoje era um dia sagrado que terminou no pôr-do-sol
+                    const dayOfWeek = now.getDay();
+                    if (dayOfWeek === 6 || yomTovToday) {
+                        shouldHideNextCountdown = true;
+                    }
+                }
+            }
+        }
+
+        if (shouldHideNextCountdown) {
+            updateDOM('next-holiday-date', t("desc.next_holiday")); // "Próxima Ocorrência"
+            if (nextHolidayInterval) clearInterval(nextHolidayInterval);
+        } else {
+            startNextHolidayCountdown(targetTime);
+        }
 
     } else {
         updateDOM('next-holiday-name', t("msg.no_holidays"));
@@ -712,7 +959,8 @@ function startCountdown(targetDate) {
     }
 
     function tick() {
-        const now = new Date();
+        // Respeita a simulação
+        const now = window.simulatedDate ? new Date(window.simulatedDate + "T12:00:00") : new Date();
         const diff = targetDate - now;
 
         if (diff <= 0) {
@@ -739,7 +987,8 @@ function startNextHolidayCountdown(targetDate) {
     if (nextHolidayInterval) clearInterval(nextHolidayInterval);
 
     function tick() {
-        const now = new Date();
+        // Respeita a simulação
+        const now = window.simulatedDate ? new Date(window.simulatedDate + "T12:00:00") : new Date();
         const diff = targetDate - now;
 
         if (diff <= 0) {
@@ -775,6 +1024,11 @@ function startNextHolidayCountdown(targetDate) {
  * @returns {string} Formatted time string
  */
 function formatCountdownDuration(diff, usePrefix = true) {
+    // Regra Geral: Se faltar menos de 15 minutos (900.000 ms), mostrar "Em breve"
+    if (diff > 0 && diff <= 15 * 60 * 1000) {
+        return t("msg.coming_soon");
+    }
+
     const totalSeconds = Math.floor(diff / 1000);
     const days = Math.floor(totalSeconds / (3600 * 24));
     const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
@@ -896,11 +1150,11 @@ function translateHoliday(text) {
     // Direct replacements for major terms
     const mapping = {
         "Rosh Hashana": "Rosh Hashaná",
-        "Yom Kippur": "Yom Kipur",
-        "Sukkot": "Sucot",
+        "Yom Kippur": "Yom Kippur",
+        "Sukkot": "Sukkot",
         "Shmini Atzeret": "Shemini Atzeret",
         "Simchat Torah": "Simchat Torá",
-        "Chanukah": "Hanucá",
+        "Chanukah": "Hanukkah",
         "Tu BiShvat": "Tu B'Shevat",
         "Purim": "Purim",
         "Pesach": "Pessach",
@@ -914,7 +1168,9 @@ function translateHoliday(text) {
         "Yom HaShoah": "Dia do Holocausto",
         "Yom HaZikaron": "Dia da Memória",
         "Yom HaAtzma'ut": "Dia da Independência",
-        "Jerusalem Day": "Dia de Jerusalém"
+        "Jerusalem Day": "Dia de Jerusalém",
+        "Shabbat": "Repouso",
+        "Shabbat Shalom": "Chag Sameach"
     };
 
     let newText = text;
