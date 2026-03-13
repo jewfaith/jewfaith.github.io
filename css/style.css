@@ -769,33 +769,65 @@ body.theme-roshchodesh {
     margin-bottom: 0.5rem;
 }
 
-/* Unique Gradients for Card Icons */
+/* Unique Colors for Card Icons (Dark Theme) */
 .location-card .card-icon {
-    background: linear-gradient(135deg, #06b6d4, #2563eb);
-}
-
-.countdown-card .card-icon {
-    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    background: #8B1E3F;
+    /* vermelho escuro */
+    color: #FFF !important;
 }
 
 .sunset-card .card-icon {
-    background: linear-gradient(135deg, #f97316, #dc2626);
+    background: #8B5A1E;
+    /* laranja escuro */
+    color: #FFF !important;
+}
+
+.shabbat-candle-card .card-icon {
+    background: #7A7A1E;
+    /* amarelo oliva escuro */
+    color: #FFF !important;
 }
 
 .date-card .card-icon {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background: #1F6B2E;
+    /* verde escuro */
+    color: #FFF !important;
 }
 
 .parashah-card .card-icon {
-    background: linear-gradient(135deg, #d97706, #b45309);
+    background: #1E5A6B;
+    /* ciano escuro */
+    color: #FFF !important;
 }
 
 .torah-card .card-icon {
-    background: linear-gradient(135deg, #64748b, #475569);
+    background: #1E3F8B;
+    /* azul escuro */
+    color: #FFF !important;
 }
 
 .haftarah-card .card-icon {
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: #4B1E8B;
+    /* roxo escuro */
+    color: #FFF !important;
+}
+
+.holiday-card .card-icon {
+    background: #7A1E6B;
+    /* magenta escuro */
+    color: #FFF !important;
+}
+
+.current-holiday-card .card-icon {
+    background: #2E6B5A;
+    /* verde-turquesa escuro */
+    color: #FFF !important;
+}
+
+.shabbat-next-desc {
+    opacity: 0.7;
+    font-size: 0.8rem;
+    margin-top: 4px;
 }
 
 .ketuvim-card .card-icon {

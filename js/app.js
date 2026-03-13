@@ -13,14 +13,27 @@ let nextHolidayInterval = null;
 // ========================================
 
 // ========================================
-// INITIALIZATION
-// ========================================
-
 async function initApp() {
     setupEventListeners();
 
-    // Always request location permission on load
-    requestLocation();
+    // Check se temos localização guardada (pesquisa manual)
+    const savedCoordsStr = localStorage.getItem('userCoords');
+    if (savedCoordsStr) {
+        try {
+            const parsed = JSON.parse(savedCoordsStr);
+            const { lat, lon } = parsed;
+
+            if (lat !== undefined && lon !== undefined) {
+                await fetchData(lat, lon);
+                return; // Usa cache da pesquisa manual
+            }
+        } catch (e) {
+            console.error("Localização guardada inválida", e);
+        }
+    }
+
+    // Default: Jerusalem
+    fetchData(31.7683, 35.2137);
 }
 
 // ========================================
@@ -139,8 +152,10 @@ async function getCurrentLocation() {
 
     navigator.geolocation.getCurrentPosition(
         async (pos) => {
+            // Apenas removemos o timeout para pesquisa em si
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
+            // Removed localStorage save to prevent GPS from persisting
 
             try {
                 // Reverse geocode to get city name
@@ -245,38 +260,9 @@ async function searchLocation(query) {
 }
 
 function requestLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            async (pos) => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
-                localStorage.setItem('userCoords', JSON.stringify({ lat, lon }));
-                await fetchData(lat, lon);
-            },
-
-            async (err) => {
-                console.warn("GPS Denied or Error:", err);
-
-                // Try to fallback to saved coordinates if GPS fails
-                const savedCoords = localStorage.getItem('userCoords');
-                if (savedCoords) {
-                    try {
-                        const { lat, lon } = JSON.parse(savedCoords);
-                        await fetchData(lat, lon);
-                        return;
-
-                    } catch (e) {
-                        console.error("Saved coords invalid", e);
-                    }
-                }
-
-                console.warn("Using Jerusalem as fallback");
-                await fetchData(31.7683, 35.2137);
-            }
-        );
-    } else {
-        fetchData(31.7683, 35.2137);
-    }
+    // Função removida a pedido do utilizador.
+    // Agora gerido diretamente no initApp, com fallback natural para Jerusalem.
+    fetchData(31.7683, 35.2137);
 }
 
 
@@ -307,7 +293,6 @@ async function fetchData(lat, lon) {
 
 
 
-        // 2. Fetch Jewish calendar data
         // VIAGEM NO TEMPO: Se houver uma data simulada, usamos essa em vez da real
         const today = window.simulatedDate ? new Date(window.simulatedDate + "T12:00:00") : new Date();
         const year = today.getFullYear();
@@ -319,19 +304,56 @@ async function fetchData(lat, lon) {
         endDate.setDate(endDate.getDate() + 240);
         const endDateStr = endDate.toISOString().split('T')[0];
 
-        const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=on&mod=off&nx=on&mf=off&ss=off&s=on&i=on`;
-        const zmanimUrl = `https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${dateStr}`;
+        // 2. Fetch Jewish calendar data (with 15-minute Cache)
+        const CACHE_KEY = `hebcal_v3_${lat.toFixed(2)}_${lon.toFixed(2)}`;
+        const CACHE_TIME = 15 * 60 * 1000; // 15 minutes in milliseconds
+        const cachedDataStr = localStorage.getItem(CACHE_KEY);
+        let hebcalData = null;
+        let zmanimData = null;
+        let shouldUseCache = false;
 
-        // 2a. Fetch standard calendar data
-        const [hebcalRes, zmanimRes] = await Promise.all([
-            fetch(hebcalUrl),
-            fetch(zmanimUrl)
-        ]);
+        if (cachedDataStr) {
+            try {
+                const cachedData = JSON.parse(cachedDataStr);
+                const cacheAge = Date.now() - cachedData.timestamp;
+                if (cacheAge < CACHE_TIME && cachedData.dateStr === dateStr) {
+                    hebcalData = cachedData.hebcal;
+                    zmanimData = cachedData.zmanim;
+                    shouldUseCache = true;
+                    console.log("Using cached calendar data (valid for 15min)");
+                }
+            } catch (e) {
+                console.warn("Invalid cache data, fetching fresh.", e);
+            }
+        }
 
-        if (!hebcalRes.ok || !zmanimRes.ok) throw new Error("Erro ao buscar dados do Hebcal");
+        if (!shouldUseCache) {
+            console.log("Fetching fresh calendar data from API...");
+            const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=on&mod=off&nx=on&mf=off&ss=on&s=on&i=on&c=on&b=25&m=50`;
+            const zmanimUrl = `https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${dateStr}`;
 
-        const hebcalData = await hebcalRes.json();
-        const zmanimData = await zmanimRes.json();
+            const [hebcalRes, zmanimRes] = await Promise.all([
+                fetch(hebcalUrl),
+                fetch(zmanimUrl)
+            ]);
+
+            if (!hebcalRes.ok || !zmanimRes.ok) throw new Error("Erro ao buscar dados do Hebcal");
+
+            hebcalData = await hebcalRes.json();
+            zmanimData = await zmanimRes.json();
+
+            // Save to Cache
+            try {
+                localStorage.setItem(CACHE_KEY, JSON.stringify({
+                    timestamp: Date.now(),
+                    dateStr: dateStr,
+                    hebcal: hebcalData,
+                    zmanim: zmanimData
+                }));
+            } catch (e) {
+                console.warn("Could not save to localStorage", e);
+            }
+        }
 
         // PERSISTÊNCIA: Guardar os dados globalmente para uso no party()
         window.lastData = hebcalData;
@@ -501,104 +523,6 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
         const finalHaftarahDisplay = formatReadingList(rawHaftarah);
         updateDOM('haftara-reading', finalHaftarahDisplay || t("status.check_sefer"));
 
-        // D. Combine Ketuvim Readings (Megillot)
-        const rawKetuvim = parashotOnDate
-            .map(p => p.leyning && p.leyning.megillah ? transliterateText(p.leyning.megillah) : "")
-            .filter(k => k)
-            .flatMap(k => k.split(';'))
-            .map(k => k.split('|')[0].trim())
-            .filter(k => k && ["Ester", "Rut", "Eicha", "Kohelet", "Shir HaShirim", "Tehillim", "Mishlei", "Iyov", "Daniel", "Ezra", "Nechemyah", "Divrei HaYamim"].some(book => k.startsWith(book) || k.startsWith("I " + book) || k.startsWith("II " + book)));
-
-        const finalKetuvimDisplay = formatReadingList(rawKetuvim);
-
-        let displayKetuvim = finalKetuvimDisplay;
-        if (!displayKetuvim) {
-            // Ciclo Anual de Ketuvim para semanas normais
-            const ketuvimCycle = [
-                // Tehillim (15 partes)
-                "Tehillim 1-17",
-                "Tehillim 18-34",
-                "Tehillim 35-51",
-                "Tehillim 52-68",
-                "Tehillim 69-85",
-                "Tehillim 86-102",
-                "Tehillim 103-119",
-                "Tehillim 120-135",
-                "Tehillim 136-150",
-
-                // Mishlei (6 partes)
-                "Mishlei 1-5",
-                "Mishlei 6-10",
-                "Mishlei 11-15",
-                "Mishlei 16-20",
-                "Mishlei 21-25",
-                "Mishlei 26-31",
-
-                // Iyov (6 partes)
-                "Iyov 1-7",
-                "Iyov 8-14",
-                "Iyov 15-21",
-                "Iyov 22-28",
-                "Iyov 29-35",
-                "Iyov 36-42",
-
-                // Cinco Megillot
-                "Shir HaShirim 1-4",
-                "Shir HaShirim 5-8",
-                "Rut 1-2",
-                "Rut 3-4",
-                "Eicha 1-3",
-                "Eicha 4-5",
-                "Kohelet 1-6",
-                "Kohelet 7-12",
-                "Esther 1-5",
-                "Esther 6-10",
-
-                // Daniel (4 partes)
-                "Daniel 1-3",
-                "Daniel 4-6",
-                "Daniel 7-9",
-                "Daniel 10-12",
-
-                // Ezra (2 partes)
-                "Ezra 1-5",
-                "Ezra 6-10",
-
-                // Nechemyah (2 partes)
-                "Nechemyah 1-6",
-                "Nechemyah 7-13",
-
-                // Divrei HaYamim I (3 partes)
-                "I Divrei HaYamim 1-9",
-                "I Divrei HaYamim 10-18",
-                "I Divrei HaYamim 19-29",
-
-                // Divrei HaYamim II (4 partes)
-                "II Divrei HaYamim 1-12",
-                "II Divrei HaYamim 13-24",
-                "II Divrei HaYamim 25-34",
-                "II Divrei HaYamim 35-36"
-            ];
-
-            // Usar o nome da Parashá para gerar um índice único e consistente
-            if (parashotOnDate.length > 0) {
-                const combinedName = parashotOnDate.map(p => p.title.replace('Parashat ', '')).join("");
-                // Simple hash function para o nome da Parashá
-                let hash = 0;
-                for (let i = 0; i < combinedName.length; i++) {
-                    hash = combinedName.charCodeAt(i) + ((hash << 5) - hash);
-                }
-                const index = Math.abs(hash) % ketuvimCycle.length;
-                displayKetuvim = ketuvimCycle[index];
-            } else {
-                displayKetuvim = t("status.check_sefer");
-            }
-        }
-
-        updateDOM('ketuvim-reading', displayKetuvim);
-
-        const ketuvimCard = document.querySelector('.ketuvim-card');
-        if (ketuvimCard) ketuvimCard.classList.remove('hidden');
 
     }
 
@@ -644,27 +568,7 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
         }
     }
 
-    // Final Status Check & Render
-    if (isSacredTime) {
-        updateDOM('countdown', greeting);
-        updateDOM('label.shabbat_in', yomTovToday ? translateHoliday(yomTovToday.title) : t("msg.shabbat"));
-        if (countdownInterval) clearInterval(countdownInterval);
-    } else {
-        // Not in sacred time, find NEXT candle lighting
-        const nextCandles = items.find(i => i.category === 'candles' && i.date >= effectiveDateStr);
-        if (nextCandles) {
-            let targetDate = new Date(nextCandles.date);
-            const candleDay = targetDate.toISOString().split('T')[0];
-
-            // SYNC FIX: If candles are today, use strict sunset
-            if (candleDay === todayStr && zmanimData && zmanimData.times.sunset) {
-                targetDate = new Date(zmanimData.times.sunset);
-            }
-
-            startCountdown(targetDate);
-            updateDOM('label.shabbat_in', t("label.shabbat_in"));
-        }
-    }
+    // Note: Shabbat candle card handling was moved to updateShabbatModule
 
     // 3. Display Hebrew date (from Converter API)
     if (converterData) {
@@ -714,34 +618,27 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
 
         let art = "";
         let easterEggIcon = "";
-        let easterEggMsg = "";
 
         const title = currentHoliday.title.toLowerCase();
 
         if (title.includes('pessach') || title.includes('matzot')) {
             art = "Chag HaMatzot";
             easterEggIcon = "fa-bread-slice";
-            easterEggMsg = "Sem Fermento, Tudo Limpo!";
         } else if (title.includes('shavuot')) {
             art = "Chag Shavuot";
             easterEggIcon = "fa-leaf";
-            easterEggMsg = "Monte Florido!";
         } else if (title.includes('rosh hashanah') || title.includes('yom teruah') || title.includes('teruah')) {
             art = "Shana Tova";
             easterEggIcon = "fa-apple-alt";
-            easterEggMsg = "Doce como Mel!";
         } else if (title.includes('yom kippur') || title.includes('kippur')) {
             art = "Gmar Chatima Tova";
             easterEggIcon = "fa-balance-scale";
-            easterEggMsg = "Livro da Vida Selado";
         } else if (title.includes('sukkot')) {
             art = "Chag Sukkot";
             easterEggIcon = "fa-campground";
-            easterEggMsg = "Hora de ir para a Cabana!";
         } else if (title.includes('shemini atzeret') || title.includes('simchat torah')) {
             art = "Chag Sameach";
             easterEggIcon = "fa-scroll";
-            easterEggMsg = "Rodas Livres e Torá Nova!";
         }
 
         const holidayCard = document.getElementById('current-holiday-name');
@@ -751,19 +648,21 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
         if (art) {
             if (holidayCard) {
                 holidayCard.innerHTML = `<span>${art}</span>`;
-                if (holidayDesc && easterEggMsg) {
-                    holidayDesc.innerHTML = `<strong>${easterEggMsg}</strong>`;
-                }
+                // Removed secondary descriptions changes to keep it clean
                 if (holidayIcon && easterEggIcon) {
                     holidayIcon.className = `fas ${easterEggIcon}`;
                     holidayIcon.style.transform = "scale(1.3)";
-                    holidayIcon.style.transition = "transform 0.5s";
+                    if (currentHoliday.title.includes('Simchat Torah')) {
+                        // Spinning Torá
+                        holidayIcon.style.animation = "spin 4s linear infinite";
+                    } else {
+                        holidayIcon.style.transition = "transform 0.5s";
+                    }
                 }
             }
         } else {
             // Caso seja um feriado mas SEM Easter Egg (ex: Purim) -> Reset visual
             if (holidayDesc) {
-                holidayDesc.innerHTML = `<span data-i18n="desc.current_holiday">${t("desc.current_holiday") || "Momento Litúrgico"}</span>`;
                 holidayDesc.style.color = "";
             }
             if (holidayIcon) {
@@ -780,7 +679,6 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
         const holidayIcon = document.querySelector('.current-holiday-card .card-icon i');
 
         if (holidayDesc) {
-            holidayDesc.innerHTML = `<span data-i18n="desc.current_holiday">${t("desc.current_holiday") || "Momento Litúrgico"}</span>`;
             holidayDesc.style.color = "";
         }
         if (holidayIcon) {
@@ -788,6 +686,9 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
             holidayIcon.style.cssText = "";
         }
     }
+
+    // 5. Update Shabbat Candle Block (Custom Logic)
+    updateShabbatModule(items);
 
     // Comandos de Teste F12 (Global Functions)
     window.party = function (holidayName) {
@@ -798,13 +699,13 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
             if (savedCoords) {
                 try {
                     const { lat, lon } = JSON.parse(savedCoords);
-                    fetchData(lat, lon);
-                } catch (e) {
-                    fetchData(31.7683, 35.2137);
-                }
-            } else {
-                fetchData(31.7683, 35.2137);
+                    if (lat !== undefined && lon !== undefined) {
+                        fetchData(lat, lon);
+                        return;
+                    }
+                } catch (e) { }
             }
+            fetchData(31.7683, 35.2137);
             return;
         }
 
@@ -831,13 +732,13 @@ function processHebcalData(data, converterData, isAfterSunset, zmanimData, isAft
         if (savedCoords) {
             try {
                 const { lat, lon } = JSON.parse(savedCoords);
-                fetchData(lat, lon);
-            } catch (e) {
-                fetchData(31.7683, 35.2137);
-            }
-        } else {
-            fetchData(31.7683, 35.2137);
+                if (lat !== undefined && lon !== undefined) {
+                    fetchData(lat, lon);
+                    return;
+                }
+            } catch (e) { }
         }
+        fetchData(31.7683, 35.2137);
     };
 
     // 4.2 Find Next Holiday (distinct from current)
@@ -977,7 +878,7 @@ function startCountdown(targetDate) {
     }
 
     tick();
-    countdownInterval = setInterval(tick, 1000);
+    countdownInterval = setInterval(tick, 500); // 0.5s max delay
 }
 
 function startNextHolidayCountdown(targetDate) {
@@ -1014,7 +915,7 @@ function startNextHolidayCountdown(targetDate) {
     }
 
     tick();
-    nextHolidayInterval = setInterval(tick, 1000);
+    nextHolidayInterval = setInterval(tick, 500); // 0.5s max delay
 }
 
 /**
@@ -1024,24 +925,103 @@ function startNextHolidayCountdown(targetDate) {
  * @returns {string} Formatted time string
  */
 function formatCountdownDuration(diff, usePrefix = true) {
-    // Regra Geral: Se faltar menos de 15 minutos (900.000 ms), mostrar "Em breve"
-    if (diff > 0 && diff <= 15 * 60 * 1000) {
-        return t("msg.coming_soon");
+    if (diff <= 0) return usePrefix ? t("status.now") : "00:00:00";
+
+    const seconds = Math.floor((diff / 1000) % 60);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (days > 0 && usePrefix) {
+        const timeStr = `${days}d ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        return t("label.faltam") + " " + timeStr;
+    } else if (usePrefix) {
+        const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        return t("label.falta") + " " + timeStr;
     }
 
+    // Default raw format if no prefix
+    return `${days > 0 ? days + ':' : ''}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// ========================================
+// SHABBAT MODULE
+// ========================================
+
+let shabbatInterval = null;
+
+function updateShabbatModule(items) {
+    if (shabbatInterval) clearInterval(shabbatInterval);
+
+    // Look specifically for candle lighting (Friday) and havdalah events (Saturday)
+    const candleEvents = items.filter(i => i.category === 'candles' && new Date(i.date).getDay() === 5);
+    const havdalahEvents = items.filter(i => i.category === 'havdalah' && new Date(i.date).getDay() === 6);
+
+    const tick = () => {
+        const now = window.simulatedDate ? new Date(window.simulatedDate + "T12:00:00") : new Date();
+
+        const countdownEl = document.getElementById('shabbat-countdown');
+        const subtitleEl = document.getElementById('shabbat-subtitle');
+
+        let foundStatus = false;
+
+        // Iterate through upcoming candle lightings
+        for (const candleEv of candleEvents) {
+            const candleTime = new Date(candleEv.date);
+
+            // Find the matching Havdalah (should be the next day, Saturday)
+            const havdalahEv = havdalahEvents.find(h => {
+                const hTime = new Date(h.date);
+                return hTime > candleTime && (hTime - candleTime) < 48 * 60 * 60 * 1000;
+            });
+
+            if (!havdalahEv) continue;
+            const havdalahTime = new Date(havdalahEv.date);
+
+            if (now < candleTime) {
+                // We are before this Shabbat
+                const diff = candleTime - now;
+                countdownEl.textContent = formatShabbatDuration(diff);
+                subtitleEl.textContent = t("desc.shabbat_candle");
+                foundStatus = true;
+                break;
+            } else if (now >= candleTime && now < havdalahTime) {
+                // We are CURRENTLY IN this Shabbat
+                countdownEl.textContent = "Yom Shabbat";
+                subtitleEl.textContent = t("desc.shabbat_candle");
+                foundStatus = true;
+                break;
+            }
+            // If we are past havdalahTime, loop continues to the next week's candleEv
+        }
+
+        if (!foundStatus) {
+            countdownEl.textContent = "--:--:--";
+        }
+    };
+
+    tick();
+    shabbatInterval = setInterval(tick, 500); // 0.5s max delay
+}
+
+function formatShabbatDuration(diff) {
+    if (diff <= 0) return "00:00:00";
+
     const totalSeconds = Math.floor(diff / 1000);
-    const days = Math.floor(totalSeconds / (3600 * 24));
-    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = Math.floor(totalSeconds % 60);
+    const totalMinutes = Math.floor(totalSeconds / 60);
+    const totalHours = Math.floor(totalMinutes / 60);
 
-    const prefix = usePrefix ? ((days > 1 || (days === 0 && hours !== 1)) ? t("msg.countdown_prefix_plural") : t("msg.countdown_prefix")) : "";
+    const s = totalSeconds % 60;
+    const m = totalMinutes % 60;
+    const h = totalHours % 24;
+    const d = Math.floor(totalHours / 24);
 
-    // Logic: DD:HH:MM if > 24h, HH:MM:SS if < 24h
-    if (days > 0) {
-        return `${prefix}${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    // Rule: if diff > 96h -> D:H:M
+    if (totalHours > 96) {
+        return `${d}:${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
     } else {
-        return `${prefix}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        // Rule: <= 96h -> H:M:S (Total Hours)
+        return `${totalHours.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     }
 }
 
