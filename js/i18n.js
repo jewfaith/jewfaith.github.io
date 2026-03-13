@@ -40,6 +40,7 @@ const translations = {
         "msg.coming_soon": "Em breve",
         "msg.sep_torah": " - ",
         "msg.sep_haftarah": " + ",
+        "label.faltam": "Faltam ",
         "status.unknown_location": "Onde estás?",
         "status.check_sefer": "Verificar Sefer",
         "err.gps_denied": "Precisamos da tua permissão para saber onde estás e mostrar o horário certo.",
