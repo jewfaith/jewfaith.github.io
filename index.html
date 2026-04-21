@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Israel Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+        <div class="events-dashboard">
+
+            <div class="event-cards-row">
+                <div class="events-list-container glass-panel">
+                    <div class="event-card event-item glass-panel">
+                        <div class="icon-circle yellow">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <div class="card-content">
+                            <h2 class="card-title" id="card-parasha">-</h2>
+                            <span class="card-subtitle">Ciclo Anual</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="events-list-container glass-panel">
+                    <div class="event-card event-item glass-panel">
+                        <div class="icon-circle yellow">
+                            <i class="fa-solid fa-scroll"></i>
+                        </div>
+                        <div class="card-content">
+                            <h2 class="card-title" id="card-torah">-</h2>
+                            <span class="card-subtitle">Lei Escrita</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="upcoming-events-grid" class="event-cards-row upcoming-events-grid">
+            </div>
+
+            <div class="event-cards-row">
+                <div class="events-list-container glass-panel">
+                    <div class="event-card event-item glass-panel">
+                        <div class="icon-circle yellow">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div class="card-content">
+                            <h2 class="card-title" id="card-local">-</h2>
+                            <span class="card-subtitle">Local Vigente</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="events-list-container glass-panel">
+                    <div class="event-card event-item glass-panel">
+                        <div class="icon-circle yellow">
+                            <i class="fa-solid fa-calendar-week"></i>
+                        </div>
+                        <div class="card-content">
+                            <h2 class="card-title" id="card-hdate">-</h2>
+                            <span class="card-subtitle">Data Hebraica</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
