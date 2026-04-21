@@ -19,16 +19,17 @@
 }
 
 body {
+    min-height: 100dvh;
+    min-width: 100dvw;
     font-family: var(--font-family);
     background-color: var(--bg-color);
     color: var(--text-primary);
-    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow-x: hidden;
     position: relative;
-    padding: 20px;
+    padding: 40px;
 }
 
 @keyframes fadeUp {
@@ -202,7 +203,8 @@ i {
 
 /* Other Categories */
 .icon-circle.fast {
-    background: hsla(215, 30%, 25%, 0.9); /* Less saturated for fasts */
+    background: hsla(215, 30%, 25%, 0.9);
+    /* Less saturated for fasts */
     color: hsla(215, 100%, 85%, 1);
 }
 
@@ -234,7 +236,6 @@ i {
 .card-subtitle,
 .timer-countdown {
     font-size: 0.9rem;
-    color: #94a3b8;
     font-weight: 500;
 }
 
