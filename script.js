@@ -404,7 +404,6 @@ function startTimers() {
 
             if (now >= startTimePlus1m && now <= endTimeMinus2m) {
                 timer.textContent = 'Festa Atual';
-                timer.style.color = "#94a3b8";
             } else if (now > endTimeMinus2m) {
                 if (now > (startTimestamp + 25 * 60 * 60 * 1000)) {
                     const card = timer.closest('.events-list-container');
