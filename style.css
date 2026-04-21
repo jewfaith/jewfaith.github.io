@@ -64,8 +64,6 @@ body {
     }
 }
 
-
-
 .dashboard-wrapper {
     position: relative;
     z-index: 10;
@@ -139,7 +137,6 @@ i {
     color: hsla(0, 100%, 85%, 1);
 }
 
-/* Static Cards Specific Colors */
 .icon-circle.cicloanual {
     background: hsla(220, 60%, 25%, 0.9);
     color: hsla(220, 100%, 85%, 1);
@@ -160,7 +157,6 @@ i {
     color: hsla(25, 100%, 85%, 1);
 }
 
-/* Holidays */
 .icon-circle.pesach {
     background: hsla(205, 60%, 25%, 0.9);
     color: hsla(205, 100%, 85%, 1);
@@ -201,10 +197,8 @@ i {
     color: hsla(300, 100%, 85%, 1);
 }
 
-/* Other Categories */
 .icon-circle.fast {
     background: hsla(215, 30%, 25%, 0.9);
-    /* Less saturated for fasts */
     color: hsla(215, 100%, 85%, 1);
 }
 
@@ -282,8 +276,6 @@ i {
     align-items: center;
     gap: 8px;
 }
-
-
 
 @media (max-width: 480px) {
 
