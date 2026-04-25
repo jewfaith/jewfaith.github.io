@@ -9,13 +9,18 @@
     --indicator-green: #145c29;
     --indicator-yellow: #8f6406;
     --blur: 24px;
-    --font-family: 'Outfit', sans-serif;
+    --font-family: 'Poppins', sans-serif;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+.card-subtitle,
+.timer-countdown {
+    color: #94a3b8;
 }
 
 body {
@@ -29,7 +34,7 @@ body {
     align-items: center;
     overflow-x: hidden;
     position: relative;
-    padding: 30px;
+    padding: 40px;
 }
 
 @keyframes fadeUp {
@@ -63,6 +68,8 @@ body {
         transform: translate(-50%, -50%) scale(1.2);
     }
 }
+
+
 
 .dashboard-wrapper {
     position: relative;
@@ -115,7 +122,8 @@ i {
     font-size: 1.2rem;
 }
 
-.icon-circle {
+.icon-circle,
+.event-timer {
     width: 54px;
     height: 54px;
     border-radius: 14px;
@@ -125,104 +133,15 @@ i {
     flex-shrink: 0;
     user-select: none;
     font-weight: 700;
-}
-
-.icon-circle.parashat {
-    background: hsla(270, 60%, 25%, 0.9);
-    color: hsla(270, 100%, 85%, 1);
-}
-
-.icon-circle.holiday {
-    background: hsla(0, 60%, 25%, 0.9);
-    color: hsla(0, 100%, 85%, 1);
-}
-
-.icon-circle.cicloanual {
-    background: hsla(220, 60%, 25%, 0.9);
-    color: hsla(220, 100%, 85%, 1);
-}
-
-.icon-circle.leiescrita {
-    background: hsla(285, 60%, 25%, 0.9);
-    color: hsla(285, 100%, 85%, 1);
-}
-
-.icon-circle.localvigente {
-    background: hsla(180, 60%, 25%, 0.9);
-    color: hsla(180, 100%, 85%, 1);
-}
-
-.icon-circle.datahebraica {
-    background: hsla(25, 60%, 25%, 0.9);
-    color: hsla(25, 100%, 85%, 1);
-}
-
-.icon-circle.pesach {
-    background: hsla(205, 60%, 25%, 0.9);
-    color: hsla(205, 100%, 85%, 1);
-}
-
-.icon-circle.matzot {
-    background: hsla(40, 60%, 25%, 0.9);
-    color: hsla(40, 100%, 85%, 1);
-}
-
-.icon-circle.shavuot {
-    background: hsla(85, 60%, 25%, 0.9);
-    color: hsla(85, 100%, 85%, 1);
-}
-
-.icon-circle.roshhashana {
-    background: hsla(15, 60%, 25%, 0.9);
-    color: hsla(15, 100%, 85%, 1);
-}
-
-.icon-circle.yomkippur {
-    background: hsla(190, 60%, 25%, 0.9);
-    color: hsla(190, 100%, 85%, 1);
-}
-
-.icon-circle.sukkot {
-    background: hsla(240, 60%, 25%, 0.9);
-    color: hsla(240, 100%, 85%, 1);
-}
-
-.icon-circle.sheminiatzeret {
-    background: hsla(330, 60%, 25%, 0.9);
-    color: hsla(330, 100%, 85%, 1);
-}
-
-.icon-circle.simchattorah {
-    background: hsla(300, 60%, 25%, 0.9);
-    color: hsla(300, 100%, 85%, 1);
-}
-
-.icon-circle.fast {
-    background: hsla(215, 30%, 25%, 0.9);
-    color: hsla(215, 100%, 85%, 1);
-}
-
-.icon-circle.roshchodesh {
-    background: hsla(345, 60%, 25%, 0.9);
-    color: hsla(345, 100%, 85%, 1);
-}
-
-.icon-circle.omer {
-    background: hsla(155, 60%, 25%, 0.9);
-    color: hsla(155, 100%, 85%, 1);
-}
-
-.icon-circle.yellow,
-.event-timer {
-    background: hsla(45, 60%, 25%, 0.9);
-    color: hsla(45, 100%, 85%, 1);
+    background: hsla(220, 60%, 20%, 0.8);
+    color: hsla(220, 100%, 75%, 1);
 }
 
 .card-title,
 .event-name {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #fff;
+    color: #ccc;
     letter-spacing: -0.2px;
     line-height: 1.2;
 }
@@ -276,6 +195,8 @@ i {
     align-items: center;
     gap: 8px;
 }
+
+
 
 @media (max-width: 480px) {
 
