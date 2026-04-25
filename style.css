@@ -34,7 +34,7 @@ body {
     align-items: center;
     overflow-x: hidden;
     position: relative;
-    padding: 40px;
+    padding: 15px;
 }
 
 @keyframes fadeUp {
