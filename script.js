@@ -1,19 +1,45 @@
-const months = [
-    "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
-    "Jul", "Ago", "Set", "Out", "Nov", "Dez"
-];
-
 let timerInterval = null;
 let unifiedEvents = [];
 let userLocation = null;
 let currentSunsetTime = 0;
 
 const BOOK_MAP = {
+    // Torah
     'Genesis': 'Bereshit',
     'Exodus': 'Shemot',
     'Leviticus': 'Vayikra',
     'Numbers': 'Bamidbar',
-    'Deuteronomy': 'Devarim'
+    'Deuteronomy': 'Devarim',
+
+    // Nevi'im (Profetas)
+    'Joshua': 'Yehoshua',
+    'Judges': 'Shoftim',
+    '1 Samuel': '1 Shmuel',
+    '2 Samuel': '2 Shmuel',
+    '1 Kings': '1 Melachim',
+    '2 Kings': '2 Melachim',
+    'Isaiah': 'Yeshayahu',
+    'Jeremiah': 'Yirmiyahu',
+    'Ezekiel': 'Yechezkel',
+    'Hosea': 'Hoshea',
+    'Joel': 'Yoel',
+    'Amos': 'Amos',
+    'Obadiah': 'Ovadia',
+    'Jonah': 'Yona',
+    'Micah': 'Micha',
+    'Nahum': 'Nachum',
+    'Habakkuk': 'Chavakuk',
+    'Zephaniah': 'Tzefania',
+    'Haggai': 'Chagai',
+    'Zechariah': 'Zecharia',
+    'Malachi': 'Malachi',
+
+    // Ketuvim (Meguilot)
+    'Song of Songs': 'Shir HaShirim',
+    'Ruth': 'Rut',
+    'Ecclesiastes': 'Kohelet',
+    'Lamentations': 'Eicha',
+    'Esther': 'Ester'
 };
 
 function transliterateTorah(text) {
@@ -32,23 +58,7 @@ async function hebcalFetch(url) {
 }
 
 
-function setCookie(name, value, minutes) {
-    const d = new Date();
-    d.setTime(d.getTime() + (minutes * 60 * 1000));
-    let expires = "expires=" + d.toUTCString();
-    document.cookie = name + "=" + JSON.stringify(value) + ";" + expires + ";path=/";
-}
 
-function getCookie(name) {
-    let nameEQ = name + "=";
-    let ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) == 0) return JSON.parse(c.substring(nameEQ.length, c.length));
-    }
-    return null;
-}
 
 const TZ_FALLBACKS = {
     'America/Sao_Paulo': { lat: -23.5505, lon: -46.6333 },
@@ -69,9 +79,6 @@ const TZ_FALLBACKS = {
 };
 
 async function getGeolocation() {
-    const cachedLoc = getCookie('user_loc');
-    if (cachedLoc) return cachedLoc;
-
     const sysTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     const endpoints = [
@@ -129,7 +136,6 @@ async function getGeolocation() {
     }
 
     if (finalLoc) {
-        setCookie('user_loc', finalLoc, 1440);
         return finalLoc;
     }
 
@@ -139,7 +145,7 @@ async function getGeolocation() {
 async function updateDashboard() {
     const grid = document.getElementById('upcoming-events-grid');
     if (grid) {
-        grid.innerHTML = '<div class="events-list-container glass-panel" style="grid-column:1/-1;text-align:center;padding:28px;color:#94a3b8;">Sincronizando com Hebcal</div>';
+        grid.innerHTML = '<div class="events-list-container glass-panel" style="color:#94a3b8;grid-column:1/-1;text-align:center;padding:28px;">Ligando Sistema</div>';
     }
 
     try {
@@ -151,10 +157,11 @@ async function updateDashboard() {
         const year = today.getFullYear();
         const month = today.getMonth() + 1;
         const day = today.getDate();
-        const dateStr = today.toISOString().split('T')[0];
+        const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
         const endDate = new Date(today);
         endDate.setMonth(endDate.getMonth() + 6);
-        const endDateStr = endDate.toISOString().split('T')[0];
+        const endDateStr = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
 
         const lat = userLocation ? userLocation.lat : 31.7683;
         const lon = userLocation ? userLocation.lon : 35.2137;
@@ -189,7 +196,7 @@ async function updateDashboard() {
 
         const converterUrl = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${day}&g2h=1&strict=1${isAfterSunset ? '&gs=on' : ''}`;
         const hdateData = await hebcalFetch(converterUrl);
-        const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=off&mod=off&nx=on&mf=off&ss=off&s=on&i=off&c=off&o=on`;
+        const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=off&mod=off&nx=on&mf=off&ss=off&s=on&i=on&c=off&o=on`;
         const hebcalData = await hebcalFetch(hebcalUrl);
 
         if (hebcalData && hebcalData.items) {
@@ -207,7 +214,7 @@ async function updateDashboard() {
                 'Omer': { name: 'Sefirat Omer', transliterated: '', ref: '' }
             };
 
-            const validCategories = ['holiday', 'parashat', 'fast', 'roshchodesh', 'omer'];
+            const validCategories = ['holiday', 'parashat', 'fast', 'omer', 'roshchodesh'];
             unifiedEvents = hebcalData.items
                 .filter(item => validCategories.includes(item.category))
                 .map(item => {
@@ -225,20 +232,22 @@ async function updateDashboard() {
                     }
 
                     let itemName = item.title;
-                    let itemTrans = "";
                     let isBiblical = false;
                     let customCategory = item.category;
 
                     for (const key in biblicalMapping) {
                         if (item.title.includes(key)) {
                             itemName = biblicalMapping[key].name;
-                            itemTrans = biblicalMapping[key].transliterated;
                             isBiblical = true;
                             customCategory = key.toLowerCase().replace(/ /g, '');
 
                             if (key === 'Parashat') {
-                                itemTrans = item.title.replace('Parashat ', '');
                                 customCategory = 'parashat';
+                            } else if (key === 'Omer') {
+                                const match = item.title.match(/\d+/);
+                                if (match) {
+                                    itemName = `${match[0]} laOmer`;
+                                }
                             }
                             break;
                         }
@@ -248,7 +257,6 @@ async function updateDashboard() {
 
                     return {
                         name: itemName,
-                        transliterated: itemTrans,
                         time: dateObj.getTime(),
                         category: customCategory,
                         rawCategory: item.category,
@@ -261,33 +269,96 @@ async function updateDashboard() {
 
     } catch (err) {
         console.error("Dashboard Sync Failed", err);
-        if (grid) {
-            grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:28px;color:#ef4444;">${err.message}</div>`;
-        }
     }
 
     renderEvents();
+
+    if (currentSunsetTime > new Date().getTime()) {
+        const msToSunset = currentSunsetTime - new Date().getTime();
+        if (window.sunsetTimeout) clearTimeout(window.sunsetTimeout);
+        window.sunsetTimeout = setTimeout(() => {
+            updateDashboard();
+        }, msToSunset + 1000);
+    }
 }
 
 function updateUIBlocks(events, hdate, locationName) {
     const now = new Date().getTime();
-    const twentyFiveHoursMs = 25 * 60 * 60 * 1000;
+    const twentyFourHoursMs = 24 * 60 * 60 * 1000;
 
     const upcomingParasha = events.find(e =>
-        e.raw.category === 'parashat' && (e.time + twentyFiveHoursMs) > now
+        e.raw.category === 'parashat' && (e.time + twentyFourHoursMs) > now
     );
     const elParasha = document.getElementById('card-parasha');
     const elTorah = document.getElementById('card-torah');
+    const elHaftara = document.getElementById('card-haftara');
+    const elKetuvim = document.getElementById('card-ketuvim');
     const elDate = document.getElementById('card-hdate');
     const elLoc = document.getElementById('card-local');
 
-    const parasha = events.find(e => e.raw.category === 'parashat');
     if (elParasha) {
-        let pName = parasha ? parasha.raw.title.replace('Parashat ', '') : '—';
+        let pName = upcomingParasha.raw.title.replace('Parashat ', '');
         elParasha.textContent = pName;
     }
-    if (elTorah) elTorah.textContent = parasha ? transliterateTorah(parasha.raw.leyning.torah) : '—';
-    if (elDate) elDate.textContent = `${hdate.hd} ${hdate.hm}`;
+
+    if (elTorah) {
+        let torahText = 'Sem Leitura';
+        if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning && upcomingParasha.raw.leyning.torah) {
+            torahText = transliterateTorah(upcomingParasha.raw.leyning.torah);
+        }
+        elTorah.textContent = torahText;
+    }
+
+    if (elHaftara) {
+        let haftaraText = 'Sem Leitura';
+        if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning) {
+            const ley = upcomingParasha.raw.leyning;
+            const hOptions = [ley.haftarah, ley.haftarah_sephardic, ley.haftarah_chabad, ley.haftarah_teiman, ley.haftarah_itali].filter(Boolean);
+            if (hOptions.length > 0) {
+                haftaraText = hOptions[0];
+                for (const opt of hOptions) {
+                    const lOpt = opt.toLowerCase();
+                    if (!lOpt.includes('samuel') && !lOpt.includes('kings')) {
+                        haftaraText = opt;
+                        break;
+                    }
+                }
+            }
+        }
+        elHaftara.textContent = transliterateTorah(haftaraText);
+    }
+
+    const TEHILIM_CYCLE = {
+        1: '1-5', 2: '6-10', 3: '11-15', 4: '16-20', 5: '21-25', 6: '26-30', 7: '31-35',
+        8: '36-40', 9: '41-45', 10: '46-50', 11: '51-55', 12: '56-60', 13: '61-65',
+        14: '66-70', 15: '71-75', 16: '76-80', 17: '81-85', 18: '86-90', 19: '91-95',
+        20: '96-100', 21: '101-105', 22: '106-110', 23: '111-115', 24: '116-120',
+        25: '121-125', 26: '126-130', 27: '131-134', 28: '135-138', 29: '139-142',
+        30: '143-146', 31: '147-150'
+    };
+
+    if (elKetuvim) {
+        let tehilimChapters = TEHILIM_CYCLE[hdate.hd] || TEHILIM_CYCLE[30];
+        let ketuvimText = `Tehilim ${tehilimChapters}`;
+        const upcomingMegillah = events.find(e => e.raw && e.raw.leyning && e.raw.leyning.megillah && (e.time + twentyFourHoursMs) > now && (e.time - now < 7 * 24 * 60 * 60 * 1000));
+        if (upcomingMegillah) {
+            ketuvimText = upcomingMegillah.raw.leyning.megillah;
+        }
+        elKetuvim.textContent = transliterateTorah(ketuvimText);
+    }
+
+    if (elDate) {
+        let hm = hdate.hm || '';
+        const hbMonths = {
+            "Nisan": "Nissan", "Iyyar": "Iyar", "Sivan": "Sivan",
+            "Tamuz": "Tamuz", "Av": "Av", "Elul": "Elul",
+            "Tishrei": "Tishrei", "Cheshvan": "Cheshvan", "Kislev": "Kislev",
+            "Tevet": "Tevet", "Sh'vat": "Shvat",
+            "Adar I": "Adar Aleph", "Adar II": "Adar Bet", "Adar": "Adar"
+        };
+        hm = hbMonths[hm] || hm;
+        elDate.textContent = `${hdate.hd} ${hm}`;
+    }
     if (elLoc) elLoc.textContent = locationName || 'Jerusalém';
 }
 
@@ -304,7 +375,7 @@ function getEventIcon(category) {
         case 'simchattorah': return '<i class="fa-solid fa-book-open"></i>';
         case 'roshchodesh': return '<i class="fa-solid fa-moon"></i>';
         case 'omer': return '<i class="fa-solid fa-wheat-awn"></i>';
-        default: return '<i class="fa-solid fa-star-of-david"></i>';
+        default: return '<i class="fa-solid fa-bookmark"></i>';
     }
 }
 
@@ -315,10 +386,10 @@ function renderEvents() {
     grid.innerHTML = '';
 
     const now = new Date().getTime();
-    const twentyFiveHoursMs = 25 * 60 * 60 * 1000;
+    const twentyFourHoursMs = 24 * 60 * 60 * 1000;
 
     const sorted = unifiedEvents
-        .filter(evt => (evt.time + twentyFiveHoursMs) > now)
+        .filter(evt => (evt.time + twentyFourHoursMs) > now)
         .sort((a, b) => a.time - b.time);
     const omerEvents = sorted.filter(e => e.category === 'omer');
     const firstOmer = omerEvents[0];
@@ -340,19 +411,19 @@ function renderEvents() {
     let majorCount = 0;
 
     for (const item of merged) {
-        if (seenNames.has(item.name + item.time)) continue;
+        if (seenNames.has(item.name)) continue;
 
         if (item.name === 'Shabbat Shalom') {
             if (shabbatCount < 1) {
                 unique.push(item);
                 shabbatCount++;
-                seenNames.add(item.name + item.time);
+                seenNames.add(item.name);
             }
         } else {
             if (majorCount < 3) {
                 unique.push(item);
                 majorCount++;
-                seenNames.add(item.name + item.time);
+                seenNames.add(item.name);
             }
         }
         if (shabbatCount >= 1 && majorCount >= 3) break;
@@ -361,13 +432,13 @@ function renderEvents() {
     const upcoming = unique.sort((a, b) => a.time - b.time);
 
     if (upcoming.length === 0) {
-        grid.innerHTML = '<div class="events-list-container glass-panel" style="grid-column:1/-1;text-align:center;padding:28px;color:#94a3b8;">Sem eventos próximos</div>';
+        grid.innerHTML = '<div class="events-list-container glass-panel" style="grid-column:1/-1;text-align:center;padding:28px;">Sem Festividade</div>';
         return;
     }
 
     upcoming.forEach(evt => {
         const icon = getEventIcon(evt.category);
-        
+
         const card = document.createElement('div');
         card.innerHTML = `
             <div class="event-card event-item glass-panel">
@@ -397,21 +468,22 @@ function startTimers() {
         timers.forEach(timer => {
             const startTimestamp = parseInt(timer.getAttribute('data-time'));
             const startTimePlus1m = startTimestamp + (1 * 60 * 1000);
-            const endTimeMinus2m = startTimestamp + (25 * 60 * 60 * 1000) - (2 * 60 * 1000);
+            const endTimestamp = startTimestamp + (24 * 60 * 60 * 1000);
+            const endTimeMinus5m = endTimestamp - (5 * 60 * 1000);
 
             const diffToStart = startTimestamp - now;
             const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
 
-            if (now >= startTimePlus1m && now <= endTimeMinus2m) {
-                timer.textContent = 'Festa Atual';
-            } else if (now > endTimeMinus2m) {
-                if (now > (startTimestamp + 25 * 60 * 60 * 1000)) {
-                    const card = timer.closest('.events-list-container');
-                    if (card) card.remove();
-                    anyExpired = true;
-                } else {
-                    timer.textContent = '--:--';
-                }
+            if (now >= startTimePlus1m && now < endTimeMinus5m) {
+                timer.textContent = 'Neste Momento';
+            } else if (now >= endTimeMinus5m && now <= endTimestamp) {
+                timer.textContent = 'Fim Iminente';
+            } else if (now > endTimestamp) {
+                const card = timer.closest('.events-list-container');
+                if (card) card.remove();
+                anyExpired = true;
+            } else if (diffToStart <= 5 * 60 * 1000) {
+                timer.textContent = 'Preparo Final';
             } else if (diffToStart > thirtyDaysMs) {
                 timer.textContent = 'Em Breve';
             } else {
@@ -425,14 +497,14 @@ function startTimers() {
 
         const grid = document.getElementById('upcoming-events-grid');
         if (anyExpired && grid && grid.children.length === 0) {
-            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:28px;color:#94a3b8;">Sem eventos próximos</div>';
+            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:28px;">Sem Festividade</div>';
         }
     }
 
     update();
-    timerInterval = setInterval(update, 60000);
+    timerInterval = setInterval(update, 2 * 500);
 }
 
 
 updateDashboard();
-setInterval(updateDashboard, 1800000);
+setInterval(updateDashboard, 90 * 500);
