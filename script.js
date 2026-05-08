@@ -507,4 +507,4 @@ function startTimers() {
 
 
 updateDashboard();
-setInterval(updateDashboard, 90 * 500);
+setInterval(updateDashboard, 10 * 60 * 500);
