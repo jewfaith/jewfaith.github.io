@@ -34,7 +34,7 @@ body {
     align-items: center;
     overflow-x: hidden;
     position: relative;
-    padding: 15px;
+    padding: 20px;
 }
 
 @keyframes fadeUp {
@@ -144,6 +144,16 @@ i {
     color: #ccc;
     letter-spacing: -0.2px;
     line-height: 1.2;
+}
+
+@media(max-width: 768px) {
+    .card-title {
+        font-size: .9rem;
+    }
+
+    .card-subtitle {
+        font-size: .45rem;
+    }
 }
 
 .card-subtitle,
