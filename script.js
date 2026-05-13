@@ -4,20 +4,21 @@ let userLocation = null;
 let currentSunsetTime = 0;
 
 const BOOK_MAP = {
-    // Torah
     'Genesis': 'Bereshit',
     'Exodus': 'Shemot',
     'Leviticus': 'Vayikra',
     'Numbers': 'Bamidbar',
     'Deuteronomy': 'Devarim',
-
-    // Nevi'im (Profetas)
     'Joshua': 'Yehoshua',
     'Judges': 'Shoftim',
-    '1 Samuel': '1 Shmuel',
-    '2 Samuel': '2 Shmuel',
-    '1 Kings': '1 Melachim',
-    '2 Kings': '2 Melachim',
+    'II Samuel': 'II Shmuel',
+    'I Samuel': 'I Shmuel',
+    '2 Samuel': 'II Shmuel',
+    '1 Samuel': 'I Shmuel',
+    'II Kings': 'II Melachim',
+    'I Kings': 'I Melachim',
+    '2 Kings': 'II Melachim',
+    '1 Kings': 'I Melachim',
     'Isaiah': 'Yeshayahu',
     'Jeremiah': 'Yirmiyahu',
     'Ezekiel': 'Yechezkel',
@@ -32,14 +33,7 @@ const BOOK_MAP = {
     'Zephaniah': 'Tzefania',
     'Haggai': 'Chagai',
     'Zechariah': 'Zecharia',
-    'Malachi': 'Malachi',
-
-    // Ketuvim (Meguilot)
-    'Song of Songs': 'Shir HaShirim',
-    'Ruth': 'Rut',
-    'Ecclesiastes': 'Kohelet',
-    'Lamentations': 'Eicha',
-    'Esther': 'Ester'
+    'Malachi': 'Malachi'
 };
 
 function transliterateTorah(text) {
@@ -201,17 +195,17 @@ async function updateDashboard() {
 
         if (hebcalData && hebcalData.items) {
             const biblicalMapping = {
-                'Parashat': { name: 'Shabbat Shalom', transliterated: '', ref: '' },
-                'Pesach': { name: 'Chag Pessach', transliterated: '', ref: '' },
-                'Matzot': { name: 'Chag Matzot', transliterated: '', ref: '' },
-                'Shavuot': { name: 'Chag Shavuot', transliterated: '', ref: '' },
-                'Rosh Hashana': { name: 'Yom Teruah', transliterated: '', ref: '' },
-                'Yom Kippur': { name: 'Yom Kippur', transliterated: '', ref: '' },
-                'Sukkot': { name: 'Chag Sucot', transliterated: '', ref: '' },
-                'Shemini Atzeret': { name: 'Shemini Atzeret', transliterated: '', ref: '' },
-                'Simchat Torah': { name: 'Shemini Atzeret', transliterated: '', ref: '' },
-                'Rosh Chodesh': { name: 'Rosh Chodesh', transliterated: '', ref: '' },
-                'Omer': { name: 'Sefirat Omer', transliterated: '', ref: '' }
+                'Parashat': { name: 'Yom Shabbat', easterEggClass: 'egg-shabbat' },
+                'Pesach Sheni': { name: 'Pessach Sheni', easterEggClass: 'egg-pesach' },
+                'Pesach': { name: 'Chag Pessach', easterEggClass: 'egg-pesach' },
+                'Matzot': { name: 'Chag Matzot', easterEggClass: 'egg-pesach' },
+                'Shavuot': { name: 'Yom Shavuot', easterEggClass: 'egg-shavuot' },
+                'Rosh Hashana': { name: 'Yom Teruah', easterEggClass: 'egg-teruah' },
+                'Yom Kippur': { name: 'Yom Kippur', easterEggClass: 'egg-kippur' },
+                'Sukkot': { name: 'Chag Sukkot', easterEggClass: 'egg-sukkot' },
+                'Shemini Atzeret': { name: 'Shemini Atzeret', easterEggClass: 'egg-simchat' },
+                'Rosh Chodesh': { name: 'Rosh Chodesh', easterEggClass: 'egg-roshchodesh' },
+                'Omer': { name: 'Sefirat Omer', easterEggClass: 'egg-omer' }
             };
 
             const validCategories = ['holiday', 'parashat', 'fast', 'omer', 'roshchodesh'];
@@ -233,11 +227,14 @@ async function updateDashboard() {
 
                     let itemName = item.title;
                     let isBiblical = false;
+                    let isTraditional = false;
                     let customCategory = item.category;
+                    let easterEggClass = '';
 
                     for (const key in biblicalMapping) {
                         if (item.title.includes(key)) {
                             itemName = biblicalMapping[key].name;
+                            easterEggClass = biblicalMapping[key].easterEggClass || '';
                             isBiblical = true;
                             customCategory = key.toLowerCase().replace(/ /g, '');
 
@@ -253,7 +250,42 @@ async function updateDashboard() {
                         }
                     }
 
-                    itemName = itemName.split(' ').slice(0, 2).join(' ');
+                    if (!isBiblical) {
+                        // As 20 Maiores Festas Tradicionais, Jejuns e Históricas (Pós-Torah)
+                        const traditionalMapping = {
+                            'Chanukah': 'Chag Chanukkah',
+                            'Purim': 'Yom Purim',
+                            'Tu BiShvat': 'Tu BiShvat',
+                            'Lag BaOmer': 'Lag BaOmer',
+                            'Tish\'a B\'Av': 'Tisha BeAv',
+                            'Tu B\'Av': 'Tu BeAv',
+                            'Asara B\'Tevet': 'Asara BeTevet',
+                            'Tzom Tammuz': 'Tzom Tamuz',
+                            'Ta\'anit Esther': 'Taanit Ester',
+                            'Tzom Gedaliah': 'Tzom Gedalyah',
+                            'Shushan Purim': 'Shushan Purim',
+                            'Purim Katan': 'Purim Katan',
+                            'Leil Selichot': 'Leil Selichot',
+                            'Sigd': 'Yom Sigd',
+                            'Yom HaShoah': 'Yom HaShoah',
+                            'Yom HaZikaron': 'Yom HaZikaron',
+                            'Yom HaAtzmaut': 'Yom HaAtzmaut',
+                            'Yom Yerushalayim': 'Yom Yerushalayim',
+                            'Yom HaAliyah': 'Yom HaAliyah',
+                        };
+                        for (const key in traditionalMapping) {
+                            if (item.title.includes(key)) {
+                                itemName = traditionalMapping[key];
+                                isTraditional = true;
+                                customCategory = 'traditional';
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!isBiblical && !isTraditional) {
+                        itemName = itemName.split(' ').slice(0, 2).join(' ');
+                    }
 
                     return {
                         name: itemName,
@@ -261,6 +293,8 @@ async function updateDashboard() {
                         category: customCategory,
                         rawCategory: item.category,
                         isBiblical: isBiblical,
+                        isTraditional: isTraditional,
+                        easterEggClass: easterEggClass,
                         raw: item
                     };
                 });
@@ -302,7 +336,7 @@ function updateUIBlocks(events, hdate, locationName) {
     }
 
     if (elTorah) {
-        let torahText = 'Sem Leitura';
+        let torahText = '';
         if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning && upcomingParasha.raw.leyning.torah) {
             torahText = transliterateTorah(upcomingParasha.raw.leyning.torah);
         }
@@ -310,51 +344,113 @@ function updateUIBlocks(events, hdate, locationName) {
     }
 
     if (elHaftara) {
-        let haftaraText = 'Sem Leitura';
+        let haftaraText = '';
         if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning) {
             const ley = upcomingParasha.raw.leyning;
             const hOptions = [ley.haftarah, ley.haftarah_sephardic, ley.haftarah_chabad, ley.haftarah_teiman, ley.haftarah_itali].filter(Boolean);
-            if (hOptions.length > 0) {
-                haftaraText = hOptions[0];
-                for (const opt of hOptions) {
-                    const lOpt = opt.toLowerCase();
-                    if (!lOpt.includes('samuel') && !lOpt.includes('kings')) {
-                        haftaraText = opt;
-                        break;
-                    }
-                }
-            }
+            haftaraText = hOptions[0] || '';
         }
-        elHaftara.textContent = transliterateTorah(haftaraText);
+        elHaftara.textContent = transliterateTorah(haftaraText.split(' | ')[0].trim());
     }
 
-    const TEHILIM_CYCLE = {
-        1: '1-5', 2: '6-10', 3: '11-15', 4: '16-20', 5: '21-25', 6: '26-30', 7: '31-35',
-        8: '36-40', 9: '41-45', 10: '46-50', 11: '51-55', 12: '56-60', 13: '61-65',
-        14: '66-70', 15: '71-75', 16: '76-80', 17: '81-85', 18: '86-90', 19: '91-95',
-        20: '96-100', 21: '101-105', 22: '106-110', 23: '111-115', 24: '116-120',
-        25: '121-125', 26: '126-130', 27: '131-134', 28: '135-138', 29: '139-142',
-        30: '143-146', 31: '147-150'
-    };
 
     if (elKetuvim) {
-        let tehilimChapters = TEHILIM_CYCLE[hdate.hd] || TEHILIM_CYCLE[30];
-        let ketuvimText = `Tehilim ${tehilimChapters}`;
-        const upcomingMegillah = events.find(e => e.raw && e.raw.leyning && e.raw.leyning.megillah && (e.time + twentyFourHoursMs) > now && (e.time - now < 7 * 24 * 60 * 60 * 1000));
-        if (upcomingMegillah) {
-            ketuvimText = upcomingMegillah.raw.leyning.megillah;
+        const shabbatTehilim = ['Tehilim 23-24', 'Tehilim 27-29', 'Tehilim 46-48', 'Tehilim 84-85', 'Tehilim 90-92', 'Tehilim 93-96', 'Tehilim 97-100', 'Tehilim 145-147'];
+        const omerTehilim = ['Tehilim 1-2', 'Tehilim 3-4', 'Tehilim 5-6', 'Tehilim 7-8', 'Tehilim 9-10', 'Tehilim 11-12', 'Tehilim 13-14', 'Tehilim 15-16', 'Tehilim 17-18', 'Tehilim 19-20', 'Tehilim 21-22', 'Tehilim 23-24', 'Tehilim 25-26', 'Tehilim 27-28', 'Tehilim 29-30', 'Tehilim 31-32', 'Tehilim 33-34', 'Tehilim 35-36', 'Tehilim 37-38', 'Tehilim 39-40', 'Tehilim 41-42', 'Tehilim 43-44', 'Tehilim 45-46', 'Tehilim 47-48', 'Tehilim 49-50', 'Tehilim 51-52', 'Tehilim 53-54', 'Tehilim 55-56', 'Tehilim 57-58', 'Tehilim 59-60', 'Tehilim 61-62', 'Tehilim 63-64', 'Tehilim 65-66', 'Tehilim 67-68', 'Tehilim 69-70', 'Tehilim 71-72', 'Tehilim 73-74', 'Tehilim 75-76', 'Tehilim 77-78', 'Tehilim 79-80', 'Tehilim 81-82', 'Tehilim 83-84', 'Tehilim 85-86', 'Tehilim 87-88', 'Tehilim 89-90', 'Tehilim 91-92', 'Tehilim 93-94', 'Tehilim 95-96', 'Tehilim 97-98', 'Tehilim 99-100'];
+
+        const FESTIVAL_READING = {
+            'parashat': shabbatTehilim[Math.floor(Math.random() * shabbatTehilim.length)],
+            'pesachsheni': 'Tehilim 25-26',
+            'pesach': 'Tehilim 114-115',
+            'matzot': 'Tehilim 118-119',
+            'shavuot': 'Tehilim 19-20',
+            'roshhashana': 'Tehilim 81-82',
+            'yomkippur': 'Tehilim 51-52',
+            'sukkot': 'Tehilim 65-67',
+            'sheminiatzeret': 'Tehilim 47-48',
+            'roshchodesh': 'Tehilim 104-105'
+        };
+
+        const CATEGORY_PRIORITY = {
+            'pesach': 10,
+            'matzot': 10,
+            'shavuot': 10,
+            'parashat': 10,
+            'omer': 10,
+            'yomkippur': 10,
+            'sheminiatzeret': 10,
+            'pesachsheni': 8,
+            'sukkot': 8,
+            'roshchodesh': 7
+        };
+
+        const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+        const nearEvents = events.filter(e =>
+            (e.time + twentyFourHoursMs) > now && (e.time - now) < sevenDaysMs
+        );
+
+        const nearEvent = nearEvents.sort((a, b) => {
+            const pa = CATEGORY_PRIORITY[a.category] ?? 1;
+            const pb = CATEGORY_PRIORITY[b.category] ?? 1;
+            return pb - pa;
+        })[0] || null;
+
+        let ketuvimText = null;
+        if (nearEvent) {
+            if (nearEvent.category === 'omer') {
+                const match = nearEvent.name.match(/\d+/);
+                if (match) {
+                    const day = parseInt(match[0], 10);
+                    ketuvimText = omerTehilim[day - 1] || 'Tehilim 67';
+                }
+            } else {
+                ketuvimText = FESTIVAL_READING[nearEvent.category] || null;
+            }
         }
+
+        if (!ketuvimText) {
+            const KETUVIM_BOOKS = [
+                { name: 'Tehilim', chapters: 149 },
+                { name: 'Mishlei', chapters: 30 },
+                { name: 'Iyov', chapters: 41 },
+                { name: 'Rut', chapters: 3 },
+                { name: 'Eicha', chapters: 4 },
+                { name: 'Kohelet', chapters: 11 },
+                { name: 'Ester', chapters: 9 }
+            ];
+
+            const chunks = [];
+            for (const b of KETUVIM_BOOKS) {
+                let start = 1;
+                while (start <= b.chapters) {
+                    let size = 3;
+                    let remaining = b.chapters - start + 1;
+
+                    if (remaining === 4) size = 4;
+                    else if (remaining === 5) size = 3;
+                    else if (remaining === 2) size = 2;
+                    else if (remaining === 1) size = 1;
+
+                    let end = start + size - 1;
+                    chunks.push(`${b.name} ${start === end ? start : start + '-' + end}`);
+                    start = end + 1;
+                }
+            }
+
+            const isAfterSunset = currentSunsetTime > 0 && now > currentSunsetTime;
+            const d = new Date(now + (isAfterSunset ? 86400000 : 0));
+            const continuousDay = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+
+            ketuvimText = chunks[continuousDay % chunks.length];
+        }
+
         elKetuvim.textContent = transliterateTorah(ketuvimText);
     }
 
     if (elDate) {
         let hm = hdate.hm || '';
         const hbMonths = {
-            "Nisan": "Nissan", "Iyyar": "Iyar", "Sivan": "Sivan",
-            "Tamuz": "Tamuz", "Av": "Av", "Elul": "Elul",
-            "Tishrei": "Tishrei", "Cheshvan": "Cheshvan", "Kislev": "Kislev",
-            "Tevet": "Tevet", "Sh'vat": "Shvat",
-            "Adar I": "Adar Aleph", "Adar II": "Adar Bet", "Adar": "Adar"
+            "Nisan": "Nissan", "Iyyar": "Iyar", "Sh'vat": "Shvat"
         };
         hm = hbMonths[hm] || hm;
         elDate.textContent = `${hdate.hd} ${hm}`;
@@ -375,6 +471,7 @@ function getEventIcon(category) {
         case 'simchattorah': return '<i class="fa-solid fa-book-open"></i>';
         case 'roshchodesh': return '<i class="fa-solid fa-moon"></i>';
         case 'omer': return '<i class="fa-solid fa-wheat-awn"></i>';
+        case 'traditional': return '<i class="fa-solid fa-star-of-david"></i>';
         default: return '<i class="fa-solid fa-bookmark"></i>';
     }
 }
@@ -398,11 +495,15 @@ function renderEvents() {
     let filtered = firstOmer ? [...nonOmer, firstOmer] : nonOmer;
 
     const biblical = filtered.filter(e => e.isBiblical);
-    const others = filtered.filter(e => !e.isBiblical);
+    const traditional = filtered.filter(e => e.isTraditional);
+    const others = filtered.filter(e => !e.isBiblical && !e.isTraditional);
 
-    const merged = [...biblical, ...others].sort((a, b) => {
+    // Prioridade secundária: se ocorrerem ao mesmo tempo, bíblicas aparecem primeiro, depois tradicionais
+    const merged = [...biblical, ...traditional, ...others].sort((a, b) => {
         if (a.time !== b.time) return a.time - b.time;
-        return (b.isBiblical ? 1 : 0) - (a.isBiblical ? 1 : 0);
+        const priorityA = a.isBiblical ? 2 : (a.isTraditional ? 1 : 0);
+        const priorityB = b.isBiblical ? 2 : (b.isTraditional ? 1 : 0);
+        return priorityB - priorityA;
     });
 
     const unique = [];
@@ -413,7 +514,7 @@ function renderEvents() {
     for (const item of merged) {
         if (seenNames.has(item.name)) continue;
 
-        if (item.name === 'Shabbat Shalom') {
+        if (item.name === 'Yom Shabbat') {
             if (shabbatCount < 1) {
                 unique.push(item);
                 shabbatCount++;
@@ -438,15 +539,17 @@ function renderEvents() {
 
     upcoming.forEach(evt => {
         const icon = getEventIcon(evt.category);
+        const eggClass = evt.easterEggClass ? evt.easterEggClass : '';
 
         const card = document.createElement('div');
         card.innerHTML = `
-            <div class="event-card event-item glass-panel">
+            <div class="event-card event-item glass-panel ${eggClass}">
                 <div class="icon-circle ${evt.category}">
                     ${icon}
                 </div>
                 <div class="card-content">
                     <h2 class="card-title">${evt.name}</h2>
+                    ${evt.easterEgg ? `<div style="font-size: 0.7rem; color: rgba(148, 163, 184, 0.7); margin-top: -6px; margin-bottom: 8px; font-style: italic; letter-spacing: 0.3px;">${evt.easterEgg}</div>` : ''}
                     <span class="timer-countdown" data-time="${evt.time}">--d --h --m</span>
                 </div>
             </div>
@@ -472,7 +575,7 @@ function startTimers() {
             const endTimeMinus5m = endTimestamp - (5 * 60 * 1000);
 
             const diffToStart = startTimestamp - now;
-            const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+            const ninetyDaysMs = 90 * 24 * 60 * 60 * 1000;
 
             if (now >= startTimePlus1m && now < endTimeMinus5m) {
                 timer.textContent = 'Neste Momento';
@@ -483,8 +586,8 @@ function startTimers() {
                 if (card) card.remove();
                 anyExpired = true;
             } else if (diffToStart <= 5 * 60 * 1000) {
-                timer.textContent = 'Preparo Final';
-            } else if (diffToStart > thirtyDaysMs) {
+                timer.textContent = 'Ultimo Preparo';
+            } else if (diffToStart > ninetyDaysMs) {
                 timer.textContent = 'Em Breve';
             } else {
                 const d = String(Math.floor(diffToStart / (1000 * 60 * 60 * 24))).padStart(2, '0');
@@ -502,9 +605,9 @@ function startTimers() {
     }
 
     update();
-    timerInterval = setInterval(update, 2 * 500);
+    timerInterval = setInterval(update, 100);
 }
 
 
 updateDashboard();
-setInterval(updateDashboard, 10 * 60 * 500);
+setInterval(updateDashboard, 160000);
