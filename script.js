@@ -51,36 +51,58 @@ async function hebcalFetch(url) {
     return res.json();
 }
 
-
-
-
-const TZ_FALLBACKS = {
-    'America/Sao_Paulo': { lat: -23.5505, lon: -46.6333 },
-    'America/New_York': { lat: 40.6782, lon: -73.9442 },
-    'America/Chicago': { lat: 41.8781, lon: -87.6298 },
-    'America/Los_Angeles': { lat: 34.0522, lon: -118.2437 },
-    'America/Argentina/Buenos_Aires': { lat: -34.6037, lon: -58.3816 },
-    'Europe/London': { lat: 51.5074, lon: -0.1278 },
-    'Europe/Paris': { lat: 48.8566, lon: 2.3522 },
-    'Europe/Lisbon': { lat: 38.7223, lon: -9.1393 },
-    'Europe/Madrid': { lat: 40.4168, lon: -3.7038 },
-    'Europe/Berlin': { lat: 52.5200, lon: 13.4050 },
-    'Europe/Rome': { lat: 41.9028, lon: 12.4964 },
-    'Asia/Jerusalem': { lat: 31.7683, lon: 35.2137 },
-    'Asia/Tel_Aviv': { lat: 32.0853, lon: 34.7818 },
-    'Asia/Hong_Kong': { lat: 22.3193, lon: 114.1694 },
-    'Australia/Sydney': { lat: -33.8688, lon: 151.2093 }
-};
-
 async function getGeolocation() {
     const sysTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     const endpoints = [
-        { url: 'https://freeipapi.com/api/json', lat: 'latitude', lon: 'longitude', tz: 'timeZone' },
-        { url: 'https://ipwho.is/', lat: 'latitude', lon: 'longitude', tz: 'timezone.id' },
-        { url: 'https://ipapi.co/json/', lat: 'latitude', lon: 'longitude', tz: 'timezone' },
-        { url: 'https://ipwhois.app/json/', lat: 'latitude', lon: 'longitude', tz: 'timezone' },
-        { url: 'https://json.geoiplookup.io/', lat: 'latitude', lon: 'longitude', tz: 'timezone_name' }
+        {
+            url: 'https://freeipapi.com/api/json',
+            parse: (data) => ({ lat: data.latitude, lon: data.longitude, tz: data.timeZone })
+        },
+        {
+            url: 'https://ipwho.is/',
+            parse: (data) => ({ lat: data.latitude, lon: data.longitude, tz: data.timezone?.id })
+        },
+        {
+            url: 'https://ipapi.co/json/',
+            parse: (data) => ({ lat: data.latitude, lon: data.longitude, tz: data.timezone })
+        },
+        {
+            url: 'https://ipwhois.app/json/',
+            parse: (data) => ({ lat: data.latitude, lon: data.longitude, tz: data.timezone })
+        },
+        {
+            url: 'https://json.geoiplookup.io/',
+            parse: (data) => ({ lat: data.latitude, lon: data.longitude, tz: data.timezone_name })
+        },
+        {
+            url: 'https://ip-api.com/json/',
+            parse: (data) => ({ lat: data.lat, lon: data.lon, tz: data.timezone })
+        },
+        {
+            url: 'https://api.ip.sb/geoip',
+            parse: (data) => ({ lat: data.latitude, lon: data.longitude, tz: data.timezone })
+        },
+        {
+            url: 'https://reallyfreegeoip.org/json/',
+            parse: (data) => ({ lat: data.latitude, lon: data.longitude, tz: data.time_zone })
+        },
+        {
+            url: 'https://ipinfo.io/json',
+            parse: (data) => {
+                if (!data.loc) return null;
+                const [lat, lon] = data.loc.split(',').map(parseFloat);
+                return { lat, lon, tz: data.timezone };
+            }
+        },
+        {
+            url: 'https://geoplugin.net/json.gp',
+            parse: (data) => ({
+                lat: data.geoplugin_latitude,
+                lon: data.geoplugin_longitude,
+                tz: data.geoplugin_timezone
+            })
+        }
     ];
 
     const results = [];
@@ -91,16 +113,11 @@ async function getGeolocation() {
             const res = await fetch(ep.url, { signal: controller.signal });
             if (!res.ok) return;
             const data = await res.json();
-            const lat = parseFloat(data[ep.lat]);
-            const lon = parseFloat(data[ep.lon]);
-
-            let apiTz = null;
-            if (ep.tz.includes('.')) {
-                const parts = ep.tz.split('.');
-                apiTz = data[parts[0]] ? data[parts[0]][parts[1]] : null;
-            } else {
-                apiTz = data[ep.tz];
-            }
+            const parsed = ep.parse(data);
+            if (!parsed) return;
+            const lat = parseFloat(parsed.lat);
+            const lon = parseFloat(parsed.lon);
+            const apiTz = parsed.tz;
 
             if (!isNaN(lat) && !isNaN(lon)) {
                 results.push({ lat, lon, tz: apiTz });
@@ -115,18 +132,28 @@ async function getGeolocation() {
     let finalLoc = null;
 
     const matchingTz = results.filter(r => r.tz === sysTimezone);
-    if (matchingTz.length > 0) {
-        const avgLat = matchingTz.reduce((sum, r) => sum + r.lat, 0) / matchingTz.length;
-        const avgLon = matchingTz.reduce((sum, r) => sum + r.lon, 0) / matchingTz.length;
-        finalLoc = { lat: avgLat, lon: avgLon };
-    }
-    else if (results.length > 0) {
-        const avgLat = results.reduce((sum, r) => sum + r.lat, 0) / results.length;
-        const avgLon = results.reduce((sum, r) => sum + r.lon, 0) / results.length;
-        finalLoc = { lat: avgLat, lon: avgLon };
-    }
-    else if (TZ_FALLBACKS[sysTimezone]) {
-        finalLoc = { ...TZ_FALLBACKS[sysTimezone] };
+    const candidates = matchingTz.length > 0 ? matchingTz : results;
+
+    if (candidates.length > 0) {
+        // Algoritmo de Consenso (Centroide de Mínima Distância):
+        // Escolhe o candidato cuja soma das distâncias para todos os outros seja mínima.
+        // Isso elimina automaticamente qualquer outlier de rota/CDN/VPN e dá a maior estabilidade e precisão.
+        let bestCandidate = candidates[0];
+        let minDistanceSum = Infinity;
+
+        for (const c1 of candidates) {
+            let distanceSum = 0;
+            for (const c2 of candidates) {
+                const dLat = c1.lat - c2.lat;
+                const dLon = c1.lon - c2.lon;
+                distanceSum += Math.sqrt(dLat * dLat + dLon * dLon);
+            }
+            if (distanceSum < minDistanceSum) {
+                minDistanceSum = distanceSum;
+                bestCandidate = c1;
+            }
+        }
+        finalLoc = { lat: bestCandidate.lat, lon: bestCandidate.lon };
     }
 
     if (finalLoc) {
@@ -190,37 +217,69 @@ async function updateDashboard() {
 
         const converterUrl = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${day}&g2h=1&strict=1${isAfterSunset ? '&gs=on' : ''}`;
         const hdateData = await hebcalFetch(converterUrl);
-        const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=off&mod=off&nx=on&mf=off&ss=off&s=on&i=on&c=off&o=on`;
+        const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=on&mod=off&nx=on&mf=off&ss=off&s=on&i=on&c=off&o=on`;
         const hebcalData = await hebcalFetch(hebcalUrl);
 
         if (hebcalData && hebcalData.items) {
             const biblicalMapping = {
-                'Parashat': { name: 'Yom Shabbat', easterEggClass: 'egg-shabbat' },
-                'Pesach Sheni': { name: 'Pessach Sheni', easterEggClass: 'egg-pesach' },
-                'Pesach': { name: 'Chag Pessach', easterEggClass: 'egg-pesach' },
-                'Matzot': { name: 'Chag Matzot', easterEggClass: 'egg-pesach' },
-                'Shavuot': { name: 'Yom Shavuot', easterEggClass: 'egg-shavuot' },
-                'Rosh Hashana': { name: 'Yom Teruah', easterEggClass: 'egg-teruah' },
-                'Yom Kippur': { name: 'Yom Kippur', easterEggClass: 'egg-kippur' },
-                'Sukkot': { name: 'Chag Sukkot', easterEggClass: 'egg-sukkot' },
-                'Shemini Atzeret': { name: 'Shemini Atzeret', easterEggClass: 'egg-simchat' },
-                'Rosh Chodesh': { name: 'Rosh Chodesh', easterEggClass: 'egg-roshchodesh' },
-                'Omer': { name: 'Sefirat Omer', easterEggClass: 'egg-omer' }
+                'Parashat': { name: 'Yom Shabbat' },
+                'Pesach Sheni': { name: 'Pessach Sheni' },
+                'Pesach': { name: 'Yom Pessach' },
+                'Matzot': { name: 'Chag Matzot' },
+                'Shavuot': { name: 'Yom Shavuot' },
+                'Rosh Hashana': { name: 'Yom Teruah' },
+                'Yom Kippur': { name: 'Yom Kippur' },
+                'Sukkot': { name: 'Chag Sukkot' },
+                'Shemini Atzeret': { name: 'Shemini Atzeret' },
+                'Rosh Chodesh': { name: 'Rosh Chodesh' },
+                'Omer': { name: 'Sefirat Omer' }
             };
 
             const validCategories = ['holiday', 'parashat', 'fast', 'omer', 'roshchodesh'];
-            unifiedEvents = hebcalData.items
-                .filter(item => validCategories.includes(item.category))
+            const filteredItems = hebcalData.items.filter(item => validCategories.includes(item.category));
+
+            // Collect unique dates so we can fetch each date's sunset individually
+            const uniqueDates = [...new Set(filteredItems.map(item => item.date.split('T')[0]))];
+
+            // Fetch zmanim for each unique date in parallel
+            const sunsetByDate = { [dateStr]: sunsetTime }; // seed with today already fetched
+            await Promise.allSettled(
+                uniqueDates
+                    .filter(d => d !== dateStr)
+                    .map(async (d) => {
+                        try {
+                            const r = await fetch(
+                                `https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${d}`,
+                                { signal: AbortSignal.timeout(6000) }
+                            );
+                            if (!r.ok) return;
+                            const zm = await r.json();
+                            sunsetByDate[d] = zm.times && zm.times.sunset
+                                ? new Date(zm.times.sunset).getTime()
+                                : 0;
+                        } catch (e) { /* fallback to 18:00 below */ }
+                    })
+            );
+
+            unifiedEvents = filteredItems
                 .map(item => {
-                    const parts = item.date.split('-');
+                    const parts = item.date.split('T')[0].split('-');
                     let dateObj;
                     if (parts.length === 3) {
                         const y = parseInt(parts[0], 10);
                         const m = parseInt(parts[1], 10) - 1;
                         const d = parseInt(parts[2], 10);
-                        const sH = sunsetTime ? new Date(sunsetTime).getHours() : 18;
-                        const sM = sunsetTime ? new Date(sunsetTime).getMinutes() : 0;
-                        dateObj = new Date(y, m, d - 1, sH, sM, 0);
+                        const eventDateStr = `${parts[0]}-${parts[1]}-${parts[2]}`;
+                        const eventSunset = sunsetByDate[eventDateStr] || 0;
+                        const sH = eventSunset ? new Date(eventSunset).getHours() : 18;
+                        const sM = eventSunset ? new Date(eventSunset).getMinutes() : 0;
+                        let dayOffset = 0;
+                        if (item.category === 'parashat' || item.category === 'omer') {
+                            dayOffset = -1;
+                        } else if (item.category === 'holiday' || item.category === 'roshchodesh' || item.category === 'fast') {
+                            dayOffset = item.title.includes('Erev') ? 0 : -1;
+                        }
+                        dateObj = new Date(y, m, d + dayOffset, sH, sM, 0);
                     } else {
                         dateObj = new Date();
                     }
@@ -229,17 +288,24 @@ async function updateDashboard() {
                     let isBiblical = false;
                     let isTraditional = false;
                     let customCategory = item.category;
-                    let easterEggClass = '';
 
                     for (const key in biblicalMapping) {
                         if (item.title.includes(key)) {
                             itemName = biblicalMapping[key].name;
-                            easterEggClass = biblicalMapping[key].easterEggClass || '';
                             isBiblical = true;
                             customCategory = key.toLowerCase().replace(/ /g, '');
 
                             if (key === 'Parashat') {
                                 customCategory = 'parashat';
+                            } else if (key === 'Pesach') {
+                                if (item.title.includes('Erev')) {
+                                    customCategory = 'pesach';
+                                    itemName = 'Yom Pessach';
+                                } else {
+                                    // 'Pesach I/II/VII' etc. from Hebcal = Chag HaMatzot (15-21 Nissan)
+                                    customCategory = 'matzot';
+                                    itemName = 'Chag Matzot';
+                                }
                             } else if (key === 'Omer') {
                                 const match = item.title.match(/\d+/);
                                 if (match) {
@@ -253,25 +319,27 @@ async function updateDashboard() {
                     if (!isBiblical) {
                         // As 20 Maiores Festas Tradicionais, Jejuns e Históricas (Pós-Torah)
                         const traditionalMapping = {
+                            'Tish\'a B\'Av': 'Tisha BeAv',
+                            'Tu B\'Av': 'Tu BeAv',
+                            'Tzom Tammuz': 'Tzom Tamuz',
+                            'Asara B\'Tevet': 'Asara BeTevet',
+                            'Tzom Gedaliah': 'Tzom Gedalyah',
+                            'Ta\'anit Esther': 'Taanit Ester',
                             'Chanukah': 'Chag Chanukkah',
                             'Purim': 'Yom Purim',
                             'Tu BiShvat': 'Tu BiShvat',
                             'Lag BaOmer': 'Lag BaOmer',
-                            'Tish\'a B\'Av': 'Tisha BeAv',
-                            'Tu B\'Av': 'Tu BeAv',
-                            'Asara B\'Tevet': 'Asara BeTevet',
-                            'Tzom Tammuz': 'Tzom Tamuz',
-                            'Ta\'anit Esther': 'Taanit Ester',
-                            'Tzom Gedaliah': 'Tzom Gedalyah',
                             'Shushan Purim': 'Shushan Purim',
-                            'Purim Katan': 'Purim Katan',
-                            'Leil Selichot': 'Leil Selichot',
-                            'Sigd': 'Yom Sigd',
-                            'Yom HaShoah': 'Yom HaShoah',
-                            'Yom HaZikaron': 'Yom HaZikaron',
-                            'Yom HaAtzmaut': 'Yom HaAtzmaut',
                             'Yom Yerushalayim': 'Yom Yerushalayim',
-                            'Yom HaAliyah': 'Yom HaAliyah',
+                            'Yom HaAtzmaut': 'Yom Atzmaut',
+                            'Yom HaZikaron': 'Yom Zikaron',
+                            'Yom HaShoah': 'Yom Shoah',
+                            'Yom HaAliyah': 'Yom Aliyah',
+                            'Sigd': 'Yom Sigd',
+                            'Purim Katan': 'Purim Katan',
+                            'Isru Chag': 'Isru Chag',
+                            'Mimouna': 'Yom Mimouna',
+                            'Selichot': 'Selichot Elul'
                         };
                         for (const key in traditionalMapping) {
                             if (item.title.includes(key)) {
@@ -294,7 +362,6 @@ async function updateDashboard() {
                         rawCategory: item.category,
                         isBiblical: isBiblical,
                         isTraditional: isTraditional,
-                        easterEggClass: easterEggClass,
                         raw: item
                     };
                 });
@@ -316,7 +383,7 @@ async function updateDashboard() {
     }
 }
 
-function updateUIBlocks(events, hdate, locationName) {
+function updateUIBlocks(events, hdate, locationName, sunsetTime) {
     const now = new Date().getTime();
     const twentyFourHoursMs = 24 * 60 * 60 * 1000;
 
@@ -324,20 +391,127 @@ function updateUIBlocks(events, hdate, locationName) {
         e.raw.category === 'parashat' && (e.time + twentyFourHoursMs) > now
     );
     const elParasha = document.getElementById('card-parasha');
+    const elParashaSubtitle = document.getElementById('card-parasha-subtitle');
     const elTorah = document.getElementById('card-torah');
     const elHaftara = document.getElementById('card-haftara');
     const elKetuvim = document.getElementById('card-ketuvim');
     const elDate = document.getElementById('card-hdate');
     const elLoc = document.getElementById('card-local');
 
-    if (elParasha) {
-        let pName = upcomingParasha.raw.title.replace('Parashat ', '');
-        elParasha.textContent = pName;
+
+    // Helper: check if 'now' falls within the full span of a festival category
+    // Also returns which day (0-based) of the festival we are currently on
+    function getFestivalSpan(cat) {
+        const evts = events
+            .filter(e => e.category === cat)
+            .sort((a, b) => a.time - b.time);
+        if (!evts.length) return null;
+        let dayIndex = 0;
+        for (let i = 0; i < evts.length; i++) {
+            if (now >= evts[i].time) dayIndex = i;
+        }
+        return {
+            start: evts[0].time,
+            end: evts[evts.length - 1].time + twentyFourHoursMs,
+            evt: evts[0],
+            dayIndex
+        };
     }
+    function findActiveFestival(cats) {
+        for (const cat of cats) {
+            const span = getFestivalSpan(cat);
+            if (span && now >= span.start && now < span.end)
+                return { ...span.evt, dayIndex: span.dayIndex };
+        }
+        return null;
+    }
+    // Pick the correct reading for the current day (clamps to last entry if needed)
+    function pickReading(arr, dayIndex) {
+        if (!arr || !arr.length) return null;
+        return arr[Math.min(dayIndex, arr.length - 1)];
+    }
+
+    const FESTIVAL_CATS = [
+        'pesach', 'matzot', 'shavuot', 'roshhashana', 'yomkippur',
+        'sukkot', 'sheminiatzeret'
+    ];
+    const activeFestival = findActiveFestival(FESTIVAL_CATS);
+
+    if (elParasha) {
+        elParasha.textContent = activeFestival
+            ? activeFestival.name
+            : (upcomingParasha ? upcomingParasha.raw.title.replace('Parashat ', '') : '-');
+    }
+    if (elParashaSubtitle) {
+        elParashaSubtitle.textContent = activeFestival ? 'Leitura Especial' : 'Ciclo Anual';
+    }
+
+
+    // Per-day Torah readings for each Biblical festival (Chabad/Diaspora Nusach)
+    const FESTIVAL_TORAH_READINGS = {
+        'pesach': ['Shemot 12:21-51'],       // 14 Nissan – korban Pessach
+        'matzot': [
+            'Shemot 12:21-51',        // Dia 1 – 15 Nissan
+            'Vayikra 22:26-23:44',    // Dia 2 – 16 Nissan
+            'Bamidbar 28:19-25',      // Dia 3 – Chol HaMoed 1
+            'Bamidbar 28:19-25',      // Dia 4 – Chol HaMoed 2
+            'Bamidbar 28:19-25',      // Dia 5 – Chol HaMoed 3
+            'Bamidbar 28:19-25',      // Dia 6 – Chol HaMoed 4
+            'Shemot 13:17-15:26',     // Dia 7 – Shvi'i shel Pessach
+        ],
+        'shavuot': ['Shemot 19:1-20:23'],
+        'roshhashana': ['Bereshit 21:1-34'],
+        'yomkippur': ['Vayikra 16:1-34'],
+        'sukkot': [
+            'Vayikra 22:26-23:44',    // Dia 1
+            'Vayikra 22:26-23:44',    // Dia 2
+            'Bamidbar 29:17-22',      // Dia 3 – Chol HaMoed 1
+            'Bamidbar 29:20-25',      // Dia 4 – Chol HaMoed 2
+            'Bamidbar 29:23-28',      // Dia 5 – Chol HaMoed 3
+            'Bamidbar 29:26-31',      // Dia 6 – Chol HaMoed 4
+            'Bamidbar 29:26-34',      // Dia 7 – Hoshana Raba
+        ],
+        'sheminiatzeret': ['Devarim 14:22 - 16:17'],
+    };
+
+    // Per-day Haftara readings for each Biblical festival (Chabad/Diaspora Nusach)
+    const FESTIVAL_HAFTARA_READINGS = {
+        'pesach': ['Yehoshua 5:2 - 6:1'],    // 14 Nissan
+        'matzot': [
+            'Yehoshua 5:2 - 6:1',          // Dia 1 – 15 Nissan
+            'II Melachim 23:1-9,21-25',    // Dia 2 – 16 Nissan
+            'Yechezkel 37:1-14',            // Dia 3 – Chol HaMoed 1
+            'Yechezkel 37:1-14',            // Dia 4 – Chol HaMoed 2
+            'Yechezkel 37:1-14',            // Dia 5 – Chol HaMoed 3
+            'Yechezkel 37:1-14',            // Dia 6 – Chol HaMoed 4
+            'II Shmuel 22:1-51',            // Dia 7 – Shvi'i shel Pessach
+            'Yeshayahu 10:32 - 12:6',       // Dia 8 – Acharon shel Pessach
+        ],
+        'shavuot': ['Yechezkel 1:1-28, 3:12'],
+        'roshhashana': ['I Shmuel 1:1-2:10'],
+        'yomkippur': ['Yeshayahu 57:14-58:14'],
+        'sukkot': [
+            'Zecharia 14:1-21',             // Dia 1
+            'I Melachim 8:2-21',            // Dia 2
+            'Yechezkel 38:18-39:7',       // Dia 3 – Chol HaMoed 1
+            'Yechezkel 38:18-39:7',       // Dia 4 – Chol HaMoed 2
+            'Yechezkel 38:18-39:7',       // Dia 5 – Chol HaMoed 3
+            'Yechezkel 38:18-39:7',       // Dia 6 – Chol HaMoed 4
+            'Yechezkel 38:18-39:7',       // Dia 7 – Hoshana Raba
+        ],
+        'sheminiatzeret': ['I Melachim 8:54-66'],
+    };
+
+    // nearFestival uses the same span logic
+    const nearFestival = findActiveFestival(Object.keys(FESTIVAL_TORAH_READINGS));
 
     if (elTorah) {
         let torahText = '';
-        if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning && upcomingParasha.raw.leyning.torah) {
+        if (nearFestival) {
+            torahText = transliterateTorah(
+                pickReading(FESTIVAL_TORAH_READINGS[nearFestival.category], nearFestival.dayIndex) || ''
+            );
+        } else if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning && upcomingParasha.raw.leyning.torah) {
             torahText = transliterateTorah(upcomingParasha.raw.leyning.torah);
         }
         elTorah.textContent = torahText;
@@ -345,103 +519,109 @@ function updateUIBlocks(events, hdate, locationName) {
 
     if (elHaftara) {
         let haftaraText = '';
-        if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning) {
+        if (nearFestival) {
+            haftaraText = transliterateTorah(
+                pickReading(FESTIVAL_HAFTARA_READINGS[nearFestival.category], nearFestival.dayIndex) || ''
+            );
+        } else if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning) {
             const ley = upcomingParasha.raw.leyning;
             const hOptions = [ley.haftarah, ley.haftarah_sephardic, ley.haftarah_chabad, ley.haftarah_teiman, ley.haftarah_itali].filter(Boolean);
-            haftaraText = hOptions[0] || '';
+            haftaraText = transliterateTorah((hOptions[0] || '').split(' | ')[0].trim());
         }
-        elHaftara.textContent = transliterateTorah(haftaraText.split(' | ')[0].trim());
+        elHaftara.textContent = haftaraText;
     }
 
 
+
     if (elKetuvim) {
-        const shabbatTehilim = ['Tehilim 23-24', 'Tehilim 27-29', 'Tehilim 46-48', 'Tehilim 84-85', 'Tehilim 90-92', 'Tehilim 93-96', 'Tehilim 97-100', 'Tehilim 145-147'];
-        const omerTehilim = ['Tehilim 1-2', 'Tehilim 3-4', 'Tehilim 5-6', 'Tehilim 7-8', 'Tehilim 9-10', 'Tehilim 11-12', 'Tehilim 13-14', 'Tehilim 15-16', 'Tehilim 17-18', 'Tehilim 19-20', 'Tehilim 21-22', 'Tehilim 23-24', 'Tehilim 25-26', 'Tehilim 27-28', 'Tehilim 29-30', 'Tehilim 31-32', 'Tehilim 33-34', 'Tehilim 35-36', 'Tehilim 37-38', 'Tehilim 39-40', 'Tehilim 41-42', 'Tehilim 43-44', 'Tehilim 45-46', 'Tehilim 47-48', 'Tehilim 49-50', 'Tehilim 51-52', 'Tehilim 53-54', 'Tehilim 55-56', 'Tehilim 57-58', 'Tehilim 59-60', 'Tehilim 61-62', 'Tehilim 63-64', 'Tehilim 65-66', 'Tehilim 67-68', 'Tehilim 69-70', 'Tehilim 71-72', 'Tehilim 73-74', 'Tehilim 75-76', 'Tehilim 77-78', 'Tehilim 79-80', 'Tehilim 81-82', 'Tehilim 83-84', 'Tehilim 85-86', 'Tehilim 87-88', 'Tehilim 89-90', 'Tehilim 91-92', 'Tehilim 93-94', 'Tehilim 95-96', 'Tehilim 97-98', 'Tehilim 99-100'];
+        const isAfterSunset = currentSunsetTime > 0 && now > currentSunsetTime;
+        const d = new Date(now + (isAfterSunset ? 86400000 : 0));
+        const stableDaySeed = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+
+        const shabbatTehilim = [
+            'Tehilim 23', 'Tehilim 92', 'Mishlei 31', 'Tehilim 104', 'Mishlei 3',
+            'Tehilim 121', 'Mishlei 4', 'Tehilim 93', 'Mishlei 8', 'Daniel 2'
+        ];
+        const pesachTehilim = [
+            'Tehilim 78', 'Tehilim 105', 'Tehilim 107', 'Tehilim 113', 'Tehilim 114',
+            'Tehilim 115', 'Tehilim 116', 'Tehilim 117', 'Tehilim 118', 'Tehilim 136'
+        ];
+        const matzotTehilim = [
+            'Tehilim 66', 'Tehilim 77', 'Tehilim 105', 'Tehilim 106', 'Tehilim 114',
+            'Tehilim 115', 'Tehilim 116', 'Tehilim 117', 'Tehilim 118', 'Tehilim 136'
+        ];
+        const shavuotTehilim = [
+            'Ruth 1', 'Ruth 2', 'Ruth 3', 'Ruth 4', 'Tehilim 19',
+            'Tehilim 68', 'Tehilim 119', 'Mishlei 8', 'Nechemia 8', 'Mishlei 1'
+        ];
+        const roshhashanaTehilim = [
+            'Tehilim 24', 'Tehilim 27', 'Tehilim 47', 'Tehilim 81', 'Tehilim 150',
+            'Nechemia 9', 'Daniel 7', 'Tehilim 33', 'Tehilim 93', 'Tehilim 96'
+        ];
+        const yomkippurTehilim = [
+            'Tehilim 25', 'Tehilim 32', 'Tehilim 51', 'Tehilim 86', 'Tehilim 103',
+            'Tehilim 130', 'Tehilim 143', 'Daniel 9', 'Ezra 9', 'Tehilim 90'
+        ];
+        const sukkotTehilim = [
+            'Kohelet 1', 'Kohelet 2', 'Kohelet 3', 'Kohelet 12', 'Tehilim 42',
+            'Tehilim 67', 'Tehilim 121', 'Tehilim 122', 'Tehilim 126', 'Nechemia 8'
+        ];
+        const sheminiatzeretTehilim = [
+            'Tehilim 1', 'Tehilim 19', 'Tehilim 119', 'Mishlei 3', 'Kohelet 12',
+            'Tehilim 147', 'Tehilim 148', 'Tehilim 85', 'Tehilim 12', 'Tehilim 111'
+        ];
 
         const FESTIVAL_READING = {
-            'parashat': shabbatTehilim[Math.floor(Math.random() * shabbatTehilim.length)],
-            'pesachsheni': 'Tehilim 25-26',
-            'pesach': 'Tehilim 114-115',
-            'matzot': 'Tehilim 118-119',
-            'shavuot': 'Tehilim 19-20',
-            'roshhashana': 'Tehilim 81-82',
-            'yomkippur': 'Tehilim 51-52',
-            'sukkot': 'Tehilim 65-67',
-            'sheminiatzeret': 'Tehilim 47-48',
-            'roshchodesh': 'Tehilim 104-105'
+            'parashat': shabbatTehilim[stableDaySeed % shabbatTehilim.length],
+            'pesach': pesachTehilim[stableDaySeed % pesachTehilim.length],
+            'matzot': matzotTehilim[stableDaySeed % matzotTehilim.length],
+            'shavuot': shavuotTehilim[stableDaySeed % shavuotTehilim.length],
+            'roshhashana': roshhashanaTehilim[stableDaySeed % roshhashanaTehilim.length],
+            'yomkippur': yomkippurTehilim[stableDaySeed % yomkippurTehilim.length],
+            'sukkot': sukkotTehilim[stableDaySeed % sukkotTehilim.length],
+            'sheminiatzeret': sheminiatzeretTehilim[stableDaySeed % sheminiatzeretTehilim.length]
         };
-
-        const CATEGORY_PRIORITY = {
-            'pesach': 10,
-            'matzot': 10,
-            'shavuot': 10,
-            'parashat': 10,
-            'omer': 10,
-            'yomkippur': 10,
-            'sheminiatzeret': 10,
-            'pesachsheni': 8,
-            'sukkot': 8,
-            'roshchodesh': 7
-        };
-
-        const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-        const nearEvents = events.filter(e =>
-            (e.time + twentyFourHoursMs) > now && (e.time - now) < sevenDaysMs
-        );
-
-        const nearEvent = nearEvents.sort((a, b) => {
-            const pa = CATEGORY_PRIORITY[a.category] ?? 1;
-            const pb = CATEGORY_PRIORITY[b.category] ?? 1;
-            return pb - pa;
-        })[0] || null;
 
         let ketuvimText = null;
-        if (nearEvent) {
-            if (nearEvent.category === 'omer') {
-                const match = nearEvent.name.match(/\d+/);
-                if (match) {
-                    const day = parseInt(match[0], 10);
-                    ketuvimText = omerTehilim[day - 1] || 'Tehilim 67';
-                }
-            } else {
-                ketuvimText = FESTIVAL_READING[nearEvent.category] || null;
-            }
+        if (nearFestival) {
+            ketuvimText = FESTIVAL_READING[nearFestival.category] || null;
+        } else if (d.getDay() === 6) {
+            // Se hoje for Shabbat (lembrando que a data d já vira para o dia seguinte no pôr do sol)
+            ketuvimText = FESTIVAL_READING['parashat'] || null;
         }
 
         if (!ketuvimText) {
-            const KETUVIM_BOOKS = [
-                { name: 'Tehilim', chapters: 149 },
-                { name: 'Mishlei', chapters: 30 },
-                { name: 'Iyov', chapters: 41 },
-                { name: 'Rut', chapters: 3 },
-                { name: 'Eicha', chapters: 4 },
-                { name: 'Kohelet', chapters: 11 },
-                { name: 'Ester', chapters: 9 }
+            // Sorteia um livro do Ketuvim de forma estável para o dia
+            // Usamos uma semente determinística com LCG para selecionar o livro e o capítulo
+            const LCG = (seed) => (seed * 9301 + 49297) % 233280;
+            const seed1 = LCG(stableDaySeed);
+            const seed2 = LCG(seed1);
+
+            const books = [
+                { name: 'Tehilim', chapters: 150, weight: 67 },
+                { name: 'Mishlei', chapters: 31, weight: 15 },
+                { name: 'Iyov', chapters: 42, weight: 5 },
+                { name: 'Kohelet', chapters: 12, weight: 4 },
+                { name: 'Ruth', chapters: 4, weight: 2 },
+                { name: 'Esther', chapters: 10, weight: 2 },
+                { name: 'Daniel', chapters: 12, weight: 3 },
+                { name: 'Ezra', chapters: 10, weight: 1 },
+                { name: 'Nechemia', chapters: 13, weight: 1 }
             ];
 
-            const chunks = [];
-            for (const b of KETUVIM_BOOKS) {
-                let start = 1;
-                while (start <= b.chapters) {
-                    let size = 3;
-                    let remaining = b.chapters - start + 1;
-
-                    if (remaining === 4) size = 4;
-                    else if (remaining === 5) size = 3;
-                    else if (remaining === 2) size = 2;
-                    else if (remaining === 1) size = 1;
-
-                    let end = start + size - 1;
-                    chunks.push(`${b.name} ${start === end ? start : start + '-' + end}`);
-                    start = end + 1;
+            const totalWeight = books.reduce((sum, b) => sum + b.weight, 0);
+            let selector = seed1 % totalWeight;
+            let selectedBook = books[0];
+            for (const b of books) {
+                if (selector < b.weight) {
+                    selectedBook = b;
+                    break;
                 }
+                selector -= b.weight;
             }
 
-            const isAfterSunset = currentSunsetTime > 0 && now > currentSunsetTime;
-            const d = new Date(now + (isAfterSunset ? 86400000 : 0));
-            const continuousDay = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
-
-            ketuvimText = chunks[continuousDay % chunks.length];
+            const chapter = (seed2 % selectedBook.chapters) + 1;
+            ketuvimText = `${selectedBook.name} ${chapter}`;
         }
 
         elKetuvim.textContent = transliterateTorah(ketuvimText);
@@ -474,6 +654,28 @@ function getEventIcon(category) {
         case 'traditional': return '<i class="fa-solid fa-star-of-david"></i>';
         default: return '<i class="fa-solid fa-bookmark"></i>';
     }
+}
+
+function getStringSimilarity(s1, s2) {
+    const clean = s => s.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+    const a = clean(s1);
+    const b = clean(s2);
+    if (a === b) return 1.0;
+    if (a.length === 0 || b.length === 0) return 0.0;
+    const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+    for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+    for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+    for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+            dp[i][j] = Math.min(
+                dp[i - 1][j] + 1,
+                dp[i][j - 1] + 1,
+                dp[i - 1][j - 1] + cost
+            );
+        }
+    }
+    return 1.0 - (dp[a.length][b.length] / Math.max(a.length, b.length));
 }
 
 function renderEvents() {
@@ -512,19 +714,32 @@ function renderEvents() {
     let majorCount = 0;
 
     for (const item of merged) {
-        if (seenNames.has(item.name)) continue;
+        if (!item.name) continue;
+        const normalized = item.name.trim().toLowerCase().replace(/\s+/g, ' ');
+        if (seenNames.has(normalized)) continue;
+
+        let isTooSimilar = false;
+        if (!item.isBiblical) {
+            for (const added of unique) {
+                if (!added.isBiblical && getStringSimilarity(item.name, added.name) >= 0.70) {
+                    isTooSimilar = true;
+                    break;
+                }
+            }
+        }
+        if (isTooSimilar) continue;
 
         if (item.name === 'Yom Shabbat') {
             if (shabbatCount < 1) {
                 unique.push(item);
                 shabbatCount++;
-                seenNames.add(item.name);
+                seenNames.add(normalized);
             }
         } else {
             if (majorCount < 3) {
                 unique.push(item);
                 majorCount++;
-                seenNames.add(item.name);
+                seenNames.add(normalized);
             }
         }
         if (shabbatCount >= 1 && majorCount >= 3) break;
@@ -539,17 +754,15 @@ function renderEvents() {
 
     upcoming.forEach(evt => {
         const icon = getEventIcon(evt.category);
-        const eggClass = evt.easterEggClass ? evt.easterEggClass : '';
 
         const card = document.createElement('div');
         card.innerHTML = `
-            <div class="event-card event-item glass-panel ${eggClass}">
+            <div class="event-card event-item glass-panel">
                 <div class="icon-circle ${evt.category}">
                     ${icon}
                 </div>
                 <div class="card-content">
                     <h2 class="card-title">${evt.name}</h2>
-                    ${evt.easterEgg ? `<div style="font-size: 0.7rem; color: rgba(148, 163, 184, 0.7); margin-top: -6px; margin-bottom: 8px; font-style: italic; letter-spacing: 0.3px;">${evt.easterEgg}</div>` : ''}
                     <span class="timer-countdown" data-time="${evt.time}">--d --h --m</span>
                 </div>
             </div>
@@ -570,23 +783,19 @@ function startTimers() {
 
         timers.forEach(timer => {
             const startTimestamp = parseInt(timer.getAttribute('data-time'));
-            const startTimePlus1m = startTimestamp + (1 * 60 * 1000);
+            const startTimeMinus90s = startTimestamp - (90 * 1000);
             const endTimestamp = startTimestamp + (24 * 60 * 60 * 1000);
-            const endTimeMinus5m = endTimestamp - (5 * 60 * 1000);
 
             const diffToStart = startTimestamp - now;
             const ninetyDaysMs = 90 * 24 * 60 * 60 * 1000;
 
-            if (now >= startTimePlus1m && now < endTimeMinus5m) {
-                timer.textContent = 'Neste Momento';
-            } else if (now >= endTimeMinus5m && now <= endTimestamp) {
-                timer.textContent = 'Fim Iminente';
+            if (now >= startTimeMinus90s && now <= endTimestamp) {
+                timer.textContent = 'Em Curso';
             } else if (now > endTimestamp) {
-                const card = timer.closest('.events-list-container');
-                if (card) card.remove();
+                const card = timer.closest('.event-card');
+                const wrapper = card ? card.parentElement : null;
+                if (wrapper) wrapper.remove(); else if (card) card.remove();
                 anyExpired = true;
-            } else if (diffToStart <= 5 * 60 * 1000) {
-                timer.textContent = 'Ultimo Preparo';
             } else if (diffToStart > ninetyDaysMs) {
                 timer.textContent = 'Em Breve';
             } else {
@@ -605,9 +814,9 @@ function startTimers() {
     }
 
     update();
-    timerInterval = setInterval(update, 100);
+    timerInterval = setInterval(update, 10);
 }
 
 
 updateDashboard();
-setInterval(updateDashboard, 160000);
+setInterval(updateDashboard, 60000);
