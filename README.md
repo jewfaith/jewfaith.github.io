@@ -1,4 +1,4 @@
-# 🌟 Israel Dashboard
+## 🌟 Israel Dashboard
 
 Um painel web dinâmico e elegante que exibe informações litúrgicas judaicas em tempo real, incluindo a Parashá da semana, leituras da Torá, Haftará, Salmos (Ketuvim) e contagens regressivas para feriados.
 
