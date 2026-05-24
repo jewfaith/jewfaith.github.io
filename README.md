@@ -1,4 +1,4 @@
-# 🌟 Israel Dashboard - Calendário Adaptativo
+# 🌟 Israel Dashboard
 
 Um painel web dinâmico e elegante que exibe informações litúrgicas judaicas em tempo real, incluindo a Parashá da semana, leituras da Torá, Haftará, Salmos (Ketuvim) e contagens regressivas para feriados.
 
@@ -25,11 +25,3 @@ O grande diferencial deste projeto é a sua **inteligência de localização**: 
 * **HTML5** (Estrutura)
 * **CSS3 Vanilla** (Estilo com design moderno em *Glassmorphism*)
 * **Javascript Puro (ES6)** (Consumo assíncrono das APIs do Hebcal e OpenStreetMap)
-
----
-
-## 💻 Como Rodar o Projeto
-
-1. Baixe ou clone este repositório.
-2. Abra o arquivo `index.html` em qualquer navegador.
-3. Certifique-se de estar conectado à internet para carregar as informações litúrgicas em tempo real e os ícones decorativos.
