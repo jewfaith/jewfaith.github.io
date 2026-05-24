@@ -189,6 +189,14 @@ async function updateDashboard() {
         const geoWasDetected = !!userLocation;
 
         let locationName = "Jerusalém";
+        let isIsrael = true; // default to true since fallback is Jerusalem
+
+        // Determine if in Israel via system timezone first as a quick local check
+        const sysTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        if (geoWasDetected) {
+            isIsrael = (sysTimezone === 'Asia/Jerusalem');
+        }
+
         if (geoWasDetected) {
             try {
                 const ctrl = new AbortController();
@@ -202,8 +210,11 @@ async function updateDashboard() {
                     const locData = await locRes.json();
                     const addr = locData.address || {};
                     locationName = addr.city || addr.town || addr.village || addr.county || addr.state || "Jerusalém";
+                    if (addr.country_code) {
+                        isIsrael = (addr.country_code.toLowerCase() === 'il');
+                    }
                 }
-            } catch (e) { /* Keep Jerusalém fallback */ }
+            } catch (e) { /* Keep fallback */ }
         }
 
         let sunsetTime = 0;
@@ -217,7 +228,7 @@ async function updateDashboard() {
 
         const converterUrl = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${day}&g2h=1&strict=1${isAfterSunset ? '&gs=on' : ''}`;
         const hdateData = await hebcalFetch(converterUrl);
-        const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=on&mod=off&nx=on&mf=off&ss=off&s=on&i=on&c=off&o=on`;
+        const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=on&mod=on&nx=on&mf=on&ss=off&s=on&i=${isIsrael ? 'on' : 'off'}&c=off&o=on`;
         const hebcalData = await hebcalFetch(hebcalUrl);
 
         if (hebcalData && hebcalData.items) {
@@ -284,13 +295,14 @@ async function updateDashboard() {
                         dateObj = new Date();
                     }
 
+                    const cleanTitle = item.title.replace(/[\u2018\u2019]/g, "'");
                     let itemName = item.title;
                     let isBiblical = false;
                     let isTraditional = false;
                     let customCategory = item.category;
 
                     for (const key in biblicalMapping) {
-                        if (item.title.includes(key)) {
+                        if (cleanTitle.includes(key)) {
                             itemName = biblicalMapping[key].name;
                             isBiblical = true;
                             customCategory = key.toLowerCase().replace(/ /g, '');
@@ -298,7 +310,7 @@ async function updateDashboard() {
                             if (key === 'Parashat') {
                                 customCategory = 'parashat';
                             } else if (key === 'Pesach') {
-                                if (item.title.includes('Erev')) {
+                                if (cleanTitle.includes('Erev')) {
                                     customCategory = 'pesach';
                                     itemName = 'Yom Pessach';
                                 } else {
@@ -307,7 +319,7 @@ async function updateDashboard() {
                                     itemName = 'Chag Matzot';
                                 }
                             } else if (key === 'Omer') {
-                                const match = item.title.match(/\d+/);
+                                const match = cleanTitle.match(/\d+/);
                                 if (match) {
                                     itemName = `${match[0]} laOmer`;
                                 }
@@ -317,33 +329,38 @@ async function updateDashboard() {
                     }
 
                     if (!isBiblical) {
-                        // As 20 Maiores Festas Tradicionais, Jejuns e Históricas (Pós-Torah)
                         const traditionalMapping = {
-                            'Tish\'a B\'Av': 'Tisha BeAv',
-                            'Tu B\'Av': 'Tu BeAv',
-                            'Tzom Tammuz': 'Tzom Tamuz',
-                            'Asara B\'Tevet': 'Asara BeTevet',
-                            'Tzom Gedaliah': 'Tzom Gedalyah',
-                            'Ta\'anit Esther': 'Taanit Ester',
-                            'Chanukah': 'Chag Chanukkah',
-                            'Purim': 'Yom Purim',
-                            'Tu BiShvat': 'Tu BiShvat',
-                            'Lag BaOmer': 'Lag BaOmer',
-                            'Shushan Purim': 'Shushan Purim',
-                            'Yom Yerushalayim': 'Yom Yerushalayim',
-                            'Yom HaAtzmaut': 'Yom Atzmaut',
-                            'Yom HaZikaron': 'Yom Zikaron',
-                            'Yom HaShoah': 'Yom Shoah',
-                            'Yom HaAliyah': 'Yom Aliyah',
-                            'Sigd': 'Yom Sigd',
-                            'Purim Katan': 'Purim Katan',
-                            'Isru Chag': 'Isru Chag',
-                            'Mimouna': 'Yom Mimouna',
-                            'Selichot': 'Selichot Elul'
+                            "Tish'a B'Av": "Tisha BeAv",
+                            "Tu B'Av": "Tu BeAv",
+                            "Tzom Tammuz": "Tzom Tamuz",
+                            "Asara B'Tevet": "Asara BeTevet",
+                            "Tzom Gedaliah": "Tzom Gedalyah",
+                            "Ta'anit Esther": "Taanit Ester",
+                            "Chanukah": "Chag Chanukkah",
+                            "Purim": "Yom Purim",
+                            "Tu BiShvat": "Tu BiShvat",
+                            "Lag BaOmer": "Lag BaOmer",
+                            "Shushan Purim": "Shushan Purim",
+                            "Yom Yerushalayim": "Yom Yerushalayim",
+                            "Yom HaAtzmaut": "Yom Atzmaut",
+                            "Yom HaZikaron": "Yom Zikaron",
+                            "Yom HaShoah": "Yom Shoah",
+                            "Yom HaAliyah": "Yom Aliyah",
+                            "Sigd": "Yom Sigd",
+                            "Purim Katan": "Purim Katan",
+                            "Isru Chag": "Isru Chag",
+                            "Mimouna": "Yom Mimouna",
+                            "Selichot": "Selichot Elul"
                         };
-                        for (const key in traditionalMapping) {
-                            if (item.title.includes(key)) {
-                                itemName = traditionalMapping[key];
+                        const sortedKeys = Object.keys(traditionalMapping).sort((a, b) => b.length - a.length);
+                        for (const key of sortedKeys) {
+                            if (cleanTitle.includes(key)) {
+                                if (key === 'Chanukah') {
+                                    const match = cleanTitle.match(/(\d+)/);
+                                    itemName = match ? `Chanukah ${match[1]}` : traditionalMapping[key];
+                                } else {
+                                    itemName = traditionalMapping[key];
+                                }
                                 isTraditional = true;
                                 customCategory = 'traditional';
                                 break;
@@ -352,7 +369,7 @@ async function updateDashboard() {
                     }
 
                     if (!isBiblical && !isTraditional) {
-                        itemName = itemName.split(' ').slice(0, 2).join(' ');
+                        return null; // Descarta feriados tradicionais/menores não mapeados
                     }
 
                     return {
@@ -364,8 +381,9 @@ async function updateDashboard() {
                         isTraditional: isTraditional,
                         raw: item
                     };
-                });
-            updateUIBlocks(unifiedEvents, hdateData, locationName, sunsetTime);
+                })
+                .filter(Boolean);
+            updateUIBlocks(unifiedEvents, hdateData, locationName, sunsetTime, isIsrael);
         }
 
     } catch (err) {
@@ -383,7 +401,7 @@ async function updateDashboard() {
     }
 }
 
-function updateUIBlocks(events, hdate, locationName, sunsetTime) {
+function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael) {
     const now = new Date().getTime();
     const twentyFourHoursMs = 24 * 60 * 60 * 1000;
 
@@ -437,13 +455,55 @@ function updateUIBlocks(events, hdate, locationName, sunsetTime) {
     ];
     const activeFestival = findActiveFestival(FESTIVAL_CATS);
 
+    let isCholHaMoed = false;
+    let isExtraDay = false;
+    if (activeFestival) {
+        const idx = activeFestival.dayIndex;
+        if (activeFestival.category === 'matzot') {
+            if (isIsrael) {
+                isCholHaMoed = (idx >= 1 && idx <= 5);
+            } else {
+                isCholHaMoed = (idx >= 2 && idx <= 5);
+            }
+        } else if (activeFestival.category === 'sukkot') {
+            if (isIsrael) {
+                isCholHaMoed = (idx >= 1 && idx <= 6);
+            } else {
+                isCholHaMoed = (idx >= 2 && idx <= 6);
+            }
+        }
+
+        // Detect Diaspora-only extra days (Yom Tov Sheni) when there is nothing left of the festival in the Torah
+        if (!isIsrael) {
+            if (activeFestival.category === 'matzot') {
+                isExtraDay = (idx === 7); // Day 8 (22 Nissan) - Pesach ended in Israel
+            } else if (activeFestival.category === 'shavuot') {
+                isExtraDay = (idx === 1); // Day 2 (7 Sivan) - Shavuot ended in Israel
+            } else if (activeFestival.category === 'sheminiatzeret') {
+                isExtraDay = (idx === 1); // Day 2 / Simchat Torah (23 Tishrei) - Shemini Atzeret ended in Israel
+            }
+        }
+    }
+
     if (elParasha) {
-        elParasha.textContent = activeFestival
-            ? activeFestival.name
-            : (upcomingParasha ? upcomingParasha.raw.title.replace('Parashat ', '') : '-');
+        if (activeFestival) {
+            if (isCholHaMoed) {
+                elParasha.textContent = 'Chol HaMoed';
+            } else if (isExtraDay) {
+                elParasha.textContent = 'Chutz laAretz';
+            } else {
+                elParasha.textContent = 'Kriat HaMoed';
+            }
+        } else {
+            elParasha.textContent = upcomingParasha ? upcomingParasha.raw.title.replace('Parashat ', '') : '-';
+        }
     }
     if (elParashaSubtitle) {
-        elParashaSubtitle.textContent = activeFestival ? 'Leitura Especial' : 'Ciclo Anual';
+        if (activeFestival) {
+            elParashaSubtitle.textContent = 'Leitura Especial';
+        } else {
+            elParashaSubtitle.textContent = 'Ciclo Anual';
+        }
     }
 
 
@@ -458,9 +518,16 @@ function updateUIBlocks(events, hdate, locationName, sunsetTime) {
             'Bamidbar 28:19-25',      // Dia 5 – Chol HaMoed 3
             'Bamidbar 28:19-25',      // Dia 6 – Chol HaMoed 4
             'Shemot 13:17-15:26',     // Dia 7 – Shvi'i shel Pessach
+            'Devarim 15:19 - 16:17'   // Dia 8 – Acharon shel Pessach
         ],
-        'shavuot': ['Shemot 19:1-20:23'],
-        'roshhashana': ['Bereshit 21:1-34'],
+        'shavuot': [
+            'Shemot 19:1-20:23',
+            'Devarim 15:19 - 16:17'
+        ],
+        'roshhashana': [
+            'Bereshit 21:1-34',
+            'Bereshit 22:1-24'
+        ],
         'yomkippur': ['Vayikra 16:1-34'],
         'sukkot': [
             'Vayikra 22:26-23:44',    // Dia 1
@@ -471,7 +538,10 @@ function updateUIBlocks(events, hdate, locationName, sunsetTime) {
             'Bamidbar 29:26-31',      // Dia 6 – Chol HaMoed 4
             'Bamidbar 29:26-34',      // Dia 7 – Hoshana Raba
         ],
-        'sheminiatzeret': ['Devarim 14:22 - 16:17'],
+        'sheminiatzeret': [
+            'Devarim 14:22 - 16:17',
+            'Devarim 33:1 - 34:12'
+        ],
     };
 
     // Per-day Haftara readings for each Biblical festival (Chabad/Diaspora Nusach)
@@ -487,8 +557,14 @@ function updateUIBlocks(events, hdate, locationName, sunsetTime) {
             'II Shmuel 22:1-51',            // Dia 7 – Shvi'i shel Pessach
             'Yeshayahu 10:32 - 12:6',       // Dia 8 – Acharon shel Pessach
         ],
-        'shavuot': ['Yechezkel 1:1-28, 3:12'],
-        'roshhashana': ['I Shmuel 1:1-2:10'],
+        'shavuot': [
+            'Yechezkel 1:1-28, 3:12',
+            'Chavakuk 2:20 - 3:19'
+        ],
+        'roshhashana': [
+            'I Shmuel 1:1-2:10',
+            'Yirmiyahu 31:1-19'
+        ],
         'yomkippur': ['Yeshayahu 57:14-58:14'],
         'sukkot': [
             'Zecharia 14:1-21',             // Dia 1
@@ -499,7 +575,10 @@ function updateUIBlocks(events, hdate, locationName, sunsetTime) {
             'Yechezkel 38:18-39:7',       // Dia 6 – Chol HaMoed 4
             'Yechezkel 38:18-39:7',       // Dia 7 – Hoshana Raba
         ],
-        'sheminiatzeret': ['I Melachim 8:54-66'],
+        'sheminiatzeret': [
+            'I Melachim 8:54-66',
+            'Yehoshua 1:1-18'
+        ],
     };
 
     // nearFestival uses the same span logic
@@ -635,7 +714,21 @@ function updateUIBlocks(events, hdate, locationName, sunsetTime) {
         hm = hbMonths[hm] || hm;
         elDate.textContent = `${hdate.hd} ${hm}`;
     }
-    if (elLoc) elLoc.textContent = locationName || 'Jerusalém';
+    if (elLoc) {
+        elLoc.textContent = locationName || 'Jerusalém';
+        const elLocSubtitle = elLoc.nextElementSibling;
+        if (elLocSubtitle) {
+            if (activeFestival) {
+                if (isIsrael) {
+                    elLocSubtitle.textContent = 'Local Vigente (Israel)';
+                } else {
+                    elLocSubtitle.textContent = `Local Vigente (${isExtraDay ? 'Chutz laAretz' : 'Chutz'})`;
+                }
+            } else {
+                elLocSubtitle.textContent = 'Local Vigente';
+            }
+        }
+    }
 }
 
 function getEventIcon(category) {
@@ -820,3 +913,56 @@ function startTimers() {
 
 updateDashboard();
 setInterval(updateDashboard, 60000);
+
+// =======================================================
+// FERRAMENTA DE SIMULAÇÃO (EXPOSTA NO DEVTOOLS DO BROWSER)
+// =======================================================
+window.simularLayout = function(tipo, local = 'Chutz LaAretz') {
+    const isIsrael = local.toLowerCase() === 'israel';
+    const elParasha = document.getElementById('card-parasha');
+    const elParashaSubtitle = document.getElementById('card-parasha-subtitle');
+    const elTorah = document.getElementById('card-torah');
+    const elHaftara = document.getElementById('card-haftara');
+    const elLoc = document.getElementById('card-local');
+
+    let isExtraDaySimulated = false;
+
+    if (tipo === 'yomtov2' || tipo === 'simchattorah' || tipo === 'chutz_laaretz') {
+        isExtraDaySimulated = true;
+        if (elParasha) elParasha.textContent = 'Chutz laAretz';
+        if (elParashaSubtitle) elParashaSubtitle.textContent = 'Leitura Especial';
+        if (elTorah) elTorah.textContent = 'Devarim 15:19 - 16:17'; // 2º dia de Shavuot / 8º dia de Pessach
+        if (elHaftara) elHaftara.textContent = 'Chavakuk 2:20 - 3:19'; // Haftará do 2º dia de Shavuot
+    } else if (tipo === 'yomtov' || tipo === 'kriat' || tipo === 'kriat_moed') {
+        if (elParasha) elParasha.textContent = 'Kriat HaMoed';
+        if (elParashaSubtitle) elParashaSubtitle.textContent = 'Leitura Especial';
+        if (elTorah) elTorah.textContent = 'Shemot 12:21-51';
+        if (elHaftara) elHaftara.textContent = 'Yehoshua 5:2 - 6:1';
+    } else if (tipo === 'chol' || tipo === 'cholhamoed') {
+        if (elParasha) elParasha.textContent = 'Chol HaMoed';
+        if (elParashaSubtitle) elParashaSubtitle.textContent = 'Leitura Especial';
+        if (elTorah) elTorah.textContent = 'Bamidbar 28:19-25';
+        if (elHaftara) elHaftara.textContent = 'Yechezkel 37:1-14';
+    } else {
+        // Recarrega o estado real e limpa simulação
+        updateDashboard();
+        console.log('%c[Simulação] Retornando ao estado real do calendário...', 'color: #3b82f6; font-weight: bold;');
+        return;
+    }
+
+    if (elLoc) {
+        elLoc.textContent = isIsrael ? 'Jerusalém' : 'São Paulo';
+        const elLocSubtitle = elLoc.nextElementSibling;
+        if (elLocSubtitle) {
+            if (isIsrael) {
+                elLocSubtitle.textContent = 'Local Vigente (Israel)';
+            } else {
+                elLocSubtitle.textContent = `Local Vigente (${isExtraDaySimulated ? 'Chutz laAretz' : 'Chutz'})`;
+            }
+        }
+    }
+
+    console.log(`%c[Simulação Ativa] Tipo: ${tipo.toUpperCase()} | Local: ${isIsrael ? 'Israel' : (isExtraDaySimulated ? 'Chutz laAretz' : 'Chutz')}`, 'color: #a855f7; font-weight: bold;');
+};
+
+console.log("%c[Israel Dashboard] Para testar o visual sem esperar pelo calendário real, digite no console:\n  simularLayout('yomtov', 'Chutz')  -> Simula Yom Tov padrão na Diáspora (Exibe 'Chutz')\n  simularLayout('yomtov2', 'Chutz') -> Simula Dia Extra da Diáspora (Exibe 'Chutz laAretz')\n  simularLayout('chol', 'Israel')   -> Simula Chol HaMoed em Israel\n  simularLayout('normal')            -> Retorna ao visual regular", "color: #3b82f6; font-weight: bold; font-size: 11px;");
