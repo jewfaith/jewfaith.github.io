@@ -25,9 +25,6 @@ O sistema adapta os títulos das seções centrais e subtítulos conforme o cale
 ### 🗓️ 4. Filtro Estrito de 21 Grandes Festividades Tradicionais
 Apenas as maiores festividades históricas, tradicionais e jejuns definidos no sistema são permitidos no feed de eventos futuros. Outros feriados menores ou modernos não mapeados são rigorosamente filtrados para manter a interface limpa e focada.
 
-### 🧪 5. Ferramenta de Simulação Integrada
-Desenvolvido para facilitar o teste visual de diferentes layouts litúrgicos instantaneamente através do console de ferramentas do desenvolvedor (F12) do navegador.
-
 ---
 
 ## 🎨 Design & Estética Premium
