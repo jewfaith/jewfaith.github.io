@@ -1,41 +1,35 @@
-# 🌟 Israel Dashboard - Calendário Litúrgico Adaptativo
+# 🌟 Israel Dashboard - Calendário Adaptativo
 
-Um dashboard web premium, dinâmico e responsivo projetado para exibir leituras da Torá (Parashá), leituras de Haftará, salmos/escritos (Ketuvim) e contagens regressivas para festividades judaicas em tempo real. O sistema adapta-se automaticamente à localização do usuário, alternando a liturgia e as regras de feriados dependendo de ele estar em **Israel** ou na **Diáspora**.
+Um painel web dinâmico e elegante que exibe informações litúrgicas judaicas em tempo real, incluindo a Parashá da semana, leituras da Torá, Haftará, Salmos (Ketuvim) e contagens regressivas para feriados.
 
----
-
-## ✨ Principais Funcionalidades
-
-### 1. 🌍 Geolocalização Inteligente e Consenso de Fuso Horário
-* **Detecção Automática:** O sistema executa consultas em paralelo a múltiplos provedores de geolocalização de alta fidelidade para capturar as coordenadas de latitude e longitude do usuário.
-* **Algoritmo de Consenso:** Utiliza uma fórmula de centroide de mínima distância para filtrar discrepâncias (como VPNs ou rotas CDN artificiais), garantindo a maior estabilidade e precisão geográfica possível.
-* **Detecção de Israel:** Verifica o fuso horário oficial (`Asia/Jerusalem`) e faz a geolocalização reversa (buscando o código de país `'il'`) para alternar de forma dinâmica o parâmetro de Israel (`i=on` ou `i=off`) nas requisições da API Hebcal.
-
-### 🌅 2. Sincronização Dinâmica pelo Pôr do Sol (Zmanim)
-* O dashboard calcula o horário exato do pôr do sol local em tempo real todos os dias usando a API de Zmanim do Hebcal para as coordenadas geográficas exatas do usuário.
-* Ao atingir o pôr do sol, o calendário avança automaticamente as datas litúrgicas para o dia seguinte de forma contínua, sem necessidade de recarregar a página manualmente.
-
-### 📜 3. Regras Litúrgicas Inteligentes (Israel vs. Diáspora)
-O sistema adapta os títulos das seções centrais e subtítulos conforme o calendário litúrgico haláchico:
-* **Semanas Comuns:** Exibe o nome da Parashá semanal do ciclo anual (ex: *Bereshit*) e o subtítulo de localização como `Local Vigente`.
-* **Chol HaMoed (Dias Intermediários de Festas):** O título central muda automaticamente para **`Chol HaMoed`** com o subtítulo **`Leitura Especial`**.
-* **Yom Tov (Dias de Festas da Torá):** O título do painel exibe **`Kriat HaMoed`**, o subtítulo exibe **`Leitura Especial`**, e o subtítulo do local mostra **`Local Vigente (Israel)`** ou **`Local Vigente (Chutz)`** dependendo do país detectado.
-* **Yom Tov Sheni (Dias Extras na Diáspora):** Nos dias adicionais celebrados apenas fora de Israel (quando a festividade já encerrou em Israel segundo a Torá — ex: 8º dia de Pessach, 2º dia de Shavuot e 2º dia de Shemini Atzeret/Simchat Torah), o título principal muda exatamente para **`Chutz laAretz`**, com o subtítulo **`Leitura Especial`**, e o rodapé de localização exibe exatamente **`Local Vigente (Chutz laAretz)`**.
-
-### 🗓️ 4. Filtro Estrito de 21 Grandes Festividades Tradicionais
-Apenas as maiores festividades históricas, tradicionais e jejuns definidos no sistema são permitidos no feed de eventos futuros. Outros feriados menores ou modernos não mapeados são rigorosamente filtrados para manter a interface limpa e focada.
+O grande diferencial deste projeto é a sua **inteligência de localização**: ele detecta automaticamente onde o usuário está e adapta os títulos e as leituras caso ele esteja em **Israel** ou na **Diáspora (Chutz laAretz)**.
 
 ---
 
-## 🎨 Design & Estética Premium
-* **Aparência Visual:** Interface construída com base em conceitos modernos de *Glassmorphism* (efeito de vidro jateado fosco) e painéis translúcidos com bordas suaves e gradientes vibrantes no fundo.
-* **Tipografia Moderna:** Utiliza a fonte **Poppins** (do Google Fonts) e ícones vetorizados estilizados do **FontAwesome** para cada categoria de evento.
-* **Micro-animações:** Transições suaves em estados de carregamento, contagens regressivas reativas que atualizam a cada 10 milissegundos e remoção dinâmica de cartões quando uma festividade expira.
+## 🚀 Principais Recursos
+
+* **Geolocalização Automática:** Identifica a localização aproximada do usuário para carregar os dados corretos da região.
+* **Transição pelo Pôr do Sol (Zmanim):** Avança o calendário litúrgico para o dia seguinte de forma automática ao anoitecer local.
+* **Títulos Adaptativos:**
+  * **Semanas Normais:** Exibe a Parashá da semana.
+  * **Chol HaMoed:** Altera o título para *Chol HaMoed* e indica leituras especiais.
+  * **Yom Tov:** Exibe *Kriat HaMoed* e ajusta os subtítulos conforme a localização.
+  * **Dias Extras da Diáspora (Yom Tov Sheni):** Exibe exatamente *Chutz laAretz* com leituras exclusivas para quem está fora de Israel.
+* **Filtro de Feriados Tradicionais:** Exibe contagens regressivas apenas para grandes datas históricas e jejuns do calendário judaico.
+* **Console de Testes:** Permite que desenvolvedores simulem estados do painel no console do navegador (F12) digitando comandos simples como `simularLayout('yomtov', 'Chutz')`.
 
 ---
 
-## 📂 Estrutura de Arquivos
+## 🛠️ Tecnologias Utilizadas
 
-* `index.html` - Estrutura semântica HTML5 com elementos e IDs únicos para os blocos de dados.
-* `style.css` - Sistema de estilo vanilla com variáveis CSS, layout flexível/grid responsivo, efeitos de desfoque de fundo e gradientes HSL adaptados.
-* `script.js` - Toda a lógica em Javascript puro (Vanilla JS): requisições HTTP assíncronas paralelas, Zmanim, consenso de geolocalização, regras litúrgicas adaptativas, normalização de caracteres e o simulador de ambiente.
+* **HTML5** (Estrutura)
+* **CSS3 Vanilla** (Estilo com design moderno em *Glassmorphism*)
+* **Javascript Puro (ES6)** (Consumo assíncrono das APIs do Hebcal e OpenStreetMap)
+
+---
+
+## 💻 Como Rodar o Projeto
+
+1. Baixe ou clone este repositório.
+2. Abra o arquivo `index.html` em qualquer navegador.
+3. Certifique-se de estar conectado à internet para carregar as informações litúrgicas em tempo real e os ícones decorativos.
