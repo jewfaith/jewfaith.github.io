@@ -166,7 +166,55 @@ async function getGeolocation() {
 async function updateDashboard() {
     const grid = document.getElementById('upcoming-events-grid');
     if (grid) {
-        grid.innerHTML = '<div class="events-list-container glass-panel" style="color:#94a3b8;grid-column:1/-1;text-align:center;padding:28px;">Ligando Sistema</div>';
+        grid.innerHTML = `<div id="upcoming-events-grid" class="event-cards-row upcoming-events-grid">
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+</div>`;
     }
 
     try {
@@ -330,34 +378,22 @@ async function updateDashboard() {
 
                     if (!isBiblical) {
                         const traditionalMapping = {
-                            "Tish'a B'Av": "Tisha BeAv",
-                            "Tu B'Av": "Tu BeAv",
-                            "Tzom Tammuz": "Tzom Tamuz",
-                            "Asara B'Tevet": "Asara BeTevet",
-                            "Tzom Gedaliah": "Tzom Gedalyah",
-                            "Ta'anit Esther": "Taanit Ester",
-                            "Chanukah": "Chag Chanukkah",
-                            "Purim": "Yom Purim",
-                            "Tu BiShvat": "Tu BiShvat",
-                            "Lag BaOmer": "Lag BaOmer",
-                            "Shushan Purim": "Shushan Purim",
-                            "Yom Yerushalayim": "Yom Yerushalayim",
-                            "Yom HaAtzmaut": "Yom Atzmaut",
-                            "Yom HaZikaron": "Yom Zikaron",
-                            "Yom HaShoah": "Yom Shoah",
-                            "Yom HaAliyah": "Yom Aliyah",
-                            "Sigd": "Yom Sigd",
-                            "Purim Katan": "Purim Katan",
-                            "Isru Chag": "Isru Chag",
-                            "Mimouna": "Yom Mimouna",
-                            "Selichot": "Selichot Elul"
+                            // "Tish'a B'Av": "Tisha BAv",
+                            // "Tu B'Av": "Tu BeAv",
+                            // "Tzom Tammuz": "Shivah Asar",
+                            // "Asara B'Tevet": "Asarah Tevet",
+                            // "Tzom Gedaliah": "Tzom Gedaliah",
+                            // "Ta'anit Esther": "Taanit Esther",
+                            // "Tu BiShvat": "Tu BiShvat",
+                            // "Shushan Purim": "Shushan Purim",
+                            // "Purim Katan": "Purim Katan"
                         };
                         const sortedKeys = Object.keys(traditionalMapping).sort((a, b) => b.length - a.length);
                         for (const key of sortedKeys) {
                             if (cleanTitle.includes(key)) {
                                 if (key === 'Chanukah') {
                                     const match = cleanTitle.match(/(\d+)/);
-                                    itemName = match ? `Chanukah ${match[1]}` : traditionalMapping[key];
+                                    itemName = match ? `Chag Chanukah ${match[1]}` : traditionalMapping[key];
                                 } else {
                                     itemName = traditionalMapping[key];
                                 }
@@ -856,7 +892,7 @@ function renderEvents() {
                 </div>
                 <div class="card-content">
                     <h2 class="card-title">${evt.name}</h2>
-                    <span class="timer-countdown" data-time="${evt.time}">--d --h --m</span>
+                    <span class="timer-countdown" data-time="${evt.time}">Em Breve</span>
                 </div>
             </div>
         `;
@@ -917,7 +953,7 @@ setInterval(updateDashboard, 60000);
 // =======================================================
 // FERRAMENTA DE SIMULAÇÃO (EXPOSTA NO DEVTOOLS DO BROWSER)
 // =======================================================
-window.simularLayout = function(tipo, local = 'Chutz LaAretz') {
+window.simularLayout = function (tipo, local = 'Chutz LaAretz') {
     const isIsrael = local.toLowerCase() === 'israel';
     const elParasha = document.getElementById('card-parasha');
     const elParashaSubtitle = document.getElementById('card-parasha-subtitle');
