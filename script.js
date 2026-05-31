@@ -912,21 +912,24 @@ function startTimers() {
 
         timers.forEach(timer => {
             const startTimestamp = parseInt(timer.getAttribute('data-time'));
-            const startTimeMinus90s = startTimestamp - (90 * 1000);
-            const endTimestamp = startTimestamp + (24 * 60 * 60 * 1000);
+            if (isNaN(startTimestamp)) {
+                if (timer.textContent !== 'Em Breve') {
+                    timer.textContent = 'Em Breve';
+                }
+                return;
+            }
+            const startTime = startTimestamp - (2 * 60 * 1000);
+            const endTimestamp = startTimestamp + (24 * 60 * 60 * 1000) + (2 * 60 * 1000);
 
             const diffToStart = startTimestamp - now;
-            const ninetyDaysMs = 90 * 24 * 60 * 60 * 1000;
 
-            if (now >= startTimeMinus90s && now <= endTimestamp) {
+            if (now >= startTime && now <= endTimestamp) {
                 timer.textContent = 'Em Curso';
             } else if (now > endTimestamp) {
                 const card = timer.closest('.event-card');
                 const wrapper = card ? card.parentElement : null;
                 if (wrapper) wrapper.remove(); else if (card) card.remove();
                 anyExpired = true;
-            } else if (diffToStart > ninetyDaysMs) {
-                timer.textContent = 'Em Breve';
             } else {
                 const d = String(Math.floor(diffToStart / (1000 * 60 * 60 * 24))).padStart(2, '0');
                 const h = String(Math.floor((diffToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');

@@ -103,6 +103,11 @@ body {
     gap: 20px;
 }
 
+.timer-countdown,
+.card-subtitle {
+    user-select: none;
+}
+
 .event-card {
     padding: 24px;
     display: flex;
