@@ -214,6 +214,30 @@ async function updateDashboard() {
             </div>
         </div>
     </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
 </div>`;
     }
 
@@ -232,9 +256,20 @@ async function updateDashboard() {
         endDate.setMonth(endDate.getMonth() + 6);
         const endDateStr = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
 
-        const lat = userLocation ? userLocation.lat : 31.7683;
-        const lon = userLocation ? userLocation.lon : 35.2137;
-        const geoWasDetected = !!userLocation;
+        let lat = userLocation ? userLocation.lat : 31.7683;
+        let lon = userLocation ? userLocation.lon : 35.2137;
+        
+        // Se houver uma localização exata de GPS salva, sobrepor tudo
+        const exactLocRaw = localStorage.getItem('exactLocation');
+        if (exactLocRaw) {
+            try {
+                const exactLoc = JSON.parse(exactLocRaw);
+                lat = exactLoc.lat;
+                lon = exactLoc.lon;
+            } catch(e) {}
+        }
+
+        const geoWasDetected = !!userLocation || !!exactLocRaw;
 
         let locationName = "Jerusalém";
         let isIsrael = true; // default to true since fallback is Jerusalem
@@ -257,7 +292,14 @@ async function updateDashboard() {
                 if (locRes.ok) {
                     const locData = await locRes.json();
                     const addr = locData.address || {};
-                    locationName = addr.city || addr.town || addr.village || addr.county || addr.state || "Jerusalém";
+                    // Mostrar apenas o País ou Cidade + País (priorizando País se existir para maior confiabilidade)
+                    const city = addr.city || addr.town || addr.village || addr.state;
+                    if (addr.country) {
+                        locationName = city ? `${city}, ${addr.country}` : addr.country;
+                    } else {
+                        locationName = city || "Jerusalém";
+                    }
+                    
                     if (addr.country_code) {
                         isIsrael = (addr.country_code.toLowerCase() === 'il');
                     }
@@ -273,6 +315,7 @@ async function updateDashboard() {
             currentSunsetTime = sunsetTime;
         } catch (e) { console.error('Zmanim failed', e); }
         const isAfterSunset = sunsetTime > 0 && new Date().getTime() > sunsetTime;
+
 
         const converterUrl = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${day}&g2h=1&strict=1${isAfterSunset ? '&gs=on' : ''}`;
         const hdateData = await hebcalFetch(converterUrl);
@@ -378,22 +421,19 @@ async function updateDashboard() {
 
                     if (!isBiblical) {
                         const traditionalMapping = {
-                            // "Tish'a B'Av": "Tisha BAv",
-                            // "Tu B'Av": "Tu BeAv",
-                            // "Tzom Tammuz": "Shivah Asar",
-                            // "Asara B'Tevet": "Asarah Tevet",
-                            // "Tzom Gedaliah": "Tzom Gedaliah",
-                            // "Ta'anit Esther": "Taanit Esther",
-                            // "Tu BiShvat": "Tu BiShvat",
-                            // "Shushan Purim": "Shushan Purim",
-                            // "Purim Katan": "Purim Katan"
+                            "Chanukah": "Chag Hanukkah",
+                            "Purim": "Yom Purim",
+                            "Tzom Tammuz": "Tzom Tammuz",
+                            "Tish'a B'Av": "Tisha BAv",
+                            "Tzom Gedaliah": "Tzom Gedaliah",
+                            "Asara B'Tevet": "Tzom Tevet"
                         };
                         const sortedKeys = Object.keys(traditionalMapping).sort((a, b) => b.length - a.length);
                         for (const key of sortedKeys) {
                             if (cleanTitle.includes(key)) {
                                 if (key === 'Chanukah') {
                                     const match = cleanTitle.match(/(\d+)/);
-                                    itemName = match ? `Chag Chanukah ${match[1]}` : traditionalMapping[key];
+                                    itemName = match ? `Hanukkah ${match[1]}` : traditionalMapping[key];
                                 } else {
                                     itemName = traditionalMapping[key];
                                 }
@@ -531,7 +571,7 @@ function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael) {
                 elParasha.textContent = 'Kriat HaMoed';
             }
         } else {
-            elParasha.textContent = upcomingParasha ? upcomingParasha.raw.title.replace('Parashat ', '') : '-';
+            elParasha.textContent = upcomingParasha ? upcomingParasha.raw.title.replace('Parashat ', '').replace(/[\u2018\u2019]/g, '') : '-';
         }
     }
     if (elParashaSubtitle) {
@@ -767,7 +807,16 @@ function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael) {
     }
 }
 
-function getEventIcon(category) {
+function getEventIcon(category, name) {
+    if (name) {
+        const cleanName = name.toLowerCase().replace(/[^a-z0-9\s]/g, '');
+        if (cleanName.includes('hanukkah')) return '<i class="fa-solid fa-menorah"></i>';
+        if (cleanName.includes('purim')) return '<i class="fa-solid fa-mask"></i>';
+        if (cleanName.includes('tammuz')) return '<i class="fa-solid fa-burst"></i>';
+        if (cleanName.includes('tisha')) return '<i class="fa-solid fa-fire"></i>';
+        if (cleanName.includes('gedaliah')) return '<i class="fa-solid fa-user-slash"></i>';
+        if (cleanName.includes('tevet')) return '<i class="fa-solid fa-shield-halved"></i>';
+    }
     switch (category) {
         case 'parashat': return '<i class="fa-solid fa-leaf"></i>';
         case 'pesach': return '<i class="fa-solid fa-person-walking-luggage"></i>';
@@ -780,8 +829,7 @@ function getEventIcon(category) {
         case 'simchattorah': return '<i class="fa-solid fa-book-open"></i>';
         case 'roshchodesh': return '<i class="fa-solid fa-moon"></i>';
         case 'omer': return '<i class="fa-solid fa-wheat-awn"></i>';
-        case 'traditional': return '<i class="fa-solid fa-star-of-david"></i>';
-        default: return '<i class="fa-solid fa-bookmark"></i>';
+        default: return '<i class="fa-solid fa-star-of-david"></i>';
     }
 }
 
@@ -865,13 +913,13 @@ function renderEvents() {
                 seenNames.add(normalized);
             }
         } else {
-            if (majorCount < 3) {
+            if (majorCount < 5) {
                 unique.push(item);
                 majorCount++;
                 seenNames.add(normalized);
             }
         }
-        if (shabbatCount >= 1 && majorCount >= 3) break;
+        if (shabbatCount >= 1 && majorCount >= 5) break;
     }
 
     const upcoming = unique.sort((a, b) => a.time - b.time);
@@ -882,7 +930,7 @@ function renderEvents() {
     }
 
     upcoming.forEach(evt => {
-        const icon = getEventIcon(evt.category);
+        const icon = getEventIcon(evt.category, evt.name);
 
         const card = document.createElement('div');
         card.innerHTML = `
@@ -911,6 +959,7 @@ function startTimers() {
         let anyExpired = false;
 
         timers.forEach(timer => {
+            if (timer.getAttribute('data-copied') === 'true') return;
             const startTimestamp = parseInt(timer.getAttribute('data-time'));
             if (isNaN(startTimestamp)) {
                 if (timer.textContent !== 'Em Breve') {
@@ -925,17 +974,24 @@ function startTimers() {
 
             if (now >= startTime && now <= endTimestamp) {
                 timer.textContent = 'Em Curso';
+                timer.classList.add('ongoing');
             } else if (now > endTimestamp) {
                 const card = timer.closest('.event-card');
                 const wrapper = card ? card.parentElement : null;
                 if (wrapper) wrapper.remove(); else if (card) card.remove();
                 anyExpired = true;
             } else {
-                const d = String(Math.floor(diffToStart / (1000 * 60 * 60 * 24))).padStart(2, '0');
-                const h = String(Math.floor((diffToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-                const m = String(Math.floor((diffToStart % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-                timer.textContent = `${d}d ${h}h ${m}m`;
+                const threshold = (99 * 24 * 60 * 60 * 1000) + (22 * 60 * 60 * 1000) + (59 * 60 * 1000);
+                if (diffToStart > threshold) {
+                    timer.textContent = 'Em Breve';
+                } else {
+                    const d = String(Math.floor(diffToStart / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                    const h = String(Math.floor((diffToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                    const m = String(Math.floor((diffToStart % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                    timer.textContent = `${d}d ${h}h ${m}m`;
+                }
                 timer.style.color = '';
+                timer.classList.remove('ongoing');
             }
         });
 
@@ -951,57 +1007,131 @@ function startTimers() {
 
 
 updateDashboard();
-setInterval(updateDashboard, 60000);
 
-// =======================================================
-// FERRAMENTA DE SIMULAÇÃO (EXPOSTA NO DEVTOOLS DO BROWSER)
-// =======================================================
-window.simularLayout = function (tipo, local = 'Chutz LaAretz') {
-    const isIsrael = local.toLowerCase() === 'israel';
-    const elParasha = document.getElementById('card-parasha');
-    const elParashaSubtitle = document.getElementById('card-parasha-subtitle');
-    const elTorah = document.getElementById('card-torah');
-    const elHaftara = document.getElementById('card-haftara');
-    const elLoc = document.getElementById('card-local');
+document.addEventListener('click', (event) => {
+    const card = event.target.closest('.event-card');
+    if (!card) return;
 
-    let isExtraDaySimulated = false;
-
-    if (tipo === 'yomtov2' || tipo === 'simchattorah' || tipo === 'chutz_laaretz') {
-        isExtraDaySimulated = true;
-        if (elParasha) elParasha.textContent = 'Chutz laAretz';
-        if (elParashaSubtitle) elParashaSubtitle.textContent = 'Leitura Especial';
-        if (elTorah) elTorah.textContent = 'Devarim 15:19 - 16:17'; // 2º dia de Shavuot / 8º dia de Pessach
-        if (elHaftara) elHaftara.textContent = 'Chavakuk 2:20 - 3:19'; // Haftará do 2º dia de Shavuot
-    } else if (tipo === 'yomtov' || tipo === 'kriat' || tipo === 'kriat_moed') {
-        if (elParasha) elParasha.textContent = 'Kriat HaMoed';
-        if (elParashaSubtitle) elParashaSubtitle.textContent = 'Leitura Especial';
-        if (elTorah) elTorah.textContent = 'Shemot 12:21-51';
-        if (elHaftara) elHaftara.textContent = 'Yehoshua 5:2 - 6:1';
-    } else if (tipo === 'chol' || tipo === 'cholhamoed') {
-        if (elParasha) elParasha.textContent = 'Chol HaMoed';
-        if (elParashaSubtitle) elParashaSubtitle.textContent = 'Leitura Especial';
-        if (elTorah) elTorah.textContent = 'Bamidbar 28:19-25';
-        if (elHaftara) elHaftara.textContent = 'Yechezkel 37:1-14';
-    } else {
-        // Recarrega o estado real e limpa simulação
-        updateDashboard();
-        console.log('%c[Simulação] Retornando ao estado real do calendário...', 'color: #3b82f6; font-weight: bold;');
+    // Check if it's the "Local Vigente" card to open the accuracy modal instead of copying
+    if (card.id === 'card-local-vigente') {
+        const modal = document.getElementById('location-modal');
+        modal.style.display = 'flex';
+        
+        // Auto-trigger a search guess based on current location string
+        const searchInput = document.getElementById('location-search-input');
+        if (searchInput) {
+            const currentLocName = document.getElementById('card-local').textContent;
+            if (currentLocName && !['-', 'Calculando...', 'Restaurando...', 'Aguardando GPS...', 'Erro GPS'].includes(currentLocName)) {
+                // Use just the city part to get broader autocomplete guesses
+                searchInput.value = currentLocName.split(',')[0].trim();
+                searchInput.dispatchEvent(new Event('input'));
+            } else {
+                searchInput.value = '';
+                document.getElementById('location-suggestions').style.display = 'none';
+            }
+            setTimeout(() => searchInput.focus(), 100);
+        }
+        
         return;
     }
 
-    if (elLoc) {
-        elLoc.textContent = isIsrael ? 'Jerusalém' : 'São Paulo';
-        const elLocSubtitle = elLoc.nextElementSibling;
-        if (elLocSubtitle) {
-            if (isIsrael) {
-                elLocSubtitle.textContent = 'Local Vigente (Israel)';
-            } else {
-                elLocSubtitle.textContent = `Local Vigente (${isExtraDaySimulated ? 'Chutz laAretz' : 'Chutz'})`;
+    const titleEl = card.querySelector('.card-title');
+    const subtitleEl = card.querySelector('.card-subtitle') || card.querySelector('.timer-countdown');
+
+    if (titleEl) {
+        const textToCopy = titleEl.textContent.trim();
+        if (!textToCopy || textToCopy === '-') return;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            if (subtitleEl) {
+                const originalText = subtitleEl.textContent;
+
+                subtitleEl.setAttribute('data-copied', 'true');
+                subtitleEl.textContent = 'Item Copiado';
+
+                setTimeout(() => {
+                    subtitleEl.removeAttribute('data-copied');
+                    subtitleEl.textContent = originalText;
+                }, 1200);
             }
-        }
+        }).catch(err => {
+            console.error('Falha ao copiar texto: ', err);
+        });
     }
+});
 
-    console.log(`%c[Simulação Ativa] Tipo: ${tipo.toUpperCase()} | Local: ${isIsrael ? 'Israel' : (isExtraDaySimulated ? 'Chutz laAretz' : 'Chutz')}`, 'color: #a855f7; font-weight: bold;');
-};
+// Modal Logic
+document.getElementById('location-modal')?.addEventListener('click', (e) => {
+    // Fechar se clicar no fundo desfocado
+    if (e.target.id === 'location-modal') {
+        e.target.style.display = 'none';
+    }
+});
 
-console.log("%c[Israel Dashboard] Para testar o visual sem esperar pelo calendário real, digite no console:\n  simularLayout('yomtov', 'Chutz')  -> Simula Yom Tov padrão na Diáspora (Exibe 'Chutz')\n  simularLayout('yomtov2', 'Chutz') -> Simula Dia Extra da Diáspora (Exibe 'Chutz laAretz')\n  simularLayout('chol', 'Israel')   -> Simula Chol HaMoed em Israel\n  simularLayout('normal')            -> Retorna ao visual regular", "color: #3b82f6; font-weight: bold; font-size: 11px;");
+// Autocomplete Logic
+const searchInput = document.getElementById('location-search-input');
+const suggestionsList = document.getElementById('location-suggestions');
+let searchTimeout;
+
+searchInput?.addEventListener('input', (e) => {
+    const query = e.target.value.trim();
+    clearTimeout(searchTimeout);
+    
+    if (query.length < 3) {
+        suggestionsList.style.display = 'none';
+        suggestionsList.innerHTML = '';
+        return;
+    }
+    
+    searchTimeout = setTimeout(async () => {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5&accept-language=pt`);
+            if (!res.ok) return;
+            const data = await res.json();
+            
+            suggestionsList.innerHTML = '';
+            
+            if (data.length === 0) {
+                suggestionsList.style.display = 'none';
+                return;
+            }
+            
+            data.forEach(item => {
+                const li = document.createElement('li');
+                // Simplify display name (get first 2-3 parts of the address)
+                const parts = item.display_name.split(',').map(s => s.trim());
+                li.textContent = parts.slice(0, 3).join(', ');
+                
+                li.addEventListener('click', () => {
+                    const lat = parseFloat(item.lat);
+                    const lon = parseFloat(item.lon);
+                    
+                    localStorage.setItem('exactLocation', JSON.stringify({ lat, lon }));
+                    
+                    document.getElementById('location-modal').style.display = 'none';
+                    searchInput.value = '';
+                    suggestionsList.style.display = 'none';
+                    
+                    const localTitle = document.getElementById('card-local');
+                    if (localTitle) localTitle.textContent = 'Calculando...';
+                    
+                    updateDashboard();
+                });
+                suggestionsList.appendChild(li);
+            });
+            
+            suggestionsList.style.display = 'block';
+        } catch (err) {
+            console.error('Search API error:', err);
+        }
+    }, 400); // 400ms debounce
+});
+
+// Close suggestions when clicking outside
+document.addEventListener('click', (e) => {
+    if (searchInput && !searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+        suggestionsList.style.display = 'none';
+    }
+});
+
+// Removed dynamic watermark generator per user request, using static bg.png instead
