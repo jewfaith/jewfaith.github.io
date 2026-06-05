@@ -1016,6 +1016,7 @@ document.addEventListener('click', (event) => {
     if (card.id === 'card-local-vigente') {
         const modal = document.getElementById('location-modal');
         modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
         
         // Auto-trigger a search guess based on current location string
         const searchInput = document.getElementById('location-search-input');
@@ -1027,7 +1028,7 @@ document.addEventListener('click', (event) => {
                 searchInput.dispatchEvent(new Event('input'));
             } else {
                 searchInput.value = '';
-                document.getElementById('location-suggestions').style.display = 'none';
+                document.getElementById('location-suggestions').innerHTML = '<li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li>';
             }
             setTimeout(() => searchInput.focus(), 100);
         }
@@ -1060,11 +1061,11 @@ document.addEventListener('click', (event) => {
     }
 });
 
-// Modal Logic
 document.getElementById('location-modal')?.addEventListener('click', (e) => {
     // Fechar se clicar no fundo desfocado
     if (e.target.id === 'location-modal') {
         e.target.style.display = 'none';
+        document.body.style.overflow = '';
     }
 });
 
@@ -1078,47 +1079,55 @@ searchInput?.addEventListener('input', (e) => {
     clearTimeout(searchTimeout);
     
     if (query.length < 3) {
-        suggestionsList.style.display = 'none';
-        suggestionsList.innerHTML = '';
+        suggestionsList.innerHTML = '<li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li>';
         return;
     }
     
     searchTimeout = setTimeout(async () => {
         try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5&accept-language=pt`);
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=3&accept-language=pt`);
             if (!res.ok) return;
             const data = await res.json();
             
             suggestionsList.innerHTML = '';
             
             if (data.length === 0) {
-                suggestionsList.style.display = 'none';
+                suggestionsList.innerHTML = '<li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li>';
                 return;
             }
             
-            data.forEach(item => {
+            // Force exactly 3 results (pad with inactive elements if less)
+            for (let i = 0; i < 3; i++) {
+                const item = data[i];
                 const li = document.createElement('li');
-                // Simplify display name (get first 2-3 parts of the address)
-                const parts = item.display_name.split(',').map(s => s.trim());
-                li.textContent = parts.slice(0, 3).join(', ');
                 
-                li.addEventListener('click', () => {
-                    const lat = parseFloat(item.lat);
-                    const lon = parseFloat(item.lon);
+                if (item) {
+                    const parts = item.display_name.split(',').map(s => s.trim());
+                    li.textContent = parts.slice(0, 3).join(', ');
                     
-                    localStorage.setItem('exactLocation', JSON.stringify({ lat, lon }));
-                    
-                    document.getElementById('location-modal').style.display = 'none';
-                    searchInput.value = '';
-                    suggestionsList.style.display = 'none';
-                    
-                    const localTitle = document.getElementById('card-local');
-                    if (localTitle) localTitle.textContent = 'Calculando...';
-                    
-                    updateDashboard();
-                });
+                    li.addEventListener('click', () => {
+                        const lat = parseFloat(item.lat);
+                        const lon = parseFloat(item.lon);
+                        
+                        localStorage.setItem('exactLocation', JSON.stringify({ lat, lon }));
+                        
+                        document.getElementById('location-modal').style.display = 'none';
+                        document.body.style.overflow = '';
+                        searchInput.value = '';
+                        suggestionsList.innerHTML = '<li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li>';
+                        
+                        const localTitle = document.getElementById('card-local');
+                        if (localTitle) localTitle.textContent = 'Calculando...';
+                        
+                        updateDashboard();
+                    });
+                } else {
+                    li.textContent = '-';
+                    li.style.opacity = '0.2';
+                    li.style.pointerEvents = 'none';
+                }
                 suggestionsList.appendChild(li);
-            });
+            }
             
             suggestionsList.style.display = 'block';
         } catch (err) {
@@ -1127,11 +1136,6 @@ searchInput?.addEventListener('input', (e) => {
     }, 400); // 400ms debounce
 });
 
-// Close suggestions when clicking outside
-document.addEventListener('click', (e) => {
-    if (searchInput && !searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
-        suggestionsList.style.display = 'none';
-    }
-});
+
 
 // Removed dynamic watermark generator per user request, using static bg.png instead
