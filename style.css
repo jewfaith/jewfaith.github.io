@@ -93,8 +93,6 @@ body {
 }
 
 .events-dashboard {
-    margin-top: 1rem;
-    margin-bottom: 3rem;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -169,6 +167,10 @@ i {
 @media(max-width: 768px) {
     .card-title {
         font-size: 1.0rem;
+    }
+
+    .events-dashboard {
+        margin-bottom: 5rem;
     }
 
     .card-subtitle {
@@ -291,8 +293,8 @@ i {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    right: 0;
+    bottom: 0;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -301,15 +303,18 @@ i {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    box-sizing: border-box;
     animation: fadeUp 0.3s ease-out;
 }
 
 .modal-content {
     max-width: 450px;
     width: 100%;
+    margin: auto;
     padding: 30px;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 .modal-btn {
@@ -370,7 +375,7 @@ i {
     max-height: 200px;
     overflow-y: auto;
     z-index: 100;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
 .suggestions-list li {
@@ -378,7 +383,7 @@ i {
     cursor: pointer;
     color: #cbd5e1;
     font-size: 0.9rem;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     transition: background 0.2s;
     white-space: nowrap;
     overflow: hidden;
