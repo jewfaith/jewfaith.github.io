@@ -967,8 +967,8 @@ function startTimers() {
                 }
                 return;
             }
-            const startTime = startTimestamp - (2 * 60 * 1000);
-            const endTimestamp = startTimestamp + (24 * 60 * 60 * 1000) + (2 * 60 * 1000);
+            const startTime = startTimestamp - 65000;
+            const endTimestamp = startTimestamp + (24 * 60 * 60 * 1000) + 65000;
 
             const diffToStart = startTimestamp - now;
 
@@ -981,7 +981,7 @@ function startTimers() {
                 if (wrapper) wrapper.remove(); else if (card) card.remove();
                 anyExpired = true;
             } else {
-                const threshold = (99 * 24 * 60 * 60 * 1000) + (22 * 60 * 60 * 1000) + (59 * 60 * 1000);
+                const threshold = (99 * 24 * 60 * 60 * 1000) + (23 * 60 * 60 * 1000) + (58 * 60 * 1000) + (50 * 1000);
                 if (diffToStart > threshold) {
                     timer.textContent = 'Em Breve';
                 } else {
