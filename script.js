@@ -258,7 +258,7 @@ async function updateDashboard() {
 
         let lat = userLocation ? userLocation.lat : 31.7683;
         let lon = userLocation ? userLocation.lon : 35.2137;
-        
+
         // Se houver uma localização exata de GPS salva, sobrepor tudo
         const exactLocRaw = localStorage.getItem('exactLocation');
         if (exactLocRaw) {
@@ -266,7 +266,7 @@ async function updateDashboard() {
                 const exactLoc = JSON.parse(exactLocRaw);
                 lat = exactLoc.lat;
                 lon = exactLoc.lon;
-            } catch(e) {}
+            } catch (e) { }
         }
 
         const geoWasDetected = !!userLocation || !!exactLocRaw;
@@ -299,7 +299,7 @@ async function updateDashboard() {
                     } else {
                         locationName = city || "Jerusalém";
                     }
-                    
+
                     if (addr.country_code) {
                         isIsrael = (addr.country_code.toLowerCase() === 'il');
                     }
@@ -925,7 +925,79 @@ function renderEvents() {
     const upcoming = unique.sort((a, b) => a.time - b.time);
 
     if (upcoming.length === 0) {
-        grid.innerHTML = '<div class="events-list-container glass-panel" style="grid-column:1/-1;text-align:center;padding:28px;">Sem Festividade</div>';
+        grid.innerHTML = `<div id="upcoming-events-grid" class="event-cards-row upcoming-events-grid">
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+</div>`;
         return;
     }
 
@@ -997,7 +1069,79 @@ function startTimers() {
 
         const grid = document.getElementById('upcoming-events-grid');
         if (anyExpired && grid && grid.children.length === 0) {
-            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:28px;">Sem Festividade</div>';
+            grid.innerHTML = `<div id="upcoming-events-grid" class="event-cards-row upcoming-events-grid">
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="event-card event-item glass-panel">
+            <div class="icon-circle">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="card-content">
+                <h2 class="card-title">-</h2>
+                <span class="timer-countdown" data-time="">Em Breve</span>
+            </div>
+        </div>
+    </div>
+</div>`;
         }
     }
 
@@ -1017,7 +1161,7 @@ document.addEventListener('click', (event) => {
         const modal = document.getElementById('location-modal');
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        
+
         // Auto-trigger a search guess based on current location string
         const searchInput = document.getElementById('location-search-input');
         if (searchInput) {
@@ -1032,7 +1176,7 @@ document.addEventListener('click', (event) => {
             }
             setTimeout(() => searchInput.focus(), 100);
         }
-        
+
         return;
     }
 
@@ -1077,48 +1221,48 @@ let searchTimeout;
 searchInput?.addEventListener('input', (e) => {
     const query = e.target.value.trim();
     clearTimeout(searchTimeout);
-    
+
     if (query.length < 3) {
         suggestionsList.innerHTML = '<li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li>';
         return;
     }
-    
+
     searchTimeout = setTimeout(async () => {
         try {
             const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=3&accept-language=pt`);
             if (!res.ok) return;
             const data = await res.json();
-            
+
             suggestionsList.innerHTML = '';
-            
+
             if (data.length === 0) {
                 suggestionsList.innerHTML = '<li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li>';
                 return;
             }
-            
+
             // Force exactly 3 results (pad with inactive elements if less)
             for (let i = 0; i < 3; i++) {
                 const item = data[i];
                 const li = document.createElement('li');
-                
+
                 if (item) {
                     const parts = item.display_name.split(',').map(s => s.trim());
                     li.textContent = parts.slice(0, 3).join(', ');
-                    
+
                     li.addEventListener('click', () => {
                         const lat = parseFloat(item.lat);
                         const lon = parseFloat(item.lon);
-                        
+
                         localStorage.setItem('exactLocation', JSON.stringify({ lat, lon }));
-                        
+
                         document.getElementById('location-modal').style.display = 'none';
                         document.body.style.overflow = '';
                         searchInput.value = '';
                         suggestionsList.innerHTML = '<li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li><li style="opacity: 0.2; pointer-events: none;">-</li>';
-                        
+
                         const localTitle = document.getElementById('card-local');
                         if (localTitle) localTitle.textContent = 'Calculando...';
-                        
+
                         updateDashboard();
                     });
                 } else {
@@ -1128,7 +1272,7 @@ searchInput?.addEventListener('input', (e) => {
                 }
                 suggestionsList.appendChild(li);
             }
-            
+
             suggestionsList.style.display = 'block';
         } catch (err) {
             console.error('Search API error:', err);
