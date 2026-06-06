@@ -1382,49 +1382,6 @@ searchInput?.addEventListener('input', (e) => {
 
 
 
-// --- ZMANIM MODAL LOGIC ---
-document.getElementById('card-hdate-wrapper')?.addEventListener('click', (e) => {
-    if (e.currentTarget.classList.contains('not-ready')) return;
-    const modal = document.getElementById('zmanim-modal');
-    const list = document.getElementById('zmanim-list');
-    if (!modal || !list) return;
-    
-    list.innerHTML = '';
-    if (!window.currentZmanim) {
-        list.innerHTML = '<span style="color:#94a3b8; text-align:center;">Nenhum Zmanim disponível.</span>';
-    } else {
-        const labels = {
-            alotHaShachar: { name: "Alot Hashachar", icon: "fa-cloud-sun" },
-            sunrise: { name: "Netz Hachama", icon: "fa-sun" },
-            chatzot: { name: "Chatzot Hayom", icon: "fa-circle-half-stroke" },
-            minchaGedola: { name: "Mincha Gedola", icon: "fa-cloud-sun" },
-            sunset: { name: "Shkiat Hachama", icon: "fa-moon" },
-            tzeit7083deg: { name: "Tzeit Hakochavim", icon: "fa-star" }
-        };
-        for (const [key, obj] of Object.entries(labels)) {
-            if (window.currentZmanim[key]) {
-                const dateObj = new Date(window.currentZmanim[key]);
-                const timeStr = dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-                list.innerHTML += `<div class="zmanim-row">
-                    <div class="zmanim-label-group">
-                        <i class="fa-solid ${obj.icon} zmanim-icon"></i>
-                        <span class="zmanim-name">${obj.name}</span>
-                    </div>
-                    <span class="zmanim-time">${timeStr}</span>
-                </div>`;
-            }
-        }
-    }
-    
-    if (window.renderIcons) window.renderIcons();
-    modal.style.display = 'flex';
-});
-
-document.getElementById('zmanim-modal')?.addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) {
-        e.currentTarget.style.display = 'none';
-    }
-});
 
 // --- ACCESSIBILITY LOGIC ---
 document.addEventListener('keydown', (e) => {

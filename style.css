@@ -441,45 +441,6 @@ i {
     color: #f8fafc;
 }
 
-.zmanim-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 18px;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 16px;
-    transition: all 0.2s;
-    cursor: default;
-    border: 1px solid rgba(255, 255, 255, 0.02);
-}
-
-.zmanim-label-group {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.zmanim-icon {
-    color: #6366f1;
-    font-size: 1.1rem;
-    width: 24px;
-    text-align: center;
-}
-
-.zmanim-name {
-    font-weight: 500;
-    font-size: 1.05rem;
-    color: #f8fafc;
-    letter-spacing: 0.3px;
-}
-
-.zmanim-time {
-    font-weight: 700;
-    font-size: 1.15rem;
-    color: #a5b4fc;
-    font-family: monospace;
-    letter-spacing: 1px;
-}
 
 @media (max-width: 600px) {
     .modal-content {
@@ -493,27 +454,7 @@ i {
         font-size: 1rem;
     }
     
-    .zmanim-row {
-        padding: 12px 14px;
-    }
-    
-    .zmanim-label-group {
-        gap: 10px;
-    }
-    
-    .zmanim-icon {
-        font-size: 1rem;
-        width: 20px;
-    }
-    
-    .zmanim-name {
-        font-size: 0.95rem;
-    }
-    
-    .zmanim-time {
-        font-size: 1.05rem;
-    }
-    
+
     .suggestions-list li {
         padding: 12px 14px;
     }

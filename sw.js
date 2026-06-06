@@ -1,13 +1,11 @@
-const CACHE_NAME = 'yisrael-date-v1';
+const CACHE_NAME = 'yisrael-date-v2';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './style.css',
     './script.js',
-    './manifest.json',
-    'https://dwo.co.il/wp-content/uploads/2022/03/Emblem_of_Israel.svg_.png',
-    'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap',
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+    './icons.js',
+    './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -41,9 +39,16 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
         fetch(event.request)
             .then((networkResponse) => {
+                // Não faz cache de respostas inválidas ou de erro (exceto opacas que são 0)
+                if (!networkResponse || (networkResponse.status !== 200 && networkResponse.type !== 'opaque')) {
+                    return networkResponse;
+                }
                 const responseClone = networkResponse.clone();
                 caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(event.request, responseClone);
+                    // Tenta salvar no cache, ignorando erros se a requisição não suportar (ex: extensões)
+                    if (event.request.url.startsWith('http')) {
+                        cache.put(event.request, responseClone).catch(() => {});
+                    }
                 });
                 return networkResponse;
             })
