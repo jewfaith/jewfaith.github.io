@@ -332,7 +332,9 @@ async function updateDashboard() {
                 'Rosh Hashana': { name: 'Yom Teruah' },
                 'Yom Kippur': { name: 'Yom Kippur' },
                 'Sukkot': { name: 'Chag Sukkot' },
+                'Shmini Atzeret': { name: 'Shemini Atzeret' },
                 'Shemini Atzeret': { name: 'Shemini Atzeret' },
+                'Simchat Torah': { name: 'Simchat Torah' },
                 'Rosh Chodesh': { name: 'Rosh Chodesh' },
                 'Omer': { name: 'Sefirat Omer' }
             };
@@ -394,6 +396,11 @@ async function updateDashboard() {
 
                     for (const key in biblicalMapping) {
                         if (cleanTitle.includes(key)) {
+                            // Previne que outros 'anos novos' menores sejam confundidos com o Yom Teruah
+                            if (key === 'Rosh Hashana' && (cleanTitle.includes('LaBehemot') || cleanTitle.includes('LaIlanot'))) {
+                                continue;
+                            }
+                            
                             itemName = biblicalMapping[key].name;
                             isBiblical = true;
                             customCategory = key.toLowerCase().replace(/ /g, '');
@@ -423,6 +430,7 @@ async function updateDashboard() {
                         const traditionalMapping = {
                             "Chanukah": "Chag Hanukkah",
                             "Purim": "Yom Purim",
+                            "Ta'anit Esther": "Ta'anit Esther",
                             "Tzom Tammuz": "Tzom Tammuz",
                             "Tish'a B'Av": "Tisha BAv",
                             "Tzom Gedaliah": "Tzom Gedaliah",
@@ -1023,15 +1031,19 @@ function renderEvents() {
 }
 
 function startTimers() {
-    if (timerInterval) clearInterval(timerInterval);
+    if (timerInterval) clearTimeout(timerInterval);
 
     function update() {
         const timers = document.querySelectorAll('.timer-countdown');
         const now = new Date().getTime();
         let anyExpired = false;
+        let minNextUpdate = 60 * 60 * 1000; // Máximo de 1 hora de espera
 
         timers.forEach(timer => {
-            if (timer.getAttribute('data-copied') === 'true') return;
+            if (timer.getAttribute('data-copied') === 'true') {
+                minNextUpdate = Math.min(minNextUpdate, 1200);
+                return;
+            }
             const startTimestamp = parseInt(timer.getAttribute('data-time'));
             if (isNaN(startTimestamp)) {
                 if (timer.textContent !== 'Em Breve') {
@@ -1039,31 +1051,56 @@ function startTimers() {
                 }
                 return;
             }
-            const startTime = startTimestamp - 65000;
+            const startTime = startTimestamp - 122000;
             const endTimestamp = startTimestamp + (24 * 60 * 60 * 1000) + 65000;
 
             const diffToStart = startTimestamp - now;
+            let nextUpdateForThisTimer = minNextUpdate;
 
             if (now >= startTime && now <= endTimestamp) {
                 timer.textContent = 'Em Curso';
                 timer.classList.add('ongoing');
+                nextUpdateForThisTimer = endTimestamp - now + 1;
             } else if (now > endTimestamp) {
                 const card = timer.closest('.event-card');
                 const wrapper = card ? card.parentElement : null;
                 if (wrapper) wrapper.remove(); else if (card) card.remove();
                 anyExpired = true;
             } else {
-                const threshold = (99 * 24 * 60 * 60 * 1000) + (23 * 60 * 60 * 1000) + (58 * 60 * 1000) + (50 * 1000);
+                const threshold = 87 * 24 * 60 * 60 * 1000;
                 if (diffToStart > threshold) {
-                    timer.textContent = 'Em Breve';
+                    const evtDate = new Date(startTimestamp);
+                    const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                    timer.textContent = `Em ${months[evtDate.getMonth()]}`;
+                    nextUpdateForThisTimer = diffToStart - threshold;
                 } else {
-                    const d = String(Math.floor(diffToStart / (1000 * 60 * 60 * 24))).padStart(2, '0');
-                    const h = String(Math.floor((diffToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-                    const m = String(Math.floor((diffToStart % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-                    timer.textContent = `${d}d ${h}h ${m}m`;
+                    const totalHours = diffToStart / (1000 * 60 * 60);
+                    if (totalHours > 95) {
+                        const days = Math.floor(diffToStart / (1000 * 60 * 60 * 24));
+                        timer.textContent = `Faltam ${days}d`;
+                        let ms = diffToStart % 86400000;
+                        if (ms === 0) ms = 86400000;
+                        nextUpdateForThisTimer = Math.min(ms, diffToStart - 95 * 3600000);
+                    } else if (totalHours < 1.5) {
+                        const totalMins = Math.floor(diffToStart / (1000 * 60));
+                        timer.textContent = `Faltam ${totalMins}m`;
+                        let ms = diffToStart % 60000;
+                        if (ms === 0) ms = 60000;
+                        nextUpdateForThisTimer = Math.min(ms, diffToStart - 122000);
+                    } else {
+                        const h = Math.floor(diffToStart / (1000 * 60 * 60));
+                        timer.textContent = `Faltam ${h}h`;
+                        let ms = diffToStart % 3600000;
+                        if (ms === 0) ms = 3600000;
+                        nextUpdateForThisTimer = Math.min(ms, diffToStart - 1.5 * 3600000);
+                    }
                 }
                 timer.style.color = '';
                 timer.classList.remove('ongoing');
+            }
+
+            if (nextUpdateForThisTimer > 0 && nextUpdateForThisTimer < minNextUpdate) {
+                minNextUpdate = nextUpdateForThisTimer;
             }
         });
 
@@ -1142,11 +1179,12 @@ function startTimers() {
         </div>
     </div>
 </div>`;
-        }
+        } // fecha if (anyExpired && ...)
+    // Usa setTimeout dinâmico com base no tempo restante mínimo necessário (mais um buffer de 5ms para precisão)
+        timerInterval = setTimeout(update, Math.max(10, minNextUpdate + 5));
     }
 
     update();
-    timerInterval = setInterval(update, 10);
 }
 
 
