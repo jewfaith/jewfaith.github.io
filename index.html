@@ -9,15 +9,21 @@
       href="https://dwo.co.il/wp-content/uploads/2022/03/Emblem_of_Israel.svg_.png"
       type="image/svg+xml"
     />
+    
+    <!-- Otimizações de Conexão (DNS/TLS) para as APIs críticas -->
+    <link rel="preconnect" href="https://www.hebcal.com" crossorigin />
+    <link rel="preconnect" href="https://nominatim.openstreetmap.org" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <script src="icons.js"></script>
     <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#05060b">
   </head>
 
   <body>
@@ -30,9 +36,7 @@
             </div>
             <div class="card-content">
               <h2 class="card-title" id="card-parasha">-</h2>
-              <span class="card-subtitle" id="card-parasha-subtitle"
-                >Ciclo Anual</span
-              >
+              <span class="card-subtitle" id="card-parasha-subtitle">Ciclo Anual</span>
             </div>
           </div>
 
@@ -75,8 +79,11 @@
         <div class="event-cards-row">
           <!-- ID added to identify card for modal trigger -->
           <div
-            class="event-card event-item glass-panel"
+            class="event-card event-item glass-panel not-ready"
             id="card-local-vigente"
+            tabindex="0"
+            role="button"
+            aria-label="Alterar localização"
           >
             <div class="icon-circle localvigente">
               <i class="fa-solid fa-location-dot"></i>
@@ -87,7 +94,13 @@
             </div>
           </div>
 
-          <div class="event-card event-item glass-panel">
+          <div 
+            class="event-card event-item glass-panel not-ready" 
+            id="card-hdate-wrapper"
+            tabindex="0"
+            role="button"
+            aria-label="Ver horários haláchicos (Zmanim)"
+          >
             <div class="icon-circle datahebraica">
               <i class="fa-solid fa-calendar-week"></i>
             </div>
@@ -103,7 +116,7 @@
     <!-- Location Privacy Modal -->
     <div id="location-modal" class="modal-overlay" style="display: none">
       <div class="modal-content glass-panel" style="position: relative">
-        <div class="search-container" style="position: relative">
+        <div class="search-container" style="position: relative; ">
           <input
             type="text"
             id="location-search-input"
@@ -111,6 +124,7 @@
             placeholder="Digite uma cidade ou país..."
             autocomplete="off"
           />
+          <i id="search-spinner" class="fa-solid fa-circle-notch fa-spin" style="position: absolute; right: 15px; top: 15px; color: #94a3b8; display: none;"></i>
           <ul
             id="location-suggestions"
             class="suggestions-list"
@@ -120,6 +134,15 @@
             <li style="opacity: 0.2; pointer-events: none">-</li>
             <li style="opacity: 0.2; pointer-events: none">-</li>
           </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zmanim Modal -->
+    <div id="zmanim-modal" class="modal-overlay" style="display: none">
+      <div class="modal-content glass-panel" style="position: relative">
+        <div id="zmanim-list" style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Será preenchido via JS -->
         </div>
       </div>
     </div>

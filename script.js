@@ -3,6 +3,15 @@ let unifiedEvents = [];
 let userLocation = null;
 let currentSunsetTime = 0;
 
+// Registro do Service Worker para PWA e Offline
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+        });
+    });
+}
+
 const BOOK_MAP = {
     'Genesis': 'Bereshit',
     'Exodus': 'Shemot',
@@ -105,67 +114,52 @@ async function getGeolocation() {
         }
     ];
 
-    const results = [];
     const fetchPromises = endpoints.map(async (ep) => {
         const controller = new AbortController();
-        const id = setTimeout(() => controller.abort(), 3500);
+        const id = setTimeout(() => controller.abort(), 2000);
         try {
             const res = await fetch(ep.url, { signal: controller.signal });
-            if (!res.ok) return;
+            if (!res.ok) throw new Error("HTTP Error");
             const data = await res.json();
             const parsed = ep.parse(data);
-            if (!parsed) return;
+            if (!parsed) throw new Error("Parse Error");
             const lat = parseFloat(parsed.lat);
             const lon = parseFloat(parsed.lon);
-            const apiTz = parsed.tz;
-
+            
             if (!isNaN(lat) && !isNaN(lon)) {
-                results.push({ lat, lon, tz: apiTz });
+                return { lat, lon, tz: parsed.tz };
             }
-        } catch (e) { } finally {
+            throw new Error("Invalid Coords");
+        } finally {
             clearTimeout(id);
         }
     });
 
-    await Promise.allSettled(fetchPromises);
-
-    let finalLoc = null;
-
-    const matchingTz = results.filter(r => r.tz === sysTimezone);
-    const candidates = matchingTz.length > 0 ? matchingTz : results;
-
-    if (candidates.length > 0) {
-        // Algoritmo de Consenso (Centroide de Mínima Distância):
-        // Escolhe o candidato cuja soma das distâncias para todos os outros seja mínima.
-        // Isso elimina automaticamente qualquer outlier de rota/CDN/VPN e dá a maior estabilidade e precisão.
-        let bestCandidate = candidates[0];
-        let minDistanceSum = Infinity;
-
-        for (const c1 of candidates) {
-            let distanceSum = 0;
-            for (const c2 of candidates) {
-                const dLat = c1.lat - c2.lat;
-                const dLon = c1.lon - c2.lon;
-                distanceSum += Math.sqrt(dLat * dLat + dLon * dLon);
-            }
-            if (distanceSum < minDistanceSum) {
-                minDistanceSum = distanceSum;
-                bestCandidate = c1;
-            }
-        }
-        finalLoc = { lat: bestCandidate.lat, lon: bestCandidate.lon };
+    try {
+        const fastestResult = await Promise.any(fetchPromises);
+        return { lat: fastestResult.lat, lon: fastestResult.lon };
+    } catch (e) {
+        return null;
     }
-
-    if (finalLoc) {
-        return finalLoc;
-    }
-
-    return null;
 }
 
 async function updateDashboard() {
+    // 1. Stale-While-Revalidate: Carrega cache instantaneamente (0ms) se existir
+    const offlineDataRaw = localStorage.getItem('hebcal_offline_cache');
+    let loadedFromCache = false;
+    if (offlineDataRaw) {
+        try {
+            const data = JSON.parse(offlineDataRaw);
+            unifiedEvents = data.events;
+            window.currentZmanim = data.zmanim || null;
+            updateUIBlocks(data.events, data.hdate, data.locName, data.sunset, data.isIsrael);
+            renderEvents();
+            loadedFromCache = true;
+        } catch (e) {}
+    }
+
     const grid = document.getElementById('upcoming-events-grid');
-    if (grid) {
+    if (grid && !loadedFromCache) {
         grid.innerHTML = `<div id="upcoming-events-grid" class="event-cards-row upcoming-events-grid">
     <div>
         <div class="event-card event-item glass-panel">
@@ -280,47 +274,49 @@ async function updateDashboard() {
             isIsrael = (sysTimezone === 'Asia/Jerusalem');
         }
 
-        if (geoWasDetected) {
+        // 1. FIRE HEBCAL EVENTS PROMISE (Doesn't block)
+        const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=on&mod=on&nx=on&mf=on&ss=off&s=on&i=${isIsrael ? 'on' : 'off'}&c=off&o=on`;
+        const hebcalPromise = hebcalFetch(hebcalUrl).catch(() => null);
+
+        // 2. FIRE NOMINATIM PROMISE (Doesn't block)
+        const nomPromise = geoWasDetected ? (async () => {
+            const ctrl = new AbortController();
+            const tid = setTimeout(() => ctrl.abort(), 5000);
             try {
-                const ctrl = new AbortController();
-                const tid = setTimeout(() => ctrl.abort(), 5000);
-                const locRes = await fetch(
-                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=pt`,
-                    { signal: ctrl.signal, headers: { 'Accept-Language': 'pt' } }
-                );
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=pt`, { signal: ctrl.signal, headers: { 'Accept-Language': 'pt' } });
+                const data = await res.json();
                 clearTimeout(tid);
-                if (locRes.ok) {
-                    const locData = await locRes.json();
-                    const addr = locData.address || {};
-                    // Mostrar apenas o País ou Cidade + País (priorizando País se existir para maior confiabilidade)
-                    const city = addr.city || addr.town || addr.village || addr.state;
-                    if (addr.country) {
-                        locationName = city ? `${city}, ${addr.country}` : addr.country;
-                    } else {
-                        locationName = city || "Jerusalém";
-                    }
+                return data;
+            } catch (e) { clearTimeout(tid); return null; }
+        })() : Promise.resolve(null);
 
-                    if (addr.country_code) {
-                        isIsrael = (addr.country_code.toLowerCase() === 'il');
-                    }
-                }
-            } catch (e) { /* Keep fallback */ }
-        }
-
+        // 3. AWAIT ZMANIM (Blocks here because Converter depends on it)
         let sunsetTime = 0;
         try {
             const zmRes = await fetch(`https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${dateStr}`);
             const zmanimData = await zmRes.json();
+            window.currentZmanim = zmanimData.times || null;
             sunsetTime = zmanimData.times && zmanimData.times.sunset ? new Date(zmanimData.times.sunset).getTime() : 0;
             currentSunsetTime = sunsetTime;
         } catch (e) { console.error('Zmanim failed', e); }
+        
         const isAfterSunset = sunsetTime > 0 && new Date().getTime() > sunsetTime;
 
-
+        // 4. AWAIT CONVERTER
         const converterUrl = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${day}&g2h=1&strict=1${isAfterSunset ? '&gs=on' : ''}`;
-        const hdateData = await hebcalFetch(converterUrl);
-        const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${dateStr}&end=${endDateStr}&maj=on&min=on&mod=on&nx=on&mf=on&ss=off&s=on&i=${isIsrael ? 'on' : 'off'}&c=off&o=on`;
-        const hebcalData = await hebcalFetch(hebcalUrl);
+        const hdateData = await hebcalFetch(converterUrl).catch(() => null);
+
+        // 5. RESOLVE PARALLEL PROMISES
+        const locData = await nomPromise;
+        if (locData && locData.address) {
+            const addr = locData.address;
+            const city = addr.city || addr.town || addr.village || addr.state;
+            if (addr.country) locationName = city ? `${city}, ${addr.country}` : addr.country;
+            else locationName = city || "Jerusalém";
+            if (addr.country_code) isIsrael = (addr.country_code.toLowerCase() === 'il');
+        }
+
+        const hebcalData = await hebcalPromise;
 
         if (hebcalData && hebcalData.items) {
             const biblicalMapping = {
@@ -343,7 +339,10 @@ async function updateDashboard() {
             const filteredItems = hebcalData.items.filter(item => validCategories.includes(item.category));
 
             // Collect unique dates so we can fetch each date's sunset individually
-            const uniqueDates = [...new Set(filteredItems.map(item => item.date.split('T')[0]))];
+            // Limit to events happening in the next 10 days to keep imminent events hyper-realistic while saving API requests
+            const tenDaysFromNow = new Date().getTime() + (10 * 24 * 60 * 60 * 1000);
+            const uniqueDates = [...new Set(filteredItems.map(item => item.date.split('T')[0]))]
+                .filter(d => new Date(`${d}T12:00:00`).getTime() <= tenDaysFromNow);
 
             // Fetch zmanim for each unique date in parallel
             const sunsetByDate = { [dateStr]: sunsetTime }; // seed with today already fetched
@@ -467,11 +466,46 @@ async function updateDashboard() {
                     };
                 })
                 .filter(Boolean);
+
+            const offlinePayload = {
+                events: unifiedEvents,
+                hdate: hdateData,
+                locName: locationName,
+                sunset: sunsetTime,
+                isIsrael: isIsrael,
+                zmanim: window.currentZmanim,
+                timestamp: new Date().getTime()
+            };
+            localStorage.setItem('hebcal_offline_cache', JSON.stringify(offlinePayload));
+
             updateUIBlocks(unifiedEvents, hdateData, locationName, sunsetTime, isIsrael);
+            
+            // Remove offline badge se existir
+            const badge = document.querySelector('.offline-badge');
+            if (badge) badge.remove();
         }
 
     } catch (err) {
         console.error("Dashboard Sync Failed", err);
+        const offlineDataRaw = localStorage.getItem('hebcal_offline_cache');
+        if (offlineDataRaw) {
+            try {
+                const data = JSON.parse(offlineDataRaw);
+                unifiedEvents = data.events;
+                window.currentZmanim = data.zmanim || null;
+                updateUIBlocks(data.events, data.hdate, data.locName, data.sunset, data.isIsrael);
+                
+                let badge = document.querySelector('.offline-badge');
+                if (!badge) {
+                    badge = document.createElement('div');
+                    badge.className = 'offline-badge';
+                    badge.innerHTML = '<i class="fa-solid fa-wifi" style="text-decoration: line-through;"></i> Offline Mode';
+                    document.body.appendChild(badge);
+                }
+            } catch (e) {
+                console.error("Failed to load offline cache", e);
+            }
+        }
     }
 
     renderEvents();
@@ -499,7 +533,6 @@ function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael) {
     const elKetuvim = document.getElementById('card-ketuvim');
     const elDate = document.getElementById('card-hdate');
     const elLoc = document.getElementById('card-local');
-
 
     // Helper: check if 'now' falls within the full span of a festival category
     // Also returns which day (0-based) of the festival we are currently on
@@ -1027,14 +1060,27 @@ function renderEvents() {
         grid.appendChild(card);
     });
 
+    document.getElementById('card-local-vigente')?.classList.remove('not-ready');
+    document.getElementById('card-hdate-wrapper')?.classList.remove('not-ready');
+
+    if (window.renderIcons) window.renderIcons();
+    
     startTimers();
 }
 
 function startTimers() {
     if (timerInterval) clearTimeout(timerInterval);
 
+    // Cache the DOM elements so we don't query the DOM on every tick
+    const timers = Array.from(document.querySelectorAll('.timer-countdown'));
+
     function update() {
-        const timers = document.querySelectorAll('.timer-countdown');
+        // Se a aba estiver invisível no navegador, simplesmente adia a atualização para economizar 100%
+        if (document.hidden) {
+            timerInterval = setTimeout(update, 1000); // Check once a sec if it became visible
+            return;
+        }
+
         const now = new Date().getTime();
         let anyExpired = false;
         let minNextUpdate = 60 * 60 * 1000; // Máximo de 1 hora de espera
@@ -1056,10 +1102,12 @@ function startTimers() {
 
             const diffToStart = startTimestamp - now;
             let nextUpdateForThisTimer = minNextUpdate;
+            let newText = timer.textContent;
+            let newClass = timer.className;
 
             if (now >= startTime && now <= endTimestamp) {
-                timer.textContent = 'Em Curso';
-                timer.classList.add('ongoing');
+                newText = 'Em Curso';
+                if (!newClass.includes('ongoing')) newClass += ' ongoing';
                 nextUpdateForThisTimer = endTimestamp - now + 1;
             } else if (now > endTimestamp) {
                 const card = timer.closest('.event-card');
@@ -1067,36 +1115,44 @@ function startTimers() {
                 if (wrapper) wrapper.remove(); else if (card) card.remove();
                 anyExpired = true;
             } else {
-                const threshold = 87 * 24 * 60 * 60 * 1000;
+                const threshold = 90 * 24 * 60 * 60 * 1000;
                 if (diffToStart > threshold) {
                     const evtDate = new Date(startTimestamp);
                     const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-                    timer.textContent = `Em ${months[evtDate.getMonth()]}`;
+                    newText = `Em ${months[evtDate.getMonth()]}`;
                     nextUpdateForThisTimer = diffToStart - threshold;
                 } else {
                     const totalHours = diffToStart / (1000 * 60 * 60);
                     if (totalHours > 95) {
                         const days = Math.floor(diffToStart / (1000 * 60 * 60 * 24));
-                        timer.textContent = `Faltam ${days}d`;
+                        newText = `Faltam ${days}d`;
                         let ms = diffToStart % 86400000;
                         if (ms === 0) ms = 86400000;
                         nextUpdateForThisTimer = Math.min(ms, diffToStart - 95 * 3600000);
                     } else if (totalHours < 1.5) {
                         const totalMins = Math.floor(diffToStart / (1000 * 60));
-                        timer.textContent = `Faltam ${totalMins}m`;
+                        newText = `Faltam ${totalMins}m`;
                         let ms = diffToStart % 60000;
                         if (ms === 0) ms = 60000;
                         nextUpdateForThisTimer = Math.min(ms, diffToStart - 122000);
                     } else {
                         const h = Math.floor(diffToStart / (1000 * 60 * 60));
-                        timer.textContent = `Faltam ${h}h`;
+                        newText = `Faltam ${h}h`;
                         let ms = diffToStart % 3600000;
                         if (ms === 0) ms = 3600000;
                         nextUpdateForThisTimer = Math.min(ms, diffToStart - 1.5 * 3600000);
                     }
                 }
                 timer.style.color = '';
-                timer.classList.remove('ongoing');
+                newClass = newClass.replace(' ongoing', '').replace('ongoing', '').trim();
+            }
+
+            // Apenas escreve no DOM se o valor realmente mudou (evita forçar redesenho da tela)
+            if (timer.textContent !== newText) {
+                timer.textContent = newText;
+            }
+            if (timer.className !== newClass) {
+                timer.className = newClass;
             }
 
             if (nextUpdateForThisTimer > 0 && nextUpdateForThisTimer < minNextUpdate) {
@@ -1196,6 +1252,7 @@ document.addEventListener('click', (event) => {
 
     // Check if it's the "Local Vigente" card to open the accuracy modal instead of copying
     if (card.id === 'card-local-vigente') {
+        if (card.classList.contains('not-ready')) return;
         const modal = document.getElementById('location-modal');
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -1246,7 +1303,7 @@ document.addEventListener('click', (event) => {
 document.getElementById('location-modal')?.addEventListener('click', (e) => {
     // Fechar se clicar no fundo desfocado
     if (e.target.id === 'location-modal') {
-        e.target.style.display = 'none';
+        document.getElementById('location-modal').style.display = 'none';
         document.body.style.overflow = '';
     }
 });
@@ -1266,6 +1323,8 @@ searchInput?.addEventListener('input', (e) => {
     }
 
     searchTimeout = setTimeout(async () => {
+        const spinner = document.getElementById('search-spinner');
+        if (spinner) spinner.style.display = 'block';
         try {
             const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=3&accept-language=pt`);
             if (!res.ok) return;
@@ -1314,10 +1373,67 @@ searchInput?.addEventListener('input', (e) => {
             suggestionsList.style.display = 'block';
         } catch (err) {
             console.error('Search API error:', err);
+        } finally {
+            const spinner = document.getElementById('search-spinner');
+            if (spinner) spinner.style.display = 'none';
         }
-    }, 400); // 400ms debounce
+    }, 800); // 800ms debounce
 });
 
 
 
-// Removed dynamic watermark generator per user request, using static bg.png instead
+// --- ZMANIM MODAL LOGIC ---
+document.getElementById('card-hdate-wrapper')?.addEventListener('click', (e) => {
+    if (e.currentTarget.classList.contains('not-ready')) return;
+    const modal = document.getElementById('zmanim-modal');
+    const list = document.getElementById('zmanim-list');
+    if (!modal || !list) return;
+    
+    list.innerHTML = '';
+    if (!window.currentZmanim) {
+        list.innerHTML = '<span style="color:#94a3b8; text-align:center;">Nenhum Zmanim disponível.</span>';
+    } else {
+        const labels = {
+            alotHaShachar: { name: "Alot Hashachar", icon: "fa-cloud-sun" },
+            sunrise: { name: "Netz Hachama", icon: "fa-sun" },
+            chatzot: { name: "Chatzot Hayom", icon: "fa-circle-half-stroke" },
+            minchaGedola: { name: "Mincha Gedola", icon: "fa-cloud-sun" },
+            sunset: { name: "Shkiat Hachama", icon: "fa-moon" },
+            tzeit7083deg: { name: "Tzeit Hakochavim", icon: "fa-star" }
+        };
+        for (const [key, obj] of Object.entries(labels)) {
+            if (window.currentZmanim[key]) {
+                const dateObj = new Date(window.currentZmanim[key]);
+                const timeStr = dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                list.innerHTML += `<div class="zmanim-row">
+                    <div class="zmanim-label-group">
+                        <i class="fa-solid ${obj.icon} zmanim-icon"></i>
+                        <span class="zmanim-name">${obj.name}</span>
+                    </div>
+                    <span class="zmanim-time">${timeStr}</span>
+                </div>`;
+            }
+        }
+    }
+    
+    if (window.renderIcons) window.renderIcons();
+    modal.style.display = 'flex';
+});
+
+document.getElementById('zmanim-modal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) {
+        e.currentTarget.style.display = 'none';
+    }
+});
+
+// --- ACCESSIBILITY LOGIC ---
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        const focusable = document.activeElement;
+        if (focusable && focusable.classList.contains('event-card')) {
+            if (focusable.classList.contains('not-ready')) return;
+            e.preventDefault();
+            focusable.click();
+        }
+    }
+});
