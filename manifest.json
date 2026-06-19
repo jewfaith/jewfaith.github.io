@@ -1,7 +1,7 @@
 {
     "name": "Yisrael Date",
-    "short_name": "Yisrael",
-    "description": "Calendário de Eventos, Festas e Parashot",
+    "short_name": "Yisrael Date",
+    "description": "Festas e Parashot",
     "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#05060b",
