@@ -655,6 +655,7 @@ function pickReading(arr, dayIndex) {
 const LCG = (seed) => (seed * 9301 + 49297) % 233280;
 
 function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael) {
+    applySolarTheme();
     const now = new Date().getTime();
     const twentyFourHoursMs = 24 * 60 * 60 * 1000;
 
@@ -1086,11 +1087,12 @@ function startTimers() {
                         if (ms === 0) ms = 60000;
                         nextUpdateForThisTimer = Math.min(ms, diffToStart - 122000);
                     } else {
-                        const h = Math.floor(diffToStart / (1000 * 60 * 60));
+                        const h = Math.round(diffToStart / (1000 * 60 * 60));
                         newText = `Faltam ${String(h).padStart(2, '0')}h`;
                         let ms = diffToStart % 3600000;
-                        if (ms === 0) ms = 3600000;
-                        nextUpdateForThisTimer = Math.min(ms, diffToStart - 1.5 * 3600000);
+                        let timeToNextHalfHour = (ms + 1800000) % 3600000;
+                        if (timeToNextHalfHour === 0) timeToNextHalfHour = 3600000;
+                        nextUpdateForThisTimer = Math.min(timeToNextHalfHour, diffToStart - 1.5 * 3600000);
                     }
                 }
                 timer.style.color = '';
@@ -1320,3 +1322,49 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
+let solarThemeTimeout = null;
+
+function applySolarTheme() {
+    if (solarThemeTimeout) {
+        clearTimeout(solarThemeTimeout);
+    }
+    
+    const now = new Date().getTime();
+    let isDay = true;
+    let nextEventTime = null;
+
+    if (window.currentZmanim && window.currentZmanim.sunrise && window.currentZmanim.sunset) {
+        // Subtrai 10 minutos (600000 ms) dos horários
+        const sunrise = new Date(window.currentZmanim.sunrise).getTime() - 600000;
+        const sunset = new Date(window.currentZmanim.sunset).getTime() - 600000;
+        
+        if (now < sunrise) {
+            isDay = false;
+            nextEventTime = sunrise;
+        } else if (now >= sunrise && now < sunset) {
+            isDay = true;
+            nextEventTime = sunset;
+        } else {
+            isDay = false;
+        }
+    } else {
+        const hour = new Date().getHours();
+        isDay = hour >= 6 && hour < 18;
+        
+        const nextHour = new Date();
+        nextHour.setHours(hour >= 18 || hour < 6 ? 6 : 18, 0, 0, 0);
+        if (nextHour.getTime() < now) nextHour.setDate(nextHour.getDate() + 1);
+        nextEventTime = nextHour.getTime();
+    }
+
+    if (isDay) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    }
+
+    if (nextEventTime && nextEventTime > now) {
+        solarThemeTimeout = setTimeout(applySolarTheme, nextEventTime - now + 1000);
+    }
+}
