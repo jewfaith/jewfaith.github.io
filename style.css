@@ -356,7 +356,7 @@ i {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 12vh 20px 20px 20px;
+    padding: 5vh 20px 20px 20px;
     box-sizing: border-box;
     animation: fadeUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -662,7 +662,6 @@ body.ee-color-active .brand-title {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding-bottom: 18px;
     margin-bottom: 18px;
     flex-shrink: 0;
 }
