@@ -443,11 +443,11 @@ i {
 
 .suggestions-list {
     list-style: none;
-    margin: 16px 0 0 0;
     padding: 0;
     display: flex;
     flex-direction: column;
     gap: 2px;
+    margin-right: 20px;
 }
 
 .suggestions-list li {
@@ -837,7 +837,6 @@ body.ee-color-active .brand-title {
     display: flex;
     gap: 12px;
     align-items: flex-start;
-    font-family: 'Cardo', 'Georgia', serif;
     font-size: 1.1rem;
     line-height: 1.8;
     color: var(--text-primary);
