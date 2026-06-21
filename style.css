@@ -471,7 +471,6 @@ i {
 
 @media (max-width: 600px) {
     .modal-content {
-        padding: 16px;
         border-radius: 20px;
     }
     
@@ -677,10 +676,16 @@ body.ee-color-active .brand-title {
     display: none !important;
 }
 
+.verse-text {
+    text-align: justify;
+    line-height: 1.75;
+    color: var(--text-primary);
+    padding-right: 20px;
+}
+
 .reading-body {
     overflow-y: auto;
     flex-grow: 1;
-    padding-right: 12px;
 }
 
 /* Custom Scrollbar for Reading Modal */
