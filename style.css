@@ -366,6 +366,7 @@ i {
         opacity: 0;
         transform: translateY(-20px) scale(0.98);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -401,6 +402,9 @@ i {
     border-radius: 16px;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .modal-input {
@@ -415,6 +419,8 @@ i {
     color: var(--text-primary);
     font-family: inherit;
     box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
 }
 
 .modal-input::placeholder {
@@ -480,7 +486,7 @@ i {
     .modal-content {
         border-radius: 20px;
     }
-    
+
     .search-container {
         height: 50px;
         padding: 0 12px;
@@ -490,23 +496,29 @@ i {
         padding: 0 8px;
         font-size: 1rem;
     }
-    
+
     .suggestions-list li {
         margin: 1px 4px;
         padding: 10px 16px;
         font-size: 0.9rem;
     }
 }
+
 /* EASTER EGGS FESTAS TORAH */
 #easter-egg-container {
     position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
 }
+
 .dashboard-wrapper {
-    z-index: 2; /* keep above easter egg */
+    z-index: 2;
+    /* keep above easter egg */
 }
 
 /* Opcao A: Particulas */
@@ -517,21 +529,37 @@ i {
     animation: fall linear infinite;
     font-size: 1.5rem;
 }
+
 @keyframes fall {
-    0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
-    10% { opacity: 0.6; }
-    90% { opacity: 0.6; }
-    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.6;
+    }
+
+    90% {
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
 }
 
 /* Opcao B: Cores Tematicas */
 body.ee-color-active {
     background: radial-gradient(circle at top right, var(--ee-bg-1) 0%, #05060b 60%);
 }
+
 body.ee-color-active .glass-panel {
     border-color: var(--ee-border);
     box-shadow: 0 16px 40px 0 var(--ee-shadow);
 }
+
 body.ee-color-active .brand-title {
     background: linear-gradient(135deg, var(--ee-bg-1) 0%, var(--ee-border) 100%);
     -webkit-text-fill-color: transparent;
@@ -540,7 +568,8 @@ body.ee-color-active .brand-title {
 /* Opcao C: Icone Gigante */
 .ee-giant-icon {
     position: absolute;
-    top: 50%; left: 50%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     font-size: 50vw;
     color: var(--ee-bg-1);
@@ -548,18 +577,40 @@ body.ee-color-active .brand-title {
     animation: pulseGiantIcon 6s ease-in-out infinite;
     filter: drop-shadow(0 0 20px var(--ee-bg-1));
 }
+
 @media (max-width: 768px) {
-    .ee-giant-icon { font-size: 80vw; }
+    .ee-giant-icon {
+        font-size: 80vw;
+    }
 }
+
 @keyframes pulseGiantIcon {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.02; }
-    50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.05; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.02; }
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.02;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 0.05;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.02;
+    }
 }
 
 
-.ee-giant-icon svg { width: 1em; height: 1em; }
-.ee-particle svg { width: 1em; height: 1em; }
+.ee-giant-icon svg {
+    width: 1em;
+    height: 1em;
+}
+
+.ee-particle svg {
+    width: 1em;
+    height: 1em;
+}
 
 /* --- Premium Persuasive CTA --- */
 .donation-card {
@@ -580,7 +631,10 @@ body.ee-color-active .brand-title {
 .donation-card::before {
     content: '';
     position: absolute;
-    top: -50%; left: -50%; width: 200%; height: 200%;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
     background: radial-gradient(circle at center, rgba(99, 102, 241, 0.08) 0%, transparent 60%);
     pointer-events: none;
     animation: pulse 8s ease-in-out infinite alternate;
@@ -634,16 +688,27 @@ body.ee-color-active .brand-title {
 .premium-donate-btn::after {
     content: '';
     position: absolute;
-    top: 0; left: -100%; width: 50%; height: 100%;
-    background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
     transform: skewX(-20deg);
     animation: shimmer 4s infinite;
 }
 
 @keyframes shimmer {
-    0% { left: -100%; }
-    20% { left: 200%; }
-    100% { left: 200%; }
+    0% {
+        left: -100%;
+    }
+
+    20% {
+        left: 200%;
+    }
+
+    100% {
+        left: 200%;
+    }
 }
 
 .premium-donate-btn:hover {
@@ -699,13 +764,16 @@ body.ee-color-active .brand-title {
 .reading-body::-webkit-scrollbar {
     width: 6px;
 }
+
 .reading-body::-webkit-scrollbar-track {
     background: transparent;
 }
+
 .reading-body::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 3px;
 }
+
 .reading-body::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.25);
 }
@@ -713,6 +781,7 @@ body.ee-color-active .brand-title {
 :root[data-theme="light"] .reading-body::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.15);
 }
+
 :root[data-theme="light"] .reading-body::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.3);
 }
@@ -787,6 +856,7 @@ body.ee-color-active .brand-title {
     color: var(--text-muted);
     font-weight: 500;
 }
+
 .reading-loading i {
     font-size: 2.2rem;
     color: #6366f1;
@@ -806,6 +876,7 @@ i {
     align-items: center;
     gap: 14px;
 }
+
 .reading-error i {
     font-size: 2.2rem;
 }
@@ -814,13 +885,16 @@ i {
     .reading-modal-content {
         padding: 20px !important;
     }
+
     .verse-row {
         padding: 10px 0;
     }
+
     .verse-portuguese {
         font-size: 1rem;
         line-height: 1.7;
     }
+
     .reading-title {
         font-size: 1.15rem;
     }
