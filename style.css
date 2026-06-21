@@ -463,6 +463,7 @@ i {
     text-overflow: ellipsis;
     display: flex;
     align-items: baseline;
+    
 }
 
 .suggestions-list li:hover {
@@ -480,6 +481,9 @@ i {
     font-size: 0.85rem;
     margin-left: 6px;
     font-weight: 300;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @media (max-width: 600px) {
