@@ -52,7 +52,10 @@ async function fetchNearbyLocations() {
             if (uniqueItems.length >= 12) break;
 
             try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&viewbox=${left},${top},${right},${bottom}&bounded=1&format=json&limit=15&accept-language=pt`);
+                const ctrl = new AbortController();
+                const tid = setTimeout(() => ctrl.abort(), 7000);
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&viewbox=${left},${top},${right},${bottom}&bounded=1&format=json&addressdetails=1&limit=15&accept-language=pt`, { signal: ctrl.signal });
+                clearTimeout(tid);
                 if (!res.ok) continue;
                 const data = await res.json();
 
@@ -195,7 +198,13 @@ function renderSuggestions(results) {
             } else {
                 const lat = parseFloat(resItem.item.lat);
                 const lon = parseFloat(resItem.item.lon);
-                localStorage.setItem('exactLocation', JSON.stringify({ lat, lon }));
+                const isIl = resItem.item.address && resItem.item.address.country_code === 'il';
+                localStorage.setItem('exactLocation', JSON.stringify({ 
+                    lat, 
+                    lon, 
+                    name: resItem.displayText,
+                    isIsrael: isIl
+                }));
                 applyEstimatedTheme(lat, lon);
             }
             
@@ -437,7 +446,16 @@ async function fetchARAVerses(parsed) {
 
     for (let ch = startChapter; ch <= endChapter; ch++) {
         const url = `https://bolls.life/get-chapter/ARA/${bookId}/${ch}/`;
-        const res = await fetch(url);
+        const ctrl = new AbortController();
+        const tid = setTimeout(() => ctrl.abort(), 7000);
+        let res;
+        try {
+            res = await fetch(url, { signal: ctrl.signal });
+        } catch(e) {
+            clearTimeout(tid);
+            throw new Error('API Timeout ou Erro de rede');
+        }
+        clearTimeout(tid);
         if (!res.ok) throw new Error(`Erro na API: status ${res.status}`);
         const data = await res.json();
 
@@ -482,24 +500,26 @@ async function openReadingModal(ref, cardTitle) {
     try {
         const parsed = parseRef(ref);
         if (!parsed) throw new Error('Referência não reconhecida.');
-
         const verses = await fetchARAVerses(parsed);
         if (verses.length === 0) {
             throw new Error('Nenhum texto encontrado para esta referência.');
         }
 
-        let html = '';
+        let html = '<div class="verses-container">';
         for (const v of verses) {
-            const displayNum = `${v.chapter}:${v.verse}`;
+            const paddedChapter = String(v.chapter).padStart(2, '0');
+            const paddedVerse = String(v.verse).padStart(2, '0');
+            const displayNum = `${paddedChapter}:${paddedVerse}`;
             html += `
-                <div class="verse-row">
-                    <div class="verse-portuguese">
-                        <span class="verse-num">${displayNum}</span>
-                        <div class="verse-text">${v.text}</div>
+                <div class="legend-card" style="align-items: flex-start; margin: 0;">
+                    <span class="date-pill" style="margin-top: 4px;">${displayNum}</span>
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
+                        <div class="verse-text" style="padding-right: 0; text-align: left; font-size: 1.05rem;">${v.text}</div>
                     </div>
                 </div>
             `;
         }
+        html += '</div>';
 
         bodyEl.innerHTML = html;
         bodyEl.scrollTop = 0;
@@ -536,6 +556,26 @@ export function initModals(updateDashboardCallback) {
                     renderSuggestions([]);
                     fetchNearbyLocations();
                     setTimeout(() => searchInput.focus(), 100);
+                }
+            }
+            return;
+        }
+
+        if (card.id === 'card-parasha-wrapper' || card.id === 'card-hdate-wrapper') {
+            if (card.classList.contains('not-ready')) return;
+            const modal = document.getElementById('info-modal');
+            const titleEl = document.getElementById('info-modal-title');
+            const bodyEl = document.getElementById('info-modal-body');
+            
+            if (modal && titleEl && bodyEl) {
+                const titleText = card.getAttribute('data-info-title') || '-';
+                const htmlContent = card.getAttribute('data-info-html') || '';
+                
+                if (htmlContent) {
+                    titleEl.textContent = titleText;
+                    bodyEl.innerHTML = htmlContent;
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
                 }
             }
             return;
@@ -595,6 +635,25 @@ export function initModals(updateDashboardCallback) {
         }
     });
 
+    document.getElementById('close-info-btn')?.addEventListener('click', () => {
+        const m = document.getElementById('info-modal');
+        if (m) m.style.display = 'none';
+        document.body.style.overflow = '';
+    });
+
+    document.getElementById('info-modal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'info-modal') {
+            e.target.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+
+    document.getElementById('close-location-btn')?.addEventListener('click', () => {
+        const m = document.getElementById('location-modal');
+        if (m) m.style.display = 'none';
+        document.body.style.overflow = '';
+    });
+
     const searchInput = document.getElementById('location-search-input');
     let searchTimeout;
 
@@ -608,12 +667,20 @@ export function initModals(updateDashboardCallback) {
         }
 
         searchTimeout = setTimeout(async () => {
+            const currentQuery = e.target.value.trim();
+            // Guard: if the user cleared or changed the input since the timer was set, bail
+            if (currentQuery !== query) return;
+
             const spinner = document.getElementById('search-spinner');
             if (spinner) spinner.style.display = 'block';
             try {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=15&accept-language=pt`);
                 if (!res.ok) return;
                 const data = await res.json();
+
+                // Guard again after async: check the input still matches
+                const afterQuery = document.getElementById('location-search-input')?.value.trim();
+                if (afterQuery !== query) return;
 
                 if (data.length === 0) {
                     renderSuggestions([]);
@@ -660,6 +727,11 @@ export function initModals(updateDashboardCallback) {
             const readingModal = document.getElementById('reading-modal');
             if (readingModal && readingModal.style.display !== 'none') {
                 readingModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            const infoModal = document.getElementById('info-modal');
+            if (infoModal && infoModal.style.display !== 'none') {
+                infoModal.style.display = 'none';
                 document.body.style.overflow = '';
             }
         }

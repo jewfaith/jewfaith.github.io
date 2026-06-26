@@ -1,13 +1,4 @@
 export function getEventIcon(category, name) {
-    if (name) {
-        const cleanName = name.toLowerCase().replace(/[^a-z0-9\s]/g, '');
-        if (cleanName.includes('hanukkah')) return '<i class="fa-solid fa-menorah"></i>';
-        if (cleanName.includes('purim')) return '<i class="fa-solid fa-mask"></i>';
-        if (cleanName.includes('tammuz')) return '<i class="fa-solid fa-burst"></i>';
-        if (cleanName.includes('tisha')) return '<i class="fa-solid fa-fire"></i>';
-        if (cleanName.includes('gedaliah')) return '<i class="fa-solid fa-user-slash"></i>';
-        if (cleanName.includes('tevet')) return '<i class="fa-solid fa-shield-halved"></i>';
-    }
     switch (category) {
         case 'parashat': return '<i class="fa-solid fa-leaf"></i>';
         case 'pesach': return '<i class="fa-solid fa-person-walking-luggage"></i>';

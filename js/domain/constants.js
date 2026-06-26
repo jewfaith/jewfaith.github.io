@@ -33,7 +33,7 @@ export const BOOK_MAP = {
 
 export const FESTIVAL_CATS = [
     'pesach', 'matzot', 'shavuot', 'roshhashana', 'yomkippur',
-    'sukkot', 'sheminiatzeret'
+    'sukkot', 'sheminiatzeret', 'simchattorah'
 ];
 
 export const FESTIVAL_TORAH_READINGS = {

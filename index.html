@@ -60,7 +60,13 @@
     <div class="dashboard-wrapper">
       <div class="events-dashboard">
         <div class="event-cards-row">
-          <div class="event-card event-item glass-panel">
+          <div
+            class="event-card event-item glass-panel"
+            id="card-parasha-wrapper"
+            tabindex="0"
+            role="button"
+            aria-label="Detalhes do Ciclo Anual"
+          >
             <div class="icon-circle cicloanual">
               <i class="fa-solid fa-book-open"></i>
             </div>
@@ -147,6 +153,9 @@
           <div
             class="event-card event-item glass-panel not-ready"
             id="card-hdate-wrapper"
+            tabindex="0"
+            role="button"
+            aria-label="Ver Data Hebraica"
           >
             <div class="icon-circle datahebraica">
               <i class="fa-solid fa-calendar-week"></i>
@@ -157,45 +166,34 @@
             </div>
           </div>
         </div>
-
-        <div class="donation-card glass-panel">
-          <div class="donation-content">
-            <h3 class="donation-title">Apoie quem desenvolve ☕</h3>
-            <p class="donation-text">
-              O Yisrael Date é feito com dedicação para a comunidade. Nossa
-              missão é mantê-lo
-              <strong>100% gratuito, rápido e livre de anúncios</strong>.
-              <br /><br />
-              Se este app facilita a sua rotina e você deseja retribuir,
-              considere pagar um café para o desenvolvedor. Qualquer apoio ajuda
-              a manter a tradição viva, mas sinta-se totalmente livre!
-            </p>
-          </div>
-          <a
-            href="https://paypal.me/ashkenar"
-            target="_blank"
-            class="premium-donate-btn"
-          >
-            <span>Pagar um Café (PayPal)</span>
-          </a>
-        </div>
       </div>
     </div>
 
     <!-- Location Privacy Modal -->
     <div id="location-modal" class="modal-overlay" style="display: none">
-      <div class="modal-content glass-panel">
-        <div class="search-container" style="margin-bottom: 18px">
+      <div class="modal-content glass-panel reading-modal-content">
+        <div class="search-container">
           <input
             type="text"
             id="location-search-input"
             class="modal-input"
             placeholder="Pesquisar cidade..."
             autocomplete="off"
+            aria-label="Pesquisar cidade"
+            style="
+              font-size: 1.1rem;
+              font-weight: 500;
+              color: var(--text-primary);
+              margin: 0;
+              letter-spacing: 0.5px;
+            "
           />
           <i id="search-spinner" class="fa-solid fa-circle-notch fa-spin"></i>
+          <button id="close-location-btn" class="modal-close-btn" aria-label="Fechar">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
         </div>
-        <div class="reading-body" style="height: 40vh">
+        <div class="reading-body">
           <ul id="location-suggestions" class="suggestions-list">
             <li style="opacity: 0.1; pointer-events: none">-</li>
             <li style="opacity: 0.1; pointer-events: none">-</li>
@@ -217,11 +215,26 @@
       <div class="modal-content glass-panel reading-modal-content">
         <div class="reading-header">
           <h2 id="reading-modal-title" class="reading-title">-</h2>
-          <button id="close-reading-btn" aria-label="Fechar">
+          <button id="close-reading-btn" class="modal-close-btn" aria-label="Fechar">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
         <div id="reading-modal-body" class="reading-body">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="info-modal" class="modal-overlay" style="display: none">
+      <div class="modal-content glass-panel reading-modal-content">
+        <div class="reading-header">
+          <h2 id="info-modal-title" class="reading-title">-</h2>
+          <button id="close-info-btn" class="modal-close-btn" aria-label="Fechar">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div id="info-modal-body" class="reading-body">
           <!-- Populated dynamically -->
         </div>
       </div>

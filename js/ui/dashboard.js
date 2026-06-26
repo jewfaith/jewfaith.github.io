@@ -6,6 +6,99 @@ import { LCG, getStringSimilarity } from '../utils/math.js';
 import { getEventIcon } from './icons.js';
 import { startTimers } from './timers.js';
 
+function generateCalendarHTML(events, currentHdate) {
+    if (!currentHdate) return ''; 
+    const hebrewMonthsPT = {
+        "Nisan": "Nisã", "Iyyar": "Iyar", "Sivan": "Sivã", "Tammuz": "Tamuz",
+        "Av": "Av", "Elul": "Elul", "Tishrei": "Tishrei", "Cheshvan": "Cheshvan",
+        "Kislev": "Kislev", "Tevet": "Tevet", "Sh'vat": "Shevat", 
+        "Adar I": "Adar I", "Adar II": "Adar II", "Adar": "Adar"
+    };
+    let displayMonth = hebrewMonthsPT[currentHdate.hm] || currentHdate.hm || 'Mês';
+    const currentHy = currentHdate.hy;
+
+    let html = `<div class="calendar-wrapper">`;
+        
+    let legendItems = [];
+    const gregMonths = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+    for (const ev of events) {
+        if (!ev || !ev.raw || !ev.raw.hdate) continue;
+        
+        const parts = ev.raw.hdate.split(' ');
+        if (parts.length >= 3) {
+            const hDay = parseInt(parts[0], 10);
+            const hMonthRaw = parts.slice(1, -1).join(' ');
+            const hYear = parseInt(parts[parts.length - 1], 10);
+            
+            if (hMonthRaw === currentHdate.hm && hYear === currentHy) {
+                if (ev.name) {
+                    let gMonth = null, gDay = null;
+                    if (ev.raw && ev.raw.date) {
+                         const gparts = ev.raw.date.split('T')[0].split('-');
+                         gMonth = parseInt(gparts[1], 10);
+                         gDay = parseInt(gparts[2], 10);
+                    }
+                    
+                    let gregText = '';
+                    if (gDay !== null) {
+                        const paddedGDay = String(gDay).padStart(2, '0');
+                        gregText = `${paddedGDay} ${gregMonths[gMonth - 1]}`;
+                    }
+                    
+                    const isDup = legendItems.some(i => i.name === ev.name && i.firstDay === hDay);
+                    if (!isDup) {
+                        const paddedHDay = String(hDay).padStart(2, '0');
+                        legendItems.push({
+                            dayText: `${paddedHDay}`,
+                            gregText: gregText,
+                            name: ev.name,
+                            isBiblical: !!ev.isBiblical,
+                            category: ev.category,
+                            firstDay: hDay
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    legendItems.sort((a, b) => {
+        if (a.firstDay !== b.firstDay) return a.firstDay - b.firstDay;
+        return (b.isBiblical ? 1 : 0) - (a.isBiblical ? 1 : 0);
+    });
+    
+    if (legendItems.length > 0) {
+        html += `<div class="calendar-legend">
+            <ul class="legend-list" style="padding: 0; margin: 0; list-style: none; display: flex; flex-direction: column">`;
+        let idx = 0;
+        for (const item of legendItems) {
+            let pillText = `${item.dayText}`;
+
+            html += `<li class="legend-card">
+                <span class="date-pill">${pillText}</span>
+                <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <span class="legend-text" style="font-size: 1.1rem; font-weight: 600;">${item.name}</span>
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                        ${item.gregText || 'Data indisponível'}
+                    </div>
+                </div>
+            </li>`;
+            idx++;
+        }
+        html += `</ul></div>`;
+    } else {
+        html += `<div class="calendar-legend" style="margin-top: 10px; text-align: center; color: var(--text-muted); padding: 20px 0;">
+            Nenhuma festa em ${displayMonth}.
+        </div>`;
+    }
+    
+    html += `</div>`;
+    return html;
+}
+
 function toEnglishRef(ref) {
     if (!ref) return '';
     let result = ref.trim();
@@ -96,8 +189,8 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
                 isExtraDay = (idx === 7); 
             } else if (activeFestival.category === 'shavuot') {
                 isExtraDay = (idx === 1); 
-            } else if (activeFestival.category === 'sheminiatzeret') {
-                isExtraDay = (idx === 1); 
+            } else if (activeFestival.category === 'simchattorah') {
+                isExtraDay = true; 
             }
         }
     }
@@ -122,8 +215,69 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             elParashaSubtitle.textContent = 'Ciclo Anual';
         }
     }
-
+    
     const nearFestival = findActiveFestival(events, now, twentyFourHoursMs, Object.keys(FESTIVAL_TORAH_READINGS));
+
+    const elParashaWrapper = document.getElementById('card-parasha-wrapper');
+    if (elParashaWrapper && elParasha) {
+        let pName = elParasha.textContent;
+        let torahRef = '';
+        let haftaraRef = '';
+        let aliyotHtml = '';
+        
+        if (nearFestival) {
+             torahRef = pickReading(FESTIVAL_TORAH_READINGS[nearFestival.category], nearFestival.dayIndex) || '';
+             haftaraRef = pickReading(FESTIVAL_HAFTARA_READINGS[nearFestival.category], nearFestival.dayIndex) || '';
+        } else if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning) {
+             const ley = upcomingParasha.raw.leyning;
+             torahRef = ley.torah || '';
+             const hOptions = [ley.haftarah, ley.haftarah_sephardic, ley.haftarah_chabad, ley.haftarah_teiman, ley.haftarah_itali].filter(Boolean);
+             haftaraRef = (hOptions[0] || '').split(' | ')[0].trim();
+             
+             if (ley["1"]) {
+                 const aliyotNames = ["Aliyah Rishon", "Aliyah Sheni", "Aliyah Shlishi", "Aliyah Revii", "Aliyah Chamishi", "Aliyah Shishi", "Aliyah Shevii"];
+                 const aliyotNums = ["01", "02", "03", "04", "05", "06", "07"];
+                 const keys = ["1", "2", "3", "4", "5", "6", "7"];
+                 
+                 for (let i = 0; i < keys.length; i++) {
+                     const key = keys[i];
+                     if (ley[key]) {
+                         aliyotHtml += `
+                             <div class="legend-card">
+                                 <span class="date-pill">${aliyotNums[i]}</span>
+                                 <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
+                                     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                         <span class="legend-text" style="font-size: 1.1rem; font-weight: 600;">${aliyotNames[i]}</span>
+                                     </div>
+                                     <div style="font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                                         ${transliterateTorah(ley[key])}
+                                     </div>
+                                 </div>
+                             </div>
+                         `;
+                     }
+                 }
+             }
+        }
+        
+        elParashaWrapper.setAttribute('data-info-title', pName);
+        let contentHtml = '';
+        if (aliyotHtml) {
+            contentHtml = aliyotHtml;
+        } else {
+            contentHtml = `
+                <div class="info-modal-card">
+                    <div class="info-modal-label"><i class="fa-solid fa-scroll" style="margin-right: 8px;"></i>Porção da Torá</div>
+                    <div class="info-modal-value highlight">${transliterateTorah(torahRef) || '-'}</div>
+                </div>
+                <div class="info-modal-card">
+                    <div class="info-modal-label"><i class="fa-solid fa-feather-pointed" style="margin-right: 8px;"></i>Haftará</div>
+                    <div class="info-modal-value secondary">${transliterateTorah(haftaraRef) || '-'}</div>
+                </div>
+            `;
+        }
+        elParashaWrapper.setAttribute('data-info-html', contentHtml);
+    }
 
     const elTorahWrapper = document.getElementById('card-torah-wrapper');
     if (elTorah) {
@@ -194,13 +348,23 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         elKetuvim.textContent = transliterateTorah(ketuvimRawRef);
     }
 
+    const elDateWrapper = document.getElementById('card-hdate-wrapper');
     if (elDate) {
         let hm = hdate.hm || '';
         const hbMonths = {
-            "Nisan": "Nissan", "Iyyar": "Iyar", "Sh\\'vat": "Shvat"
+            "Nisan": "Nisã", "Iyyar": "Iyar", "Sivan": "Sivã", "Tammuz": "Tamuz",
+            "Av": "Av", "Elul": "Elul", "Tishrei": "Tishrei", "Cheshvan": "Cheshvan",
+            "Kislev": "Kislev", "Tevet": "Tevet", "Sh'vat": "Shevat", 
+            "Adar I": "Adar I", "Adar II": "Adar II", "Adar": "Adar"
         };
         hm = hbMonths[hm] || hm;
         elDate.textContent = `${hdate.hd} ${hm}`;
+        
+        if (elDateWrapper) {
+            elDateWrapper.setAttribute('data-info-title', `${hm} ${hdate.hy}`);
+            let contentHtml = generateCalendarHTML(events, hdate);
+            elDateWrapper.setAttribute('data-info-html', contentHtml);
+        }
     }
     if (elLoc) {
         elLoc.textContent = locationName || 'Jerusalém';
@@ -317,12 +481,12 @@ export function renderEvents() {
     const upcoming = unique.sort((a, b) => a.time - b.time);
 
     if (upcoming.length === 0) {
-        grid.innerHTML = `<div id="upcoming-events-grid" class="event-cards-row upcoming-events-grid">
+        grid.innerHTML = `
     <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
     <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
     <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
     <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
-</div>`;
+`;
         return;
     }
 
