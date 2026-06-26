@@ -40,15 +40,15 @@ export function applySolarTheme() {
     let nextEventTime = null;
 
     if (state.currentZmanim && state.currentZmanim.sunrise && state.currentZmanim.sunset) {
-        const sunrise = new Date(state.currentZmanim.sunrise).getTime() - 600000;
-        const sunset = new Date(state.currentZmanim.sunset).getTime() - 600000;
+        const sunrise = new Date(state.currentZmanim.sunrise).getTime() + 4500000; // 75 min after sunrise
+        const darkThreshold = new Date(state.currentZmanim.sunset).getTime() - 4500000; // 75 min before sunset
         
         if (now < sunrise) {
             isDay = false;
             nextEventTime = sunrise;
-        } else if (now >= sunrise && now < sunset) {
+        } else if (now >= sunrise && now < darkThreshold) {
             isDay = true;
-            nextEventTime = sunset;
+            nextEventTime = darkThreshold;
         } else {
             isDay = false;
         }
