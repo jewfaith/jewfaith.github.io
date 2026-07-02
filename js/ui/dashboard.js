@@ -1,7 +1,7 @@
 import { state } from '../state.js';
 import { applySolarTheme } from './theme.js';
 import { findActiveFestival, transliterateTorah, pickReading } from '../domain/halacha.js';
-import { FESTIVAL_CATS, FESTIVAL_TORAH_READINGS, FESTIVAL_HAFTARA_READINGS, KETUVIM_BOOKS, KETUVIM_TOTAL_WEIGHT, FESTIVAL_TEHILIM } from '../domain/constants.js';
+import { FESTIVAL_CATS, FESTIVAL_TORAH_READINGS, FESTIVAL_HAFTARA_READINGS, KETUVIM_BOOKS, KETUVIM_TOTAL_WEIGHT, FESTIVAL_TEHILIM, FESTIVAL_DESCRIPTIONS } from '../domain/constants.js';
 import { LCG, getStringSimilarity } from '../utils/math.js';
 import { getEventIcon } from './icons.js';
 import { startTimers } from './timers.js';
@@ -33,9 +33,10 @@ function generateCalendarHTML(events, currentHdate) {
             
             if (hMonthRaw === currentHdate.hm && hYear === currentHy) {
                 if (ev.name) {
-                    let gMonth = null, gDay = null;
+                    let gYear = null, gMonth = null, gDay = null;
                     if (ev.raw && ev.raw.date) {
                          const gparts = ev.raw.date.split('T')[0].split('-');
+                         gYear = parseInt(gparts[0], 10);
                          gMonth = parseInt(gparts[1], 10);
                          gDay = parseInt(gparts[2], 10);
                     }
@@ -73,17 +74,9 @@ function generateCalendarHTML(events, currentHdate) {
             <ul class="legend-list" style="padding: 0; margin: 0; list-style: none; display: flex; flex-direction: column">`;
         let idx = 0;
         for (const item of legendItems) {
-            let pillText = `${item.dayText}`;
-
-            html += `<li class="legend-card">
-                <span class="date-pill">${pillText}</span>
-                <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
-                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                        <span class="legend-text" style="font-size: 1.1rem; font-weight: 600;">${item.name}</span>
-                    </div>
-                    <div style="font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-                        ${item.gregText || 'Data indisponível'}
-                    </div>
+            html += `<li class="legend-card" style="padding: 12px 14px;">
+                <div style="font-size: 1rem; font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${item.name}, ${item.gregText || 'Data indisponível'}
                 </div>
             </li>`;
             idx++;
@@ -243,18 +236,12 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
                      const key = keys[i];
                      if (ley[key]) {
                          aliyotHtml += `
-                             <div class="legend-card">
-                                 <span class="date-pill">${aliyotNums[i]}</span>
-                                 <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
-                                     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                                         <span class="legend-text" style="font-size: 1.1rem; font-weight: 600;">${aliyotNames[i]}</span>
-                                     </div>
-                                     <div style="font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-                                         ${transliterateTorah(ley[key])}
-                                     </div>
-                                 </div>
-                             </div>
-                         `;
+                            <div class="legend-card" style="padding: 12px 14px;">
+                                <div style="font-size: 1rem; font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    ${aliyotNames[i]}, ${transliterateTorah(ley[key])}
+                                </div>
+                            </div>
+                        `;
                      }
                  }
              }
@@ -493,9 +480,42 @@ export function renderEvents() {
     upcoming.forEach(evt => {
         const icon = getEventIcon(evt.category, evt.name);
 
-        const card = document.createElement('div');
-        card.innerHTML = `
-            <div class="event-card event-item glass-panel">
+        let baseName = evt.name;
+        if (evt.name.includes('laOmer')) baseName = 'Sefirat Omer';
+        else if (evt.name.includes('Hanukkah')) baseName = 'Chag Hanukkah';
+
+        let festivalData = FESTIVAL_DESCRIPTIONS[baseName] || FESTIVAL_DESCRIPTIONS[evt.name];
+        
+        let infoHtml = '';
+        if (festivalData && typeof festivalData === 'object') {
+            infoHtml = `
+                <div class="levels-container" style="display:flex; flex-direction:column;">
+                    <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Peshat Literal: ${festivalData.peshat}</div>
+                    </div>
+                    <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Remez Alegórico: ${festivalData.remez}</div>
+                    </div>
+                    <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Drash Homilético: ${festivalData.drash}</div>
+                    </div>
+                    <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; border-bottom:none; white-space:normal; overflow:visible;">
+                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Sod Místico: ${festivalData.sod}</div>
+                    </div>
+                </div>
+            `;
+        } else {
+            let desc = festivalData || 'Uma data significativa no calendário judaico.';
+            infoHtml = `
+                <div class="info-modal-card" style="margin-bottom: 0; white-space:normal; overflow:visible;">
+                    <div class="info-modal-value" style="font-weight: 400; font-size: 1.05rem; line-height: 1.6; color: var(--text-primary); text-align: left; padding: 4px 0; white-space:normal; overflow:visible; text-overflow:clip;">${desc}</div>
+                </div>
+            `;
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = `
+            <div class="event-card event-item glass-panel info-trigger" tabindex="0" role="button" aria-label="Detalhes de ${evt.name}">
                 <div class="icon-circle ${evt.category}">
                     ${icon}
                 </div>
@@ -505,7 +525,12 @@ export function renderEvents() {
                 </div>
             </div>
         `;
-        grid.appendChild(card);
+        
+        const card = wrapper.querySelector('.event-card');
+        card.setAttribute('data-info-title', evt.name);
+        card.setAttribute('data-info-html', infoHtml);
+
+        grid.appendChild(wrapper);
     });
 
     document.getElementById('card-local-vigente')?.classList.remove('not-ready');

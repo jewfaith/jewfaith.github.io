@@ -184,12 +184,14 @@ function renderSuggestions(results) {
     // 4. Render slots
     finalItems.forEach(resItem => {
         const li = document.createElement('li');
+        li.className = 'legend-card';
         
         const parts = resItem.displayText.split(',').map(s => s.trim());
         const primaryText = parts[0];
         const secondaryText = parts.slice(1, 4).join(', ');
 
-        li.innerHTML = `<strong>${primaryText}</strong>${secondaryText ? `<span class="suggestion-secondary">, ${secondaryText}</span>` : ''}`;
+        li.style.cssText = "font-size: 1rem; font-weight: 400; text-align: left; color: var(--text-primary); cursor: pointer;";
+        li.innerHTML = `${primaryText}${secondaryText ? `, ${secondaryText}` : ''}`;
 
         li.addEventListener('click', () => {
             if (resItem.isCurrent) {
@@ -512,9 +514,8 @@ async function openReadingModal(ref, cardTitle) {
             const displayNum = `${paddedChapter}:${paddedVerse}`;
             html += `
                 <div class="legend-card" style="align-items: flex-start; margin: 0;">
-                    <span class="date-pill" style="margin-top: 4px;">${displayNum}</span>
                     <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
-                        <div class="verse-text" style="padding-right: 0; text-align: left; font-size: 1.05rem;">${v.text}</div>
+                        <div class="verse-text" style="padding-right: 0; text-align: left; font-size: 1.05rem; white-space: normal; overflow: visible; text-overflow: clip;">${displayNum} ${v.text}</div>
                     </div>
                 </div>
             `;
@@ -561,7 +562,7 @@ export function initModals(updateDashboardCallback) {
             return;
         }
 
-        if (card.id === 'card-parasha-wrapper' || card.id === 'card-hdate-wrapper') {
+        if (card.id === 'card-parasha-wrapper' || card.id === 'card-hdate-wrapper' || card.classList.contains('info-trigger')) {
             if (card.classList.contains('not-ready')) return;
             const modal = document.getElementById('info-modal');
             const titleEl = document.getElementById('info-modal-title');
@@ -616,24 +617,14 @@ export function initModals(updateDashboardCallback) {
         }
     });
 
-    document.getElementById('location-modal')?.addEventListener('click', (e) => {
-        if (e.target.id === 'location-modal') {
-            document.getElementById('location-modal').style.display = 'none';
-            document.body.style.overflow = '';
-        }
-    });
+
 
     document.getElementById('close-reading-btn')?.addEventListener('click', () => {
         document.getElementById('reading-modal').style.display = 'none';
         document.body.style.overflow = '';
     });
 
-    document.getElementById('reading-modal')?.addEventListener('click', (e) => {
-        if (e.target.id === 'reading-modal') {
-            document.getElementById('reading-modal').style.display = 'none';
-            document.body.style.overflow = '';
-        }
-    });
+
 
     document.getElementById('close-info-btn')?.addEventListener('click', () => {
         const m = document.getElementById('info-modal');
@@ -641,12 +632,7 @@ export function initModals(updateDashboardCallback) {
         document.body.style.overflow = '';
     });
 
-    document.getElementById('info-modal')?.addEventListener('click', (e) => {
-        if (e.target.id === 'info-modal') {
-            e.target.style.display = 'none';
-            document.body.style.overflow = '';
-        }
-    });
+
 
     document.getElementById('close-location-btn')?.addEventListener('click', () => {
         const m = document.getElementById('location-modal');
