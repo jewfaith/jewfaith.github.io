@@ -594,6 +594,101 @@ export function initModals(updateDashboardCallback) {
             return;
         }
 
+        if (card.id === 'card-paypal-wrapper') {
+            if (card.classList.contains('not-ready') || card.classList.contains('locked')) {
+                // Se estiver bloqueado (Yom Tov / Shabbat), mostrar modal de aviso
+                if (card.classList.contains('locked')) {
+                    const modal = document.getElementById('info-modal');
+                    const titleEl = document.getElementById('info-modal-title');
+                    const bodyEl = document.getElementById('info-modal-body');
+                    if (modal && titleEl && bodyEl) {
+                        titleEl.textContent = 'Apoio Pausado';
+                        bodyEl.innerHTML = `
+                            <div class="levels-container" style="display:flex; flex-direction:column;">
+                                <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                                    <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Status Atual: O recebimento de apoios financeiros está temporariamente suspenso em respeito à santidade do dia.</div>
+                                </div>
+                                <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                                    <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Halachá: A lei judaica determina a cessação de transações financeiras e trabalho físico durante os dias sagrados. Essa pausa honra o mandamento do descanso e permite a elevação espiritual.</div>
+                                </div>
+                                <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                                    <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Período de Bloqueio: A suspensão entra em vigor de forma preventiva cinco horas antes do pôr do sol e se encerra apenas cinco horas após a saída das estrelas do último dia da festividade.</div>
+                                </div>
+                                <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                                    <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Margem de Segurança: Para evitar qualquer infração involuntária nos momentos que antecedem ou sucedem a festividade, o sistema adiciona automaticamente este intervalo preventivo em ambas as extremidades do dia sagrado.</div>
+                                </div>
+                            </div>
+                        `;
+                        modal.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                    }
+                }
+                return;
+            }
+            window.open('https://paypal.me/ashkenar', '_blank');
+            return;
+        }
+
+        if (card.id === 'card-share-wrapper') {
+            if (card.classList.contains('not-ready')) return;
+            const shareUrl = window.location.href;
+            
+            const copyLink = () => {
+                try {
+                    const tempInput = document.createElement('input');
+                    tempInput.value = shareUrl;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempInput);
+                    
+                    const subtitleEl = card.querySelector('.card-subtitle');
+                    if (subtitleEl) {
+                        const originalText = subtitleEl.getAttribute('data-orig') || subtitleEl.textContent;
+                        subtitleEl.setAttribute('data-orig', originalText);
+                        subtitleEl.textContent = 'Link Copiado!';
+                        setTimeout(() => subtitleEl.textContent = originalText, 2000);
+                    }
+                } catch(e) {
+                    prompt('Copie o link do projeto:', shareUrl);
+                }
+            };
+
+            const fallbackShare = () => {
+                try {
+                    const tempInput = document.createElement('input');
+                    tempInput.value = shareUrl;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempInput);
+                    
+                    const subtitleEl = card.querySelector('.card-subtitle');
+                    if (subtitleEl) {
+                        const originalText = subtitleEl.getAttribute('data-orig') || subtitleEl.textContent;
+                        subtitleEl.setAttribute('data-orig', originalText);
+                        subtitleEl.textContent = 'Link Copiado';
+                        setTimeout(() => subtitleEl.textContent = originalText, 2000);
+                    }
+                } catch(e) {
+                    prompt('Copie o link abaixo:', shareUrl);
+                }
+            };
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Yisrael Date',
+                    text: 'Acesse horários, parashá, feriados e zmanim em tempo real.',
+                    url: shareUrl
+                }).catch(err => {
+                    fallbackShare();
+                });
+            } else {
+                fallbackShare();
+            }
+            return;
+        }
+
         const titleEl = card.querySelector('.card-title');
         const subtitleEl = card.querySelector('.card-subtitle') || card.querySelector('.timer-countdown');
 

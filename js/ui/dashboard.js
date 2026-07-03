@@ -228,7 +228,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
              haftaraRef = (hOptions[0] || '').split(' | ')[0].trim();
              
              if (ley["1"]) {
-                 const aliyotNames = ["Aliyah Rishon", "Aliyah Sheni", "Aliyah Shlishi", "Aliyah Revii", "Aliyah Chamishi", "Aliyah Shishi", "Aliyah Shevii"];
+                 const aliyotNames = ["Rishon", "Sheni", "Shlishi", "Revii", "Chamishi", "Shishi", "Shevii"];
                  const aliyotNums = ["01", "02", "03", "04", "05", "06", "07"];
                  const keys = ["1", "2", "3", "4", "5", "6", "7"];
                  
@@ -370,18 +370,48 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
     }
 
     // --- Halachic Donation Button Logic & Persuasive Copy ---
-    const isAfterSunsetLocal = sunsetTime > 0 && now > sunsetTime;
-    const currentHebrewDay = new Date(now + (isAfterSunsetLocal ? 86400000 : 0));
-    const isHolyDay = (currentHebrewDay.getDay() === 6) || (activeFestival && !isCholHaMoed);
+    const FIVE_HOURS_MS = 5 * 60 * 60 * 1000;
+    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+    let isHolyDayBlocked = false;
+
+    // Check Shabbat boundaries (+/- 5 horas)
+    const currentDayOfWeek = new Date(now).getDay(); // 0=Sun, 5=Fri, 6=Sat
+    if (currentDayOfWeek === 5 && sunsetTime > 0 && now >= sunsetTime - FIVE_HOURS_MS) {
+        isHolyDayBlocked = true;
+    } else if (currentDayOfWeek === 6 && sunsetTime > 0 && now <= sunsetTime + FIVE_HOURS_MS) {
+        isHolyDayBlocked = true;
+    }
+
+    // Check Yom Tov boundaries (+/- 5 horas)
+    if (!isHolyDayBlocked) {
+        for (const cat of FESTIVAL_CATS) {
+            const evts = events.filter(e => e.category === cat).sort((a, b) => a.time - b.time);
+            for (let i = 0; i < evts.length; i++) {
+                let isChmDay = false;
+                if (cat === 'matzot') isChmDay = isIsrael ? (i >= 1 && i <= 5) : (i >= 2 && i <= 5);
+                else if (cat === 'sukkot') isChmDay = isIsrael ? (i >= 1 && i <= 6) : (i >= 2 && i <= 6);
+
+                if (!isChmDay) {
+                    const ytStart = evts[i].time;
+                    const ytEnd = ytStart + TWENTY_FOUR_HOURS_MS;
+                    if (now >= ytStart - FIVE_HOURS_MS && now <= ytEnd + FIVE_HOURS_MS) {
+                        isHolyDayBlocked = true;
+                        break;
+                    }
+                }
+            }
+            if (isHolyDayBlocked) break;
+        }
+    }
     
     const donateBtn = document.querySelector('.premium-donate-btn');
     const donateTitle = document.querySelector('.donation-title');
     const donateText = document.querySelector('.donation-text');
 
     if (donateBtn && donateText && donateTitle) {
-        if (isHolyDay) {
+        if (isHolyDayBlocked) {
             donateTitle.textContent = 'Dia Sagrado de Descanso 🕊️';
-            donateText.innerHTML = 'Hoje é <strong>Shabat ou Yom Tov</strong>. Em respeito à Halachá (Lei Judaica), não realizamos transações financeiras nestes dias. <br><br>O recebimento de apoios foi temporariamente desativado para honrarmos o mandamento do descanso. Aproveite o dia e volte após a saída das estrelas!';
+            donateText.innerHTML = 'Hoje é <strong>Shabat ou Yom Tov</strong>. Em respeito à Halachá (Lei Judaica), pausamos transações financeiras 5 horas antes até 5 horas depois dos dias sagrados.<br><br>O recebimento de apoios foi temporariamente desativado para honrarmos o mandamento do descanso. Aproveite o dia e volte após a saída das estrelas!';
             donateBtn.style.pointerEvents = 'none';
             donateBtn.style.opacity = '0.5';
             donateBtn.style.filter = 'grayscale(100%)';
@@ -395,6 +425,30 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             donateBtn.style.filter = 'none';
             donateBtn.querySelector('span').textContent = 'Pagar um Café (PayPal)';
             donateBtn.setAttribute('href', 'https://paypal.me/ashkenar');
+        }
+    }
+
+    // Lock also the small PayPal card
+    const smallPaypalCard = document.getElementById('card-paypal-wrapper');
+    if (smallPaypalCard) {
+        const icon = smallPaypalCard.querySelector('i');
+        const title = smallPaypalCard.querySelector('.card-title');
+        const subtitle = smallPaypalCard.querySelector('.card-subtitle');
+
+        if (isHolyDayBlocked) {
+            smallPaypalCard.classList.add('locked');
+            if (icon) {
+                icon.style.color = 'var(--text-muted)';
+            }
+            if (title) title.textContent = 'Apoio Pausado';
+            if (subtitle) subtitle.textContent = 'Doar Depois';
+        } else {
+            smallPaypalCard.classList.remove('locked');
+            if (icon) {
+                icon.style.color = '';
+            }
+            if (title) title.textContent = 'Apoio Extra';
+            if (subtitle) subtitle.textContent = 'No Paypal';
         }
     }
 }
@@ -535,6 +589,8 @@ export function renderEvents() {
 
     document.getElementById('card-local-vigente')?.classList.remove('not-ready');
     document.getElementById('card-hdate-wrapper')?.classList.remove('not-ready');
+    document.getElementById('card-paypal-wrapper')?.classList.remove('not-ready');
+    document.getElementById('card-share-wrapper')?.classList.remove('not-ready');
     
     startTimers();
 }
