@@ -11,7 +11,7 @@ const missingCode = \
             const addr = locData.address;
             const city = addr.city || addr.town || addr.village || addr.state;
             if (addr.country) locationName = city ? \\\\\\, \\\\\\ : addr.country;
-            else locationName = city || "Jerusalém";
+            else locationName = city || "Jerusalï¿½m";
             if (addr.country_code) isIsrael = (addr.country_code.toLowerCase() === 'il');
         }
 

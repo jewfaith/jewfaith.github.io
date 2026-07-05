@@ -134,117 +134,136 @@ export const FESTIVAL_TEHILIM = {
 
 export const FESTIVAL_DESCRIPTIONS = {
     'Yom Shabbat': {
-        peshat: 'O sétimo dia da semana em que Deus cessou o trabalho após criar o mundo. A Torá ordena a completa cessação de todo trabalho físico em imitação ao descanso divino.',
-        remez: 'O número sete alude à perfeição no tempo e na natureza. O descanso semanal é uma dica de que o homem não vive apenas da produção material.',
-        drash: 'Os sábios ensinam que o Shabbat equivale a todos os outros mandamentos juntos. Ele nos dá uma alma extra e antecipa o grande dia de descanso eterno.',
-        sod: 'Representa a ascensão dos mundos espirituais e a união da noiva, Malchut, com o noivo cósmico. A luz divina flui sem os julgamentos severos da semana.'
+        torah: 'Em Shemot 20, institui-se o descanso absoluto no sétimo dia, recordando a criação e a saída da escravidão como sinal eterno.',
+        neviim: 'A mensagem transmitida em Yeshayahu 58 enfatiza que o repouso deve ser um dia de deleite, alertando o povo a afastar-se de interesses comerciais.',
+        ketuvim: 'Exaltando as obras divinas através de Tehilim 92, representa-se o cântico para o dia de repouso como um vislumbre poético de paz completa.',
+        talmud: 'A Masechet Shabbat 118b ensina que se todos guardassem dois dias de descanso perfeitamente, a redenção final chegaria imediatamente ao mundo.',
+        sod: 'Na secção Yitro 88a do Zohar, revela-se a ascensão dos mundos espirituais e a união da luz cósmica, livre dos julgamentos da semana.'
     },
     'Pessach Sheni': {
-        peshat: 'Uma segunda oportunidade, um mês depois, para que os israelitas que estavam impuros ou distantes pudessem realizar o sacrifício do cordeiro pascal.',
-        remez: 'A palavra sheni, segundo, sugere que sempre há uma nova chance. Na jornada da vida, falhas passadas não impedem a conexão futura.',
-        drash: 'Mostra que o choro e o desejo sincero do povo judeu clamando por justiça forçaram o céu a criar uma nova lei. O desejo humano move a revelação divina.',
-        sod: 'Representa a correção das quebras nos recipientes espirituais inferiores. Uma luz que alcança lugares profundos que a luz original não pôde atingir.'
+        torah: 'Citado em Bamidbar 9, concede-se uma segunda oportunidade num mês seguinte para os israelitas impuros ou distantes oferecerem o sacrifício.',
+        neviim: 'A constante mensagem de Yirmiyahu 8 ecoa intensamente, mostrando que o arrependimento sincero gera sempre novas oportunidades de retorno.',
+        ketuvim: 'Nos salmos de Tehilim 25, reflete-se o clamor humano que alcança os céus, semelhante a quem busca ansiosamente não ser excluído das bênçãos.',
+        talmud: 'Com base na Masechet Psachim 93a, transmite-se uma lição de esperança provando que nunca é tarde demais para quem estava num caminho distante.',
+        sod: 'Na obra Pri Etz Chaim 15, simboliza-se a correção dos recipientes espirituais inferiores, alcançando lugares profundos que a luz original não conseguiu atingir.'
     },
     'Yom Pessach': {
-        peshat: 'A data em que os israelitas foram libertos da escravidão no Egito. O mandamento original envolvia sacrificar e comer um cordeiro.',
-        remez: 'O Egito, Mitzrayim, significa limitações. A saída do Egito simboliza a quebra constante das nossas próprias barreiras psicológicas e limites pessoais.',
-        drash: 'O sangue nas portas demonstra dedicação pública a Deus num ambiente hostil. É o nascimento do povo judeu como uma nação dedicada a uma missão sagrada.',
-        sod: 'A libertação das faíscas sagradas presas nas forças da impureza egípcia. O êxodo ocorreu com uma grande revelação de luz de cima para baixo.'
+        torah: 'Descrevendo a noite da libertação em Shemot 12, institui-se a abstenção de fermento como memorial perpétuo da grande saída.',
+        neviim: 'Em Yehoshua 5, a transição da provisão do deserto para os frutos da terra é celebrada no primeiro memorial na terra prometida.',
+        ketuvim: 'Através de Tehilim 114, os cânticos transformam o evento histórico num hino de louvor que exalta os grandes milagres e a divisão do mar.',
+        talmud: 'O dever de cada pessoa se ver a si mesma como se tivesse saído pessoalmente daquela terra é uma obrigação estrita definida na Masechet Psachim 116b.',
+        sod: 'No nível mais profundo explicado no Zohar Bo 40a, a festividade representa a libertação das faíscas sagradas presas nas forças da impureza.'
     },
     'Chag Matzot': {
-        peshat: 'Comemora o fato de que os israelitas saíram às pressas e sua massa não teve tempo de levedar. Também marca o início da colheita da cevada.',
-        remez: 'O pão levedado representa a arrogância e o orgulho, enquanto a matzá, o pão achatado, representa a humildade e a submissão total.',
-        drash: 'Comer matzá durante sete dias é a dieta da fé. Nutrimos o nosso interior apenas com o necessário e simples, curando o nosso próprio egoísmo.',
-        sod: 'A matzá é chamada de pão da fé e pão da cura. Ao consumi-la, internalizamos a luz da sabedoria superior que não sofreu o decaimento do fermento.'
+        torah: 'A ordem estabelecida em Shemot 12 para comer pão ázimo durante sete dias lembra a pressa na saída, onde a massa não teve tempo de levedar, ensinando a humildade.',
+        neviim: 'Reforçando a observância das festas em Yechezkel 45, utiliza-se a eliminação do fermento para ecoar a purificação exigida contra o orgulho.',
+        ketuvim: 'Em Shir Hashirim 2, o amor primaveril entre o Criador e o povo é refletido, simbolizando a libertação como uma relação fiel.',
+        talmud: 'Segundo a Masechet Brachot 17a, a diferença entre o fermento e a matzá reside no "ar" do orgulho, simbolizando o ego que deve ser completamente anulado.',
+        sod: 'O pão ázimo é compreendido no Zohar Emor 95b como o pão da cura e da fé, cuja ingestão internaliza a sabedoria superior que escapou ao decaimento.'
     },
     'Yom Shavuot': {
-        peshat: 'O dia histórico da outorga dos Dez Mandamentos no Sinai. Na agricultura, é a Festa da Colheita, quando as primícias do trigo eram trazidas ao Templo.',
-        remez: 'Sendo o quinquagésimo dia após o Êxodo, simboliza o nível além dos ciclos naturais normais, abrindo o grande portal cinquenta do entendimento.',
-        drash: 'Deus, como um noivo, deu a Torá como contrato de casamento a Israel, a noiva. O monte Sinai foi escolhido pela sua humildade, não pela sua enorme altura.',
-        sod: 'O céu e a terra fundiram-se. A barreira entre os reinos espirituais superiores e o mundo material inferior foi permanentemente removida.'
+        torah: 'Marcando os cinquenta dias desde a libertação em Vayikra 23, institui-se a festa das semanas, assinalando historicamente a grandiosa outorga da lei.',
+        neviim: 'As visões celestiais descritas em Yechezkel 1 conectam a impressionante revelação no monte com as grandiosas visões da glória divina.',
+        ketuvim: 'Lida durante a festa, a história de Megillat Ruth 4 ilustra a escolha voluntária de abraçar a fé, espelhando a aceitação na grande revelação.',
+        talmud: 'Uma tradição da Masechet Sota 5a assegura que o monte Sinai foi escolhido por ser o mais humilde, demonstrando onde a verdadeira sabedoria reside.',
+        sod: 'Ocorre, consoante a visão do Zohar Yitro 78b, a fusão entre o céu e a terra, removendo permanentemente a barreira espessa entre os reinos superiores e o mundo inferior.'
     },
     'Yom Teruah': {
-        peshat: 'O dia em que a Torá ordena descansar e ouvir o toque do Shofar, logo no primeiro dia do sétimo mês do ano litúrgico judaico.',
-        remez: 'O som não articulado do Shofar é como o choro de uma criança que não sabe falar e apenas clama ao pai celeste com o coração partido.',
-        drash: 'Conhecido como Rosh Hashaná. É o aniversário da criação de Adão, coroamos Deus novamente como o rei soberano do universo perante o tribunal celeste.',
-        sod: 'O som estridente quebra o rigor cósmico. O chifre de carneiro evoca a memória pura, mitigando julgamentos rigorosos e atraindo enorme compaixão infinita.'
+        torah: 'Um dia de descanso no primeiro dia do sétimo mês é prescrito em Vayikra 23, sendo assinalado com o toque sonoro como convocação solene.',
+        neviim: 'O som de alerta é associado no relato de Yirmiyahu 4 ao aviso iminente do dia do julgamento e ao chamado urgente ao arrependimento.',
+        ketuvim: 'Solidificando o reconhecimento da realeza divina em Tehilim 47, descreve-se o Altíssimo a ascender ao trono ao som do toque do shofar.',
+        talmud: 'Destacando a ordem na Masechet Rosh Hashana 16a, indica-se que o chifre curvo lembra a necessidade de curvar o coração em submissão.',
+        sod: 'Na obra Pri Etz Chaim 21, o som estridente atrai uma enorme compaixão infinita e quebra as barreiras do rigor cósmico, mitigando julgamentos severos.'
     },
     'Yom Kippur': {
-        peshat: 'O Dia da Expiação, o dia de afligir a alma, jejuar, no qual o Sumo Sacerdote realizava sacrifícios para purificar todo o povo.',
-        remez: 'A privação das necessidades corporais eleva o ser humano ao estado puro dos anjos celestes, que não comem nem bebem, focando no criador supremo.',
-        drash: 'Consolida o selo do perdão que começou a ser desenhado em Rosh Hashaná. Demonstra o amor divino que abraça e perdoa quando o povo retorna sinceramente.',
-        sod: 'A elevação até ao nível de Binah, uma dimensão de transcendentalidade tão alta que as falhas e os pecados terrenos deixam completamente de existir na sua base original.'
+        torah: 'Detalhando um rigoroso jejum e a purificação em Vayikra 16, relata-se o envio do bode para o deserto para expiar as falhas da congregação.',
+        neviim: 'Em Yeshayahu 58, avisa-se que o jejum verdadeiro implica quebrar correntes da opressão, partilhar pão e praticar a justiça inabalável.',
+        ketuvim: 'Ilustrando que a misericórdia alcança quem se arrepende em Yona 3, mostra-se como a compaixão divina opera face ao perdão.',
+        talmud: 'Apesar de o dia perdoar certas falhas, a Masechet Yoma 85b é clara ao exigir que ofensas contra o próximo necessitam de um pedido de perdão direto.',
+        sod: 'Atingindo uma dimensão elevada descrita no Zohar Acharei Mot 67a, as falhas terrenas perdem completamente a sua força e deixam de existir na sua raiz.'
     },
     'Chag Sukkot': {
-        peshat: 'A ordem divina de habitar em cabanas provisórias para lembrar as tendas do deserto. Assinala de modo marcante o fim da colheita agrícola festiva no outono.',
-        remez: 'O teto da cabana feito de simples folhagens avisa-nos que a verdadeira e segura proteção humana nasce unicamente da providência e não das sólidas e ilusórias paredes.',
-        drash: 'A habitação simboliza as sagradas nuvens de glória que rodearam os judeus. O ato de convidar os notáveis ilustres une perfeitamente todas as eras da história.',
-        sod: 'A Sukkah exprime de maneira inigualável a sublime energia espiritual externa tão intensa e abrangente que jamais cabe internamente dentro de qualquer pequeno corpo terrestre.'
+        torah: 'A obrigação prescrita em Vayikra 23 de habitar em cabanas temporárias recorda as moradias frágeis no deserto, celebrando também a recolha das colheitas.',
+        neviim: 'Apontando para a união global em Zecharia 14, indica-se que no futuro todas as nações da terra subirão pacificamente para celebrar esta festa.',
+        ketuvim: 'Contrastando com a alegria na presença divina, o texto de Kohelet 1 lembra-nos constantemente da transitoriedade da vida material.',
+        talmud: 'O ensinamento da Masechet Suka 2a sobre a cabana demonstra que a habitação fixa humana é ilusória, provindo a verdadeira segurança do alto.',
+        sod: 'A energia espiritual sublime revela-se no Zohar Emor 103a através da luz circundante Makif do feriado, que é tão intensa que não consegue ser contida internamente.'
     },
     'Shemini Atzeret': {
-        peshat: 'A ordenação pontual determinando um oitavo dia sagrado designado de solene encerramento oficial das intensas celebrações agrícolas do final das colheitas sazonais.',
-        remez: 'O expressivo algarismo oito alude ao infinito perante a materialidade. Sugere a ideia profunda de um magnânimo rei solicitando aos queridos filhos apenas mais um instante íntimo.',
-        drash: 'O feriado em particular despido dos grandes rituais típicos onde sobressai e perdura a total singeleza entre a enorme glória dividida com o seu fiel povo exultante.',
-        sod: 'O maravilhoso brilho abrangente vivenciado debaixo das humildes folhas condensa agora firmemente no plano material moldando intimamente as faculdades duradouras da nossa frágil personalidade interior.'
+        torah: 'Com o acréscimo de um oitavo dia de assembleia em Bamidbar 29, estabelece-se um feriado solene que encerra as grandes celebrações.',
+        neviim: 'A culminar a dedicação original do Santuário relatada em I Melachim 8, este oitavo dia enviou o povo às suas tendas com profunda alegria.',
+        ketuvim: 'As preces pelas águas e o cântico de alegria em Tehilim 104 refletem a profunda dependência humana da providência detalhada nesta época.',
+        talmud: 'Comparando a um banquete na Masechet Suka 55b, ilustra-se um rei que pede aos mais próximos para ficarem mais um dia apenas num encontro íntimo.',
+        sod: 'Moldando firmemente a personalidade em Pri Etz Chaim 24, o brilho intenso vivenciado no exterior recolhe-se finalmente para o plano material interior.'
     },
     'Simchat Torah': {
-        peshat: 'O rito efusivo festejando a tão desejada finalização completa de todo o rolo anual seguido sem demora pelo alegre recomeço absoluto com o capítulo inaugural da criação material.',
-        remez: 'A perpétua união sem quebras evidencia indubitavelmente que todo o aprofundamento acerca das dádivas imateriais se assemelha e confunde com um anel precioso impossível de encontrar fim aparente.',
-        drash: 'O movimento cadenciado alegre abarcando a sagrada escritura encerrada anula diferenças perversas de saber igualando assim os eruditos e simplórios de um lado ao outro da fraterna celebração animada.',
-        sod: 'A coroa fulgurante e reluzente adornando intensamente a festiva leitura entrelaça inseparavelmente esferas e emanações puras refletidas nos constantes giros repletos do contagiante povo alegre envolvente da festa suprema.'
-    },
-    'Rosh Chodesh': {
-        peshat: 'O amanhecer literal e verídico de todo e qualquer calendário lunar judaico outrora balizado fisicamente consoante e imediatamente avistada e relatada a minúscula aparição reluzente noturna exata.',
-        remez: 'A discreta lua dependente eternamente do radiante sol exprime a real jornada judia espelhada através da escuridão recomeçando frágil e crescente num ciclo duradouro inabalável garantido historicamente.',
-        drash: 'A peculiar distinção merecida e carinhosamente guardada especialmente voltada à valorosa mulher abstida do grande ídolo fundido ressaltando oportunidades mensais garantidas na direção dos recomeços promissores e belos imprevistos futuros constantes felizes vindouros brilhantes notórios reais.',
-        sod: 'O resgate cósmico aguardado atestando inegavelmente que a humilde esfera clareada possuirá um idêntico fausto resplandecente equiparado puramente e divinamente unindo os reinos polarizados e unificando as energias distantes perfeitamente redimidas imaculadas absolutas supremas maravilhosas belas.'
+        torah: 'Ao concluir a leitura em Devarim 34 e reiniciar o princípio, estabelece-se um ciclo de sabedoria perpétuo e ininterrupto na festividade.',
+        neviim: 'A promessa divina entregue em Yehoshua 1 garante que a lei não se apartará da boca do líder, exortando à meditação diurna e noturna.',
+        ketuvim: 'Exaltando a doçura e a perfeição dos mandamentos em Tehilim 19, descreve-se a retidão que alegra e ilumina os olhos de quem a estuda.',
+        talmud: 'O estabelecimento do calendário de leituras anuais na Masechet Megilla 31a assegura que nenhuma parte do texto sagrado caia no esquecimento.',
+        sod: 'Na conceção mística do Zohar Bereshit 1a, as letras não são simples símbolos, mas antes as próprias fundações que geram e sustentam continuamente o universo.'
     },
     'Sefirat Omer': {
-        peshat: 'A ação e preceito ordenando uma exata contagem estrita somando os quarenta dias seguidos de nove decorridos no tempo começando ao entardecer preciso aquando da espiga rústica primária oriunda trazida solenemente oferecida subindo ao altar divinal de pedras imaculadas perante os altos pontífices santos ungidos limpos reais.',
-        remez: 'O número sete multiplicado pelo mesmo sete sugere a completude perfeita da lapidação do caráter humano transparecendo o caminho íngreme ascendente saindo direto da impura escravidão submissa alcançando devidamente e seguramente as purificadoras verdades elevadas inestimáveis preciosas ricas puras brilhantes radiantes imponentes vitais sagradas supremas puras divinas excelsas divinais.',
-        drash: 'Um percurso doloroso mas sanador limpando e lavando minuciosamente defeito por defeito ao longo dos dias os duros resquícios adquiridos dolorosamente em solo opressor permitindo acolher depois dignamente o grande e absoluto clarão esplendoroso inestimável prometido milagrosamente ao longínquo acampamento liberto sedento fiel valente e puro congregado reunido abençoado unânime devoto atento zeloso fiel devotado.',
-        sod: 'O entrelaçamento denso cabalístico ajustando incansavelmente a interdependência curativa abrangente de sete qualidades emotivas intrínsecas e retificando incisivamente de modo milimétrico exato harmonizando perfeitamente as forças vibracionais e o canal vital humano interno espiritual sagrado e elevado de luz intensa brilhante radiante resplandecente poderosa suprema forte divinal sagrada linda linda grandiosa imensa vasta pura imaculada real.'
+        torah: 'A ordem contínua expressa em Vayikra 23 para contar sete semanas a partir da oferenda dos feixes serve como uma ponte de antecipação purificadora.',
+        neviim: 'A promessa de um coração renovado em Yechezkel 36 reflete a purificação interior gradual durante estes quarenta e nove dias essenciais de preparação.',
+        ketuvim: 'O cântico da colheita em Tehilim 67, composto por quarenta e nove palavras, é utilizado diariamente para alinhar a bênção sobre os frutos da terra e a ascensão espiritual.',
+        talmud: 'As complexidades logísticas da contagem e o rigor associado ao sacrifício de cevada estão exaustivamente explorados nas discussões de Masechet Menachot 65b.',
+        sod: 'Na cabala do Zohar Emor 97a, cada dia refina uma combinação diferente das emoções, culminando numa transformação completa do caráter humano na quinquagésima luz.'
     },
     'Chag Hanukkah': {
-        peshat: 'A retumbante e militarmente improvável e exultante vitória e sucesso obtido ferozmente pela frágil guerrilha destemida afastando decisivamente as legiões helênicas intrusas retomando devolvendo limpando erigindo refazendo purificando inteiramente e rededicando prontamente o abalado mas majestoso santuário de pedras e tesouros sagrados preciosos ricos brilhantes maravilhosos lindos inestimáveis amados reais esplendorosos supremos majestosos inigualáveis eternos reais abençoados.',
-        remez: 'O diminuto combustível azeite milagroso ensinando eternamente provando definitivamente ressaltando apontando realçando que as vitais lamparinas brilhantes acesas ensinam silenciosamente apontando o farol de que não usufruímos da essência espiritual para o puro luxo carnal ou conveniência imediata terrena proveitosa vaidosa útil cobiçosa inútil mundana temporal perecível fugaz e transitória e fútil frívola terrena.',
-        drash: 'A ínfima gotícula poupada selada pura resgatada resguardada denota inequivocamente e comprova vigorosamente o persistente fundo inabalável recôndito intacto intocado insubornável inatingível imutável incorruptível do intelecto vivo da remanescente pátria que superou e derrotou firmemente ininterruptamente incontáveis filosofias hostis rudes nefastas invasoras pesadas duras ímpias tirânicas obscuras mortíferas hostis letais violentas e avassaladoras amargas densas cruéis reais.',
-        sod: 'O incandescer vibrante irrompendo emanado radiante descendo diretamente do ápice infinito da primeiríssima vontade primordial altíssima elevada sagrada magna sublime inatingível longínqua infinita imensa majestosa penetrando furando brilhando rompendo transpassando aniquilando desintegrando as espessas profundezas abismais nefastas e tenebrosas inferiores escuras frias remotas vazias negras soturnas densas distantes lúgubres cegas vazias fundas tristes cegas baixas duras.'
+        torah: 'As ofertas dos líderes de Israel descritas em Bamidbar 7 inspiram o conceito de rededicação diária e purificação constante do santuário.',
+        neviim: 'A visão do candelabro de ouro em Zecharia 4 reforça a promessa de que não é por força nem por violência, mas pelo espírito divino que a vitória chega.',
+        ketuvim: 'O cântico entoado para a dedicação da casa em Tehilim 30 celebra a transformação do choro noturno numa manhã repleta de alegria duradoura.',
+        talmud: 'A essência do milagre não reside na guerra, mas sim no pequeno cântaro de azeite que durou oito dias, conforme relata a Masechet Shabbat 21b.',
+        sod: 'No plano oculto detalhado em Pri Etz Chaim 26, acender as luzes nos dias mais escuros do ano puxa a luminosidade infinita para dentro dos recantos mais sombrios da realidade.'
     },
     'Yom Purim': {
-        peshat: 'A reversão física e oficial do edito mortal ditado por assuero para executar a população judia persa inteira.',
-        remez: 'A ausência do nome divino e o acaso nos sorteios ensinam a divina condução nos bastidores políticos escuros mundanos e vulgares.',
-        drash: 'Ester oculta as origens tal qual o altíssimo encobre os contínuos milagres constantes atrás dos longos pretextos temporais lógicos e naturais reais.',
-        sod: 'A alegria estridente resgata e unifica na fonte inexplorada a compaixão cósmica esmagadora cancelando até velhas queixas imensas e rígidas cóleras justas antigas.'
+        torah: 'O confronto implacável contra Amaleque relatado em Shemot 17 alerta o povo de que a força da dúvida e do ataque injustificado deve ser apagada de geração em geração.',
+        neviim: 'A ordem transmitida a Saul em I Shmuel 15 para erradicar o mal estabelece o precedente histórico para o conflito final que se desenrola no palácio persa.',
+        ketuvim: 'As inversões dramáticas documentadas em Megillat Esther 9 comprovam que a salvação opera nos bastidores, transformando um decreto de morte em dias de banquete e alegria.',
+        talmud: 'A obrigação estipulada na Masechet Megilla 7a encoraja a alegria até ao ponto de não se conseguir distinguir entre o vilão que amaldiçoou e o herói que abençoou.',
+        sod: 'Profundamente enraizado no Zohar Truma 140b, o disfarce e as máscaras representam o Criador escondido na natureza, operando milagres através dos eventos mais triviais.'
+    },
+    'Rosh Chodesh': {
+        torah: 'O início de cada mês é assinalado em Bamidbar 28 com sacrifícios específicos e o toque das trombetas, marcando a contagem do tempo a partir da renovação lunar.',
+        neviim: 'A profecia de Yeshayahu 66 prevê um futuro onde toda a carne virá prostrar-se mensalmente, estabelecendo este dia como uma celebração perene de renovação.',
+        ketuvim: 'Louvando o Criador pela precisão do universo em Tehilim 104, destaca-se que a lua foi feita para as estações, ordenando o ciclo das marés e do tempo humano.',
+        talmud: 'O rigoroso processo de testemunhar a lua nova é debatido na Masechet Chulin 60b, enfatizando a parceria entre a autoridade terrena e o calendário celeste.',
+        sod: 'Na sabedoria do Zohar Pinchas 248a, a lua que não tem luz própria reflete a posição da humanidade de receber e amplificar a luz infinita no mundo inferior.'
     },
     'Ta\'anit Esther': {
-        peshat: 'O jejum doloroso e literal efetuado a pedido da rainha valente antes de correr evidente perigo oficial extremo ao interceder frente ao duro e tirano rei altivo.',
-        remez: 'A paragem na nutrição orgânica demonstra fielmente sem máscaras enganosas ou fáceis e comodismos mornos banais que a causa suprema supera a fome transitória básica real.',
-        drash: 'A comoção solidária conjunta gerada na cidade provou categoricamente irrefutavelmente que a genuína compaixão grupal resgata efetivamente os fardos opressivos impossíveis gigantes e duros pesados densos nefastos mortais.',
-        sod: 'As entranhas destas forças obscuras astrais funestas ficam completamente exauridas de recursos quando o clamor da renúncia sincera e devotada pura esvazia os desejos terrenos corporais ilusórios frágeis mortais pequenos mesquinhos rasteiros banais.'
+        torah: 'A quebra do pacto após o incidente do bezerro de ouro em Shemot 32 ensina como o jejum e a oração intensa podem anular decretos celestiais severos.',
+        neviim: 'O apelo arrebatador em Yeshayahu 55 incentiva todos a buscar a proximidade divina enquanto ela está disponível, ecoando a convocação urgente para o arrependimento.',
+        ketuvim: 'A heroína determina em Megillat Esther 4 que o seu povo deve jejuar por três dias sem comer nem beber, unindo a nação antes da sua intervenção arriscada.',
+        talmud: 'O jejum não é para sofrimento vão, mas segundo a Masechet Megilla 2a serve para despertar os corações e incitar ao arrependimento frente à crise iminente.',
+        sod: 'Desvendado no Zohar Truma 141a, a abstinência purifica o recipiente material, permitindo que as orações da nação subam diretamente sem qualquer interferência.'
     },
     'Tzom Tammuz': {
-        peshat: 'A quebra iminente da proteção mural na amada praça devido à persistente máquina letal militar estrangeira cruel opressora.',
-        remez: 'As altas temperaturas do ardente pino do estio representam de longe e simbolizam o entorpecimento e afrouxamento relaxado perigoso letal fatal desidratado da sã consciência humana espiritual real.',
-        drash: 'Uma dolorosa janela rasgada revelou na carne viva as terríveis disfunções passionais falíveis cegas insanas internas do impaciente e instável coletivo descrente afoito e infiel.',
-        sod: 'Os pórticos escuros astrais severos cederam abruptamente despejando correntes cármicas densas rigorosas e amargas opressivas letais densas cortantes duras impiedosas na recetiva órbita passiva assustada débil caída mundana terrena vulnerável material frágil temporal baixa.'
+        torah: 'A descida com as primeiras tábuas termina em destroços perante a rebelião em Shemot 32, ensinando as graves consequências da rutura e da idolatria num momento frágil.',
+        neviim: 'A queda trágica das muralhas que protegem o santuário é documentada em Yirmiyahu 52, abrindo caminho para a desolação completa da cidade sagrada.',
+        ketuvim: 'As lágrimas derramadas pelos cativos em Tehilim 137 espelham a saudade da terra prometida logo no momento em que as proteções originais caíram.',
+        talmud: 'A Masechet Ta\'anit 28b enumera cinco grandes tragédias ocorridas neste dia, sublinhando a vulnerabilidade que surge quando a união interna do povo se quebra.',
+        sod: 'As fendas criadas neste período na visão de Pri Etz Chaim 29 representam a infiltração de energias caóticas no domínio sagrado que requerem um esforço rigoroso de reparação.'
     },
     'Tisha BAv': {
-        peshat: 'A tragédia suprema consumada na aniquilação maciça exata inclemente impiedosa fatal funesta dura das sumptuosas e monumentais ricas edificações de exaltação litúrgica primárias sagradas abençoadas erigidas solenemente firmadas cravadas fundadas imponentes sólidas e belas centrais essenciais preciosas vitais.',
-        remez: 'A negação inicial amedrontada e lamentosa insegura descrente dos dez emissários inseguros originou historicamente este choro ecoante penoso contínuo desolador angustiado temeroso fatal recorrente lúgubre longo doloroso secular.',
-        drash: 'O benevolente patriarca imenso puniu furiosamente e demoliu firmemente as valiosas madeiras e nobres colunatas de sustento material provisório efêmero temporal para preservar intimamente e proteger ativamente arduamente zelosamente incansavelmente e poupar decididamente amorosamente salvaguardando a própria essência duradoura e perene querida tenaz alma imortal resiliente do rebanho amado protegido forte valioso querido eleito.',
-        sod: 'A amarga separação e denso encobrimento nublado distanciado enevoado sombrio aflitivo das superiores matrizes repletas da unificadora glória excelsa descendo abruptamente caídas atiradas proscritas rejeitadas mergulhadas espalhadas escondidas despedaçadas divididas estilhaçadas cegas presas limitadas veladas nos lodosos abismos isolados duros sombrios distantes vazios dispersos tristes perdidos baixos materiais.'
+        torah: 'O pecado dos espias culminando no choro injustificado do povo em Bamidbar 14 fixou este dia como um tempo de lamento duradouro pelas gerações futuras.',
+        neviim: 'As profecias devastadoras proferidas em Yirmiyahu 9 choram amargamente sobre as ruínas, descrevendo o fogo devorador e a dispersão dolorosa.',
+        ketuvim: 'O livro de Eicha 1 é a expressão máxima do desespero e do luto solitário, retratando a cidade outrora populosa agora vazia e desolada como uma viúva.',
+        talmud: 'Na análise contundente da Masechet Ta\'anit 29a, o exílio ocorreu devido ao ódio gratuito e à divisão infundada entre irmãos, que destruiu a morada terrena do Criador.',
+        sod: 'As cinzas da destruição referidas no Zohar Truma 142b escondem o paradoxo supremo, pois ensina-se que exatamente no pico da escuridão deste dia nasce o potencial do redentor.'
     },
     'Tzom Gedaliah': {
-        peshat: 'O derrame violento súbito do governante apontado gerando medo instaurando pânico fuga caos morte dispersão generalizada completa do frágil minúsculo enclave sobrevivente desamparado atônito assustado órfão exposto frágil dependente.',
-        remez: 'A dolorida perda abrupta acidental da pessoa integra sublinha e ilustra desenha retrata claramente quão essencial curativo aglutinador vital apaziguador indispensável fundamental se reveste e faz o magnânimo e reto exemplo compassivo bondoso coerente virtuoso inspirador honesto justo puro limpo firme de liderança mansa pacífica atenta idônea séria coesa franca nobre sã leal doce moral reta.',
-        drash: 'O embate cego trágico fratricida instigou raiva e revelou claramente o destrutivo e cego inaceitável instinto vaidoso vil assassino impiedoso sujo desonesto cruel traiçoeiro iníquo desleal letal hostil insensato oriundo tristemente vergonhosamente oriundo e cultivado nefastamente no cerne idêntico da mesma linhagem comum irmanada familiar afim.',
-        sod: 'O choque provocado brutal letal afasta bruscamente isola amputa seca corta fatalmente bloqueia incisivamente fere brutalmente as fluentes delicadas e finas artérias vitais finas sutis benéficas santas bondosas curativas sagradas puras suaves divinas e sublimes celestes boas doadoras santas e compassivas amenas.'
+        torah: 'O desrespeito pela autoridade justa e pela liderança nomeada ecoa em Bamidbar 16 a anarquia ancestral que corrói os fundamentos da responsabilidade comunitária.',
+        neviim: 'O assassinato traiçoeiro do governador e o desespero final dos sobreviventes na terra são vividamente contados em Yirmiyahu 41, apagando a última chama de autonomia.',
+        ketuvim: 'O clamor contra os lábios mentirosos e a traição constante no seio da comunidade encontram reflexo nos lamentos ascensoriais de Tehilim 120.',
+        talmud: 'Ao comparar o assassinato de uma pessoa justa à queima do santuário, a Masechet Rosh Hashana 18b alerta para as consequências mortais da violência política interna.',
+        sod: 'O declínio que a morte do governante representa na obra Pri Etz Chaim 30 manifesta a ocultação final da luz providencial, mergulhando a congregação no escuro do exílio absoluto.'
     },
     'Tzom Tevet': {
-        peshat: 'O acampamento opressor que encerrou impediu as trocas livres impondo carência dura e fome severa iniciando doloroso e lúgubre triste sítio trágico sangrento mortífero cruel frio funesto da amada vila sagrada forte histórica muralhada.',
-        remez: 'O pico frio agudo tenso duro áspero cortante congelante severo denso austero isolante solitário gelado e amargo rigoroso da temporada exprime fortemente demonstra sinaliza mostra assinala aponta claramente a letárgica sombria escura pesada sonolenta dura opressiva amarga ausência letal mortal desprovida e nua crua ausente ausente de cálido empático vivo sincero ardor emotivo quente terno humano compassivo caridoso lindo nobre belo fraterno bom dócil leal bom são puro amável alegre e vívido e vivo livre fluente vibrante doce.',
-        drash: 'O cinturão férreo maciço bloqueador inimigo sufocante hostil revela impiedosamente amargamente tristemente que o recuo medroso silencioso surdo mudo fechado cego vaidoso covarde frio avarento de generosidade espontânea partilhada ativa voluntária aberta sincera livre calorosa limpa já havia previamente sorrateiramente fechado aprisionado selado blindado erguido insidiosamente silenciosamente murado bloqueado duramente friamente e severamente e cegamente o centro e coração insensível orgulhoso altivo deslumbrado duro pávido rígido trancado inerte surdo cego teimoso vaidoso fechado.',
-        sod: 'As grossas travas celestes obstrutivas pesadas escuras tensas funestas de julgamento e rigor afunilam impiedosamente cortam suprimem isolam apartam sufocam bloqueiam estagnam repulsam fecham as ternas delicadas bondosas maravilhosas radiantes celestiais vitais amenas doces serenas suaves puras divinas finas santas plácidas doadoras celestiais bondosas livres fontes.'
+        torah: 'O desastre coletivo gerado por graves desvios recorda em Devarim 28 as duras punições repreensivas perante as falhas severas da nação.',
+        neviim: 'A agonia avassaladora da capital começou inquestionavelmente no exato dia focado em Yechezkel 24, quando as muralhas foram isoladas e o cerco foi montado.',
+        ketuvim: 'Ensinando de forma extrema o desumano custo da obstinação contínua e as privações severas da dura fome, os lamentos agudos ecoam alto por Tehilim 74.',
+        talmud: 'Sendo um jejum de extrema gravidade, a Masechet Rosh Hashana 18b decreta que a privação neste dia não seria adiada nem que calhasse no dia de repouso semanal.',
+        sod: 'Afunilando denso rigor impiedoso do céu, a compilação Bnei Yissaschar 15 expõe que enormes e intransponíveis barreiras travaram então perfeitamente as fontes luminosas.'
     }
 };

@@ -35,7 +35,7 @@ async function fetchNearbyLocations() {
         const lat = coords.lat;
         const lon = coords.lon;
 
-        const latDelta = 1.8;
+        const latDelta = 0.4; // Reduced to ~44km radius to prevent distant big cities from dominating
         const cosLat = Math.cos(lat * Math.PI / 180);
         const lonDelta = latDelta / (cosLat > 0.01 ? cosLat : 1);
 
@@ -44,7 +44,7 @@ async function fetchNearbyLocations() {
         const top = lat + latDelta;
         const bottom = lat - latDelta;
 
-        const queryTypes = ['suburb', 'village', 'town'];
+        const queryTypes = ['cidade', 'vila', 'aldeia', 'freguesia'];
         const seen = new Set();
         const uniqueItems = [];
 
@@ -54,20 +54,32 @@ async function fetchNearbyLocations() {
             try {
                 const ctrl = new AbortController();
                 const tid = setTimeout(() => ctrl.abort(), 7000);
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&viewbox=${left},${top},${right},${bottom}&bounded=1&format=json&addressdetails=1&limit=15&accept-language=pt`, { signal: ctrl.signal });
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&viewbox=${left},${top},${right},${bottom}&bounded=1&format=json&addressdetails=1&limit=25&accept-language=pt&email=contato@yisraeldate.app`, { signal: ctrl.signal });
                 clearTimeout(tid);
                 if (!res.ok) continue;
                 const data = await res.json();
 
                 for (const item of data) {
-                    if (item.type === 'country' || item.class === 'country' || item.addresstype === 'country') {
+                    // Filter out streets, POIs, etc. Only allow places and administrative boundaries
+                    if (item.class !== 'place' && item.class !== 'boundary') {
+                        continue;
+                    }
+                    // Filter out countries and large states
+                    if (['country', 'state', 'region'].includes(item.type) || ['country', 'state'].includes(item.addresstype)) {
                         continue;
                     }
                     const parts = item.display_name.split(',').map(s => s.trim());
                     if (parts.length <= 1) {
                         continue;
                     }
-                    const displayText = parts.slice(0, 4).join(', ');
+                    
+                    let locality = parts[0];
+                    if (item.address) {
+                        locality = item.address.village || item.address.town || item.address.city || item.address.municipality || item.address.county || item.address.suburb || item.address.hamlet || parts[0];
+                    }
+                    
+                    const country = item.address && item.address.country ? item.address.country : parts[parts.length - 1];
+                    const displayText = `${locality}, ${country}`;
 
                     if (seen.has(displayText)) continue;
                     seen.add(displayText);
@@ -99,13 +111,13 @@ async function fetchNearbyLocations() {
         });
         uniqueItems.sort((a, b) => a.distanceKm - b.distanceKm);
 
-        // Group into 20km interval bins (0-20km, 20-40km, etc.)
+        // Group into 5km interval bins (0-5km, 5-10km, etc.)
         const binnedItems = [];
         const usedBins = new Set();
         
         for (const item of uniqueItems) {
-            const bin = Math.floor(item.distanceKm / 20);
-            if (bin < 10 && !usedBins.has(bin)) {
+            const bin = Math.floor(item.distanceKm / 5);
+            if (!usedBins.has(bin)) {
                 usedBins.add(bin);
                 binnedItems.push(item);
             }
@@ -145,22 +157,7 @@ function renderSuggestions(results) {
     const searchInput = document.getElementById('location-search-input');
     const isSearching = searchInput && searchInput.value.trim().length >= 3;
 
-    // 1. Prepend Current Active Location at slot 1 ONLY if not actively searching
-    const currentLocName = document.getElementById('card-local')?.textContent || '';
-    const hasValidName = currentLocName && !['-', 'Calculando...', 'Restaurando...', 'Aguardando GPS...', 'Erro GPS'].includes(currentLocName);
-    
-    if (!isSearching) {
-        const activeCoords = getActiveCoords();
-        const activeItem = {
-            isCurrent: true,
-            item: {
-                lat: activeCoords.lat,
-                lon: activeCoords.lon
-            },
-            displayText: hasValidName ? currentLocName : 'Jerusalém, Israel'
-        };
-        finalItems.push(activeItem);
-    }
+    // Search results logic
 
     // 2. Add search results (up to 7 items if searching, or 6 if not searching)
     const maxSearchResults = isSearching ? 7 : 6;
@@ -214,8 +211,7 @@ function renderSuggestions(results) {
 
             const modal = document.getElementById('location-modal');
             if (modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
+                closeModalSafely(modal);
             }
 
             const searchInput = document.getElementById('location-search-input');
@@ -442,7 +438,15 @@ function parseRef(ref) {
 /**
  * Fetch verses from Bolls.life ARA API for a parsed reference.
  */
-async function fetchARAVerses(parsed) {
+async function fetchARAVerses(parsed, refKey) {
+    const cacheKey = 'bible_cache_' + (refKey || '').replace(/\s+/g, '_');
+    const cached = localStorage.getItem(cacheKey) || sessionStorage.getItem(cacheKey);
+    if (cached) {
+        try {
+            return JSON.parse(cached);
+        } catch(e) {}
+    }
+
     const { bookId, startChapter, startVerse, endChapter, endVerse } = parsed;
     const allVerses = [];
 
@@ -475,7 +479,74 @@ async function fetchARAVerses(parsed) {
         }
     }
 
+    if (allVerses.length > 0) {
+        try {
+            localStorage.setItem(cacheKey, JSON.stringify(allVerses));
+        } catch (e) {
+            try { sessionStorage.setItem(cacheKey, JSON.stringify(allVerses)); } catch (e2) {}
+        }
+    }
+
     return allVerses;
+}
+
+window.addEventListener('popstate', (e) => {
+    const modals = [
+        document.getElementById('reading-modal'),
+        document.getElementById('location-modal'),
+        document.getElementById('info-modal')
+    ];
+    let anyClosed = false;
+    modals.forEach(m => {
+        if (m && m.style.display !== 'none' && m.style.display !== '') {
+            m.style.display = 'none';
+            anyClosed = true;
+        }
+    });
+    if (anyClosed) {
+        document.body.style.overflow = '';
+        sessionStorage.removeItem('openReadingModalRef');
+        sessionStorage.removeItem('openReadingModalTitle');
+        sessionStorage.removeItem('openLocationModal');
+        sessionStorage.removeItem('openInfoModalTitle');
+    }
+});
+
+export function closeModalSafely(modal) {
+    if (modal && modal.style.display !== 'none' && modal.style.display !== '') {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        sessionStorage.removeItem('openReadingModalRef');
+        sessionStorage.removeItem('openReadingModalTitle');
+        sessionStorage.removeItem('openLocationModal');
+        sessionStorage.removeItem('openInfoModalTitle');
+        if (history.state && history.state.modalOpen) {
+            history.back();
+        }
+    }
+}
+
+window.addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal-overlay')) {
+        closeModalSafely(e.target);
+    }
+});
+
+function getSkeletonHTML() {
+    return `
+        <div class="reading-loading-skeleton" style="display: flex; flex-direction: column; gap: 16px; margin-top: 10px;">
+            <div class="skeleton-card" style="padding: 16px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                <div class="skeleton-line" style="width: 100%; height: 12px; border-radius: 4px; margin-bottom: 8px;"></div>
+                <div class="skeleton-line" style="width: 75%; height: 12px; border-radius: 4px; margin-bottom: 8px;"></div>
+                <div class="skeleton-line" style="width: 60%; height: 12px; border-radius: 4px;"></div>
+            </div>
+            <div class="skeleton-card" style="padding: 16px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                <div class="skeleton-line" style="width: 95%; height: 12px; border-radius: 4px; margin-bottom: 8px;"></div>
+                <div class="skeleton-line" style="width: 85%; height: 12px; border-radius: 4px; margin-bottom: 8px;"></div>
+                <div class="skeleton-line" style="width: 40%; height: 12px; border-radius: 4px;"></div>
+            </div>
+        </div>
+    `;
 }
 
 async function openReadingModal(ref, cardTitle) {
@@ -487,22 +558,23 @@ async function openReadingModal(ref, cardTitle) {
     // Show modal
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    if (!history.state || !history.state.modalOpen) history.pushState({ modalOpen: true }, '');
+    sessionStorage.setItem('openReadingModalRef', ref);
+    sessionStorage.setItem('openReadingModalTitle', cardTitle);
 
     // Set title
     titleEl.textContent = toHebrewBookName(cardTitle);
 
-    // Set loading state
-    bodyEl.innerHTML = `
-        <div class="reading-loading">
-            <i class="fa-solid fa-circle-notch fa-spin"></i>
-            <span>Carregando texto sagrado...</span>
-        </div>
-    `;
+    // Set loading state (Skeleton loader for a professional look)
+    bodyEl.innerHTML = getSkeletonHTML();
+
+    // Atraso para transição suave do modal
+    await new Promise(resolve => setTimeout(resolve, 250));
 
     try {
         const parsed = parseRef(ref);
         if (!parsed) throw new Error('Referência não reconhecida.');
-        const verses = await fetchARAVerses(parsed);
+        const verses = await fetchARAVerses(parsed, ref);
         if (verses.length === 0) {
             throw new Error('Nenhum texto encontrado para esta referência.');
         }
@@ -550,14 +622,36 @@ export function initModals(updateDashboardCallback) {
             if (modal) {
                 modal.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
+                if (!history.state || !history.state.modalOpen) history.pushState({ modalOpen: true }, '');
+                sessionStorage.setItem('openLocationModal', 'true');
 
-                const searchInput = document.getElementById('location-search-input');
-                if (searchInput) {
-                    searchInput.value = '';
-                    renderSuggestions([]);
-                    fetchNearbyLocations();
-                    setTimeout(() => searchInput.focus(), 100);
+                const readingBody = modal.querySelector('.reading-body');
+                
+                // Hide actual content list
+                if (readingBody) readingBody.style.display = 'none';
+                
+                // Inject skeleton container
+                let skeletonContainer = modal.querySelector('.location-skeleton-container');
+                if (!skeletonContainer) {
+                    skeletonContainer = document.createElement('div');
+                    skeletonContainer.className = 'location-skeleton-container';
+                    modal.querySelector('.modal-content').appendChild(skeletonContainer);
                 }
+                skeletonContainer.innerHTML = getSkeletonHTML();
+                skeletonContainer.style.display = 'block';
+
+                setTimeout(() => {
+                    if (skeletonContainer) skeletonContainer.style.display = 'none';
+                    if (readingBody) readingBody.style.display = 'block';
+
+                    const searchInput = document.getElementById('location-search-input');
+                    if (searchInput) {
+                        searchInput.value = '';
+                        renderSuggestions([]);
+                        fetchNearbyLocations();
+                        setTimeout(() => searchInput.focus(), 100);
+                    }
+                }, 250);
             }
             return;
         }
@@ -574,9 +668,18 @@ export function initModals(updateDashboardCallback) {
                 
                 if (htmlContent) {
                     titleEl.textContent = titleText;
-                    bodyEl.innerHTML = htmlContent;
+                    
+                    // Show skeleton first
+                    bodyEl.innerHTML = getSkeletonHTML();
                     modal.style.display = 'flex';
                     document.body.style.overflow = 'hidden';
+                    if (!history.state || !history.state.modalOpen) history.pushState({ modalOpen: true }, '');
+                    sessionStorage.setItem('openInfoModalTitle', titleText);
+
+                    // Atraso para transição suave
+                    setTimeout(() => {
+                        bodyEl.innerHTML = htmlContent;
+                    }, 250);
                 }
             }
             return;
@@ -621,6 +724,7 @@ export function initModals(updateDashboardCallback) {
                         `;
                         modal.style.display = 'flex';
                         document.body.style.overflow = 'hidden';
+                        if (!history.state || !history.state.modalOpen) history.pushState({ modalOpen: true }, '');
                     }
                 }
                 return;
@@ -715,24 +819,21 @@ export function initModals(updateDashboardCallback) {
 
 
     document.getElementById('close-reading-btn')?.addEventListener('click', () => {
-        document.getElementById('reading-modal').style.display = 'none';
-        document.body.style.overflow = '';
+        closeModalSafely(document.getElementById('reading-modal'));
+        sessionStorage.removeItem('openReadingModalRef');
+        sessionStorage.removeItem('openReadingModalTitle');
     });
-
-
 
     document.getElementById('close-info-btn')?.addEventListener('click', () => {
         const m = document.getElementById('info-modal');
-        if (m) m.style.display = 'none';
-        document.body.style.overflow = '';
+        if (m) closeModalSafely(m);
+        sessionStorage.removeItem('openInfoModalTitle');
     });
-
-
 
     document.getElementById('close-location-btn')?.addEventListener('click', () => {
         const m = document.getElementById('location-modal');
-        if (m) m.style.display = 'none';
-        document.body.style.overflow = '';
+        if (m) closeModalSafely(m);
+        sessionStorage.removeItem('openLocationModal');
     });
 
     const searchInput = document.getElementById('location-search-input');
@@ -755,7 +856,7 @@ export function initModals(updateDashboardCallback) {
             const spinner = document.getElementById('search-spinner');
             if (spinner) spinner.style.display = 'block';
             try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=15&accept-language=pt`);
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=15&accept-language=pt&email=contato@yisraeldate.app`);
                 if (!res.ok) return;
                 const data = await res.json();
 
@@ -781,7 +882,14 @@ export function initModals(updateDashboardCallback) {
                     if (parts.length <= 1) {
                         return;
                     }
-                    const displayText = parts.slice(0, 4).join(', ');
+                    
+                    let locality = parts[0];
+                    if (item.address) {
+                        locality = item.address.village || item.address.town || item.address.city || item.address.municipality || item.address.county || item.address.suburb || item.address.hamlet || parts[0];
+                    }
+                    
+                    const country = item.address && item.address.country ? item.address.country : parts[parts.length - 1];
+                    const displayText = `${locality}, ${country}`;
 
                     if (seenDisplayNames.has(displayText)) return;
                     seenDisplayNames.add(displayText);
@@ -802,18 +910,19 @@ export function initModals(updateDashboardCallback) {
         if (e.key === 'Escape') {
             const locationModal = document.getElementById('location-modal');
             if (locationModal && locationModal.style.display !== 'none') {
-                locationModal.style.display = 'none';
-                document.body.style.overflow = '';
+                closeModalSafely(locationModal);
+                sessionStorage.removeItem('openLocationModal');
             }
             const readingModal = document.getElementById('reading-modal');
             if (readingModal && readingModal.style.display !== 'none') {
-                readingModal.style.display = 'none';
-                document.body.style.overflow = '';
+                closeModalSafely(readingModal);
+                sessionStorage.removeItem('openReadingModalRef');
+                sessionStorage.removeItem('openReadingModalTitle');
             }
             const infoModal = document.getElementById('info-modal');
             if (infoModal && infoModal.style.display !== 'none') {
-                infoModal.style.display = 'none';
-                document.body.style.overflow = '';
+                closeModalSafely(infoModal);
+                sessionStorage.removeItem('openInfoModalTitle');
             }
         }
         if (e.key === 'Enter' || e.key === ' ') {
@@ -828,4 +937,20 @@ export function initModals(updateDashboardCallback) {
 
     // Initialize the global observer to freeze background on any modal open
     initModalObserver();
+}
+
+export function reopenModals() {
+    if (sessionStorage.getItem('openLocationModal')) {
+        document.getElementById('card-local-vigente')?.click();
+    } else if (sessionStorage.getItem('openInfoModalTitle')) {
+        const title = sessionStorage.getItem('openInfoModalTitle');
+        const card = document.querySelector(`.event-card[data-info-title="${title}"]`);
+        if (card) {
+            card.click();
+        } else {
+            sessionStorage.removeItem('openInfoModalTitle');
+        }
+    } else if (sessionStorage.getItem('openReadingModalRef') && sessionStorage.getItem('openReadingModalTitle')) {
+        openReadingModal(sessionStorage.getItem('openReadingModalRef'), sessionStorage.getItem('openReadingModalTitle'));
+    }
 }

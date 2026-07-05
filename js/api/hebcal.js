@@ -8,7 +8,7 @@ export async function fetchNominatimReverse(lat, lon) {
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 5000);
     try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=pt`, { signal: ctrl.signal, headers: { 'Accept-Language': 'pt' } });
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=pt&email=contato@yisraeldate.app`, { signal: ctrl.signal, headers: { 'Accept-Language': 'pt' } });
         const data = await res.json();
         clearTimeout(tid);
         return data;

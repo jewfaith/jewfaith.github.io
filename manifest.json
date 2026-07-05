@@ -1,21 +1,41 @@
 {
+    "id": "yisrael-date-app",
     "name": "Yisrael Date",
     "short_name": "Yisrael Date",
-    "description": "Festas e Parashot",
+    "description": "Acesse horários, parashá, feriados e zmanim em tempo real. Uma ferramenta gratuita e elegante para a rotina judaica.",
+    "lang": "pt",
+    "dir": "ltr",
     "start_url": "./index.html",
     "display": "standalone",
+    "display_override": ["standalone", "minimal-ui"],
+    "orientation": "portrait-primary",
     "background_color": "#05060b",
     "theme_color": "#05060b",
+    "categories": ["education", "utilities", "lifestyle"],
     "icons": [
         {
-            "src": "https://dwo.co.il/wp-content/uploads/2022/03/Emblem_of_Israel.svg_.png",
+            "src": "./icon.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "./icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "./icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
         },
         {
             "src": "https://dwo.co.il/wp-content/uploads/2022/03/Emblem_of_Israel.svg_.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "maskable"
         }
     ]
 }

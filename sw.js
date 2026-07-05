@@ -15,7 +15,8 @@ const ASSETS_TO_CACHE = [
     './js/ui/modals.js',
     './js/ui/theme.js',
     './js/ui/timers.js',
-    './js/utils/math.js'
+    './js/utils/math.js',
+    './icon.png'
 ];
 
 self.addEventListener('install', (event) => {

@@ -5,6 +5,78 @@ import { FESTIVAL_CATS, FESTIVAL_TORAH_READINGS, FESTIVAL_HAFTARA_READINGS, KETU
 import { LCG, getStringSimilarity } from '../utils/math.js';
 import { getEventIcon } from './icons.js';
 import { startTimers } from './timers.js';
+import { reopenModals } from './modals.js';
+
+export function showDashboardSkeletons() {
+    // Restore the skeletons for all top cards
+    const cards = [
+        { id: 'card-parasha', subId: 'card-parasha-wrapper' },
+        { id: 'card-torah', subId: 'card-torah-wrapper' },
+        { id: 'card-haftara', subId: 'card-haftara-wrapper' },
+        { id: 'card-ketuvim', subId: 'card-ketuvim-wrapper' },
+        { id: 'card-local', subId: 'card-local-vigente' },
+        { id: 'card-hdate', subId: 'card-hdate-wrapper' },
+        { id: 'card-paypal', subId: 'card-paypal-wrapper' },
+        { id: 'card-share', subId: 'card-share-wrapper' }
+    ];
+
+    cards.forEach(c => {
+        const titleEl = document.getElementById(c.id);
+        const wrapperEl = document.getElementById(c.subId);
+        if (wrapperEl) {
+            wrapperEl.classList.add('not-ready');
+            const iconEl = wrapperEl.querySelector('.icon-circle i');
+            if (iconEl) {
+                if (!iconEl.hasAttribute('data-original-class')) {
+                    iconEl.setAttribute('data-original-class', iconEl.className);
+                }
+                iconEl.className = 'fa-solid fa-circle-notch fa-spin';
+            }
+        }
+        if (titleEl) {
+            titleEl.innerHTML = '<div class="skeleton-line" style="width: 75%; height: 24px; border-radius: 6px;"></div>';
+            const subtitle = titleEl.nextElementSibling;
+            if (subtitle && subtitle.classList.contains('card-subtitle')) {
+                subtitle.innerHTML = '<div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div>';
+            }
+        }
+    });
+
+    // Restore upcoming grid skeletons
+    const grid = document.getElementById('upcoming-events-grid');
+    if (grid) {
+        grid.innerHTML = `
+          <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
+            <div class="icon-circle localvigente"><i class="fa-solid fa-star"></i></div>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title"><div class="skeleton-line" style="width: 60%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+            </div>
+          </div>
+          <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
+            <div class="icon-circle datahebraica"><i class="fa-solid fa-star"></i></div>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title"><div class="skeleton-line" style="width: 75%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 50%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+            </div>
+          </div>
+          <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
+            <div class="icon-circle parashat"><i class="fa-solid fa-star"></i></div>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title"><div class="skeleton-line" style="width: 50%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 35%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+            </div>
+          </div>
+          <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
+            <div class="icon-circle roshchodesh"><i class="fa-solid fa-star"></i></div>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title"><div class="skeleton-line" style="width: 80%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+            </div>
+          </div>
+        `;
+    }
+}
 
 function generateCalendarHTML(events, currentHdate) {
     if (!currentHdate) return ''; 
@@ -276,8 +348,10 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         }
         if (elTorahWrapper) {
             elTorahWrapper.setAttribute('data-ref', toEnglishRef(torahRawRef));
+            const sub = elTorahWrapper.querySelector('.card-subtitle');
+            if (sub) sub.textContent = 'Lei Escrita';
         }
-        elTorah.textContent = transliterateTorah(torahRawRef);
+        elTorah.textContent = transliterateTorah(torahRawRef) || '-';
     }
 
     const elHaftaraWrapper = document.getElementById('card-haftara-wrapper');
@@ -292,8 +366,10 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         }
         if (elHaftaraWrapper) {
             elHaftaraWrapper.setAttribute('data-ref', toEnglishRef(haftaraRawRef));
+            const sub = elHaftaraWrapper.querySelector('.card-subtitle');
+            if (sub) sub.textContent = 'Olhar Futuro';
         }
-        elHaftara.textContent = transliterateTorah(haftaraRawRef);
+        elHaftara.textContent = transliterateTorah(haftaraRawRef) || '-';
     }
 
     const elKetuvimWrapper = document.getElementById('card-ketuvim-wrapper');
@@ -331,8 +407,10 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
 
         if (elKetuvimWrapper) {
             elKetuvimWrapper.setAttribute('data-ref', toEnglishRef(ketuvimRawRef));
+            const sub = elKetuvimWrapper.querySelector('.card-subtitle');
+            if (sub) sub.textContent = 'Escrito Sagrado';
         }
-        elKetuvim.textContent = transliterateTorah(ketuvimRawRef);
+        elKetuvim.textContent = transliterateTorah(ketuvimRawRef) || '-';
     }
 
     const elDateWrapper = document.getElementById('card-hdate-wrapper');
@@ -351,6 +429,8 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             elDateWrapper.setAttribute('data-info-title', `${hm} ${hdate.hy}`);
             let contentHtml = generateCalendarHTML(events, hdate);
             elDateWrapper.setAttribute('data-info-html', contentHtml);
+            const sub = elDateWrapper.querySelector('.card-subtitle');
+            if (sub) sub.textContent = 'Data Hebraica';
         }
     }
     if (elLoc) {
@@ -437,11 +517,8 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
 
         if (isHolyDayBlocked) {
             smallPaypalCard.classList.add('locked');
-            if (icon) {
-                icon.style.color = 'var(--text-muted)';
-            }
             if (title) title.textContent = 'Apoio Pausado';
-            if (subtitle) subtitle.textContent = 'Doar Depois';
+            if (subtitle) subtitle.textContent = 'No Paypal';
         } else {
             smallPaypalCard.classList.remove('locked');
             if (icon) {
@@ -451,6 +528,22 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             if (subtitle) subtitle.textContent = 'No Paypal';
         }
     }
+
+    const shareCard = document.getElementById('card-share-wrapper');
+    if (shareCard) {
+        const title = shareCard.querySelector('.card-title');
+        const subtitle = shareCard.querySelector('.card-subtitle');
+        if (title) title.textContent = 'Mostrar App';
+        if (subtitle) subtitle.textContent = 'Partilhar Link';
+    }
+
+    document.querySelectorAll('.event-card.not-ready').forEach(el => {
+        el.classList.remove('not-ready');
+        const iconEl = el.querySelector('.icon-circle i');
+        if (iconEl && iconEl.hasAttribute('data-original-class')) {
+            iconEl.className = iconEl.getAttribute('data-original-class');
+        }
+    });
 }
 
 export function renderEvents() {
@@ -522,12 +615,7 @@ export function renderEvents() {
     const upcoming = unique.sort((a, b) => a.time - b.time);
 
     if (upcoming.length === 0) {
-        grid.innerHTML = `
-    <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
-    <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
-    <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
-    <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
-`;
+        grid.innerHTML = '';
         return;
     }
 
@@ -541,20 +629,23 @@ export function renderEvents() {
         let festivalData = FESTIVAL_DESCRIPTIONS[baseName] || FESTIVAL_DESCRIPTIONS[evt.name];
         
         let infoHtml = '';
-        if (festivalData && typeof festivalData === 'object') {
+        if (festivalData && typeof festivalData === 'object' && festivalData.torah) {
             infoHtml = `
                 <div class="levels-container" style="display:flex; flex-direction:column;">
                     <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
-                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Peshat Literal: ${festivalData.peshat}</div>
+                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.torah}</div>
                     </div>
                     <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
-                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Remez Alegórico: ${festivalData.remez}</div>
+                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.neviim}</div>
                     </div>
                     <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
-                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Drash Homilético: ${festivalData.drash}</div>
+                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.ketuvim}</div>
+                    </div>
+                    <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.talmud}</div>
                     </div>
                     <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; border-bottom:none; white-space:normal; overflow:visible;">
-                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Sod Místico: ${festivalData.sod}</div>
+                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.sod}</div>
                     </div>
                 </div>
             `;
@@ -587,10 +678,17 @@ export function renderEvents() {
         grid.appendChild(wrapper);
     });
 
-    document.getElementById('card-local-vigente')?.classList.remove('not-ready');
-    document.getElementById('card-hdate-wrapper')?.classList.remove('not-ready');
-    document.getElementById('card-paypal-wrapper')?.classList.remove('not-ready');
-    document.getElementById('card-share-wrapper')?.classList.remove('not-ready');
+    ['card-local-vigente', 'card-hdate-wrapper', 'card-paypal-wrapper', 'card-share-wrapper'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.remove('not-ready');
+            const iconEl = el.querySelector('.icon-circle i');
+            if (iconEl && iconEl.hasAttribute('data-original-class')) {
+                iconEl.className = iconEl.getAttribute('data-original-class');
+            }
+        }
+    });
     
     startTimers();
+    reopenModals();
 }

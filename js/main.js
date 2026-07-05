@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { getGeolocation } from './api/geolocation.js';
 import { hebcalFetch, fetchNominatimReverse } from './api/hebcal.js';
-import { updateUIBlocks, renderEvents } from './ui/dashboard.js';
+import { updateUIBlocks, renderEvents, showDashboardSkeletons } from './ui/dashboard.js';
 import { initModals } from './ui/modals.js';
 import { applyEstimatedTheme } from './ui/theme.js';
 
@@ -15,6 +15,12 @@ if ('serviceWorker' in navigator) {
 }
 
 async function updateDashboard() {
+    // 0. Impor loading esqueleto imediatamente
+    showDashboardSkeletons();
+
+    // 0.5. Iniciar o temporizador de 250ms em paralelo com os pedidos de rede
+    const minDelayPromise = new Promise(resolve => setTimeout(resolve, 250));
+
     // Apply estimated theme instantly on start based on saved location to prevent theme flashes
     const exactLocRaw = localStorage.getItem('exactLocation');
     if (exactLocRaw) {
@@ -36,6 +42,7 @@ async function updateDashboard() {
             const data = JSON.parse(offlineDataRaw);
             state.unifiedEvents = data.events;
             state.currentZmanim = data.zmanim || null;
+            await minDelayPromise; // Garante que a cache também respeita os 250ms
             updateUIBlocks(data.events, data.hdate, data.locName, data.sunset, data.isIsrael);
             renderEvents();
             loadedFromCache = true;
@@ -43,57 +50,6 @@ async function updateDashboard() {
     }
 
     const grid = document.getElementById('upcoming-events-grid');
-    if (grid && !loadedFromCache) {
-        grid.innerHTML = `<div id="upcoming-events-grid" class="event-cards-row upcoming-events-grid">
-    <div>
-        <div class="event-card event-item glass-panel">
-            <div class="icon-circle">
-                <i class="fa-solid fa-clock"></i>
-            </div>
-            <div class="card-content">
-                <h2 class="card-title">-</h2>
-                <span class="timer-countdown" data-time="">Em Breve</span>
-            </div>
-        </div>
-    </div>
-
-    <div>
-        <div class="event-card event-item glass-panel">
-            <div class="icon-circle">
-                <i class="fa-solid fa-clock"></i>
-            </div>
-            <div class="card-content">
-                <h2 class="card-title">-</h2>
-                <span class="timer-countdown" data-time="">Em Breve</span>
-            </div>
-        </div>
-    </div>
-
-    <div>
-        <div class="event-card event-item glass-panel">
-            <div class="icon-circle">
-                <i class="fa-solid fa-clock"></i>
-            </div>
-            <div class="card-content">
-                <h2 class="card-title">-</h2>
-                <span class="timer-countdown" data-time="">Em Breve</span>
-            </div>
-        </div>
-    </div>
-
-    <div>
-        <div class="event-card event-item glass-panel">
-            <div class="icon-circle">
-                <i class="fa-solid fa-clock"></i>
-            </div>
-            <div class="card-content">
-                <h2 class="card-title">-</h2>
-                <span class="timer-countdown" data-time="">Em Breve</span>
-            </div>
-        </div>
-    </div>
-</div>`;
-    }
 
     try {
         if (!state.userLocation) {
@@ -379,11 +335,22 @@ async function updateDashboard() {
                 updateUIBlocks(data.events, data.hdate, data.locName, data.sunset, data.isIsrael);
             } catch (e) {
                 console.error("Failed to load offline cache", e);
+                updateUIBlocks([], { hd: '-', hm: '', hy: '' }, 'Erro', 0, true);
             }
+        } else {
+            updateUIBlocks([], { hd: '-', hm: '', hy: '' }, 'Erro', 0, true);
         }
     }
 
+    // Aguardar que os 250ms mínimos tenham passado (em paralelo com a rede)
+    await minDelayPromise;
+
     renderEvents();
+
+    // Quando tudo acabar de renderizar e preparar, espera 50ms para remover o esqueleto e mostrar a UI final
+    setTimeout(() => {
+        document.body.classList.add('loaded');
+    }, 50);
 
     if (state.currentSunsetTime > new Date().getTime()) {
         const msToSunset = state.currentSunsetTime - new Date().getTime();

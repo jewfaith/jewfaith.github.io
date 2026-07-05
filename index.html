@@ -4,11 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Yisrael Date</title>
-    <link
-      rel="shortcut icon"
-      href="https://dwo.co.il/wp-content/uploads/2022/03/Emblem_of_Israel.svg_.png"
-      type="image/svg+xml"
-    />
+    <link rel="shortcut icon" href="./icon.png" type="image/png" />
 
     <!-- Otimizações de Conexão (DNS/TLS) para as APIs críticas -->
     <link rel="preconnect" href="https://www.hebcal.com" crossorigin />
@@ -34,7 +30,7 @@
     <meta property="og:title" content="Yisrael Date" />
     <meta
       property="og:description"
-      content="Acesse horários, parashá, feriados e zmanim em tempo real. Uma ferramenta gratuita, elegante e livre de anúncios para a sua rotina."
+      content="Acesse horários, parashá, feriados e zmanim em tempo real. Uma ferramenta gratuita e elegante para a sua rotina."
     />
     <meta
       property="og:image"
@@ -61,7 +57,7 @@
       <div class="events-dashboard">
         <div class="event-cards-row">
           <div
-            class="event-card event-item glass-panel"
+            class="event-card event-item glass-panel not-ready"
             id="card-parasha-wrapper"
             tabindex="0"
             role="button"
@@ -70,16 +66,16 @@
             <div class="icon-circle cicloanual">
               <i class="fa-solid fa-book-open"></i>
             </div>
-            <div class="card-content">
-              <h2 class="card-title" id="card-parasha">-</h2>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title" id="card-parasha"><div class="skeleton-line" style="width: 80%; height: 24px; border-radius: 6px;"></div></h2>
               <span class="card-subtitle" id="card-parasha-subtitle"
-                >Ciclo Anual</span
+                ><div class="skeleton-line" style="width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span
               >
             </div>
           </div>
 
           <div
-            class="event-card event-item glass-panel"
+            class="event-card event-item glass-panel not-ready"
             id="card-torah-wrapper"
             tabindex="0"
             role="button"
@@ -88,14 +84,14 @@
             <div class="icon-circle leiescrita">
               <i class="fa-solid fa-scroll"></i>
             </div>
-            <div class="card-content">
-              <h2 class="card-title" id="card-torah">-</h2>
-              <span class="card-subtitle">Lei Escrita</span>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title" id="card-torah"><div class="skeleton-line" style="width: 60%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
             </div>
           </div>
 
           <div
-            class="event-card event-item glass-panel"
+            class="event-card event-item glass-panel not-ready"
             id="card-haftara-wrapper"
             tabindex="0"
             role="button"
@@ -104,14 +100,14 @@
             <div class="icon-circle profetas">
               <i class="fa-solid fa-feather-pointed"></i>
             </div>
-            <div class="card-content">
-              <h2 class="card-title" id="card-haftara">-</h2>
-              <span class="card-subtitle">Olhar Futuro</span>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title" id="card-haftara"><div class="skeleton-line" style="width: 70%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 50%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
             </div>
           </div>
 
           <div
-            class="event-card event-item glass-panel"
+            class="event-card event-item glass-panel not-ready"
             id="card-ketuvim-wrapper"
             tabindex="0"
             role="button"
@@ -120,9 +116,9 @@
             <div class="icon-circle ketuvim">
               <i class="fa-solid fa-pen-nib"></i>
             </div>
-            <div class="card-content">
-              <h2 class="card-title" id="card-ketuvim">-</h2>
-              <span class="card-subtitle">Escrito Sagrado</span>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title" id="card-ketuvim"><div class="skeleton-line" style="width: 65%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 55%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
             </div>
           </div>
         </div>
@@ -130,7 +126,44 @@
         <div
           id="upcoming-events-grid"
           class="event-cards-row upcoming-events-grid"
-        ></div>
+        >
+          <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
+            <div class="icon-circle localvigente">
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title"><div class="skeleton-line" style="width: 60%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+            </div>
+          </div>
+          <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
+            <div class="icon-circle datahebraica">
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title"><div class="skeleton-line" style="width: 75%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 50%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+            </div>
+          </div>
+          <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
+            <div class="icon-circle parashat">
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title"><div class="skeleton-line" style="width: 50%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 35%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+            </div>
+          </div>
+          <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
+            <div class="icon-circle roshchodesh">
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title"><div class="skeleton-line" style="width: 80%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+            </div>
+          </div>
+        </div>
 
         <div class="event-cards-row">
           <!-- ID added to identify card for modal trigger -->
@@ -144,9 +177,9 @@
             <div class="icon-circle localvigente">
               <i class="fa-solid fa-location-dot"></i>
             </div>
-            <div class="card-content">
-              <h2 class="card-title" id="card-local">-</h2>
-              <span class="card-subtitle">Local Vigente</span>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title" id="card-local"><div class="skeleton-line" style="width: 85%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
             </div>
           </div>
 
@@ -155,14 +188,14 @@
             id="card-hdate-wrapper"
             tabindex="0"
             role="button"
-            aria-label="Ver Data Hebraica"
+            aria-label="Detalhes da Data Hebraica"
           >
             <div class="icon-circle datahebraica">
-              <i class="fa-solid fa-calendar-week"></i>
+              <i class="fa-solid fa-calendar-days"></i>
             </div>
-            <div class="card-content">
-              <h2 class="card-title" id="card-hdate">-</h2>
-              <span class="card-subtitle">Data Hebraica</span>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title" id="card-hdate"><div class="skeleton-line" style="width: 75%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
             </div>
           </div>
 
@@ -176,9 +209,9 @@
             <div class="icon-circle paypal">
               <i class="fa-brands fa-paypal"></i>
             </div>
-            <div class="card-content">
-              <h2 class="card-title" id="card-paypal">Apoio Extra</h2>
-              <span class="card-subtitle">No Paypal</span>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title" id="card-paypal"><div class="skeleton-line" style="width: 65%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
             </div>
           </div>
 
@@ -192,9 +225,9 @@
             <div class="icon-circle share">
               <i class="fa-solid fa-share-nodes"></i>
             </div>
-            <div class="card-content">
-              <h2 class="card-title" id="card-share">Mostrar App</h2>
-              <span class="card-subtitle">Partilhar Link</span>
+            <div class="card-content" style="width: 100%;">
+              <h2 class="card-title" id="card-share"><div class="skeleton-line" style="width: 70%; height: 24px; border-radius: 6px;"></div></h2>
+              <span class="card-subtitle"><div class="skeleton-line" style="width: 55%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
             </div>
           </div>
         </div>
@@ -221,7 +254,11 @@
             "
           />
           <i id="search-spinner" class="fa-solid fa-circle-notch fa-spin"></i>
-          <button id="close-location-btn" class="modal-close-btn" aria-label="Fechar">
+          <button
+            id="close-location-btn"
+            class="modal-close-btn"
+            aria-label="Fechar"
+          >
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
@@ -247,7 +284,11 @@
       <div class="modal-content glass-panel reading-modal-content">
         <div class="reading-header">
           <h2 id="reading-modal-title" class="reading-title">-</h2>
-          <button id="close-reading-btn" class="modal-close-btn" aria-label="Fechar">
+          <button
+            id="close-reading-btn"
+            class="modal-close-btn"
+            aria-label="Fechar"
+          >
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
@@ -262,7 +303,11 @@
       <div class="modal-content glass-panel reading-modal-content">
         <div class="reading-header">
           <h2 id="info-modal-title" class="reading-title">-</h2>
-          <button id="close-info-btn" class="modal-close-btn" aria-label="Fechar">
+          <button
+            id="close-info-btn"
+            class="modal-close-btn"
+            aria-label="Fechar"
+          >
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>

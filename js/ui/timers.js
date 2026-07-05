@@ -99,12 +99,7 @@ export function startTimers() {
 
         const grid = document.getElementById('upcoming-events-grid');
         if (anyExpired && grid && grid.children.length === 0) {
-            grid.innerHTML = `<div id="upcoming-events-grid" class="event-cards-row upcoming-events-grid">
-    <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
-    <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
-    <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
-    <div><div class="event-card event-item glass-panel"><div class="icon-circle"><i class="fa-solid fa-clock"></i></div><div class="card-content"><h2 class="card-title">-</h2><span class="timer-countdown" data-time="">Em Breve</span></div></div></div>
-</div>`;
+            grid.innerHTML = '';
         } 
         state.timerInterval = setTimeout(update, Math.max(10, minNextUpdate + 5));
     }
