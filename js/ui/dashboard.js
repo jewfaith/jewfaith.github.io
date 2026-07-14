@@ -16,7 +16,7 @@ export function showDashboardSkeletons() {
         { id: 'card-ketuvim', subId: 'card-ketuvim-wrapper' },
         { id: 'card-local', subId: 'card-local-vigente' },
         { id: 'card-hdate', subId: 'card-hdate-wrapper' },
-        { id: 'card-paypal', subId: 'card-paypal-wrapper' },
+        { id: 'card-zmanim', subId: 'card-zmanim-wrapper' },
         { id: 'card-share', subId: 'card-share-wrapper' }
     ];
 
@@ -34,10 +34,10 @@ export function showDashboardSkeletons() {
             }
         }
         if (titleEl) {
-            titleEl.innerHTML = '<div class="skeleton-line" style="width: 75%; height: 24px; border-radius: 6px;"></div>';
+            titleEl.innerHTML = '<span class="skeleton-line" style="display: inline-block; width: 75%; height: 24px; border-radius: 6px;"></span>';
             const subtitle = titleEl.nextElementSibling;
             if (subtitle && subtitle.classList.contains('card-subtitle')) {
-                subtitle.innerHTML = '<div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div>';
+                subtitle.innerHTML = '<span class="skeleton-line" style="display: inline-block; width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></span>';
             }
         }
     });
@@ -49,29 +49,29 @@ export function showDashboardSkeletons() {
           <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
             <div class="icon-circle localvigente"><i class="fa-solid fa-star"></i></div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title"><div class="skeleton-line" style="width: 60%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 60%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
           <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
             <div class="icon-circle datahebraica"><i class="fa-solid fa-star"></i></div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title"><div class="skeleton-line" style="width: 75%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 50%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 75%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 50%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
           <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
             <div class="icon-circle parashat"><i class="fa-solid fa-star"></i></div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title"><div class="skeleton-line" style="width: 50%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 35%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 50%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 35%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
           <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
             <div class="icon-circle roshchodesh"><i class="fa-solid fa-star"></i></div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title"><div class="skeleton-line" style="width: 80%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 80%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
         `;
@@ -483,58 +483,65 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             if (isHolyDayBlocked) break;
         }
     }
-    
-    const donateBtn = document.querySelector('.premium-donate-btn');
-    const donateTitle = document.querySelector('.donation-title');
-    const donateText = document.querySelector('.donation-text');
-
-    if (donateBtn && donateText && donateTitle) {
-        if (isHolyDayBlocked) {
-            donateTitle.textContent = 'Dia Sagrado de Descanso 🕊️';
-            donateText.innerHTML = 'Hoje é <strong>Shabat ou Yom Tov</strong>. Em respeito à Halachá (Lei Judaica), pausamos transações financeiras 5 horas antes até 5 horas depois dos dias sagrados.<br><br>O recebimento de apoios foi temporariamente desativado para honrarmos o mandamento do descanso. Aproveite o dia e volte após a saída das estrelas!';
-            donateBtn.style.pointerEvents = 'none';
-            donateBtn.style.opacity = '0.5';
-            donateBtn.style.filter = 'grayscale(100%)';
-            donateBtn.querySelector('span').textContent = 'Indisponível Hoje';
-            donateBtn.removeAttribute('href');
-        } else {
-            donateTitle.textContent = 'Faça parte deste projeto ☕';
-            donateText.innerHTML = 'O Yisrael Date foi criado para ser um refúgio: <strong>rápido, privado e 100% livre de anúncios.</strong><br><br>Projetos independentes sobrevivem do apoio da própria comunidade. Se você valoriza ter a tradição sempre à mão, considere pagar um café para o desenvolvedor. Sua ação direta é o que garante que o app continuará gratuito para todos!';
-            donateBtn.style.pointerEvents = 'auto';
-            donateBtn.style.opacity = '1';
-            donateBtn.style.filter = 'none';
-            donateBtn.querySelector('span').textContent = 'Pagar um Café (PayPal)';
-            donateBtn.setAttribute('href', 'https://paypal.me/ashkenar');
-        }
-    }
-
-    // Lock also the small PayPal card
-    const smallPaypalCard = document.getElementById('card-paypal-wrapper');
-    if (smallPaypalCard) {
-        const icon = smallPaypalCard.querySelector('i');
-        const title = smallPaypalCard.querySelector('.card-title');
-        const subtitle = smallPaypalCard.querySelector('.card-subtitle');
-
-        if (isHolyDayBlocked) {
-            smallPaypalCard.classList.add('locked');
-            if (title) title.textContent = 'Apoio Pausado';
-            if (subtitle) subtitle.textContent = 'No Paypal';
-        } else {
-            smallPaypalCard.classList.remove('locked');
-            if (icon) {
-                icon.style.color = '';
-            }
-            if (title) title.textContent = 'Apoio Extra';
-            if (subtitle) subtitle.textContent = 'No Paypal';
-        }
-    }
 
     const shareCard = document.getElementById('card-share-wrapper');
     if (shareCard) {
         const title = shareCard.querySelector('.card-title');
         const subtitle = shareCard.querySelector('.card-subtitle');
-        if (title) title.textContent = 'Mostrar App';
-        if (subtitle) subtitle.textContent = 'Partilhar Link';
+        if (title) title.textContent = 'Yisrael Date';
+        if (subtitle) subtitle.textContent = 'Enviar Convite';
+    }
+
+    const elZmanim = document.getElementById('card-zmanim');
+    const elZmanimWrapper = document.getElementById('card-zmanim-wrapper');
+    if (elZmanim && elZmanimWrapper) {
+        elZmanim.textContent = 'Zman Hayom';
+        const sub = elZmanimWrapper.querySelector('.card-subtitle');
+        if (sub) sub.textContent = 'Hora Atual';
+        
+        let zmanimHtml = '';
+        if (state.currentZmanim) {
+            const formatZman = (isoString) => {
+                if (!isoString) return '--:--';
+                // A API do Hebcal retorna no fuso horário do local pedido (ex: 2021-09-06T13:42:00+03:00).
+                // Ao usar substring(11, 16), extraímos exatamente a hora local do Zman.
+                return isoString.substring(11, 16);
+            };
+            const zmanimMap = [
+                { key: 'alotHaShachar', label: 'Alot Hashachar' },
+                { key: 'sunrise', label: 'Netz Hachama' },
+                { key: 'sofZmanShma', label: 'Zman Shma' },
+                { key: 'sofZmanTfila', label: 'Zman Tefila' },
+                { key: 'chatzot', label: 'Chatzot Hayom' },
+                { key: 'minchaGedola', label: 'Mincha Gedola' },
+                { key: 'plagHaMincha', label: 'Plag Hamincha' },
+                { key: 'sunset', label: 'Shkiat Hachama' },
+                { key: 'tzeit7083deg', label: 'Tzeit Hakochavim' },
+                { key: 'tzeit72min', label: 'Rabbeinu Tam' }
+            ];
+            
+            for (const {key, label} of zmanimMap) {
+                if (state.currentZmanim[key]) {
+                    zmanimHtml += `
+                        <div class="legend-card" style="padding: 12px 14px;">
+                            <div style="font-size: 1rem; font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary);">
+                                ${formatZman(state.currentZmanim[key])}, ${label}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        } else {
+             zmanimHtml += `
+                 <div class="info-modal-card">
+                     <div class="info-modal-value">Horário Indisponível</div>
+                 </div>
+             `;
+        }
+        
+        
+        elZmanimWrapper.setAttribute('data-info-title', 'Zman Hayom');
+        elZmanimWrapper.setAttribute('data-info-html', zmanimHtml);
     }
 
     document.querySelectorAll('.event-card.not-ready').forEach(el => {
@@ -582,7 +589,7 @@ export function renderEvents() {
 
     for (const item of merged) {
         if (!item.name) continue;
-        const normalized = item.name.trim().toLowerCase().replace(/\\s+/g, ' ');
+        const normalized = item.name.trim().toLowerCase().replace(/\s+/g, ' ');
         if (seenNames.has(normalized)) continue;
 
         let isTooSimilar = false;
@@ -678,7 +685,7 @@ export function renderEvents() {
         grid.appendChild(wrapper);
     });
 
-    ['card-local-vigente', 'card-hdate-wrapper', 'card-paypal-wrapper', 'card-share-wrapper'].forEach(id => {
+    ['card-local-vigente', 'card-hdate-wrapper', 'card-zmanim-wrapper', 'card-share-wrapper'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.classList.remove('not-ready');

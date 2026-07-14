@@ -46,11 +46,29 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
+    // Apenas faz cache de origens confiáveis (local, APIs e CDNs necessários)
+    const url = event.request.url;
+    const isTrusted = url.startsWith(self.location.origin) ||
+                      url.includes('hebcal.com') ||
+                      url.includes('nominatim.openstreetmap.org') ||
+                      url.includes('bolls.life') ||
+                      url.includes('cdnjs.cloudflare.com') ||
+                      url.includes('fonts.googleapis.com') ||
+                      url.includes('fonts.gstatic.com') ||
+                      url.includes('geojs.io') ||
+                      url.includes('ipwho.is') ||
+                      url.includes('ip.sb') ||
+                      url.includes('ipinfo.io') ||
+                      url.includes('freeipapi.com') ||
+                      url.includes('ipapi.co');
+
+    if (!isTrusted) return;
+
     // Network First, fallback to cache
     event.respondWith(
         fetch(event.request)
             .then((networkResponse) => {
-                // Não faz cache de respostas inválidas ou de erro (exceto opacas que são 0)
+                // Não faz cache de respostas inválidas ou de erro (exceto opacas que são status 0)
                 if (!networkResponse || (networkResponse.status !== 200 && networkResponse.type !== 'opaque')) {
                     return networkResponse;
                 }

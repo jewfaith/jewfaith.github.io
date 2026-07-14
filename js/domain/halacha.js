@@ -19,16 +19,44 @@ export function getFestivalSpan(events, now, twentyFourHoursMs, cat) {
         .filter(e => e.category === cat)
         .sort((a, b) => a.time - b.time);
     if (!evts.length) return null;
-    let dayIndex = 0;
-    for (let i = 0; i < evts.length; i++) {
-        if (now >= evts[i].time) dayIndex = i;
+
+    // Agrupa eventos em ocorrências distintas do festival (clusters)
+    // Uma diferença de mais de 5 dias indica um evento em data ou ano diferente
+    const clusters = [];
+    let currentCluster = [evts[0]];
+
+    for (let i = 1; i < evts.length; i++) {
+        const prevEvent = evts[i - 1];
+        const currEvent = evts[i];
+        const gapMs = currEvent.time - prevEvent.time;
+        if (gapMs > 5 * 24 * 60 * 60 * 1000) {
+            clusters.push(currentCluster);
+            currentCluster = [currEvent];
+        } else {
+            currentCluster.push(currEvent);
+        }
     }
-    return {
-        start: evts[0].time,
-        end: evts[evts.length - 1].time + twentyFourHoursMs,
-        evt: evts[0],
-        dayIndex
-    };
+    clusters.push(currentCluster);
+
+    // Encontra o cluster que está ativo no momento "now"
+    for (const cluster of clusters) {
+        const start = cluster[0].time;
+        const end = cluster[cluster.length - 1].time + twentyFourHoursMs;
+        if (now >= start && now < end) {
+            let dayIndex = 0;
+            for (let i = 0; i < cluster.length; i++) {
+                if (now >= cluster[i].time) dayIndex = i;
+            }
+            return {
+                start,
+                end,
+                evt: cluster[0],
+                dayIndex
+            };
+        }
+    }
+
+    return null;
 }
 
 export function findActiveFestival(events, now, twentyFourHoursMs, cats) {

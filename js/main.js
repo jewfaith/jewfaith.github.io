@@ -26,7 +26,13 @@ async function updateDashboard() {
     if (exactLocRaw) {
         try {
             const exactLoc = JSON.parse(exactLocRaw);
-            applyEstimatedTheme(exactLoc.lat, exactLoc.lon);
+            const parsedLat = parseFloat(exactLoc.lat);
+            const parsedLon = parseFloat(exactLoc.lon);
+            if (!isNaN(parsedLat) && !isNaN(parsedLon)) {
+                applyEstimatedTheme(parsedLat, parsedLon);
+            } else {
+                applyEstimatedTheme();
+            }
         } catch (e) {
             applyEstimatedTheme();
         }
@@ -68,19 +74,24 @@ async function updateDashboard() {
 
         let lat = state.userLocation ? state.userLocation.lat : 31.7683;
         let lon = state.userLocation ? state.userLocation.lon : 35.2137;
+        let tzid = state.userLocation && state.userLocation.tz ? state.userLocation.tz : Intl.DateTimeFormat().resolvedOptions().timeZone;
 
         let overrideName = null;
         let overrideIsIsrael = null;
 
         // Se houver uma localização exata de GPS salva, sobrepor tudo
-        const exactLocRaw = localStorage.getItem('exactLocation');
         if (exactLocRaw) {
             try {
                 const exactLoc = JSON.parse(exactLocRaw);
-                lat = exactLoc.lat;
-                lon = exactLoc.lon;
-                if (exactLoc.name) overrideName = exactLoc.name;
-                if (exactLoc.isIsrael !== undefined) overrideIsIsrael = exactLoc.isIsrael;
+                const parsedLat = parseFloat(exactLoc.lat);
+                const parsedLon = parseFloat(exactLoc.lon);
+                if (!isNaN(parsedLat) && !isNaN(parsedLon)) {
+                    lat = parsedLat;
+                    lon = parsedLon;
+                    if (exactLoc.name) overrideName = String(exactLoc.name);
+                    if (exactLoc.isIsrael !== undefined) overrideIsIsrael = !!exactLoc.isIsrael;
+                    if (exactLoc.tz) tzid = String(exactLoc.tz);
+                }
             } catch (e) { }
         }
 
@@ -124,7 +135,7 @@ async function updateDashboard() {
         // 3. AWAIT ZMANIM (Blocks here because Converter depends on it)
         let sunsetTime = 0;
         try {
-            const zmRes = await fetch(`https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${dateStr}`);
+            const zmRes = await fetch(`https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${dateStr}&tzid=${tzid}`);
             const zmanimData = await zmRes.json();
             state.currentZmanim = zmanimData.times || null;
             sunsetTime = zmanimData.times && zmanimData.times.sunset ? new Date(zmanimData.times.sunset).getTime() : 0;
@@ -187,7 +198,7 @@ async function updateDashboard() {
                             const _ctrl = new AbortController();
                             const _tid = setTimeout(() => _ctrl.abort(), 6000);
                             const r = await fetch(
-                                `https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${d}`,
+                                `https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${d}&tzid=${tzid}`,
                                 { signal: _ctrl.signal }
                             );
                             clearTimeout(_tid);
@@ -352,12 +363,21 @@ async function updateDashboard() {
         document.body.classList.add('loaded');
     }, 50);
 
+    if (state.sunsetTimeout) clearTimeout(state.sunsetTimeout);
     if (state.currentSunsetTime > new Date().getTime()) {
         const msToSunset = state.currentSunsetTime - new Date().getTime();
-        if (state.sunsetTimeout) clearTimeout(state.sunsetTimeout);
         state.sunsetTimeout = setTimeout(async () => {
             await updateDashboard();
         }, msToSunset + 1000);
+    } else {
+        // Se o pôr-do-sol já passou hoje, agenda a próxima atualização para a meia-noite (00:00:10)
+        // para carregar o novo dia civil e recalcular os zmanim do dia seguinte.
+        const nextMidnight = new Date();
+        nextMidnight.setHours(24, 0, 10, 0);
+        const msToMidnight = nextMidnight.getTime() - new Date().getTime();
+        state.sunsetTimeout = setTimeout(async () => {
+            await updateDashboard();
+        }, msToMidnight);
     }
 }
 

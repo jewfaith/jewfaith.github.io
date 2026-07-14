@@ -188,7 +188,7 @@ function renderSuggestions(results) {
         const secondaryText = parts.slice(1, 4).join(', ');
 
         li.style.cssText = "font-size: 1rem; font-weight: 400; text-align: left; color: var(--text-primary); cursor: pointer;";
-        li.innerHTML = `${primaryText}${secondaryText ? `, ${secondaryText}` : ''}`;
+        li.textContent = `${primaryText}${secondaryText ? `, ${secondaryText}` : ''}`;
 
         li.addEventListener('click', () => {
             if (resItem.isCurrent) {
@@ -197,12 +197,14 @@ function renderSuggestions(results) {
             } else {
                 const lat = parseFloat(resItem.item.lat);
                 const lon = parseFloat(resItem.item.lon);
-                const isIl = resItem.item.address && resItem.item.address.country_code === 'il';
+                const isIl = resItem.item.address && (resItem.item.address.country_code === 'il' || resItem.item.address.country === 'Israel');
+                const tz = isIl ? 'Asia/Jerusalem' : Intl.DateTimeFormat().resolvedOptions().timeZone;
                 localStorage.setItem('exactLocation', JSON.stringify({ 
                     lat, 
                     lon, 
                     name: resItem.displayText,
-                    isIsrael: isIl
+                    isIsrael: isIl,
+                    tz: tz
                 }));
                 applyEstimatedTheme(lat, lon);
             }
@@ -381,7 +383,7 @@ function toHebrewBookName(text) {
 
 /**
  * Parse a Sefaria-style reference into structured data.
- * Examples: "Genesis 12:21-51", "Genesis 12:21-13:5", "Psalms 23"
+ * Examples: "Genesis 12:21-51", "Genesis 12:21-13:5", "Psalms 23", "Ezekiel 1:1-28, 3:12"
  */
 function parseRef(ref) {
     const clean = ref.trim();
@@ -394,45 +396,77 @@ function parseRef(ref) {
     const bookId = BOLLS_BOOK_IDS[bookName];
     if (!bookId) return null;
 
-    // Parse the chapter:verse range
-    // Formats: "23" | "12:21-51" | "12:21-13:5"
-    const rangeParts = rest.split('-');
+    const parts = rest.split(',');
+    const ranges = [];
+    let currentChapter = null;
 
-    if (rangeParts.length === 1) {
-        // Single chapter or single verse: "23" or "12:3"
-        const parts = rangeParts[0].split(':');
-        const chapter = parseInt(parts[0], 10);
-        const verse = parts.length > 1 ? parseInt(parts[1], 10) : null;
-        return {
-            bookId, bookName,
-            startChapter: chapter, startVerse: verse,
-            endChapter: chapter, endVerse: verse
-        };
+    for (const part of parts) {
+        const trimmedPart = part.trim();
+        if (!trimmedPart) continue;
+
+        const rangeParts = trimmedPart.split('-');
+        if (rangeParts.length === 1) {
+            // Single chapter or single verse: "23" or "12:3"
+            const subparts = rangeParts[0].split(':');
+            if (subparts.length > 1) {
+                currentChapter = parseInt(subparts[0], 10);
+                const verse = parseInt(subparts[1], 10);
+                ranges.push({
+                    startChapter: currentChapter, startVerse: verse,
+                    endChapter: currentChapter, endVerse: verse
+                });
+            } else {
+                const val = parseInt(subparts[0], 10);
+                if (currentChapter !== null) {
+                    // It's a single verse in the current chapter
+                    ranges.push({
+                        startChapter: currentChapter, startVerse: val,
+                        endChapter: currentChapter, endVerse: val
+                    });
+                } else {
+                    // It's a whole chapter
+                    currentChapter = val;
+                    ranges.push({
+                        startChapter: currentChapter, startVerse: null,
+                        endChapter: currentChapter, endVerse: null
+                    });
+                }
+            }
+        } else {
+            // Range: "12:21-51", "12:21-13:5", or "21-25"
+            const startRaw = rangeParts[0].trim();
+            const endRaw = rangeParts[1].trim();
+
+            const startParts = startRaw.split(':');
+            let startChapter, startVerse;
+            if (startParts.length > 1) {
+                currentChapter = parseInt(startParts[0], 10);
+                startChapter = currentChapter;
+                startVerse = parseInt(startParts[1], 10);
+            } else {
+                startChapter = currentChapter;
+                startVerse = parseInt(startParts[0], 10);
+            }
+
+            const endParts = endRaw.split(':');
+            let endChapter, endVerse;
+            if (endParts.length > 1) {
+                endChapter = parseInt(endParts[0], 10);
+                endVerse = parseInt(endParts[1], 10);
+                currentChapter = endChapter;
+            } else {
+                endChapter = startChapter;
+                endVerse = parseInt(endRaw, 10);
+            }
+
+            ranges.push({
+                startChapter, startVerse,
+                endChapter, endVerse
+            });
+        }
     }
 
-    // Start part
-    const startParts = rangeParts[0].split(':');
-    const startChapter = parseInt(startParts[0], 10);
-    const startVerse = startParts.length > 1 ? parseInt(startParts[1], 10) : null;
-
-    // End part: could be just verse "51" or chapter:verse "13:5"
-    const endRaw = rangeParts[1].trim();
-    if (endRaw.includes(':')) {
-        const endParts = endRaw.split(':');
-        return {
-            bookId, bookName,
-            startChapter, startVerse,
-            endChapter: parseInt(endParts[0], 10),
-            endVerse: parseInt(endParts[1], 10)
-        };
-    } else {
-        return {
-            bookId, bookName,
-            startChapter, startVerse,
-            endChapter: startChapter,
-            endVerse: parseInt(endRaw, 10)
-        };
-    }
+    return { bookId, bookName, ranges };
 }
 
 /**
@@ -447,10 +481,12 @@ async function fetchARAVerses(parsed, refKey) {
         } catch(e) {}
     }
 
-    const { bookId, startChapter, startVerse, endChapter, endVerse } = parsed;
+    const { bookId, ranges } = parsed;
     const allVerses = [];
+    const chapterCache = {};
 
-    for (let ch = startChapter; ch <= endChapter; ch++) {
+    async function getChapterData(ch) {
+        if (chapterCache[ch]) return chapterCache[ch];
         const url = `https://bolls.life/get-chapter/ARA/${bookId}/${ch}/`;
         const ctrl = new AbortController();
         const tid = setTimeout(() => ctrl.abort(), 7000);
@@ -464,18 +500,26 @@ async function fetchARAVerses(parsed, refKey) {
         clearTimeout(tid);
         if (!res.ok) throw new Error(`Erro na API: status ${res.status}`);
         const data = await res.json();
+        chapterCache[ch] = data;
+        return data;
+    }
 
-        for (const v of data) {
-            const vNum = v.verse;
-            // Filter by verse range
-            if (ch === startChapter && startVerse !== null && vNum < startVerse) continue;
-            if (ch === endChapter && endVerse !== null && vNum > endVerse) continue;
+    for (const range of ranges) {
+        const { startChapter, startVerse, endChapter, endVerse } = range;
+        for (let ch = startChapter; ch <= endChapter; ch++) {
+            const data = await getChapterData(ch);
+            for (const v of data) {
+                const vNum = v.verse;
+                // Filter by verse range
+                if (ch === startChapter && startVerse !== null && vNum < startVerse) continue;
+                if (ch === endChapter && endVerse !== null && vNum > endVerse) continue;
 
-            allVerses.push({
-                chapter: ch,
-                verse: vNum,
-                text: cleanText(v.text)
-            });
+                allVerses.push({
+                    chapter: ch,
+                    verse: vNum,
+                    text: cleanText(v.text)
+                });
+            }
         }
     }
 
@@ -697,41 +741,7 @@ export function initModals(updateDashboardCallback) {
             return;
         }
 
-        if (card.id === 'card-paypal-wrapper') {
-            if (card.classList.contains('not-ready') || card.classList.contains('locked')) {
-                // Se estiver bloqueado (Yom Tov / Shabbat), mostrar modal de aviso
-                if (card.classList.contains('locked')) {
-                    const modal = document.getElementById('info-modal');
-                    const titleEl = document.getElementById('info-modal-title');
-                    const bodyEl = document.getElementById('info-modal-body');
-                    if (modal && titleEl && bodyEl) {
-                        titleEl.textContent = 'Apoio Pausado';
-                        bodyEl.innerHTML = `
-                            <div class="levels-container" style="display:flex; flex-direction:column;">
-                                <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
-                                    <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Status Atual: O recebimento de apoios financeiros está temporariamente suspenso em respeito à santidade do dia.</div>
-                                </div>
-                                <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
-                                    <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Halachá: A lei judaica determina a cessação de transações financeiras e trabalho físico durante os dias sagrados. Essa pausa honra o mandamento do descanso e permite a elevação espiritual.</div>
-                                </div>
-                                <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
-                                    <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Período de Bloqueio: A suspensão entra em vigor de forma preventiva cinco horas antes do pôr do sol e se encerra apenas cinco horas após a saída das estrelas do último dia da festividade.</div>
-                                </div>
-                                <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
-                                    <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">Margem de Segurança: Para evitar qualquer infração involuntária nos momentos que antecedem ou sucedem a festividade, o sistema adiciona automaticamente este intervalo preventivo em ambas as extremidades do dia sagrado.</div>
-                                </div>
-                            </div>
-                        `;
-                        modal.style.display = 'flex';
-                        document.body.style.overflow = 'hidden';
-                        if (!history.state || !history.state.modalOpen) history.pushState({ modalOpen: true }, '');
-                    }
-                }
-                return;
-            }
-            window.open('https://paypal.me/ashkenar', '_blank');
-            return;
-        }
+
 
         if (card.id === 'card-share-wrapper') {
             if (card.classList.contains('not-ready')) return;

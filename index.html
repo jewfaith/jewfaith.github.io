@@ -1,10 +1,16 @@
 <!doctype html>
-<html>
+<html lang="pt">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Yisrael Date</title>
     <link rel="shortcut icon" href="./icon.png" type="image/png" />
+
+    <!-- Content Security Policy (CSP) para Segurança robusta contra XSS e injeções -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'sha256-vvt4KWwuNr51XfE5m+hzeNEGhiOfZzG97ccfqGsPwvE='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://dwo.co.il https://nominatim.openstreetmap.org; connect-src 'self' https://www.hebcal.com https://nominatim.openstreetmap.org https://bolls.life https://get.geojs.io https://ipwho.is https://api.ip.sb https://ipinfo.io https://freeipapi.com https://ipapi.co; manifest-src 'self';"
+    />
 
     <!-- Otimizações de Conexão (DNS/TLS) para as APIs críticas -->
     <link rel="preconnect" href="https://www.hebcal.com" crossorigin />
@@ -23,6 +29,9 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="manifest.json" />
@@ -67,9 +76,9 @@
               <i class="fa-solid fa-book-open"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title" id="card-parasha"><div class="skeleton-line" style="width: 80%; height: 24px; border-radius: 6px;"></div></h2>
+              <h2 class="card-title" id="card-parasha"><span class="skeleton-line" style="display: inline-block; width: 80%; height: 24px; border-radius: 6px;"></span></h2>
               <span class="card-subtitle" id="card-parasha-subtitle"
-                ><div class="skeleton-line" style="width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span
+                ><span class="skeleton-line" style="display: inline-block; width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span
               >
             </div>
           </div>
@@ -85,8 +94,8 @@
               <i class="fa-solid fa-scroll"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title" id="card-torah"><div class="skeleton-line" style="width: 60%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title" id="card-torah"><span class="skeleton-line" style="display: inline-block; width: 60%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
 
@@ -101,8 +110,8 @@
               <i class="fa-solid fa-feather-pointed"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title" id="card-haftara"><div class="skeleton-line" style="width: 70%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 50%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title" id="card-haftara"><span class="skeleton-line" style="display: inline-block; width: 70%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 50%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
 
@@ -117,8 +126,8 @@
               <i class="fa-solid fa-pen-nib"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title" id="card-ketuvim"><div class="skeleton-line" style="width: 65%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 55%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title" id="card-ketuvim"><span class="skeleton-line" style="display: inline-block; width: 65%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 55%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
         </div>
@@ -132,8 +141,8 @@
               <i class="fa-solid fa-star"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title"><div class="skeleton-line" style="width: 60%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 60%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
           <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
@@ -141,8 +150,8 @@
               <i class="fa-solid fa-star"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title"><div class="skeleton-line" style="width: 75%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 50%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 75%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 50%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
           <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
@@ -150,8 +159,8 @@
               <i class="fa-solid fa-star"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title"><div class="skeleton-line" style="width: 50%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 35%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 50%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 35%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
           <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
@@ -159,8 +168,8 @@
               <i class="fa-solid fa-star"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title"><div class="skeleton-line" style="width: 80%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 80%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
         </div>
@@ -178,8 +187,8 @@
               <i class="fa-solid fa-location-dot"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title" id="card-local"><div class="skeleton-line" style="width: 85%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title" id="card-local"><span class="skeleton-line" style="display: inline-block; width: 85%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
 
@@ -194,24 +203,24 @@
               <i class="fa-solid fa-calendar-days"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title" id="card-hdate"><div class="skeleton-line" style="width: 75%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title" id="card-hdate"><span class="skeleton-line" style="display: inline-block; width: 75%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
 
           <div
-            class="event-card event-item glass-panel not-ready"
-            id="card-paypal-wrapper"
+            class="event-card event-item glass-panel not-ready info-trigger"
+            id="card-zmanim-wrapper"
             tabindex="0"
             role="button"
-            aria-label="Doar via PayPal"
+            aria-label="Ver Zmanim"
           >
-            <div class="icon-circle paypal">
-              <i class="fa-brands fa-paypal"></i>
+            <div class="icon-circle zmanim">
+              <i class="fa-solid fa-clock"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title" id="card-paypal"><div class="skeleton-line" style="width: 65%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title" id="card-zmanim"><span class="skeleton-line" style="display: inline-block; width: 65%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
 
@@ -226,8 +235,8 @@
               <i class="fa-solid fa-share-nodes"></i>
             </div>
             <div class="card-content" style="width: 100%;">
-              <h2 class="card-title" id="card-share"><div class="skeleton-line" style="width: 70%; height: 24px; border-radius: 6px;"></div></h2>
-              <span class="card-subtitle"><div class="skeleton-line" style="width: 55%; height: 16px; border-radius: 4px; margin-top: 4px;"></div></span>
+              <h2 class="card-title" id="card-share"><span class="skeleton-line" style="display: inline-block; width: 70%; height: 24px; border-radius: 6px;"></span></h2>
+              <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 55%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
         </div>
