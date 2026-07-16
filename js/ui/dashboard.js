@@ -147,7 +147,7 @@ function generateCalendarHTML(events, currentHdate) {
         let idx = 0;
         for (const item of legendItems) {
             html += `<li class="legend-card" style="padding: 12px 14px;">
-                <div style="font-size: 1rem; font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                <div style="font-size: var(--font-size-base); font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                     ${item.name}, ${item.gregText || 'Data indisponível'}
                 </div>
             </li>`;
@@ -308,11 +308,11 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
                      const key = keys[i];
                      if (ley[key]) {
                          aliyotHtml += `
-                            <div class="legend-card" style="padding: 12px 14px;">
-                                <div style="font-size: 1rem; font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    ${aliyotNames[i]}, ${transliterateTorah(ley[key])}
-                                </div>
-                            </div>
+                             <div class="legend-card" style="padding: 12px 14px;">
+                                 <div style="font-size: var(--font-size-base); font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                     ${aliyotNames[i]}, ${transliterateTorah(ley[key])}
+                                 </div>
+                             </div>
                         `;
                      }
                  }
@@ -524,7 +524,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
                 if (state.currentZmanim[key]) {
                     zmanimHtml += `
                         <div class="legend-card" style="padding: 12px 14px;">
-                            <div style="font-size: 1rem; font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary);">
+                            <div style="font-size: var(--font-size-base); font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary);">
                                 ${formatZman(state.currentZmanim[key])}, ${label}
                             </div>
                         </div>
@@ -640,19 +640,19 @@ export function renderEvents() {
             infoHtml = `
                 <div class="levels-container" style="display:flex; flex-direction:column;">
                     <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
-                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.torah}</div>
+                        <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.torah}</div>
                     </div>
                     <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
-                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.neviim}</div>
+                        <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.neviim}</div>
                     </div>
                     <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
-                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.ketuvim}</div>
+                        <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.ketuvim}</div>
                     </div>
                     <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
-                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.talmud}</div>
+                        <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.talmud}</div>
                     </div>
                     <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; border-bottom:none; white-space:normal; overflow:visible;">
-                        <div class="info-modal-value" style="font-weight:400; font-size:0.95rem; line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.sod}</div>
+                        <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.sod}</div>
                     </div>
                 </div>
             `;
@@ -660,7 +660,7 @@ export function renderEvents() {
             let desc = festivalData || 'Uma data significativa no calendário judaico.';
             infoHtml = `
                 <div class="info-modal-card" style="margin-bottom: 0; white-space:normal; overflow:visible;">
-                    <div class="info-modal-value" style="font-weight: 400; font-size: 1.05rem; line-height: 1.6; color: var(--text-primary); text-align: left; padding: 4px 0; white-space:normal; overflow:visible; text-overflow:clip;">${desc}</div>
+                    <div class="info-modal-value" style="font-weight: 400; font-size: var(--font-size-base); line-height: 1.6; color: var(--text-primary); text-align: left; padding: 4px 0; white-space:normal; overflow:visible; text-overflow:clip;">${desc}</div>
                 </div>
             `;
         }

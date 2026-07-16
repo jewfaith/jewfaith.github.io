@@ -187,7 +187,7 @@ function renderSuggestions(results) {
         const primaryText = parts[0];
         const secondaryText = parts.slice(1, 4).join(', ');
 
-        li.style.cssText = "font-size: 1rem; font-weight: 400; text-align: left; color: var(--text-primary); cursor: pointer;";
+        li.style.cssText = "font-size: var(--font-size-base); font-weight: 400; text-align: left; color: var(--text-primary); cursor: pointer;";
         li.textContent = `${primaryText}${secondaryText ? `, ${secondaryText}` : ''}`;
 
         li.addEventListener('click', () => {
@@ -481,27 +481,129 @@ async function fetchARAVerses(parsed, refKey) {
         } catch(e) {}
     }
 
-    const { bookId, ranges } = parsed;
+    const { bookId, ranges, bookName } = parsed;
     const allVerses = [];
     const chapterCache = {};
+    const diagnosticLog = [];
 
     async function getChapterData(ch) {
         if (chapterCache[ch]) return chapterCache[ch];
-        const url = `https://bolls.life/get-chapter/ARA/${bookId}/${ch}/`;
-        const ctrl = new AbortController();
-        const tid = setTimeout(() => ctrl.abort(), 7000);
-        let res;
+        
+        // 1. Try Bolls.life with all major translations in parallel
+        const translations = ['ARA', 'ARC09', 'ACF11', 'NVI', 'NVT', 'NAA', 'NTLH', 'KJA', 'ALM21', 'TB'];
+        const fetchPromise = (trans) => new Promise(async (resolve, reject) => {
+            const url = `https://bolls.life/get-chapter/${trans}/${bookId}/${ch}/`;
+            const ctrl = new AbortController();
+            const tid = setTimeout(() => ctrl.abort(), 5000);
+            const startTime = performance.now();
+            try {
+                const res = await fetch(url, { signal: ctrl.signal });
+                const duration = Math.round(performance.now() - startTime);
+                clearTimeout(tid);
+                
+                diagnosticLog.push({
+                    endpoint: 'Bolls.life',
+                    translation: trans,
+                    url: url,
+                    status: res.status,
+                    statusText: res.statusText,
+                    durationMs: duration,
+                    success: res.ok,
+                    error: res.ok ? null : `HTTP Status ${res.status}`
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        resolve(data);
+                        return;
+                    }
+                    reject(new Error(`Dados vazios para ${trans}`));
+                    return;
+                }
+                reject(new Error(`HTTP ${res.status} para ${trans}`));
+            } catch(e) {
+                const duration = Math.round(performance.now() - startTime);
+                clearTimeout(tid);
+                
+                diagnosticLog.push({
+                    endpoint: 'Bolls.life',
+                    translation: trans,
+                    url: url,
+                    status: 0,
+                    statusText: 'Network Exception/Timeout',
+                    durationMs: duration,
+                    success: false,
+                    error: e.name === 'AbortError' ? 'Timeout (5000ms)' : e.message
+                });
+                reject(e);
+            }
+        });
+
         try {
-            res = await fetch(url, { signal: ctrl.signal });
-        } catch(e) {
-            clearTimeout(tid);
-            throw new Error('API Timeout ou Erro de rede');
+            // Race all 10 requests and resolve with the fastest successful one
+            const firstSuccessData = await Promise.any(translations.map(t => fetchPromise(t)));
+            chapterCache[ch] = firstSuccessData;
+            // Expose trace logs globally for post-mortem
+            window.lastReadingDiagnostic = diagnosticLog;
+            return firstSuccessData;
+        } catch(err) {
+            console.warn('As 10 buscas em paralelo da Bolls.life falharam concorrentemente. Tentando Bible-API...', err);
         }
-        clearTimeout(tid);
-        if (!res.ok) throw new Error(`Erro na API: status ${res.status}`);
-        const data = await res.json();
-        chapterCache[ch] = data;
-        return data;
+
+        // 2. Final fallback: Try bible-api.com (independent provider, Portuguese Almeida version)
+        const bookQuery = bookName.replace(/\s+/g, '+');
+        const url = `https://bible-api.com/${bookQuery}+${ch}?translation=almeida`;
+        const ctrl = new AbortController();
+        const tid = setTimeout(() => ctrl.abort(), 6000);
+        const startTime = performance.now();
+        try {
+            const res = await fetch(url, { signal: ctrl.signal });
+            const duration = Math.round(performance.now() - startTime);
+            clearTimeout(tid);
+            
+            diagnosticLog.push({
+                endpoint: 'Bible-API.com',
+                translation: 'almeida',
+                url: url,
+                status: res.status,
+                statusText: res.statusText,
+                durationMs: duration,
+                success: res.ok,
+                error: res.ok ? null : `HTTP Status ${res.status}`
+            });
+
+            if (res.ok) {
+                const json = await res.json();
+                if (json && json.verses && json.verses.length > 0) {
+                    const converted = json.verses.map(v => ({
+                        verse: v.verse,
+                        text: v.text
+                    }));
+                    chapterCache[ch] = converted;
+                    window.lastReadingDiagnostic = diagnosticLog;
+                    return converted;
+                }
+            }
+        } catch(e) {
+            const duration = Math.round(performance.now() - startTime);
+            clearTimeout(tid);
+            
+            diagnosticLog.push({
+                endpoint: 'Bible-API.com',
+                translation: 'almeida',
+                url: url,
+                status: 0,
+                statusText: 'Network Exception/Timeout',
+                durationMs: duration,
+                success: false,
+                error: e.name === 'AbortError' ? 'Timeout (6000ms)' : e.message
+            });
+            console.error('Falhou no fallback do bible-api.com:', e);
+        }
+
+        window.lastReadingDiagnostic = diagnosticLog;
+        throw new Error('Não foi possível carregar o capítulo de nenhum dos servidores.');
     }
 
     for (const range of ranges) {
@@ -631,7 +733,7 @@ async function openReadingModal(ref, cardTitle) {
             html += `
                 <div class="legend-card" style="align-items: flex-start; margin: 0;">
                     <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
-                        <div class="verse-text" style="padding-right: 0; text-align: left; font-size: 1.05rem; white-space: normal; overflow: visible; text-overflow: clip;">${displayNum} ${v.text}</div>
+                        <div class="verse-text" style="padding-right: 0; text-align: left; font-size: var(--font-size-base); white-space: normal; overflow: visible; text-overflow: clip;">${displayNum} ${v.text}</div>
                     </div>
                 </div>
             `;
@@ -642,12 +744,38 @@ async function openReadingModal(ref, cardTitle) {
         bodyEl.scrollTop = 0;
 
     } catch (err) {
-        console.error('Erro ao buscar leitura:', err);
+        console.group("%c[CRITICAL NETWORK EXCEPTION] Scripture Reader Fetch Failure", "color: #f87171; font-weight: bold; font-size: 14px;");
+        console.error("Technical Context Summary:", {
+            requestedReference: ref,
+            bookOriginal: cardTitle,
+            bookHebrew: toHebrewBookName(cardTitle),
+            navigatorOnline: navigator.onLine,
+            systemTimestamp: new Date().toISOString(),
+            clientUserAgent: navigator.userAgent,
+            exceptionMessage: err.message,
+            exceptionStack: err.stack
+        });
+        
+        console.warn("Parallel & Fallback Network Request Diagnostics Trace:");
+        if (window.lastReadingDiagnostic) {
+            console.table(window.lastReadingDiagnostic);
+        } else {
+            console.log("No diagnostic trace was captured.");
+        }
+        
+        console.log(
+            "Hypothetical Diagnostic Vectors:\n" +
+            "  • Vector A (CORS/Extensões): Bloqueio local por Adblockers ou firewalls de rede local (ex: Pi-hole).\n" +
+            "  • Vector B (Roteamento):navigator.onLine = " + navigator.onLine + ". Possível falta de link de internet.\n" +
+            "  • Vector C (API Outage): Indisponibilidade dos endpoints da Bolls.life e Bible-API simultaneamente."
+        );
+        console.groupEnd();
+
         bodyEl.innerHTML = `
             <div class="reading-error">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <span>Não foi possível carregar o texto sagrado no momento. Verifique sua conexão.</span>
-                <small style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px;">${err.message}</small>
+                <span class="reading-error-title">Conexão Indisponível</span>
+                <span class="reading-error-message">Não foi possível carregar o texto sagrado no momento. Verifique sua conexão.</span>
+                <small class="reading-error-detail">Detalhe técnico: ${err.message}</small>
             </div>
         `;
     }

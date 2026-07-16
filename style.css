@@ -1,55 +1,134 @@
 @import url('https://fonts.googleapis.com/css2?family=Cardo:wght@400;700&display=swap');
 
 :root {
-    --bg-color-1: #06080e;
-    --bg-color-2: #0b0f19;
-    --bg-color-3: #06080e;
-    --card-bg-start: rgba(255, 255, 255, 0.04);
-    --card-bg-end: rgba(255, 255, 255, 0.01);
-    --card-border-color: rgba(255, 255, 255, 0.08);
-    --text-primary: #f8fafc;
+    /* DEFAULT THEME: Deep Midnight */
+    --bg-color-1: #090d16;
+    --bg-color-2: #111827;
+    --bg-color-3: #090d16;
+    --card-bg-start: rgba(17, 24, 39, 0.6);
+    --card-bg-end: rgba(9, 13, 22, 0.3);
+    --card-border-color: rgba(255, 255, 255, 0.06);
+    --text-primary: #f1f5f9;
     --text-muted: #94a3b8;
     --title-gradient-start: #ffffff;
-    --title-gradient-end: #93c5fd;
-    --icon-bg-start: rgba(59, 130, 246, 0.15);
-    --icon-bg-end: rgba(37, 99, 235, 0.25);
-    --icon-color: #60a5fa;
-    --modal-bg: rgba(15, 23, 42, 0.85);
-    --modal-input-bg: rgba(0, 0, 0, 0.3);
+    --title-gradient-end: #7dd3fc; /* Soft sky blue */
+    --icon-bg-start: rgba(125, 211, 252, 0.08);
+    --icon-bg-end: rgba(56, 189, 248, 0.12);
+    --icon-color: #7dd3fc;
+    --modal-bg: rgba(17, 24, 39, 0.95);
+    --modal-input-bg: rgba(9, 13, 22, 0.6);
     --shadow-color: rgba(0, 0, 0, 0.4);
-    --shadow-large: rgba(0, 0, 0, 0.7);
-    --suggestion-hover: rgba(59, 130, 246, 0.2);
+    --shadow-large: rgba(0, 0, 0, 0.6);
+    --suggestion-hover: rgba(125, 211, 252, 0.1);
     --modal-close-color: #94a3b8;
-    --modal-close-hover: #f8fafc;
-    --modal-close-bg: rgba(255, 255, 255, 0.05);
-    --modal-close-bg-hover: rgba(255, 255, 255, 0.15);
+    --modal-close-hover: #7dd3fc;
+    --modal-close-bg: rgba(255, 255, 255, 0.04);
+    --modal-close-bg-hover: rgba(255, 255, 255, 0.12);
     --font-family: 'Poppins', sans-serif;
     --blur: 24px;
+
+    /* Theme Accent and Calendar Variables */
+    --accent-color: #7dd3fc;
+    --accent-bg: rgba(125, 211, 252, 0.08);
+    --hover-gradient: linear-gradient(135deg, rgba(125, 211, 252, 0.12) 0%, rgba(56, 189, 248, 0.05) 100%);
+    --calendar-event-bg: rgba(125, 211, 252, 0.15);
+    --calendar-event-color: #e0f2fe;
+    --calendar-biblical-bg: rgba(56, 189, 248, 0.22);
+    --calendar-biblical-color: #f0f9ff;
+    
+    --scrollbar-thumb-bg: rgba(255, 255, 255, 0.08);
+    --skeleton-bg: rgba(255, 255, 255, 0.04);
+    --skeleton-shimmer: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0.04) 75%);
+
+    /* Scale of consistent typography variables */
+    --font-size-xxs: 0.7rem;    /* ~11px / 9.8px mobile */
+    --font-size-xs: 0.8rem;     /* ~13px / 11.2px mobile */
+    --font-size-sm: 0.9rem;     /* ~14px / 12.6px mobile */
+    --font-size-base: 1rem;     /* ~16px / 14px mobile */
+    --font-size-md: 1.1rem;     /* ~18px / 15.4px mobile */
+    --font-size-lg: 1.3rem;     /* ~21px / 18.2px mobile */
+    --font-size-xl: 1.4rem;     /* ~22px / 19.6px mobile */
+    --font-size-2xl: 1.8rem;    /* ~29px / 25.2px mobile */
+    --font-size-3xl: 2.2rem;    /* ~35px / 30.8px mobile */
+    --font-size-4xl: 2.8rem;    /* ~45px / 39.2px mobile */
 }
 
-:root[data-theme="light"] {
-    --bg-color-1: #f1f5f9;
-    --bg-color-2: #e2e8f0;
-    --bg-color-3: #f1f5f9;
-    --card-bg-start: rgba(255, 255, 255, 0.8);
-    --card-bg-end: rgba(255, 255, 255, 0.5);
-    --card-border-color: rgba(255, 255, 255, 0.8);
-    --text-primary: #0f172a;
-    --text-muted: #475569;
-    --title-gradient-start: #1e293b;
-    --title-gradient-end: #2563eb;
-    --icon-bg-start: rgba(59, 130, 246, 0.1);
-    --icon-bg-end: rgba(37, 99, 235, 0.15);
-    --icon-color: #2563eb;
-    --modal-bg: rgba(248, 250, 252, 0.85);
-    --modal-input-bg: rgba(255, 255, 255, 0.6);
-    --shadow-color: rgba(148, 163, 184, 0.3);
-    --shadow-large: rgba(148, 163, 184, 0.4);
-    --suggestion-hover: rgba(59, 130, 246, 0.1);
-    --modal-close-color: #475569;
-    --modal-close-hover: #0f172a;
-    --modal-close-bg: rgba(59, 130, 246, 0.08);
-    --modal-close-bg-hover: rgba(0, 0, 0, 0.1);
+:root[data-theme="day"] {
+    --bg-color-1: #f4f3f0; /* Sandy cool limestone gray */
+    --bg-color-2: #eae7e1; 
+    --bg-color-3: #e0dbd3; 
+    --card-bg-start: rgba(255, 255, 255, 0.95);
+    --card-bg-end: rgba(245, 243, 238, 0.85);
+    --card-border-color: rgba(140, 114, 92, 0.12); 
+    --text-primary: #2d2b28; /* Deep limestone graphite */
+    --text-muted: #6e6a64; 
+    --title-gradient-start: #3a3733; 
+    --title-gradient-end: #8c725c; /* Neutral warm bronze */
+    --icon-bg-start: rgba(140, 114, 92, 0.05); 
+    --icon-bg-end: rgba(140, 114, 92, 0.12); 
+    --icon-color: #8c725c; 
+    --modal-bg: rgba(244, 243, 240, 0.96);
+    --modal-input-bg: rgba(234, 231, 225, 0.7);
+    --shadow-color: rgba(140, 114, 92, 0.04);
+    --shadow-large: rgba(140, 114, 92, 0.12);
+    --suggestion-hover: rgba(140, 114, 92, 0.08);
+    --modal-close-color: #6e6a64;
+    --modal-close-hover: #2d2b28;
+    --modal-close-bg: rgba(140, 114, 92, 0.04);
+    --modal-close-bg-hover: rgba(140, 114, 92, 0.1);
+    --font-family: 'Poppins', sans-serif;
+    --blur: 24px;
+    
+    --accent-color: #8c725c;
+    --accent-bg: rgba(140, 114, 92, 0.08);
+    --hover-gradient: linear-gradient(135deg, rgba(140, 114, 92, 0.1) 0%, rgba(140, 114, 92, 0.04) 100%);
+    --calendar-event-bg: rgba(140, 114, 92, 0.12);
+    --calendar-event-color: #4f4133;
+    --calendar-biblical-bg: rgba(140, 114, 92, 0.22);
+    --calendar-biblical-color: #2d241c;
+    
+    --scrollbar-thumb-bg: rgba(140, 114, 92, 0.15);
+    --skeleton-bg: rgba(140, 114, 92, 0.04);
+    --skeleton-shimmer: linear-gradient(90deg, rgba(140, 114, 92, 0.04) 25%, rgba(140, 114, 92, 0.1) 50%, rgba(140, 114, 92, 0.04) 75%);
+}
+
+:root[data-theme="night"] {
+    --bg-color-1: #090d16;
+    --bg-color-2: #111827;
+    --bg-color-3: #090d16;
+    --card-bg-start: rgba(17, 24, 39, 0.6);
+    --card-bg-end: rgba(9, 13, 22, 0.3);
+    --card-border-color: rgba(255, 255, 255, 0.06);
+    --text-primary: #f1f5f9;
+    --text-muted: #94a3b8;
+    --title-gradient-start: #ffffff;
+    --title-gradient-end: #7dd3fc;
+    --icon-bg-start: rgba(125, 211, 252, 0.08);
+    --icon-bg-end: rgba(56, 189, 248, 0.12);
+    --icon-color: #7dd3fc;
+    --modal-bg: rgba(17, 24, 39, 0.95);
+    --modal-input-bg: rgba(9, 13, 22, 0.6);
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --shadow-large: rgba(0, 0, 0, 0.6);
+    --suggestion-hover: rgba(125, 211, 252, 0.1);
+    --modal-close-color: #94a3b8;
+    --modal-close-hover: #7dd3fc;
+    --modal-close-bg: rgba(255, 255, 255, 0.04);
+    --modal-close-bg-hover: rgba(255, 255, 255, 0.12);
+    --font-family: 'Poppins', sans-serif;
+    --blur: 24px;
+    
+    --accent-color: #7dd3fc;
+    --accent-bg: rgba(125, 211, 252, 0.1);
+    --hover-gradient: linear-gradient(135deg, rgba(125, 211, 252, 0.12) 0%, rgba(56, 189, 248, 0.05) 100%);
+    --calendar-event-bg: rgba(125, 211, 252, 0.15);
+    --calendar-event-color: #e0f2fe;
+    --calendar-biblical-bg: rgba(56, 189, 248, 0.25);
+    --calendar-biblical-color: #f0f9ff;
+    
+    --scrollbar-thumb-bg: rgba(255, 255, 255, 0.06);
+    --skeleton-bg: rgba(255, 255, 255, 0.04);
+    --skeleton-shimmer: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.04) 75%);
 }
 
 * {
@@ -91,7 +170,7 @@ body {
     color: #fca5a5;
     padding: 6px 12px;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -195,7 +274,7 @@ body.modal-open .dashboard-wrapper {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(37, 99, 235, 0.15) 100%);
+    background: var(--hover-gradient);
     border-radius: inherit;
     opacity: 0;
     transition: opacity 0.25s ease;
@@ -223,7 +302,7 @@ body.modal-open .dashboard-wrapper {
 }
 
 i {
-    font-size: 1.4rem;
+    font-size: var(--font-size-xl);
 }
 
 .icon-circle,
@@ -246,7 +325,7 @@ i {
 .card-title,
 .event-name {
     margin-right: 1rem;
-    font-size: 1.3rem;
+    font-size: var(--font-size-lg);
     font-weight: 600;
     color: var(--text-primary);
     letter-spacing: -0.2px;
@@ -261,7 +340,7 @@ i {
         font-size: 14px;
     }
     .card-title {
-        font-size: 1.0rem;
+        font-size: var(--font-size-base);
     }
 
     .events-dashboard {
@@ -269,13 +348,13 @@ i {
     }
 
     .card-subtitle {
-        font-size: 0.5rem;
+        font-size: var(--font-size-xs);
     }
 }
 
 .card-subtitle,
 .timer-countdown {
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     letter-spacing: 0.5px;
     color: var(--text-muted);
@@ -311,13 +390,13 @@ i {
 
 .event-name {
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: var(--font-size-md);
     color: var(--text-primary);
     letter-spacing: 0.2px;
 }
 
 .event-category {
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
     font-weight: 500;
     display: flex;
@@ -349,7 +428,7 @@ i {
 }
 
 .brand-title {
-    font-size: 1.8rem;
+    font-size: var(--font-size-2xl);
     font-weight: 700;
     background: linear-gradient(135deg, var(--title-gradient-start) 0%, var(--title-gradient-end) 100%);
     -webkit-background-clip: text;
@@ -359,7 +438,7 @@ i {
 }
 
 .brand-subtitle {
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
     font-weight: 400;
 }
@@ -431,7 +510,7 @@ i {
     background: transparent;
     height: 100%;
     padding: 0;
-    font-size: 1.1rem;
+    font-size: var(--font-size-md);
     box-shadow: none;
     flex: 1;
     outline: none;
@@ -450,13 +529,13 @@ i {
 #search-spinner {
     color: #3b82f6;
     display: none;
-    font-size: 1.1rem;
+    font-size: var(--font-size-md);
     flex-shrink: 0;
     margin: 0 4px;
 }
 
 .fa-solid {
-    font-size: 1.4rem;
+    font-size: var(--font-size-xl);
 }
 
 .suggestions-list {
@@ -474,7 +553,7 @@ i {
     color: var(--text-muted);
     border-radius: 8px;
     transition: background 0.25s ease, color 0.2s ease;
-    font-size: 0.95rem;
+    font-size: var(--font-size-sm);
     white-space: normal;
     overflow: visible;
     display: flex;
@@ -486,7 +565,7 @@ i {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(37, 99, 235, 0.15) 100%);
+    background: var(--hover-gradient);
     border-radius: inherit;
     opacity: 0;
     transition: opacity 0.25s ease;
@@ -510,7 +589,7 @@ i {
 
 .suggestions-list li .suggestion-secondary {
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: var(--font-size-xs);
     margin-left: 6px;
     font-weight: 300;
     white-space: normal;
@@ -528,13 +607,13 @@ i {
 
     .modal-input {
         padding: 0 8px;
-        font-size: 1rem;
+        font-size: var(--font-size-base);
     }
 
     .suggestions-list li {
         margin: 1px 4px;
         padding: 10px 16px;
-        font-size: 0.9rem;
+        font-size: var(--font-size-sm);
     }
 }
 
@@ -560,7 +639,7 @@ i {
     position: absolute;
     top: -50px;
     opacity: 0.6;
-    font-size: 1.5rem;
+    font-size: var(--font-size-xl);
 }
 
 
@@ -640,7 +719,7 @@ body.ee-color-active .brand-title {
 }
 
 .reading-title {
-    font-size: 1.1rem;
+    font-size: var(--font-size-md);
     font-weight: 500;
     color: var(--text-primary);
     margin: 0;
@@ -655,7 +734,7 @@ body.ee-color-active .brand-title {
     background: var(--modal-close-bg);
     border: none;
     color: var(--text-muted);
-    font-size: 1.05rem;
+    font-size: var(--font-size-base);
     cursor: pointer;
     padding: 6px 10px;
     border-radius: 12px;
@@ -692,30 +771,18 @@ body.ee-color-active .brand-title {
     width: 6px;
 }
 
-.reading-body::-webkit-scrollbar-track {
-    background: transparent;
-}
-
 .reading-body::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--scrollbar-thumb-bg);
     border-radius: 3px;
 }
 
 .reading-body::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
-
-:root[data-theme="light"] .reading-body::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
-}
-
-:root[data-theme="light"] .reading-body::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--accent-color);
 }
 
 .verse-row {
     padding: 12px 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--card-border-color);
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     border-radius: 12px;
     margin: 2px 0;
@@ -726,7 +793,7 @@ body.ee-color-active .brand-title {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(37, 99, 235, 0.15) 100%);
+    background: var(--hover-gradient);
     border-radius: inherit;
     opacity: 0;
     transition: opacity 0.25s ease;
@@ -737,23 +804,13 @@ body.ee-color-active .brand-title {
     opacity: 1;
 }
 
-:root[data-theme="light"] .verse-row {
-    border-bottom: 1px solid rgba(99, 102, 241, 0.08);
-}
-
-
-
-:root[data-theme="light"] .verse-row:last-child {
-    border-bottom: none;
-}
-
 .verse-num {
-    font-size: 0.62rem;
+    font-size: var(--font-size-xxs);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #60a5fa;
-    background: rgba(59, 130, 246, 0.12);
+    color: var(--accent-color);
+    background: var(--accent-bg);
     padding: 2px 7px;
     border-radius: 12px;
     display: inline-flex;
@@ -763,16 +820,11 @@ body.ee-color-active .brand-title {
     margin-top: 4px;
 }
 
-:root[data-theme="light"] .verse-num {
-    color: #2563eb;
-    background: rgba(59, 130, 246, 0.08);
-}
-
 .verse-portuguese {
     display: flex;
     gap: 12px;
     align-items: flex-start;
-    font-size: 1.1rem;
+    font-size: var(--font-size-md);
     line-height: 1.8;
     color: var(--text-primary);
     direction: ltr;
@@ -785,7 +837,7 @@ body.ee-color-active .brand-title {
 }
 
 .skeleton-line {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.05) 75%);
+    background: var(--skeleton-shimmer);
     background-size: 200% 100%;
     animation: skeleton-shimmer 1.5s infinite linear;
 }
@@ -795,29 +847,73 @@ body.ee-color-active .brand-title {
     100% { background-position: -200% 0; }
 }
 
-:root[data-theme="light"] .skeleton-card {
-    background: rgba(0, 0, 0, 0.02) !important;
-    border-color: rgba(0, 0, 0, 0.04) !important;
-}
-
-:root[data-theme="light"] .skeleton-line {
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0.06) 75%);
-    background-size: 200% 100%;
-}
-
-/* Error state */
+/* Redesigned Amigavel Error State */
 .reading-error {
     text-align: center;
-    padding: 40px 20px;
-    color: #f87171;
+    padding: 32px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--card-border-color);
+    border-radius: 20px;
+    margin: 20px auto;
+    max-width: 90%;
+    backdrop-filter: blur(8px);
 }
 
-.reading-error i {
-    font-size: 2.2rem;
+.reading-error-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--icon-bg-start);
+    color: var(--icon-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--font-size-lg);
+    border: 1px solid var(--card-border-color);
+    margin-bottom: 4px;
+}
+
+.reading-error-title {
+    font-size: var(--font-size-md);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.reading-error-message {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    line-height: 1.5;
+    max-width: 280px;
+}
+
+.retry-btn {
+    margin-top: 8px;
+    background: var(--icon-bg-start);
+    border: 1px solid var(--card-border-color);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.retry-btn:hover {
+    background: var(--icon-bg-end);
+    color: var(--accent-color);
+    transform: scale(1.03);
+}
+
+.reading-error-detail {
+    font-size: var(--font-size-xxs);
+    color: var(--text-muted);
+    opacity: 0.6;
+    margin-top: 12px;
 }
 
 @media (max-width: 768px) {
@@ -830,7 +926,7 @@ body.ee-color-active .brand-title {
     }
 
     .verse-portuguese {
-        font-size: 1rem;
+        font-size: var(--font-size-base);
         line-height: 1.7;
     }
 
@@ -846,19 +942,19 @@ body.ee-color-active .brand-title {
     }
 
     .calendar-day .day-number {
-        font-size: 0.85rem;
+        font-size: var(--font-size-xs);
         margin-bottom: 2px;
     }
 
     .calendar-day .event-label {
-        font-size: 0.52rem;
+        font-size: var(--font-size-xxs);
         line-height: 1;
         letter-spacing: -0.2px;
         -webkit-line-clamp: 4;
     }
 
     .calendar-header-row {
-        font-size: 0.75rem;
+        font-size: var(--font-size-xs);
         margin-bottom: 8px;
     }
 }
@@ -870,18 +966,18 @@ body.ee-color-active .brand-title {
     align-items: center;
     gap: 12px;
     padding: 32px 24px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%);
+    background: linear-gradient(135deg, var(--icon-bg-start) 0%, var(--icon-bg-end) 100%);
     border-radius: 20px;
-    border: 1px solid rgba(59, 130, 246, 0.25);
+    border: 1px solid var(--card-border-color);
     margin-bottom: 24px;
     text-align: center;
     box-shadow: inset 0 2px 20px rgba(255, 255, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .info-modal-hero .hebrew-large {
-    font-size: 2.8rem;
+    font-size: var(--font-size-4xl);
     font-weight: 800;
-    background: linear-gradient(135deg, #93c5fd 0%, #bae6fd 100%);
+    background: linear-gradient(135deg, var(--title-gradient-start) 0%, var(--title-gradient-end) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: 1px;
@@ -889,7 +985,7 @@ body.ee-color-active .brand-title {
 }
 
 .info-modal-hero .gregorian-large {
-    font-size: 1.2rem;
+    font-size: var(--font-size-md);
     color: var(--text-primary);
     font-weight: 500;
     opacity: 0.95;
@@ -897,7 +993,7 @@ body.ee-color-active .brand-title {
 
 .info-modal-card {
     padding: 12px 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--card-border-color);
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     border-radius: 12px;
     display: flex;
@@ -917,7 +1013,7 @@ body.ee-color-active .brand-title {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(37, 99, 235, 0.15) 100%);
+    background: var(--hover-gradient);
     border-radius: inherit;
     opacity: 0;
     transition: opacity 0.25s ease;
@@ -929,7 +1025,7 @@ body.ee-color-active .brand-title {
 }
 
 .info-modal-label {
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
     color: var(--text-muted);
     font-weight: 600;
     text-transform: uppercase;
@@ -941,13 +1037,13 @@ body.ee-color-active .brand-title {
 }
 
 .info-modal-label i {
-    font-size: 1.1rem;
-    color: #60a5fa;
+    font-size: var(--font-size-md);
+    color: var(--accent-color);
     margin-right: 10px;
 }
 
 .info-modal-value {
-    font-size: 1.2rem;
+    font-size: var(--font-size-md);
     color: var(--text-primary);
     font-weight: 600;
     text-align: right;
@@ -958,40 +1054,12 @@ body.ee-color-active .brand-title {
 }
 
 .info-modal-value.highlight {
-    color: #60a5fa;
+    color: var(--accent-color);
 }
 
 .info-modal-value.secondary {
-    color: #7dd3fc;
-}
-
-:root[data-theme="light"] .info-modal-hero {
-    background: linear-gradient(135deg, rgba(219, 234, 254, 0.8) 0%, rgba(191, 219, 254, 0.8) 100%);
-    border: 1px solid rgba(147, 197, 253, 0.6);
-    box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.7), 0 4px 20px rgba(59, 130, 246, 0.06);
-}
-
-:root[data-theme="light"] .info-modal-hero .hebrew-large {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-:root[data-theme="light"] .info-modal-card {
-    border-bottom: 1px solid rgba(59, 130, 246, 0.08);
-    background: transparent;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    box-shadow: none;
-}
-
-:root[data-theme="light"]:root[data-theme="light"] .info-modal-value.highlight {
-    color: #2563eb;
-}
-
-:root[data-theme="light"] .info-modal-value.secondary {
-    color: #0ea5e9;
+    color: var(--accent-color);
+    opacity: 0.85;
 }
 
 /* --- Calendar Widget --- */
@@ -1010,7 +1078,7 @@ body.ee-color-active .brand-title {
 }
 
 .calendar-header-title .calendar-title {
-    font-size: 1.1rem;
+    font-size: var(--font-size-md);
     font-weight: 600;
     color: var(--text-primary);
     margin: 0;
@@ -1020,7 +1088,7 @@ body.ee-color-active .brand-title {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-muted);
-    font-size: 1rem;
+    font-size: var(--font-size-base);
     cursor: pointer;
     padding: 6px 12px;
     border-radius: 8px;
@@ -1032,22 +1100,11 @@ body.ee-color-active .brand-title {
     color: var(--text-primary);
 }
 
-:root[data-theme="light"] .calendar-header-title button {
-    background: rgba(59, 130, 246, 0.05);
-    border: 1px solid rgba(59, 130, 246, 0.08);
-    color: #4b5563;
-}
-
-:root[data-theme="light"] .calendar-header-title button:hover {
-    background: rgba(59, 130, 246, 0.12);
-    color: #111827;
-}
-
 .calendar-header-row {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
-    font-size: 0.8rem;
+    font-size: var(--font-size-xs);
     font-weight: 600;
     color: var(--text-muted);
     margin-bottom: 12px;
@@ -1073,7 +1130,7 @@ body.ee-color-active .brand-title {
 }
 
 .calendar-day .day-number {
-    font-size: 1.05rem;
+    font-size: var(--font-size-base);
     font-weight: 500;
     width: 32px;
     height: 32px;
@@ -1085,20 +1142,20 @@ body.ee-color-active .brand-title {
 }
 
 .calendar-day.today .day-number {
-    background: #3b82f6;
+    background: var(--accent-color);
     color: #ffffff;
     font-weight: 700;
 }
 
 .calendar-day.has-event .day-number {
-    background: rgba(96, 165, 250, 0.3);
-    color: #dbeafe;
+    background: var(--calendar-event-bg);
+    color: var(--calendar-event-color);
     font-weight: 600;
 }
 
 .calendar-day.has-event.biblical .day-number {
-    background: rgba(59, 130, 246, 0.3);
-    color: #bfdbfe;
+    background: var(--calendar-biblical-bg);
+    color: var(--calendar-biblical-color);
 }
 
 .legend-title {
@@ -1123,7 +1180,7 @@ body.ee-color-active .brand-title {
 }
 
 .date-pill {
-    font-size: 0.65rem;
+    font-size: var(--font-size-xxs);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1141,7 +1198,7 @@ body.ee-color-active .brand-title {
 
 .legend-card {
     padding: 12px 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--card-border-color);
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     border-radius: 12px;
     display: flex;
@@ -1155,7 +1212,7 @@ body.ee-color-active .brand-title {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(37, 99, 235, 0.15) 100%);
+    background: var(--hover-gradient);
     border-radius: inherit;
     opacity: 0;
     transition: opacity 0.25s ease;
@@ -1166,42 +1223,11 @@ body.ee-color-active .brand-title {
     opacity: 1;
 }
 
-:root[data-theme="light"] .legend-card {
-    border-bottom: 1px solid rgba(59, 130, 246, 0.08);
-}
-
 .legend-card:last-child {
     border-bottom: none;
 }
 
-:root[data-theme="light"] .legend-text {
-    font-size: 0.95rem;
-    line-height: 1.4;
-    color: var(--text-primary);
-}
-
-:root[data-theme="light"] .calendar-wrapper {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-}
-
-:root[data-theme="light"] .calendar-day.has-event .day-number,
-:root[data-theme="light"] .legend-circle {
-    background: rgba(96, 165, 250, 0.2);
-    color: #1d4ed8;
-}
-
-:root[data-theme="light"] .calendar-day.has-event.biblical .day-number,
-:root[data-theme="light"] .legend-circle.biblical {
-    background: rgba(59, 130, 246, 0.2);
-    color: #1e40af;
-}
-
-:root[data-theme="light"] .calendar-day.today .day-number {
-    background: #3b82f6;
-    color: #ffffff;
-}
+/* Reading modal inherits day/night theme automatically */
 
 
 /* Ellipsis truncation for all modal lists except reading passages */
