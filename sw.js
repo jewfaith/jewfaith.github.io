@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yisrael-date-v3';
+const CACHE_NAME = 'yisrael-date-v4';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
