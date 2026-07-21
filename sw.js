@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yisrael-date-v4';
+const CACHE_NAME = 'yisrael-date-v18';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -10,6 +10,7 @@ const ASSETS_TO_CACHE = [
     './js/api/hebcal.js',
     './js/domain/constants.js',
     './js/domain/halacha.js',
+    './js/domain/parashot.js',
     './js/ui/dashboard.js',
     './js/ui/icons.js',
     './js/ui/modals.js',
@@ -52,6 +53,7 @@ self.addEventListener('fetch', (event) => {
                       url.includes('hebcal.com') ||
                       url.includes('nominatim.openstreetmap.org') ||
                       url.includes('bolls.life') ||
+                      url.includes('bible-api.com') ||
                       url.includes('cdnjs.cloudflare.com') ||
                       url.includes('fonts.googleapis.com') ||
                       url.includes('fonts.gstatic.com') ||

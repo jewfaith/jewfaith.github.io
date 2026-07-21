@@ -2,9 +2,42 @@ import { startTimers, stopTimers } from './timers.js';
 import { state } from '../state.js';
 import { applyEstimatedTheme } from './theme.js';
 
+// Sanitize strings before innerHTML to prevent XSS
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 let updateDashboardCallbackGlobal = null;
 let nearbyLocationsCache = [];
 let isFetchingNearby = false;
+
+// Purge any legacy cached Bible verses that contain orphaned artifacts or outdated versions
+(function purgeLegacyBibleCache() {
+    try {
+        const ptTranslations = ['NVT', 'OL'];
+        const pref = localStorage.getItem('preferred_bible_version');
+        if (pref && !ptTranslations.includes(pref)) {
+            localStorage.removeItem('preferred_bible_version');
+        }
+        [localStorage, sessionStorage].forEach(storage => {
+            if (!storage) return;
+            for (let i = storage.length - 1; i >= 0; i--) {
+                const key = storage.key(i);
+                if (key && key.startsWith('bible_cache_')) {
+                    try {
+                        const item = JSON.parse(storage.getItem(key));
+                        if (!item || !item.translation || !ptTranslations.includes(item.translation)) {
+                            storage.removeItem(key);
+                        }
+                    } catch(e) {
+                        storage.removeItem(key);
+                    }
+                }
+            }
+        });
+    } catch(e) {}
+})();
 
 function getActiveCoords() {
     const exactLocRaw = localStorage.getItem('exactLocation');
@@ -187,18 +220,29 @@ function renderSuggestions(results) {
         const primaryText = parts[0];
         const secondaryText = parts.slice(1, 4).join(', ');
 
-        li.style.cssText = "font-size: var(--font-size-base); font-weight: 400; text-align: left; color: var(--text-primary); cursor: pointer;";
-        li.textContent = `${primaryText}${secondaryText ? `, ${secondaryText}` : ''}`;
+        li.style.cssText = "display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--card-border-color); margin-bottom: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease;";
+        li.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
+                <div style="width: 34px; height: 34px; border-radius: 10px; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.06);">
+                    <i class="fa-solid fa-location-dot" style="color: var(--accent-color); font-size: 14px;"></i>
+                </div>
+                <div style="display: flex; flex-direction: column; text-align: left; min-width: 0; flex: 1;">
+                    <span style="font-size: var(--font-size-base); font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(primaryText)}</span>
+                    <span style="font-size: var(--font-size-xs); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(secondaryText) || 'Localidade'}</span>
+                </div>
+            </div>
+        `;
 
         li.addEventListener('click', () => {
             if (resItem.isCurrent) {
-                // Clicking the active location resets manual override and pulls device GPS/IP again
+                console.log('[ACTION] Localização Automática');
                 localStorage.removeItem('exactLocation');
             } else {
                 const lat = parseFloat(resItem.item.lat);
                 const lon = parseFloat(resItem.item.lon);
                 const isIl = resItem.item.address && (resItem.item.address.country_code === 'il' || resItem.item.address.country === 'Israel');
                 const tz = isIl ? 'Asia/Jerusalem' : Intl.DateTimeFormat().resolvedOptions().timeZone;
+                console.log(`[ACTION] ${resItem.displayText}`);
                 localStorage.setItem('exactLocation', JSON.stringify({ 
                     lat, 
                     lon, 
@@ -236,9 +280,15 @@ function renderSuggestions(results) {
     const remaining = 10 - finalItems.length;
     for (let i = 0; i < remaining; i++) {
         const li = document.createElement('li');
-        li.textContent = '-';
-        li.style.opacity = '0.1';
-        li.style.pointerEvents = 'none';
+        li.className = 'legend-card';
+        li.style.cssText = "opacity: 0.05; pointer-events: none; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--card-border-color); margin-bottom: 8px; box-sizing: border-box;";
+        li.innerHTML = `
+            <div style="width: 34px; height: 34px; border-radius: 10px; background: var(--skeleton-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.06);"></div>
+            <div style="display: flex; flex-direction: column; text-align: left; min-width: 0; flex: 1; gap: 4px;">
+                <div style="width: 60%; height: 16px; background: var(--skeleton-bg); border-radius: 4px;"></div>
+                <div style="width: 40%; height: 12px; background: var(--skeleton-bg); border-radius: 4px;"></div>
+            </div>
+        `;
         suggestionsList.appendChild(li);
     }
 }
@@ -470,14 +520,25 @@ function parseRef(ref) {
 }
 
 /**
- * Fetch verses from Bolls.life ARA API for a parsed reference.
+ * Fetch verses from Bolls.life API for a parsed reference.
  */
-async function fetchARAVerses(parsed, refKey) {
+async function fetchBibleVerses(parsed, refKey) {
     const cacheKey = 'bible_cache_' + (refKey || '').replace(/\s+/g, '_');
     const cached = localStorage.getItem(cacheKey) || sessionStorage.getItem(cacheKey);
+    const preferredVersion = localStorage.getItem('preferred_bible_version');
     if (cached) {
         try {
-            return JSON.parse(cached);
+            const parsedCache = JSON.parse(cached);
+            const ptTranslations = ['NVT', 'OL'];
+            if (parsedCache && parsedCache.verses) {
+                if (preferredVersion) {
+                    if (parsedCache.translation === preferredVersion) return { ...parsedCache, isCache: true };
+                } else if (ptTranslations.includes(parsedCache.translation)) {
+                    return { ...parsedCache, isCache: true };
+                }
+            }
+            localStorage.removeItem(cacheKey);
+            sessionStorage.removeItem(cacheKey);
         } catch(e) {}
     }
 
@@ -489,12 +550,14 @@ async function fetchARAVerses(parsed, refKey) {
     async function getChapterData(ch) {
         if (chapterCache[ch]) return chapterCache[ch];
         
-        // 1. Try Bolls.life with all major translations in parallel
-        const translations = ['ARA', 'ARC09', 'ACF11', 'NVI', 'NVT', 'NAA', 'NTLH', 'KJA', 'ALM21', 'TB'];
+        let translations = ['NVT', 'OL'];
+        if (preferredVersion && ['NVT', 'OL'].includes(preferredVersion)) {
+            translations = [preferredVersion];
+        }
         const fetchPromise = (trans) => new Promise(async (resolve, reject) => {
             const url = `https://bolls.life/get-chapter/${trans}/${bookId}/${ch}/`;
             const ctrl = new AbortController();
-            const tid = setTimeout(() => ctrl.abort(), 5000);
+            const tid = setTimeout(() => ctrl.abort(), 8000);
             const startTime = performance.now();
             try {
                 const res = await fetch(url, { signal: ctrl.signal });
@@ -515,7 +578,7 @@ async function fetchARAVerses(parsed, refKey) {
                 if (res.ok) {
                     const data = await res.json();
                     if (data && data.length > 0) {
-                        resolve(data);
+                        resolve({ data, trans });
                         return;
                     }
                     reject(new Error(`Dados vazios para ${trans}`));
@@ -534,82 +597,29 @@ async function fetchARAVerses(parsed, refKey) {
                     statusText: 'Network Exception/Timeout',
                     durationMs: duration,
                     success: false,
-                    error: e.name === 'AbortError' ? 'Timeout (5000ms)' : e.message
+                    error: e.name === 'AbortError' ? 'Timeout (8000ms)' : e.message
                 });
                 reject(e);
             }
         });
 
         try {
-            // Race all 10 requests and resolve with the fastest successful one
-            const firstSuccessData = await Promise.any(translations.map(t => fetchPromise(t)));
-            chapterCache[ch] = firstSuccessData;
-            // Expose trace logs globally for post-mortem
+            const result = await Promise.any(translations.map(t => fetchPromise(t)));
+            chapterCache[ch] = result;
             window.lastReadingDiagnostic = diagnosticLog;
-            return firstSuccessData;
+            return result;
         } catch(err) {
-            console.warn('As 10 buscas em paralelo da Bolls.life falharam concorrentemente. Tentando Bible-API...', err);
+            window.lastReadingDiagnostic = diagnosticLog;
+            throw new Error('Não foi possível carregar o capítulo de nenhum dos servidores.');
         }
-
-        // 2. Final fallback: Try bible-api.com (independent provider, Portuguese Almeida version)
-        const bookQuery = bookName.replace(/\s+/g, '+');
-        const url = `https://bible-api.com/${bookQuery}+${ch}?translation=almeida`;
-        const ctrl = new AbortController();
-        const tid = setTimeout(() => ctrl.abort(), 6000);
-        const startTime = performance.now();
-        try {
-            const res = await fetch(url, { signal: ctrl.signal });
-            const duration = Math.round(performance.now() - startTime);
-            clearTimeout(tid);
-            
-            diagnosticLog.push({
-                endpoint: 'Bible-API.com',
-                translation: 'almeida',
-                url: url,
-                status: res.status,
-                statusText: res.statusText,
-                durationMs: duration,
-                success: res.ok,
-                error: res.ok ? null : `HTTP Status ${res.status}`
-            });
-
-            if (res.ok) {
-                const json = await res.json();
-                if (json && json.verses && json.verses.length > 0) {
-                    const converted = json.verses.map(v => ({
-                        verse: v.verse,
-                        text: v.text
-                    }));
-                    chapterCache[ch] = converted;
-                    window.lastReadingDiagnostic = diagnosticLog;
-                    return converted;
-                }
-            }
-        } catch(e) {
-            const duration = Math.round(performance.now() - startTime);
-            clearTimeout(tid);
-            
-            diagnosticLog.push({
-                endpoint: 'Bible-API.com',
-                translation: 'almeida',
-                url: url,
-                status: 0,
-                statusText: 'Network Exception/Timeout',
-                durationMs: duration,
-                success: false,
-                error: e.name === 'AbortError' ? 'Timeout (6000ms)' : e.message
-            });
-            console.error('Falhou no fallback do bible-api.com:', e);
-        }
-
-        window.lastReadingDiagnostic = diagnosticLog;
-        throw new Error('Não foi possível carregar o capítulo de nenhum dos servidores.');
     }
 
+    let chosenTranslation = '';
     for (const range of ranges) {
         const { startChapter, startVerse, endChapter, endVerse } = range;
         for (let ch = startChapter; ch <= endChapter; ch++) {
-            const data = await getChapterData(ch);
+            const { data, trans } = await getChapterData(ch);
+            chosenTranslation = trans;
             for (const v of data) {
                 const vNum = v.verse;
                 // Filter by verse range
@@ -625,15 +635,16 @@ async function fetchARAVerses(parsed, refKey) {
         }
     }
 
+    const payload = { verses: allVerses, translation: chosenTranslation, isCache: false };
     if (allVerses.length > 0) {
         try {
-            localStorage.setItem(cacheKey, JSON.stringify(allVerses));
+            localStorage.setItem(cacheKey, JSON.stringify(payload));
         } catch (e) {
-            try { sessionStorage.setItem(cacheKey, JSON.stringify(allVerses)); } catch (e2) {}
+            try { sessionStorage.setItem(cacheKey, JSON.stringify(payload)); } catch (e2) {}
         }
     }
 
-    return allVerses;
+    return payload;
 }
 
 window.addEventListener('popstate', (e) => {
@@ -720,9 +731,18 @@ async function openReadingModal(ref, cardTitle) {
     try {
         const parsed = parseRef(ref);
         if (!parsed) throw new Error('Referência não reconhecida.');
-        const verses = await fetchARAVerses(parsed, ref);
+        const { verses, translation, isCache } = await fetchBibleVerses(parsed, ref);
         if (verses.length === 0) {
             throw new Error('Nenhum texto encontrado para esta referência.');
+        }
+
+        // Set title
+        titleEl.textContent = toHebrewBookName(cardTitle);
+
+        if (isCache) {
+            console.log(`[CACHE] ${translation} - ${toHebrewBookName(ref)}`);
+        } else {
+            console.log(`[API] ${translation} - ${toHebrewBookName(ref)}`);
         }
 
         let html = '<div class="verses-container">';
@@ -744,7 +764,7 @@ async function openReadingModal(ref, cardTitle) {
         bodyEl.scrollTop = 0;
 
     } catch (err) {
-        console.group("%c[CRITICAL NETWORK EXCEPTION] Scripture Reader Fetch Failure", "color: #f87171; font-weight: bold; font-size: 14px;");
+        console.group("[ERRO CRITICO] Scripture Reader Fetch Failure");
         console.error("Technical Context Summary:", {
             requestedReference: ref,
             bookOriginal: cardTitle,
@@ -765,9 +785,9 @@ async function openReadingModal(ref, cardTitle) {
         
         console.log(
             "Hypothetical Diagnostic Vectors:\n" +
-            "  • Vector A (CORS/Extensões): Bloqueio local por Adblockers ou firewalls de rede local (ex: Pi-hole).\n" +
-            "  • Vector B (Roteamento):navigator.onLine = " + navigator.onLine + ". Possível falta de link de internet.\n" +
-            "  • Vector C (API Outage): Indisponibilidade dos endpoints da Bolls.life e Bible-API simultaneamente."
+            "  - Vector A (CORS/Extensoes): Bloqueio local por Adblockers ou firewalls de rede local (ex: Pi-hole).\n" +
+            "  - Vector B (Roteamento): navigator.onLine = " + navigator.onLine + ". Possivel falta de link de internet.\n" +
+            "  - Vector C (API Outage): Indisponibilidade dos endpoints da Bolls.life e Bible-API simultaneamente."
         );
         console.groupEnd();
 
@@ -775,7 +795,7 @@ async function openReadingModal(ref, cardTitle) {
             <div class="reading-error">
                 <span class="reading-error-title">Conexão Indisponível</span>
                 <span class="reading-error-message">Não foi possível carregar o texto sagrado no momento. Verifique sua conexão.</span>
-                <small class="reading-error-detail">Detalhe técnico: ${err.message}</small>
+                <small class="reading-error-detail">Detalhe técnico: ${escapeHtml(err.message)}</small>
             </div>
         `;
     }
@@ -785,11 +805,49 @@ export function initModals(updateDashboardCallback) {
     updateDashboardCallbackGlobal = updateDashboardCallback;
 
     document.addEventListener('click', (event) => {
-        const card = event.target.closest('.event-card');
+        const shareItem = event.target.closest('.share-option-item');
+        if (shareItem) {
+            const action = shareItem.getAttribute('data-share-action');
+            const shareText = 'Acesse a parashá, o mês hebraico, as leituras bíblicas e as festas em tempo real no Yisrael Date: ';
+
+            const shareNames = { whatsapp: 'WhatsApp', copy: 'Copiar Link', email: 'Email' };
+            console.log(`[ACTION] ${shareNames[action] || action}`);
+
+            if (action === 'whatsapp') {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + shareUrl)}`, '_blank');
+            } else if (action === 'copy') {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        const label = shareItem.querySelector('span');
+                        if (label) {
+                            const orig = label.textContent;
+                            label.textContent = 'Link copiado!';
+                            label.style.color = 'var(--accent-color)';
+                            setTimeout(() => { label.textContent = orig; label.style.color = ''; }, 2500);
+                        }
+                    }).catch(() => {
+                        prompt('Copie o link do aplicativo:', shareUrl);
+                    });
+                } else {
+                    prompt('Copie o link do aplicativo:', shareUrl);
+                }
+            } else if (action === 'email') {
+                const mailLink = document.createElement('a');
+                mailLink.href = `mailto:?subject=${encodeURIComponent('Convite: Yisrael Date')}&body=${encodeURIComponent(shareText + '\n' + shareUrl)}`;
+                mailLink.style.display = 'none';
+                document.body.appendChild(mailLink);
+                mailLink.click();
+                document.body.removeChild(mailLink);
+            }
+            return;
+        }
+
+        const card = event.target.closest('.event-card, .legend-card');
         if (!card) return;
 
         if (card.id === 'card-local-vigente') {
             if (card.classList.contains('not-ready')) return;
+            console.log('[MODAL] Pesquisa de Localização');
             const modal = document.getElementById('location-modal');
             if (modal) {
                 modal.style.display = 'flex';
@@ -828,7 +886,7 @@ export function initModals(updateDashboardCallback) {
             return;
         }
 
-        if (card.id === 'card-parasha-wrapper' || card.id === 'card-hdate-wrapper' || card.classList.contains('info-trigger')) {
+        if (card.id === 'card-parasha-wrapper' || card.id === 'card-hdate-wrapper' || card.id === 'card-share-wrapper' || card.classList.contains('info-trigger')) {
             if (card.classList.contains('not-ready')) return;
             const modal = document.getElementById('info-modal');
             const titleEl = document.getElementById('info-modal-title');
@@ -839,6 +897,7 @@ export function initModals(updateDashboardCallback) {
                 const htmlContent = card.getAttribute('data-info-html') || '';
                 
                 if (htmlContent) {
+                    console.log(`[MODAL] ${titleText}`);
                     titleEl.textContent = titleText;
                     
                     // Show skeleton first
@@ -869,68 +928,6 @@ export function initModals(updateDashboardCallback) {
             return;
         }
 
-
-
-        if (card.id === 'card-share-wrapper') {
-            if (card.classList.contains('not-ready')) return;
-            const shareUrl = window.location.href;
-            
-            const copyLink = () => {
-                try {
-                    const tempInput = document.createElement('input');
-                    tempInput.value = shareUrl;
-                    document.body.appendChild(tempInput);
-                    tempInput.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(tempInput);
-                    
-                    const subtitleEl = card.querySelector('.card-subtitle');
-                    if (subtitleEl) {
-                        const originalText = subtitleEl.getAttribute('data-orig') || subtitleEl.textContent;
-                        subtitleEl.setAttribute('data-orig', originalText);
-                        subtitleEl.textContent = 'Link Copiado!';
-                        setTimeout(() => subtitleEl.textContent = originalText, 2000);
-                    }
-                } catch(e) {
-                    prompt('Copie o link do projeto:', shareUrl);
-                }
-            };
-
-            const fallbackShare = () => {
-                try {
-                    const tempInput = document.createElement('input');
-                    tempInput.value = shareUrl;
-                    document.body.appendChild(tempInput);
-                    tempInput.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(tempInput);
-                    
-                    const subtitleEl = card.querySelector('.card-subtitle');
-                    if (subtitleEl) {
-                        const originalText = subtitleEl.getAttribute('data-orig') || subtitleEl.textContent;
-                        subtitleEl.setAttribute('data-orig', originalText);
-                        subtitleEl.textContent = 'Link Copiado';
-                        setTimeout(() => subtitleEl.textContent = originalText, 2000);
-                    }
-                } catch(e) {
-                    prompt('Copie o link abaixo:', shareUrl);
-                }
-            };
-
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Yisrael Date',
-                    text: 'Acesse horários, parashá, feriados e zmanim em tempo real.',
-                    url: shareUrl
-                }).catch(err => {
-                    fallbackShare();
-                });
-            } else {
-                fallbackShare();
-            }
-            return;
-        }
-
         const titleEl = card.querySelector('.card-title');
         const subtitleEl = card.querySelector('.card-subtitle') || card.querySelector('.timer-countdown');
 
@@ -953,6 +950,8 @@ export function initModals(updateDashboardCallback) {
             });
         }
     });
+
+
 
 
 
@@ -985,6 +984,8 @@ export function initModals(updateDashboardCallback) {
             renderSuggestions([]);
             return;
         }
+
+        console.log(`[ACTION] Pesquisa "${query}"`);
 
         searchTimeout = setTimeout(async () => {
             const currentQuery = e.target.value.trim();
@@ -1073,6 +1074,8 @@ export function initModals(updateDashboardCallback) {
         }
     });
 
+
+
     // Initialize the global observer to freeze background on any modal open
     initModalObserver();
 }
@@ -1092,3 +1095,54 @@ export function reopenModals() {
         openReadingModal(sessionStorage.getItem('openReadingModalRef'), sessionStorage.getItem('openReadingModalTitle'));
     }
 }
+
+// Expose Bible version switcher helpers to the window object for testing via Console
+window.setBibleVersion = (version) => {
+    if (!version) {
+        window.listBibleVersions();
+        return;
+    }
+    const target = String(version).toUpperCase().trim();
+    const validMap = {
+        'NVT': 'NVT (Nova Versão Transformadora - PT-BR)',
+        'OL': 'OL (O Livro - PT-PT)'
+    };
+    if (validMap[target]) {
+        localStorage.setItem('preferred_bible_version', target);
+        try {
+            [localStorage, sessionStorage].forEach(storage => {
+                if (!storage) return;
+                for (let i = storage.length - 1; i >= 0; i--) {
+                    const key = storage.key(i);
+                    if (key && key.startsWith('bible_cache_')) storage.removeItem(key);
+                }
+            });
+        } catch(e) {}
+        console.log(`[ACTION] Bible Version ${target}`);
+    } else {
+        console.warn(`[ACTION] Bible Version Invalid ${version}`);
+        window.listBibleVersions();
+    }
+};
+
+window.resetBibleVersion = () => {
+    localStorage.removeItem('preferred_bible_version');
+    try {
+        [localStorage, sessionStorage].forEach(storage => {
+            if (!storage) return;
+            for (let i = storage.length - 1; i >= 0; i--) {
+                const key = storage.key(i);
+                if (key && key.startsWith('bible_cache_')) storage.removeItem(key);
+            }
+        });
+    } catch(e) {}
+    console.log('[ACTION] Bible Version Reset');
+};
+
+window.listBibleVersions = () => {
+    console.log('[ACTION] Bible Version List');
+    console.table([
+        { Version: 'NVT', Name: 'Nova Versão Transformadora', Language: 'PT-BR', Command: "setBibleVersion('NVT')" },
+        { Version: 'OL', Name: 'O Livro', Language: 'PT-PT', Command: "setBibleVersion('OL')" }
+    ]);
+};

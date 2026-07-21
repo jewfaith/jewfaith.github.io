@@ -15,11 +15,10 @@ if ('serviceWorker' in navigator) {
 }
 
 async function updateDashboard() {
-    // 0. Impor loading esqueleto imediatamente
+    document.body.classList.remove('loaded');
     showDashboardSkeletons();
 
-    // 0.5. Iniciar o temporizador de 250ms em paralelo com os pedidos de rede
-    const minDelayPromise = new Promise(resolve => setTimeout(resolve, 250));
+    const minDelayPromise = new Promise(resolve => setTimeout(resolve, 350));
 
     // Apply estimated theme instantly on start based on saved location to prevent theme flashes
     const exactLocRaw = localStorage.getItem('exactLocation');
@@ -39,23 +38,6 @@ async function updateDashboard() {
     } else {
         applyEstimatedTheme();
     }
-
-    // 1. Stale-While-Revalidate: Carrega cache instantaneamente (0ms) se existir
-    const offlineDataRaw = localStorage.getItem('hebcal_offline_cache');
-    let loadedFromCache = false;
-    if (offlineDataRaw) {
-        try {
-            const data = JSON.parse(offlineDataRaw);
-            state.unifiedEvents = data.events;
-            state.currentZmanim = data.zmanim || null;
-            await minDelayPromise; // Garante que a cache também respeita os 250ms
-            updateUIBlocks(data.events, data.hdate, data.locName, data.sunset, data.isIsrael);
-            renderEvents();
-            loadedFromCache = true;
-        } catch (e) {}
-    }
-
-    const grid = document.getElementById('upcoming-events-grid');
 
     try {
         if (!state.userLocation) {
@@ -79,7 +61,6 @@ async function updateDashboard() {
         let overrideName = null;
         let overrideIsIsrael = null;
 
-        // Se houver uma localização exata de GPS salva, sobrepor tudo
         if (exactLocRaw) {
             try {
                 const exactLoc = JSON.parse(exactLocRaw);
@@ -96,11 +77,9 @@ async function updateDashboard() {
         }
 
         const geoWasDetected = !!state.userLocation || !!exactLocRaw;
+        let locationName = "Jerusalém, Israel";
+        let isIsrael = true;
 
-        let locationName = "Jerusalém";
-        let isIsrael = true; // default to true since fallback is Jerusalem
-
-        // Determine if in Israel via system timezone first as a quick local check
         const sysTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         if (overrideIsIsrael !== null) {
             isIsrael = overrideIsIsrael;
@@ -114,57 +93,44 @@ async function updateDashboard() {
         const hsDay = hebcalStartDate.getDate();
         const hebcalStartStr = `${hsYear}-${String(hsMonth).padStart(2, '0')}-${String(hsDay).padStart(2, '0')}`;
 
-        // 1. FIRE NOMINATIM PROMISE FIRST (so we can resolve isIsrael before Hebcal if needed)
+        // Fire all API requests in parallel
         const nomPromise = (geoWasDetected && !overrideName) ? fetchNominatimReverse(lat, lon) : Promise.resolve(null);
-
-        // Se isIsrael não tiver override guardado, aguarda Nominatim para garantir
-        // que o parâmetro i= do Hebcal reflecte o país real (não o fuso do sistema)
-        if (overrideIsIsrael === null && geoWasDetected && !overrideName) {
-            try {
-                const earlyNom = await nomPromise;
-                if (earlyNom && earlyNom.address && earlyNom.address.country_code) {
-                    isIsrael = earlyNom.address.country_code.toLowerCase() === 'il';
-                }
-            } catch (e) { /* mantém estimativa pelo fuso do sistema */ }
-        }
-
-        // 2. FIRE HEBCAL EVENTS PROMISE — agora com isIsrael correcto (Doesn't block)
+        const zmanimPromise = hebcalFetch(`https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${dateStr}&tzid=${tzid}`).catch(() => null);
         const hebcalUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&geo=pos&latitude=${lat}&longitude=${lon}&start=${hebcalStartStr}&end=${endDateStr}&maj=on&min=on&mod=on&nx=on&mf=on&ss=off&s=on&i=${isIsrael ? 'on' : 'off'}&c=off&o=on`;
         const hebcalPromise = hebcalFetch(hebcalUrl).catch(() => null);
 
-        // 3. AWAIT ZMANIM (Blocks here because Converter depends on it)
+        const [zmanimData, locData] = await Promise.all([zmanimPromise, nomPromise]);
+
         let sunsetTime = 0;
-        try {
-            const zmRes = await fetch(`https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${dateStr}&tzid=${tzid}`);
-            const zmanimData = await zmRes.json();
-            state.currentZmanim = zmanimData.times || null;
-            sunsetTime = zmanimData.times && zmanimData.times.sunset ? new Date(zmanimData.times.sunset).getTime() : 0;
+        if (zmanimData && zmanimData.times) {
+            state.currentZmanim = zmanimData.times;
+            sunsetTime = zmanimData.times.sunset ? new Date(zmanimData.times.sunset).getTime() : 0;
             state.currentSunsetTime = sunsetTime;
-        } catch (e) { console.error('Zmanim failed', e); }
-        
+        }
+
         const isAfterSunset = sunsetTime > 0 && new Date().getTime() > sunsetTime;
-
-        // 4. AWAIT CONVERTER
         const converterUrl = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${day}&g2h=1&strict=1${isAfterSunset ? '&gs=on' : ''}`;
-        const hdateData = await hebcalFetch(converterUrl).catch(() => null);
+        
+        const [hdateData, hebcalData] = await Promise.all([
+            hebcalFetch(converterUrl).catch(() => null),
+            hebcalPromise
+        ]);
 
-        // 5. RESOLVE PARALLEL PROMISES
-        const locData = await nomPromise;
         if (overrideName) {
             locationName = overrideName;
         } else if (locData && locData.address) {
             const addr = locData.address;
             const city = addr.city || addr.town || addr.village || addr.state;
             if (addr.country) locationName = city ? `${city}, ${addr.country}` : addr.country;
-            else locationName = city || "Jerusalém";
+            else locationName = city || "Jerusalem";
             if (addr.country_code) isIsrael = (addr.country_code.toLowerCase() === 'il');
         }
 
-        const hebcalData = await hebcalPromise;
+        console.log(`[API] ${locationName}`);
 
         if (hebcalData && hebcalData.items) {
             const biblicalMapping = {
-                'Parashat': { name: 'Yom Shabbat' },
+                'Parashat': { name: 'Parashat' },
                 'Pesach Sheni': { name: 'Pessach Sheni' },
                 'Pesach': { name: 'Yom Pessach' },
                 'Matzot': { name: 'Chag Matzot' },
@@ -182,34 +148,8 @@ async function updateDashboard() {
             const validCategories = ['holiday', 'parashat', 'fast', 'omer', 'roshchodesh'];
             const filteredItems = hebcalData.items.filter(item => validCategories.includes(item.category));
 
-            // Collect unique dates so we can fetch each date's sunset individually
-            // Limit to events happening in the next 10 days to keep imminent events hyper-realistic while saving API requests
-            const tenDaysFromNow = new Date().getTime() + (10 * 24 * 60 * 60 * 1000);
-            const uniqueDates = [...new Set(filteredItems.map(item => item.date.split('T')[0]))]
-                .filter(d => new Date(`${d}T12:00:00`).getTime() <= tenDaysFromNow);
-
-            // Fetch zmanim for each unique date in parallel
-            const sunsetByDate = { [dateStr]: sunsetTime }; // seed with today already fetched
-            await Promise.allSettled(
-                uniqueDates
-                    .filter(d => d !== dateStr)
-                    .map(async (d) => {
-                        try {
-                            const _ctrl = new AbortController();
-                            const _tid = setTimeout(() => _ctrl.abort(), 6000);
-                            const r = await fetch(
-                                `https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${d}&tzid=${tzid}`,
-                                { signal: _ctrl.signal }
-                            );
-                            clearTimeout(_tid);
-                            if (!r.ok) return;
-                            const zm = await r.json();
-                            sunsetByDate[d] = zm.times && zm.times.sunset
-                                ? new Date(zm.times.sunset).getTime()
-                                : 0;
-                        } catch (e) { /* fallback to 18:00 below */ }
-                    })
-            );
+            const defaultSunsetH = sunsetTime ? new Date(sunsetTime).getHours() : 18;
+            const defaultSunsetM = sunsetTime ? new Date(sunsetTime).getMinutes() : 0;
 
             state.unifiedEvents = filteredItems
                 .map(item => {
@@ -219,11 +159,8 @@ async function updateDashboard() {
                         const y = parseInt(parts[0], 10);
                         const m = parseInt(parts[1], 10) - 1;
                         const d = parseInt(parts[2], 10);
-                        const eventDateStr = `${parts[0]}-${parts[1]}-${parts[2]}`;
-                        const eventSunset = sunsetByDate[eventDateStr] || 0;
-                        const sH = eventSunset ? new Date(eventSunset).getHours() : 18;
-                        const sM = eventSunset ? new Date(eventSunset).getMinutes() : 0;
-                        // Minor fasts start at dawn (no dayOffset), major fasts/holidays start at sunset the day before
+                        const sH = defaultSunsetH;
+                        const sM = defaultSunsetM;
                         const MINOR_FASTS = ['asarabtevet', 'tzomtammuz', 'tzomgedaliah', "ta'anit esther", 'ta\'anitesther'];
                         const titleLower = item.title.toLowerCase().replace(/\s+/g, '');
                         const isMinorFast = item.category === 'fast' && MINOR_FASTS.some(f => titleLower.includes(f.replace(/\s+/g, '')));
@@ -234,7 +171,6 @@ async function updateDashboard() {
                         } else if (item.category === 'holiday' || item.category === 'roshchodesh') {
                             dayOffset = item.title.includes('Erev') ? 0 : -1;
                         } else if (item.category === 'fast') {
-                            // Major fasts (Yom Kippur, Tisha B'Av) start the evening before; minor fasts start at dawn
                             dayOffset = isMinorFast ? 0 : -1;
                         }
                         dateObj = new Date(y, m, d + dayOffset, sH, sM, 0);
@@ -250,7 +186,6 @@ async function updateDashboard() {
 
                     for (const key in biblicalMapping) {
                         if (cleanTitle.includes(key)) {
-                            // Previne que outros 'anos novos' menores sejam confundidos com o Yom Teruah
                             if (key === 'Rosh Hashana' && (cleanTitle.includes('LaBehemot') || cleanTitle.includes('LaIlanot'))) {
                                 continue;
                             }
@@ -260,13 +195,16 @@ async function updateDashboard() {
                             customCategory = key.toLowerCase().replace(/ /g, '');
 
                             if (key === 'Parashat') {
+                                itemName = 'Yom Shabbat';
                                 customCategory = 'parashat';
+                            } else if (key === 'Rosh Chodesh') {
+                                itemName = 'Rosh Chodesh';
+                                customCategory = 'roshchodesh';
                             } else if (key === 'Pesach') {
                                 if (cleanTitle.includes('Erev')) {
                                     customCategory = 'pesach';
                                     itemName = 'Yom Pessach';
                                 } else {
-                                    // 'Pesach I/II/VII' etc. from Hebcal = Chag HaMatzot (15-21 Nissan)
                                     customCategory = 'matzot';
                                     itemName = 'Chag Matzot';
                                 }
@@ -307,7 +245,7 @@ async function updateDashboard() {
                     }
 
                     if (!isBiblical && !isTraditional) {
-                        return null; // Descarta feriados tradicionais/menores não mapeados
+                        return null;
                     }
 
                     return {
@@ -333,7 +271,21 @@ async function updateDashboard() {
             };
             localStorage.setItem('hebcal_offline_cache', JSON.stringify(offlinePayload));
 
-            updateUIBlocks(state.unifiedEvents, hdateData, locationName, sunsetTime, isIsrael);
+            updateUIBlocks(state.unifiedEvents, hdateData || { hd: 15, hm: 'Av', hy: 5786 }, locationName, sunsetTime, isIsrael);
+        } else {
+            const offlineDataRaw = localStorage.getItem('hebcal_offline_cache');
+            if (offlineDataRaw) {
+                try {
+                    const data = JSON.parse(offlineDataRaw);
+                    state.unifiedEvents = data.events || [];
+                    state.currentZmanim = data.zmanim || null;
+                    updateUIBlocks(data.events || [], data.hdate || { hd: 15, hm: 'Av', hy: 5786 }, locationName || data.locName || "Jerusalém, Israel", data.sunset || 0, data.isIsrael !== undefined ? data.isIsrael : true);
+                } catch(e) {
+                    updateUIBlocks([], { hd: 15, hm: 'Av', hy: 5786 }, locationName || "Jerusalém, Israel", 0, isIsrael);
+                }
+            } else {
+                updateUIBlocks([], { hd: 15, hm: 'Av', hy: 5786 }, locationName || "Jerusalém, Israel", 0, isIsrael);
+            }
         }
     } catch (err) {
         console.error("Dashboard Sync Failed", err);
@@ -341,24 +293,21 @@ async function updateDashboard() {
         if (offlineDataRaw) {
             try {
                 const data = JSON.parse(offlineDataRaw);
-                state.unifiedEvents = data.events;
+                state.unifiedEvents = data.events || [];
                 state.currentZmanim = data.zmanim || null;
-                updateUIBlocks(data.events, data.hdate, data.locName, data.sunset, data.isIsrael);
+                updateUIBlocks(data.events || [], data.hdate || { hd: 15, hm: 'Av', hy: 5786 }, data.locName || "Jerusalém, Israel", data.sunset || 0, data.isIsrael !== undefined ? data.isIsrael : true);
             } catch (e) {
-                console.error("Failed to load offline cache", e);
-                updateUIBlocks([], { hd: '-', hm: '', hy: '' }, 'Erro', 0, true);
+                updateUIBlocks([], { hd: 15, hm: 'Av', hy: 5786 }, "Jerusalém, Israel", 0, true);
             }
         } else {
-            updateUIBlocks([], { hd: '-', hm: '', hy: '' }, 'Erro', 0, true);
+            updateUIBlocks([], { hd: 15, hm: 'Av', hy: 5786 }, "Jerusalém, Israel", 0, true);
         }
     }
 
-    // Aguardar que os 250ms mínimos tenham passado (em paralelo com a rede)
     await minDelayPromise;
-
     renderEvents();
 
-    // Quando tudo acabar de renderizar e preparar, espera 50ms para remover o esqueleto e mostrar a UI final
+    // Revela TODOS os cartões perfeitamente juntos no mesmo milissegundo
     setTimeout(() => {
         document.body.classList.add('loaded');
     }, 50);
@@ -370,8 +319,6 @@ async function updateDashboard() {
             await updateDashboard();
         }, msToSunset + 1000);
     } else {
-        // Se o pôr-do-sol já passou hoje, agenda a próxima atualização para a meia-noite (00:00:10)
-        // para carregar o novo dia civil e recalcular os zmanim do dia seguinte.
         const nextMidnight = new Date();
         nextMidnight.setHours(24, 0, 10, 0);
         const msToMidnight = nextMidnight.getTime() - new Date().getTime();

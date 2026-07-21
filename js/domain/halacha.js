@@ -20,7 +20,7 @@ export function getFestivalSpan(events, now, twentyFourHoursMs, cat) {
         .sort((a, b) => a.time - b.time);
     if (!evts.length) return null;
 
-    // Agrupa eventos em ocorrências distintas do festival (clusters)
+    // Agrupa eventos em ocorrencias distintas do festival (clusters)
     // Uma diferença de mais de 5 dias indica um evento em data ou ano diferente
     const clusters = [];
     let currentCluster = [evts[0]];
@@ -38,7 +38,7 @@ export function getFestivalSpan(events, now, twentyFourHoursMs, cat) {
     }
     clusters.push(currentCluster);
 
-    // Encontra o cluster que está ativo no momento "now"
+    // Encontra o cluster que esta ativo no momento "now"
     for (const cluster of clusters) {
         const start = cluster[0].time;
         const end = cluster[cluster.length - 1].time + twentyFourHoursMs;

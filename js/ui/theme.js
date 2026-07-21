@@ -27,7 +27,9 @@ export function applyEstimatedTheme(lat, lon) {
         isDay = localHours >= transitionStartHour && localHours < transitionEndHour;
     }
     
-    document.documentElement.setAttribute('data-theme', isDay ? 'day' : 'night');
+    const themeName = isDay ? 'day' : 'night';
+    document.documentElement.setAttribute('data-theme', themeName);
+    console.log(`[ACTION] Tema ${isDay ? 'Dia' : 'Noite'}`);
 }
 
 export function applySolarTheme() {
@@ -119,29 +121,14 @@ window.setTheme = (themeName) => {
     const validThemes = ['day', 'night'];
     if (validThemes.includes(themeName)) {
         document.documentElement.setAttribute('data-theme', themeName);
-        console.log(`%c[Tema] Exibindo design: ${themeName} (Automático pausado)`, "color: #eab308; font-weight: bold;");
     } else {
-        console.warn(`[Tema] Nome inválido. Escolha um destes: ${validThemes.join(', ')}`);
+        console.warn(`[Tema] Nome invalido. Escolha um destes: ${validThemes.join(', ')}`);
     }
 };
 
 window.resetTheme = () => {
     manualThemeOverride = false;
-    console.log("%c[Tema] Retornando ao ciclo solar automático.", "color: #10b981; font-weight: bold;");
     applySolarTheme();
 };
 
-// Print helpful instructions in the console on module load
-console.log(
-    "%c📜 Yisrael Date - Controle de Temas %c\n" +
-    "Você pode alternar e visualizar os 2 designs diretamente pelo console:\n" +
-    "  • %csetTheme('day')%c    - Tema Dia (Pedra de Jerusalém)\n" +
-    "  • %csetTheme('night')%c  - Tema Noite (Meia-noite Profunda)\n\n" +
-    "Para retornar ao ciclo de transição automático, digite:\n" +
-    "  • %cresetTheme()%c",
-    "color: #eab308; font-weight: bold; font-size: 13px;",
-    "color: inherit;",
-    "color: #a27b5c; font-family: monospace; font-weight: bold;", "color: inherit;",
-    "color: #7dd3fc; font-family: monospace; font-weight: bold;", "color: inherit;",
-    "color: #10b981; font-family: monospace; font-weight: bold;", "color: inherit;"
-);
+

@@ -2,6 +2,7 @@ import { state } from '../state.js';
 import { applySolarTheme } from './theme.js';
 import { findActiveFestival, transliterateTorah, pickReading } from '../domain/halacha.js';
 import { FESTIVAL_CATS, FESTIVAL_TORAH_READINGS, FESTIVAL_HAFTARA_READINGS, KETUVIM_BOOKS, KETUVIM_TOTAL_WEIGHT, FESTIVAL_TEHILIM, FESTIVAL_DESCRIPTIONS } from '../domain/constants.js';
+import { getParashaSummary } from '../domain/parashot.js';
 import { LCG, getStringSimilarity } from '../utils/math.js';
 import { getEventIcon } from './icons.js';
 import { startTimers } from './timers.js';
@@ -15,9 +16,7 @@ export function showDashboardSkeletons() {
         { id: 'card-haftara', subId: 'card-haftara-wrapper' },
         { id: 'card-ketuvim', subId: 'card-ketuvim-wrapper' },
         { id: 'card-local', subId: 'card-local-vigente' },
-        { id: 'card-hdate', subId: 'card-hdate-wrapper' },
-        { id: 'card-zmanim', subId: 'card-zmanim-wrapper' },
-        { id: 'card-share', subId: 'card-share-wrapper' }
+        { id: 'card-hdate', subId: 'card-hdate-wrapper' }
     ];
 
     cards.forEach(c => {
@@ -104,6 +103,13 @@ function generateCalendarHTML(events, currentHdate) {
             const hYear = parseInt(parts[parts.length - 1], 10);
             
             if (hMonthRaw === currentHdate.hm && hYear === currentHy) {
+                if (ev.raw && ev.raw.title && ev.raw.title.includes('Rosh Chodesh')) {
+                    const titleParts = ev.raw.title.split(' ');
+                    const targetMonth = titleParts.slice(2).join(' ');
+                    if (targetMonth && targetMonth !== currentHdate.hm) {
+                        continue;
+                    }
+                }
                 if (ev.name) {
                     let gYear = null, gMonth = null, gDay = null;
                     if (ev.raw && ev.raw.date) {
@@ -119,8 +125,27 @@ function generateCalendarHTML(events, currentHdate) {
                         gregText = `${paddedGDay} ${gregMonths[gMonth - 1]}`;
                     }
                     
-                    const isDup = legendItems.some(i => i.name === ev.name && i.firstDay === hDay);
-                    if (!isDup) {
+                    const isDup = legendItems.some(i => {
+                        if (ev.name === 'Yom Shabbat') {
+                            return i.name === ev.name && i.firstDay === hDay;
+                        }
+                        return i.name === ev.name || getStringSimilarity(i.name, ev.name) >= 0.70;
+                    });
+
+                    if (isDup && ev.name !== 'Yom Shabbat') {
+                        const existingIndex = legendItems.findIndex(i => i.name === ev.name || getStringSimilarity(i.name, ev.name) >= 0.70);
+                        if (existingIndex !== -1 && hDay > legendItems[existingIndex].firstDay) {
+                            const paddedHDay = String(hDay).padStart(2, '0');
+                            legendItems[existingIndex] = {
+                                dayText: `${paddedHDay}`,
+                                gregText: gregText,
+                                name: ev.name,
+                                isBiblical: !!ev.isBiblical,
+                                category: ev.category,
+                                firstDay: hDay
+                            };
+                        }
+                    } else if (!isDup) {
                         const paddedHDay = String(hDay).padStart(2, '0');
                         legendItems.push({
                             dayText: `${paddedHDay}`,
@@ -140,18 +165,78 @@ function generateCalendarHTML(events, currentHdate) {
         if (a.firstDay !== b.firstDay) return a.firstDay - b.firstDay;
         return (b.isBiblical ? 1 : 0) - (a.isBiblical ? 1 : 0);
     });
+
+    // Agrupa dias consecutivos apenas para festas de múltiplos dias (ex: Chag Matzot, Sukkot, Hanukkah)
+    const multiDayCategories = ['matzot', 'sukkot', 'hanukkah', 'omer'];
+    const mergedLegend = [];
+    for (const item of legendItems) {
+        const last = mergedLegend[mergedLegend.length - 1];
+        const isMultiDay = multiDayCategories.includes(item.category) || item.name.includes('Matzot') || item.name.includes('Sukkot');
+        if (last && last.name === item.name && isMultiDay && (item.firstDay === last.lastDay + 1 || item.firstDay === last.lastDay)) {
+            last.lastDay = item.firstDay;
+            if (last.gregText && item.gregText && last.gregText !== item.gregText) {
+                const day1 = last.gregText.split(' ')[0];
+                last.gregText = `${day1}–${item.gregText}`;
+            }
+        } else {
+            mergedLegend.push({ ...item, lastDay: item.firstDay });
+        }
+    }
     
-    if (legendItems.length > 0) {
+    if (mergedLegend.length > 0) {
         html += `<div class="calendar-legend">
-            <ul class="legend-list" style="padding: 0; margin: 0; list-style: none; display: flex; flex-direction: column">`;
-        let idx = 0;
-        for (const item of legendItems) {
-            html += `<li class="legend-card" style="padding: 12px 14px;">
-                <div style="font-size: var(--font-size-base); font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                    ${item.name}, ${item.gregText || 'Data indisponível'}
+            <ul class="legend-list" style="padding: 0; margin: 0; list-style: none; display: flex; flex-direction: column;">`;
+        for (const item of mergedLegend) {
+            const iconHtml = getEventIcon(item.category, item.name);
+
+            let baseName = item.name;
+            if (item.name.includes('laOmer')) baseName = 'Sefirat Omer';
+            else if (item.name.includes('Hanukkah')) baseName = 'Chag Hanukkah';
+
+            let festivalData = FESTIVAL_DESCRIPTIONS[baseName] || FESTIVAL_DESCRIPTIONS[item.name];
+            let infoHtml = '';
+            if (festivalData && typeof festivalData === 'object' && festivalData.torah) {
+                infoHtml = `
+                    <div class="levels-container" style="display:flex; flex-direction:column;">
+                        <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                            <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.torah}</div>
+                        </div>
+                        <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                            <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.neviim}</div>
+                        </div>
+                        <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                            <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.ketuvim}</div>
+                        </div>
+                        <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                            <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.talmud}</div>
+                        </div>
+                        <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; border-bottom:none; white-space:normal; overflow:visible;">
+                            <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.sod}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let desc = (typeof festivalData === 'string' ? festivalData : null) || 'Uma data significativa no calendário judaico.';
+                infoHtml = `
+                    <div class="info-modal-card" style="margin-bottom: 0; white-space:normal; overflow:visible;">
+                        <div class="info-modal-value" style="font-weight: 400; font-size: var(--font-size-base); line-height: 1.6; color: var(--text-primary); text-align: left; padding: 4px 0; white-space:normal; overflow:visible; text-overflow:clip;">${desc}</div>
+                    </div>
+                `;
+            }
+            const safeInfoHtml = infoHtml.replace(/"/g, '&quot;');
+            const safeName = item.name.replace(/"/g, '&quot;');
+
+            html += `<li class="legend-card info-trigger" data-info-title="${safeName}" data-info-html="${safeInfoHtml}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--card-border-color); margin-bottom: 8px; box-sizing: border-box; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease;">
+                <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
+                    <div style="width: 34px; height: 34px; border-radius: 10px; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.06); color: var(--accent-color); font-size: 14px;">
+                        ${iconHtml}
+                    </div>
+                    <div style="display: flex; flex-direction: column; text-align: left; min-width: 0; flex: 1;">
+                        <span style="font-size: var(--font-size-base); font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.name}</span>
+                        <span style="font-size: var(--font-size-xs); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.gregText || 'Data indisponível'}</span>
+                    </div>
                 </div>
             </li>`;
-            idx++;
         }
         html += `</ul></div>`;
     } else {
@@ -288,7 +373,6 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         let pName = elParasha.textContent;
         let torahRef = '';
         let haftaraRef = '';
-        let aliyotHtml = '';
         
         if (nearFestival) {
              torahRef = pickReading(FESTIVAL_TORAH_READINGS[nearFestival.category], nearFestival.dayIndex) || '';
@@ -298,31 +382,26 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
              torahRef = ley.torah || '';
              const hOptions = [ley.haftarah, ley.haftarah_sephardic, ley.haftarah_chabad, ley.haftarah_teiman, ley.haftarah_itali].filter(Boolean);
              haftaraRef = (hOptions[0] || '').split(' | ')[0].trim();
-             
-             if (ley["1"]) {
-                 const aliyotNames = ["Rishon", "Sheni", "Shlishi", "Revii", "Chamishi", "Shishi", "Shevii"];
-                 const aliyotNums = ["01", "02", "03", "04", "05", "06", "07"];
-                 const keys = ["1", "2", "3", "4", "5", "6", "7"];
-                 
-                 for (let i = 0; i < keys.length; i++) {
-                     const key = keys[i];
-                     if (ley[key]) {
-                         aliyotHtml += `
-                             <div class="legend-card" style="padding: 12px 14px;">
-                                 <div style="font-size: var(--font-size-base); font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                     ${aliyotNames[i]}, ${transliterateTorah(ley[key])}
-                                 </div>
-                             </div>
-                        `;
-                     }
-                 }
-             }
         }
         
         elParashaWrapper.setAttribute('data-info-title', pName);
+        
+        let parashaSummary = getParashaSummary(pName);
         let contentHtml = '';
-        if (aliyotHtml) {
-            contentHtml = aliyotHtml;
+
+        if (parashaSummary) {
+            const paragraphs = Array.isArray(parashaSummary) ? parashaSummary : [parashaSummary];
+            let cardsHtml = paragraphs.map((p, idx) => `
+                <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:6px; white-space:normal; overflow:visible; ${idx === paragraphs.length - 1 ? 'border-bottom:none;' : ''}">
+                    <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.65; text-align:left; white-space:normal; overflow:visible; text-overflow:clip; color: var(--text-primary);">${p}</div>
+                </div>
+            `).join('');
+
+            contentHtml = `
+                <div class="levels-container" style="display:flex; flex-direction:column; gap:4px;">
+                    ${cardsHtml}
+                </div>
+            `;
         } else {
             contentHtml = `
                 <div class="info-modal-card">
@@ -437,15 +516,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         elLoc.textContent = locationName || 'Jerusalém';
         const elLocSubtitle = elLoc.nextElementSibling;
         if (elLocSubtitle) {
-            if (activeFestival) {
-                if (isIsrael) {
-                    elLocSubtitle.textContent = 'Local Vigente (Israel)';
-                } else {
-                    elLocSubtitle.textContent = `Local Vigente (${isExtraDay ? 'Chutz laAretz' : 'Chutz'})`;
-                }
-            } else {
-                elLocSubtitle.textContent = 'Local Vigente';
-            }
+            elLocSubtitle.textContent = 'Local Vigente';
         }
     }
 
@@ -508,29 +579,52 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
                 return isoString.substring(11, 16);
             };
             const zmanimMap = [
-                { key: 'alotHaShachar', label: 'Alot Hashachar' },
-                { key: 'sunrise', label: 'Netz Hachama' },
-                { key: 'sofZmanShma', label: 'Zman Shma' },
-                { key: 'sofZmanTfila', label: 'Zman Tefila' },
-                { key: 'chatzot', label: 'Chatzot Hayom' },
-                { key: 'minchaGedola', label: 'Mincha Gedola' },
-                { key: 'plagHaMincha', label: 'Plag Hamincha' },
-                { key: 'sunset', label: 'Shkiat Hachama' },
-                { key: 'tzeit7083deg', label: 'Tzeit Hakochavim' },
-                { key: 'tzeit72min', label: 'Rabbeinu Tam' }
+                { key: 'alotHaShachar', label: 'Alot Hashachar', icon: 'fa-solid fa-cloud-sun-rain' },
+                { key: 'sunrise', label: 'Netz Hachama', icon: 'fa-solid fa-sun' },
+                { key: 'sofZmanShma', label: 'Zman Shma', icon: 'fa-solid fa-book-open' },
+                { key: 'sofZmanTfila', label: 'Zman Tefila', icon: 'fa-solid fa-scroll' },
+                { key: 'chatzot', label: 'Chatzot Hayom', icon: 'fa-solid fa-sun' },
+                { key: 'minchaGedola', label: 'Mincha Gedola', icon: 'fa-solid fa-cloud-sun' },
+                { key: 'plagHaMincha', label: 'Plag Hamincha', icon: 'fa-solid fa-cloud-sun' },
+                { key: 'sunset', label: 'Shkiat Hachama', icon: 'fa-solid fa-cloud-moon' },
+                { key: 'tzeit7083deg', label: 'Tzeit Hakochavim', icon: 'fa-solid fa-moon' },
+                { key: 'tzeit72min', label: 'Rabbeinu Tam', icon: 'fa-solid fa-star' }
             ];
             
-            for (const {key, label} of zmanimMap) {
-                if (state.currentZmanim[key]) {
+            const ZMAN_EXPLANATIONS = {
+                'Alot Hashachar': 'A alvorada representa o primeiro sinal de luz no horizonte antes do nascer do sol, marcando o início haláchico dos jejuns e das mitzvot diárias.',
+                'Netz Hachama': 'O nascer do sol é o momento exato em que o disco solar surge no horizonte, sendo o horário ideal para a recitação da oração da Amidá matinal.',
+                'Zman Shma': 'O horário limite proporcional para o cumprimento da obrigação sagrada de recitar a oração do Shemá Yisrael pela manhã.',
+                'Zman Tefila': 'O horário limite ideal estipulado pelos sábios para a recitação da oração da Amidá matinal.',
+                'Chatzot Hayom': 'O meio-dia haláchico exato, dividindo proporcionalmente o período entre o nascer do sol e o pôr do sol.',
+                'Mincha Gedola': 'O primeiro momento em que se torna permitido recitar a oração da tarde da Minchá.',
+                'Plag Hamincha': 'Momento equivalente a uma hora e um quarto haláchica antes do pôr do sol, permitindo o acendimento antecipado das velas de Shabbat.',
+                'Shkiat Hachama': 'O pôr do sol assinala a ocultação do disco solar, iniciando a transição para o novo dia hebraico.',
+                'Tzeit Hakochavim': 'O anochecer definitivo verificado com o surgimento de três estrelas no céu, confirmando a entrada do novo dia.',
+                'Rabbeinu Tam': 'O horário estrito de anochecer estipulado segundo a opinião haláchica de Rabbeinu Tam para o encerramento do Shabbat.'
+            };
+
+            zmanimHtml = '<div class="levels-container" style="display: flex; flex-direction: column; gap: 10px;">';
+            for (const item of zmanimMap) {
+                const val = state.currentZmanim[item.key];
+                if (val) {
+                    const formattedTime = formatZman(val);
                     zmanimHtml += `
-                        <div class="legend-card" style="padding: 12px 14px;">
-                            <div style="font-size: var(--font-size-base); font-weight: 400; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary);">
-                                ${formatZman(state.currentZmanim[key])}, ${label}
+                        <div class="legend-card" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--card-border-color); margin: 0; box-sizing: border-box; transition: background 0.2s ease, border-color 0.2s ease;">
+                            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
+                                <div style="width: 32px; height: 32px; border-radius: 10px; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.06);">
+                                    <i class="${item.icon}" style="color: var(--accent-color); font-size: 14px;"></i>
+                                </div>
+                                <span style="font-size: var(--font-size-base); font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.2px;">${item.label}</span>
                             </div>
+                            <span class="date-pill" style="font-size: 13px; font-weight: 700; color: var(--accent-color); background: var(--accent-bg); padding: 5px 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); white-space: nowrap; flex-shrink: 0; letter-spacing: 0.8px;">
+                                ${formattedTime}
+                            </span>
                         </div>
                     `;
                 }
             }
+            zmanimHtml += '</div>';
         } else {
              zmanimHtml += `
                  <div class="info-modal-card">
@@ -539,9 +633,66 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
              `;
         }
         
-        
         elZmanimWrapper.setAttribute('data-info-title', 'Zman Hayom');
         elZmanimWrapper.setAttribute('data-info-html', zmanimHtml);
+    }
+
+    const elShareWrapper = document.getElementById('card-share-wrapper');
+    if (elShareWrapper) {
+        const shareHtml = `
+            <div class="levels-container" style="display: flex; flex-direction: column; gap: 10px;">
+                <div class="legend-card share-option-item" data-share-action="whatsapp" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--card-border-color); cursor: pointer; transition: background 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 34px; height: 34px; border-radius: 10px; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.06);">
+                            <i class="fa-brands fa-whatsapp" style="color: var(--accent-color); font-size: 16px;"></i>
+                        </div>
+                        <div style="display: flex; flex-direction: column; text-align: left;">
+                            <span style="font-size: var(--font-size-base); font-weight: 600; color: var(--text-primary);">Enviar WhatsApp</span>
+                            <span style="font-size: var(--font-size-xs); color: var(--text-muted);">Mensagem Direta</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legend-card share-option-item" data-share-action="telegram" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--card-border-color); cursor: pointer; transition: background 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 34px; height: 34px; border-radius: 10px; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.06);">
+                            <i class="fa-brands fa-telegram" style="color: var(--accent-color); font-size: 16px;"></i>
+                        </div>
+                        <div style="display: flex; flex-direction: column; text-align: left;">
+                            <span style="font-size: var(--font-size-base); font-weight: 600; color: var(--text-primary);">Enviar Telegram</span>
+                            <span style="font-size: var(--font-size-xs); color: var(--text-muted);">Canal Mensagem</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legend-card share-option-item" data-share-action="copy" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--card-border-color); cursor: pointer; transition: background 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 34px; height: 34px; border-radius: 10px; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.06);">
+                            <i class="fa-solid fa-link" style="color: var(--accent-color); font-size: 14px;"></i>
+                        </div>
+                        <div style="display: flex; flex-direction: column; text-align: left;">
+                            <span style="font-size: var(--font-size-base); font-weight: 600; color: var(--text-primary);">Copiar Link</span>
+                            <span style="font-size: var(--font-size-xs); color: var(--text-muted);">Endereço Web</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legend-card share-option-item" data-share-action="email" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--card-border-color); cursor: pointer; transition: background 0.2s ease;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 34px; height: 34px; border-radius: 10px; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.06);">
+                            <i class="fa-solid fa-envelope" style="color: var(--accent-color); font-size: 14px;"></i>
+                        </div>
+                        <div style="display: flex; flex-direction: column; text-align: left;">
+                            <span style="font-size: var(--font-size-base); font-weight: 600; color: var(--text-primary);">Enviar Email</span>
+                            <span style="font-size: var(--font-size-xs); color: var(--text-muted);">Correio Eletrónico</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        elShareWrapper.setAttribute('data-info-title', 'Enviar Convite');
+        elShareWrapper.setAttribute('data-info-html', shareHtml);
     }
 
     document.querySelectorAll('.event-card.not-ready').forEach(el => {
@@ -593,12 +744,10 @@ export function renderEvents() {
         if (seenNames.has(normalized)) continue;
 
         let isTooSimilar = false;
-        if (!item.isBiblical) {
-            for (const added of unique) {
-                if (!added.isBiblical && getStringSimilarity(item.name, added.name) >= 0.70) {
-                    isTooSimilar = true;
-                    break;
-                }
+        for (const added of unique) {
+            if (getStringSimilarity(item.name, added.name) >= 0.70) {
+                isTooSimilar = true;
+                break;
             }
         }
         if (isTooSimilar) continue;
@@ -627,7 +776,7 @@ export function renderEvents() {
     }
 
     upcoming.forEach(evt => {
-        const icon = getEventIcon(evt.category, evt.name);
+        const icon = getEventIcon(evt.category, evt.name, "");
 
         let baseName = evt.name;
         if (evt.name.includes('laOmer')) baseName = 'Sefirat Omer';
