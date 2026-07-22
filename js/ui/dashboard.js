@@ -398,7 +398,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             `).join('');
 
             contentHtml = `
-                <div class="levels-container" style="display:flex; flex-direction:column; gap:4px;">
+                <div class="levels-container" style="display:flex; flex-direction:column;">
                     ${cardsHtml}
                 </div>
             `;
