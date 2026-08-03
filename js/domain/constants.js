@@ -242,7 +242,7 @@ export const FESTIVAL_DESCRIPTIONS = {
     },
 
     'Yom Purim': {
-        info: 'Festa rabínica. Purim recorda a salvação dos judeus do Império Persa perante o plano de Haman. A Megillah conta como Esther e Mordechai participaram da reversão da ameaça e como os dias que deveriam representar destruição se transformaram em dias de alegria. Esther 9:20-28 apresenta a instituição da celebração.',
+        info: 'Festa rabínica. Purim recorda a salvação do povo de Yisrael do Império Persa perante o plano de Haman. A Megillah conta como Esther e Mordechai participaram da reversão da ameaça e como os dias que deveriam representar destruição se transformaram em dias de alegria. Esther 9:20-28 apresenta a instituição da celebração.',
         torah: 'Purim não é uma festa estabelecida pela Torah, pois os acontecimentos ocorreram muito depois do período da Torah. No entanto, a importância de recordar os acontecimentos e transmiti-los às gerações está presente em Devarim 4:9 e Shemot 13:8-9.',
         neviim: 'Os acontecimentos de Purim são posteriores ao período dos Neviim e não são narrados diretamente nos livros proféticos. Os temas de preservação de Yisrael, ameaça nacional e restauração, porém, aparecem em profecias como Yirmeyahu 30:7-11.',
         ketuvim: 'O Livro de Esther é a principal fonte de Purim. Esther 3:8-13 descreve o plano de Haman, Esther 7:1-10 apresenta a sua intervenção perante o rei e Esther 9:20-28 descreve a transformação da ameaça em dias de celebração.',
@@ -260,10 +260,10 @@ export const FESTIVAL_DESCRIPTIONS = {
     },
 
     'Ta\'anit Esther': {
-        info: 'Jejum rabínico. Ta’anit Esther é observado antes de Purim e está relacionado com o jejum realizado por Esther e pelos judeus antes de ela entrar perante o rei. Esther 4:15-16 descreve diretamente esse jejum. A transformação desse episódio num jejum anual pertence à tradição posterior.',
+        info: 'Jejum rabínico. Ta’anit Esther é observado antes de Purim e está relacionado com o jejum realizado por Esther e pelos israelitas antes de ela entrar perante o rei. Esther 4:15-16 descreve diretamente esse jejum. A transformação desse episódio num jejum anual pertence à tradição posterior.',
         torah: 'A Torah estabelece diretamente o jejum de Yom Kippur, mas não estabelece Ta’anit Esther. O princípio de procurar Deus através de jejum, humildade e arrependimento aparece, porém, em vários textos bíblicos, como Devarim 9:18.',
         neviim: 'Os Neviim apresentam o jejum como uma prática que deve estar ligada à mudança interior. Yoel 2:12-13 chama Yisrael a regressar a Deus com jejum, choro e arrependimento, mostrando que o objetivo não é apenas deixar de comer.',
-        ketuvim: 'O Livro de Esther apresenta diretamente o jejum realizado antes da intervenção de Esther. Em Esther 4:15-16, Esther pede que os judeus jejuem durante três dias enquanto ela se prepara para entrar perante o rei.',
+        ketuvim: 'O Livro de Esther apresenta diretamente o jejum realizado antes da intervenção de Esther. Em Esther 4:15-16, Esther pede que os israelitas jejuem durante três dias enquanto ela se prepara para entrar perante o rei.',
         talmud: 'A tradição rabínica desenvolveu Ta’anit Esther como um jejum relacionado com Purim. Ta’anit 12a discute os princípios dos jejuns comunitários, enquanto a tradição haláchica posterior determina a sua observância antes de Purim.',
         sod: 'Na tradição do Sod, o jejum pode ser entendido como uma forma de diminuir temporariamente a atenção às necessidades físicas e concentrá-la na súplica e na dependência de Deus. A tradição mística relaciona o jejum com processos de purificação interior.'
     },
