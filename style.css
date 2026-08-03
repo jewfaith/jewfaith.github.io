@@ -764,6 +764,7 @@ body.ee-color-active .brand-title {
     width: 100%;
     max-width: 650px;
     height: 25vh;
+    max-height: 700px;
     display: flex;
     flex-direction: column;
     padding: 28px;
