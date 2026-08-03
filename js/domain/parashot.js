@@ -203,7 +203,7 @@ export const PARASHA_DESCRIPTIONS = {
         'Descrevendo o ritual de sete dias para a ordenação sacerdotal e a confecção do Altar de Incenso de ouro, o texto encerra a rotina de adoração diária.'
     ],
     'Ki Tisa': [
-        'Determinando a arrecadação da meia moeda de prata como censo comunitário, a regra estabelece a igualdade de todos os judeus perante o resgate espiritual.',
+        'Determinando a arrecadação da meia moeda de prata como censo comunitário, a regra estabelece a igualdade de todos os israelitas perante o resgate espiritual.',
         'Moldando a pia de bronze a partir dos espelhos das mulheres para a purificação de mãos e pés, o ritual assegura a pureza física dos sacerdotes.',
         'Formulando o azeite da unção sagrada e a mistura aromática do incenso, o texto proíbe o uso profano dessas composições exclusivas do Santuário.',
         'Designando Bezalel da tribo de Yehuda e Oholiab da tribo de Dan, o Espírito Divino concede-lhes sabedoria artística para executar a obra do Mishkan.',
@@ -292,7 +292,7 @@ export const PARASHA_DESCRIPTIONS = {
         'Proibindo o abate de animais destinados ao consumo fora do pátio do Tabernáculo, a ordem previne a idolatria nos campos e centraliza o culto divino.',
         'Reiterando com severidade a proibição de consumir sangue, a Torá exige que o sangue de aves e animais caçados seja coberto com terra após o abate.',
         'Proibindo categoricamente as uniões incestuosas e práticas abomináveis, a lei condena os costumes imorais vigentes no Egito e na terra de Canaã.',
-        'Advertindo que a Terra de Israel vomita os seus habitantes quando poluída pela imoralidade sexual, a norma exige a preservação da santidade no viver.'
+        'Advertindo que a Terra de Yisrael vomita os seus habitantes quando poluída pela imoralidade sexual, a norma exige a preservação da santidade no viver.'
     ],
     'Kedoshim': [
         'Proclamando a toda a congregação o imperativo "Sede santos, porque Eu, o Criador vosso Deus, sou Santo", a leitura estabelece o modelo ético da nação.',
@@ -315,7 +315,7 @@ export const PARASHA_DESCRIPTIONS = {
         'Detalhando o ciclo outonal com Rosh Hashana, Yom Kippur e Sukkot, a porção encerra-se com as regras de acendimento da Menorá e os Pães da Proposição.'
     ],
     'Behar': [
-        'Proclamando a lei do Ano Sabático da Shemitá no Monte Sinai, a Torá exige que a Terra de Israel descanse sem plantio ou colheita a cada sete anos.',
+        'Proclamando a lei do Ano Sabático da Shemitá no Monte Sinai, a Torá exige que a Terra de Yisrael descanse sem plantio ou colheita a cada sete anos.',
         'Garantindo a bênção da fartura no sexto ano, a promessa divina assegura colheita tripla para abastecer a comunidade durante o período de repouso da terra.',
         'Instituindo o Ano de Jubileu após sete ciclos Sabáticos, o toque do Shofar no Yom Kippur do quinquagésimo ano proclama a liberdade na terra.',
         'Restituindo as propriedades rurais vendidas aos seus proprietários originais no Jubileu, a norma impede a concentração permanente de terras.',
@@ -470,7 +470,7 @@ export const PARASHA_DESCRIPTIONS = {
     ],
     'Re\'eh': [
         'Colocando o livre-arbítrio no centro da existência, a abertura da leitura convoca o povo a contemplar as consequências de suas decisões, apresentando a bênção e a maldição como caminhos que decorrem da adesão ou rejeição aos mandamentos.',
-        'Determinando a erradicação completa de todos os resquícios de culto idólatra na Terra de Israel, a norma bíblica estabelece a centralização do serviço divino em um único local sagrado escolhido pelo Criador.',
+        'Determinando a erradicação completa de todos os resquícios de culto idólatra na Terra de Yisrael, a norma bíblica estabelece a centralização do serviço divino em um único local sagrado escolhido pelo Criador.',
         'Mediante o refinamento da vida cotidiana, as leis de Kashrut são reafirmadas com rigor, estabelecendo a distinção entre animais permitidos e proibidos, a absoluta interdição do consumo de sangue e a proibição de cozer o cabrito no leite da mãe.',
         'Alertando contra os perigos da sedução ideológica e da apostasia, o texto prescreve o combate intransigente aos falsos profetas e àqueles que tentam desviar a comunidade para o culto de entidades estranhas.',
         'Estruturando uma sociedade baseada na solidariedade, os mandamentos do dízimo social e do ano de Shemitá impõem o perdão periódico das dívidas e a obrigação contínua de suprir as necessidades do irmão necessitado.',
