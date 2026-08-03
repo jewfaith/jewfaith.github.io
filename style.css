@@ -11,7 +11,8 @@
     --text-primary: #f1f5f9;
     --text-muted: #94a3b8;
     --title-gradient-start: #ffffff;
-    --title-gradient-end: #7dd3fc; /* Soft sky blue */
+    --title-gradient-end: #7dd3fc;
+    /* Soft sky blue */
     --icon-bg-start: rgba(125, 211, 252, 0.08);
     --icon-bg-end: rgba(56, 189, 248, 0.12);
     --icon-color: #7dd3fc;
@@ -35,38 +36,51 @@
     --calendar-event-color: #e0f2fe;
     --calendar-biblical-bg: rgba(56, 189, 248, 0.22);
     --calendar-biblical-color: #f0f9ff;
-    
+
     --scrollbar-thumb-bg: rgba(255, 255, 255, 0.08);
     --skeleton-bg: rgba(255, 255, 255, 0.04);
     --skeleton-shimmer: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0.04) 75%);
 
     /* Scale of consistent typography variables */
-    --font-size-xxs: 0.7rem;    /* ~11px / 9.8px mobile */
-    --font-size-xs: 0.8rem;     /* ~13px / 11.2px mobile */
-    --font-size-sm: 0.9rem;     /* ~14px / 12.6px mobile */
-    --font-size-base: 1rem;     /* ~16px / 14px mobile */
-    --font-size-md: 1.1rem;     /* ~18px / 15.4px mobile */
-    --font-size-lg: 1.3rem;     /* ~21px / 18.2px mobile */
-    --font-size-xl: 1.4rem;     /* ~22px / 19.6px mobile */
-    --font-size-2xl: 1.8rem;    /* ~29px / 25.2px mobile */
-    --font-size-3xl: 2.2rem;    /* ~35px / 30.8px mobile */
-    --font-size-4xl: 2.8rem;    /* ~45px / 39.2px mobile */
+    --font-size-xxs: 0.7rem;
+    /* ~11px / 9.8px mobile */
+    --font-size-xs: 0.8rem;
+    /* ~13px / 11.2px mobile */
+    --font-size-sm: 0.9rem;
+    /* ~14px / 12.6px mobile */
+    --font-size-base: 1rem;
+    /* ~16px / 14px mobile */
+    --font-size-md: 1.1rem;
+    /* ~18px / 15.4px mobile */
+    --font-size-lg: 1.3rem;
+    /* ~21px / 18.2px mobile */
+    --font-size-xl: 1.4rem;
+    /* ~22px / 19.6px mobile */
+    --font-size-2xl: 1.8rem;
+    /* ~29px / 25.2px mobile */
+    --font-size-3xl: 2.2rem;
+    /* ~35px / 30.8px mobile */
+    --font-size-4xl: 2.8rem;
+    /* ~45px / 39.2px mobile */
 }
 
 :root[data-theme="day"] {
-    --bg-color-1: #f4f3f0; /* Sandy cool limestone gray */
-    --bg-color-2: #eae7e1; 
-    --bg-color-3: #e0dbd3; 
+    --bg-color-1: #f4f3f0;
+    /* Sandy cool limestone gray */
+    --bg-color-2: #eae7e1;
+    --bg-color-3: #e0dbd3;
     --card-bg-start: rgba(255, 255, 255, 0.95);
     --card-bg-end: rgba(245, 243, 238, 0.85);
-    --card-border-color: rgba(140, 114, 92, 0.12); 
-    --text-primary: #2d2b28; /* Deep limestone graphite */
-    --text-muted: #6e6a64; 
-    --title-gradient-start: #3a3733; 
-    --title-gradient-end: #8c725c; /* Neutral warm bronze */
-    --icon-bg-start: rgba(140, 114, 92, 0.05); 
-    --icon-bg-end: rgba(140, 114, 92, 0.12); 
-    --icon-color: #8c725c; 
+    --card-border-color: rgba(140, 114, 92, 0.12);
+    --text-primary: #2d2b28;
+    /* Deep limestone graphite */
+    --text-muted: #6e6a64;
+    --title-gradient-start: #3a3733;
+    --title-gradient-end: #8c725c;
+    /* Neutral warm bronze */
+    --icon-bg-start: rgba(140, 114, 92, 0.05);
+    --icon-bg-end: rgba(140, 114, 92, 0.12);
+    --icon-color: #8c725c;
     --modal-bg: rgba(244, 243, 240, 0.96);
     --modal-input-bg: rgba(234, 231, 225, 0.7);
     --shadow-color: rgba(140, 114, 92, 0.04);
@@ -78,7 +92,7 @@
     --modal-close-bg-hover: rgba(140, 114, 92, 0.1);
     --font-family: 'Poppins', sans-serif;
     --blur: 24px;
-    
+
     --accent-color: #8c725c;
     --accent-bg: rgba(140, 114, 92, 0.08);
     --hover-gradient: linear-gradient(135deg, rgba(140, 114, 92, 0.1) 0%, rgba(140, 114, 92, 0.04) 100%);
@@ -86,7 +100,7 @@
     --calendar-event-color: #4f4133;
     --calendar-biblical-bg: rgba(140, 114, 92, 0.22);
     --calendar-biblical-color: #2d241c;
-    
+
     --scrollbar-thumb-bg: rgba(140, 114, 92, 0.15);
     --skeleton-bg: rgba(140, 114, 92, 0.04);
     --skeleton-shimmer: linear-gradient(90deg, rgba(140, 114, 92, 0.04) 25%, rgba(140, 114, 92, 0.1) 50%, rgba(140, 114, 92, 0.04) 75%);
@@ -117,7 +131,7 @@
     --modal-close-bg-hover: rgba(255, 255, 255, 0.12);
     --font-family: 'Poppins', sans-serif;
     --blur: 24px;
-    
+
     --accent-color: #7dd3fc;
     --accent-bg: rgba(125, 211, 252, 0.1);
     --hover-gradient: linear-gradient(135deg, rgba(125, 211, 252, 0.12) 0%, rgba(56, 189, 248, 0.05) 100%);
@@ -125,7 +139,7 @@
     --calendar-event-color: #e0f2fe;
     --calendar-biblical-bg: rgba(56, 189, 248, 0.25);
     --calendar-biblical-color: #f0f9ff;
-    
+
     --scrollbar-thumb-bg: rgba(255, 255, 255, 0.06);
     --skeleton-bg: rgba(255, 255, 255, 0.04);
     --skeleton-shimmer: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.04) 75%);
@@ -147,8 +161,10 @@
 }
 
 html {
-    -ms-overflow-style: none !important;  /* IE and Edge */
-    scrollbar-width: none !important;  /* Firefox */
+    -ms-overflow-style: none !important;
+    /* IE and Edge */
+    scrollbar-width: none !important;
+    /* Firefox */
 }
 
 body {
@@ -163,8 +179,10 @@ body {
     overflow-x: hidden;
     position: relative;
     padding: 40px 20px;
-    -ms-overflow-style: none !important;  /* IE and Edge */
-    scrollbar-width: none !important;  /* Firefox */
+    -ms-overflow-style: none !important;
+    /* IE and Edge */
+    scrollbar-width: none !important;
+    /* Firefox */
 }
 
 /* Hide scrollbar for Chrome, Safari, Opera and Edge */
@@ -223,7 +241,9 @@ body::-webkit-scrollbar {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .pulse-text {
@@ -231,8 +251,15 @@ body::-webkit-scrollbar {
 }
 
 @keyframes pulse-opacity {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
 }
 
 .dashboard-wrapper {
@@ -283,7 +310,7 @@ body.modal-open .dashboard-wrapper {
     position: relative;
     overflow: hidden;
     transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .event-card::before {
@@ -298,13 +325,14 @@ body.modal-open .dashboard-wrapper {
 }
 
 .event-card:not(.not-ready) {
-    padding-right: 48px; /* Extra padding on the right for the chevron */
+    padding-right: 48px;
+    /* Extra padding on the right for the chevron */
 }
 
 .event-card:not(.not-ready):hover {
     border-color: var(--accent-color);
-    box-shadow: 0 12px 30px -10px var(--shadow-large), 
-                0 0 20px -5px var(--accent-bg);
+    box-shadow: 0 12px 30px -10px var(--shadow-large),
+        0 0 20px -5px var(--accent-bg);
 }
 
 .event-card:not(.not-ready):hover::before {
@@ -318,7 +346,8 @@ body.modal-open .dashboard-wrapper {
 
 /* Subtle chevron indicator on the right of clickable cards */
 .event-card:not(.not-ready)::after {
-    content: '\f054'; /* FontAwesome chevron-right icon */
+    content: '\f054';
+    /* FontAwesome chevron-right icon */
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
     position: absolute;
@@ -328,7 +357,7 @@ body.modal-open .dashboard-wrapper {
     opacity: 0.35;
     color: var(--text-muted);
     transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     pointer-events: none;
     font-size: var(--font-size-sm);
 }
@@ -395,6 +424,7 @@ i {
     html {
         font-size: 14px;
     }
+
     .card-title {
         font-size: var(--font-size-base);
     }
@@ -512,38 +542,19 @@ i {
 /* Modal Styles */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: rgba(5, 6, 11, 0.65);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     z-index: 9999;
+
+    align-items: flex-start;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 5vh 20px 20px 20px;
-    box-sizing: border-box;
-}
 
-.modal-content {
-    max-width: 650px;
-    width: 100%;
-    min-height: 31.25rem;
-    max-height: 31.25rem;
-    height: 31.25rem;
-    margin: 0 auto;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
+    padding: 16px 20px;
     box-sizing: border-box;
-    background: var(--modal-bg);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 30px 60px -15px var(--shadow-large), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    border-radius: 24px;
+
     overflow: hidden;
 }
 
@@ -644,11 +655,6 @@ i {
     color: var(--text-primary);
 }
 
-.suggestions-list li:active {
-}
-
-
-
 .suggestions-list li strong {
     color: var(--text-primary);
     font-weight: 500;
@@ -739,15 +745,6 @@ body.ee-color-active .brand-title {
     filter: drop-shadow(0 0 20px var(--ee-bg-1));
 }
 
-@media (max-width: 768px) {
-    .ee-giant-icon {
-        font-size: 80vw;
-    }
-}
-
-
-
-
 .ee-giant-icon svg {
     width: 1em;
     height: 1em;
@@ -761,14 +758,18 @@ body.ee-color-active .brand-title {
 
 /* Scripture Reading Modal Premium Styling */
 .reading-modal-content {
-    width: 100%;
+    width: min(650px, calc(100vw - 40px));
     max-width: 650px;
-    height: 25vh;
-    max-height: 700px;
+    min-height: 200px;
+    max-height: 670px;
     display: flex;
     flex-direction: column;
     padding: 28px;
     background: var(--modal-bg);
+    box-sizing: border-box;
+    overflow: hidden;
+    height: 90%;
+    flex-shrink: 1;
 }
 
 .reading-header {
@@ -823,17 +824,6 @@ body.ee-color-active .brand-title {
     border-color: rgba(255, 255, 255, 0.15);
 }
 
-.modal-close-btn:active {
-}
-
-
-/* Legacy IDs kept for JS listeners - now re-use the class */
-#close-reading-btn,
-#close-info-btn,
-#close-location-btn {
-    /* Styles inherited from .modal-close-btn */
-}
-
 .verse-text {
     text-align: justify;
     line-height: 1.75;
@@ -842,10 +832,14 @@ body.ee-color-active .brand-title {
 }
 
 .reading-body {
+    flex: 1 1 auto;
+    min-height: 0;
+
     overflow-y: auto;
-    flex-grow: 1;
-    -ms-overflow-style: none !important;  /* IE and Edge */
-    scrollbar-width: none !important;  /* Firefox */
+    overflow-x: hidden;
+
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
 }
 
 /* Hide Scrollbar for Reading Modal */
@@ -916,8 +910,13 @@ body.ee-color-active .brand-title {
 }
 
 @keyframes skeleton-shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 /* Redesigned Amigavel Error State */
@@ -983,9 +982,6 @@ body.ee-color-active .brand-title {
     box-shadow: 0 6px 15px -5px var(--accent-bg);
 }
 
-.retry-btn:active {
-}
-
 .reading-error-detail {
     font-size: var(--font-size-xxs);
     color: var(--text-muted);
@@ -995,7 +991,13 @@ body.ee-color-active .brand-title {
 
 @media (max-width: 768px) {
     .reading-modal-content {
+        width: calc(100vw - 20px);
+
         padding: 20px !important;
+    }
+
+    .ee-giant-icon {
+        font-size: 80vw;
     }
 
     .verse-row {
@@ -1007,26 +1009,13 @@ body.ee-color-active .brand-title {
         line-height: 1.7;
     }
 
-    /* Mobile Clickability & Touch Feedback Enhancements */
-    .event-card:not(.not-ready) {
-        -webkit-tap-highlight-color: rgba(125, 211, 252, 0.12);
-        border-color: rgba(255, 255, 255, 0.12);
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.01) 100%);
-    }
-
-    :root[data-theme="day"] .event-card:not(.not-ready) {
-        -webkit-tap-highlight-color: rgba(140, 114, 92, 0.12);
-        border-color: rgba(140, 114, 92, 0.2);
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.01) 0%, rgba(0, 0, 0, 0.02) 100%);
-    }
-
 
     /* Make chevron highly visible and themed by default on touch screens */
     .event-card:not(.not-ready)::after {
         opacity: 0.8;
         color: var(--accent-color);
     }
-    
+
     /* Dedicated active tap feedback on touch (border glow + background highlight, no scale zoom) */
     .event-card:not(.not-ready):active {
         border-color: var(--accent-color) !important;
@@ -1225,9 +1214,6 @@ body.ee-color-active .brand-title {
     box-shadow: 0 6px 15px -5px var(--accent-bg);
 }
 
-.calendar-header-title button:active {
-}
-
 .calendar-header-row {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -1360,10 +1346,11 @@ body.ee-color-active .brand-title {
 .legend-card[style*="cursor: pointer"],
 .suggestions-list li:not([style*="pointer-events: none"]) {
     transition: border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                background-color 0.25s ease;
+        box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.25s ease;
     border: 1px solid transparent;
-    padding-right: 36px !important; /* Ensure space for chevron */
+    padding-right: 36px !important;
+    /* Ensure space for chevron */
 }
 
 .legend-card[style*="cursor: pointer"]:hover,
@@ -1372,14 +1359,11 @@ body.ee-color-active .brand-title {
     box-shadow: 0 6px 15px -5px var(--accent-bg);
 }
 
-.legend-card[style*="cursor: pointer"]:active,
-.suggestions-list li:not([style*="pointer-events: none"]):active {
-}
-
 /* Subtle chevron indicator on the right of clickable suggestions */
 .legend-card[style*="cursor: pointer"]::after,
 .suggestions-list li:not([style*="pointer-events: none"])::after {
-    content: '\f054'; /* FontAwesome chevron-right icon */
+    content: '\f054';
+    /* FontAwesome chevron-right icon */
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
     position: absolute;
@@ -1389,7 +1373,7 @@ body.ee-color-active .brand-title {
     opacity: 0.35;
     color: var(--text-muted);
     transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     pointer-events: none;
     font-size: var(--font-size-xs);
 }
@@ -1452,6 +1436,11 @@ body.ee-color-active .brand-title {
 }
 
 @keyframes css-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }

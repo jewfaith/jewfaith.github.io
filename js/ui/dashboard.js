@@ -12,6 +12,7 @@ export function showDashboardSkeletons() {
     // Restore the skeletons for all top cards
     const cards = [
         { id: 'card-parasha', subId: 'card-parasha-wrapper' },
+        { id: 'card-info', subId: 'card-info-wrapper' },
         { id: 'card-torah', subId: 'card-torah-wrapper' },
         { id: 'card-haftara', subId: 'card-haftara-wrapper' },
         { id: 'card-ketuvim', subId: 'card-ketuvim-wrapper' },
@@ -46,28 +47,28 @@ export function showDashboardSkeletons() {
     if (grid) {
         grid.innerHTML = `
           <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
-            <div class="icon-circle localvigente"><i class="fa-solid fa-star"></i></div>
+            <div class="icon-circle localvigente"></div>
             <div class="card-content" style="width: 100%;">
               <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 60%; height: 24px; border-radius: 6px;"></span></h2>
               <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 40%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
           <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
-            <div class="icon-circle datahebraica"><i class="fa-solid fa-star"></i></div>
+            <div class="icon-circle datahebraica"></div>
             <div class="card-content" style="width: 100%;">
               <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 75%; height: 24px; border-radius: 6px;"></span></h2>
               <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 50%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
           <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
-            <div class="icon-circle parashat"><i class="fa-solid fa-star"></i></div>
+            <div class="icon-circle parashat"></div>
             <div class="card-content" style="width: 100%;">
               <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 50%; height: 24px; border-radius: 6px;"></span></h2>
               <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 35%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
             </div>
           </div>
           <div class="event-card event-item glass-panel not-ready" tabindex="0" role="button">
-            <div class="icon-circle roshchodesh"><i class="fa-solid fa-star"></i></div>
+            <div class="icon-circle roshchodesh"></div>
             <div class="card-content" style="width: 100%;">
               <h2 class="card-title"><span class="skeleton-line" style="display: inline-block; width: 80%; height: 24px; border-radius: 6px;"></span></h2>
               <span class="card-subtitle"><span class="skeleton-line" style="display: inline-block; width: 45%; height: 16px; border-radius: 4px; margin-top: 4px;"></span></span>
@@ -198,6 +199,9 @@ function generateCalendarHTML(events, currentHdate) {
             if (festivalData && typeof festivalData === 'object' && festivalData.torah) {
                 infoHtml = `
                     <div class="levels-container" style="display:flex; flex-direction:column;">
+                        <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                            <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.info}</div>
+                        </div>
                         <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
                             <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.torah}</div>
                         </div>
@@ -788,6 +792,9 @@ export function renderEvents() {
         if (festivalData && typeof festivalData === 'object' && festivalData.torah) {
             infoHtml = `
                 <div class="levels-container" style="display:flex; flex-direction:column;">
+                    <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
+                        <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.info}</div>
+                    </div>
                     <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:8px; white-space:normal; overflow:visible;">
                         <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.6; text-align:left; white-space:normal; overflow:visible; text-overflow:clip;">${festivalData.torah}</div>
                     </div>
