@@ -753,7 +753,7 @@ async function openReadingModal(ref, cardTitle) {
             html += `
                 <div class="legend-card" style="align-items: flex-start; margin: 0;">
                     <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
-                        <div class="verse-text" style="padding-right: 0; text-align: left; font-size: var(--font-size-base); white-space: normal; overflow: visible; text-overflow: clip;">${displayNum} ${v.text}</div>
+                        <div class="verse-text" style="padding-right: 0; text-align: left; font-size: var(--font-size-sm); white-space: normal; overflow: visible; text-overflow: clip;">${displayNum} ${v.text}</div>
                     </div>
                 </div>
             `;
