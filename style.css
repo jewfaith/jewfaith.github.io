@@ -763,9 +763,7 @@ body.ee-color-active .brand-title {
 .reading-modal-content {
     width: 100%;
     max-width: 650px;
-    min-height: 31.25rem;
-    max-height: 31.25rem;
-    height: 31.25rem;
+    height: 25vh;
     display: flex;
     flex-direction: column;
     padding: 28px;
