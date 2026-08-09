@@ -220,13 +220,14 @@ async function updateDashboard() {
 
                     if (!isBiblical) {
                         const traditionalMapping = {
-                            "Chanukah": "Chag Hanukkah",
-                            "Purim": "Yom Purim",
-                            "Ta'anit Esther": "Ta'anit Esther",
-                            "Tzom Tammuz": "Tzom Tammuz",
-                            "Tish'a B'Av": "Tisha BAv",
-                            "Tzom Gedaliah": "Tzom Gedaliah",
-                            "Asara B'Tevet": "Tzom Tevet"
+                            // "Chanukah": "Chag Hanukkah",
+                            // "Purim": "Yom Purim",
+                            // "Ta'anit Esther": "Ta'anit Esther",
+                            // "Tzom Tammuz": "Tzom Tammuz",
+                            // "Tish'a B'Av": "Tisha B'Av",
+                            // "Tu B'Av": "Tu B'Av",
+                            // "Tzom Gedaliah": "Tzom Gedaliah",
+                            // "Asara B'Tevet": "Tzom Tevet"
                         };
                         const sortedKeys = Object.keys(traditionalMapping).sort((a, b) => b.length - a.length);
                         for (const key of sortedKeys) {

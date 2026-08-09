@@ -50,19 +50,19 @@ self.addEventListener('fetch', (event) => {
     // Apenas faz cache de origens confiáveis (local, APIs e CDNs necessários)
     const url = event.request.url;
     const isTrusted = url.startsWith(self.location.origin) ||
-                      url.includes('hebcal.com') ||
-                      url.includes('nominatim.openstreetmap.org') ||
-                      url.includes('bolls.life') ||
-                      url.includes('bible-api.com') ||
-                      url.includes('cdnjs.cloudflare.com') ||
-                      url.includes('fonts.googleapis.com') ||
-                      url.includes('fonts.gstatic.com') ||
-                      url.includes('geojs.io') ||
-                      url.includes('ipwho.is') ||
-                      url.includes('ip.sb') ||
-                      url.includes('ipinfo.io') ||
-                      url.includes('freeipapi.com') ||
-                      url.includes('ipapi.co');
+        url.includes('hebcal.com') ||
+        url.includes('nominatim.openstreetmap.org') ||
+        url.includes('bolls.life') ||
+        url.includes('bible-api.com') ||
+        url.includes('cdnjs.cloudflare.com') ||
+        url.includes('fonts.googleapis.com') ||
+        url.includes('fonts.gstatic.com') ||
+        url.includes('geojs.io') ||
+        url.includes('ipwho.is') ||
+        url.includes('ip.sb') ||
+        url.includes('ipinfo.io') ||
+        url.includes('freeipapi.com') ||
+        url.includes('ipapi.co');
 
     if (!isTrusted) return;
 
@@ -78,7 +78,7 @@ self.addEventListener('fetch', (event) => {
                 caches.open(CACHE_NAME).then((cache) => {
                     // Tenta salvar no cache, ignorando erros se a requisição não suportar (ex: extensões)
                     if (event.request.url.startsWith('http')) {
-                        cache.put(event.request, responseClone).catch(() => {});
+                        cache.put(event.request, responseClone).catch(() => { });
                     }
                 });
                 return networkResponse;

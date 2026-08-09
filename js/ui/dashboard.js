@@ -220,10 +220,10 @@ function generateCalendarHTML(events, currentHdate) {
                     </div>
                 `;
             } else {
-                let desc = (typeof festivalData === 'string' ? festivalData : null) || 'Uma data significativa no calendário judaico.';
+                let desc = (typeof festivalData === 'string' ? festivalData : null) || 'Esta é uma data significativa no calendário israelita. O seu significado está relacionado com a história, a tradição e os ensinamentos do povo de Israel, podendo envolver acontecimentos históricos, mandamentos da Torá, práticas religiosas ou outros elementos transmitidos ao longo das gerações.';
                 infoHtml = `
                     <div class="info-modal-card" style="margin-bottom: 0; white-space:normal; overflow:visible;">
-                        <div class="info-modal-value" style="font-weight: 400; font-size: var(--font-size-base); line-height: 1.6; color: var(--text-primary); text-align: left; padding: 4px 0; white-space:normal; overflow:visible; text-overflow:clip;">${desc}</div>
+                        <div class="info-modal-value" style="font-weight: 400; font-size: var(--font-size-sm); line-height: 1.6; color: var(--text-primary); text-align: left; padding: 4px 0; white-space:normal; overflow:visible; text-overflow:clip;">${desc}</div>
                     </div>
                 `;
             }
@@ -813,10 +813,10 @@ export function renderEvents() {
                 </div>
             `;
         } else {
-            let desc = festivalData || 'Uma data significativa no calendário judaico.';
+            let desc = festivalData || 'Esta é uma data significativa no calendário israelita. O seu significado está relacionado com a história, a tradição e os ensinamentos do povo de Yisrael, podendo envolver acontecimentos históricos, mandamentos da Torá, práticas religiosas ou outros elementos transmitidos ao longo das gerações.';
             infoHtml = `
                 <div class="info-modal-card" style="margin-bottom: 0; white-space:normal; overflow:visible;">
-                    <div class="info-modal-value" style="font-weight: 400; font-size: var(--font-size-base); line-height: 1.6; color: var(--text-primary); text-align: left; padding: 4px 0; white-space:normal; overflow:visible; text-overflow:clip;">${desc}</div>
+                    <div class="info-modal-value" style="font-weight: 400; font-size: var(--font-size-sm); line-height: 1.6; color: var(--text-primary); text-align: left; padding: 4px 0; white-space:normal; overflow:visible; text-overflow:clip;">${desc}</div>
                 </div>
             `;
         }

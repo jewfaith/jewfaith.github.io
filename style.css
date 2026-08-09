@@ -758,6 +758,7 @@ body.ee-color-active .brand-title {
 
 /* Scripture Reading Modal Premium Styling */
 .reading-modal-content {
+    margin-top: 30px;
     width: min(650px, calc(100vw - 40px));
     max-width: 650px;
     min-height: 200px;

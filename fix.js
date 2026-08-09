@@ -1,48 +1,41 @@
-const fs = require('fs');
-let code = fs.readFileSync('js/main.js', 'utf8');
-code = code.replace(/const locData = await nomPromise;.*?\.filter\(d => new Date\(/s,
-    \// 4. AWAIT CONVERTER
-        const converterUrl = \\\https://www.hebcal.com/converter?cfg=json&gy=\\\&gm=\\\&gd=\\\&g2h=1&strict=1\\\\\\;
-    const hdateData = await hebcalFetch(converterUrl).catch(() => null);
+﻿const fs = require('fs');
+const path = require('path');
 
-// 5. RESOLVE PARALLEL PROMISES
-const locData = await nomPromise;
-if (locData && locData.address) {
-    const addr = locData.address;
-    const city = addr.city || addr.town || addr.village || addr.state;
-    if (addr.country) locationName = city ?\\\\\\, \\\\\\ : addr.country;
-            else locationName = city || "Jerusal�m";
-    if (addr.country_code) isIsrael = (addr.country_code.toLowerCase() === 'il');
+const filePath = path.join(__dirname, 'js', 'main.js');
+const code = fs.readFileSync(filePath, 'utf8');
+
+const marker = 'const isAfterSunset = sunsetTime > 0 && new Date().getTime() > sunsetTime;';
+if (!code.includes(marker)) {
+    console.error('fix.js: could not find the expected marker in js/main.js.');
+    process.exit(1);
 }
 
-const hebcalData = await hebcalPromise;
-if (!hebcalData || !hebcalData.items) {
-    throw new Error('Hebcal fetch failed');
+const expected = 'const converterUrl = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${day}&g2h=1&strict=1${isAfterSunset ? \"&gs=on\" : \"\"}`;';
+if (code.includes(expected)) {
+    console.log('fix.js: js/main.js already contains the expected converter block.');
+    process.exit(0);
 }
 
-if (hebcalData && hebcalData.items) {
-    const biblicalMapping = {
-        'Parashat': { name: 'Yom Shabbat' },
-        'Pesach Sheni': { name: 'Pessach Sheni' },
-        'Pesach': { name: 'Yom Pessach' },
-        'Matzot': { name: 'Chag Matzot' },
-        'Shavuot': { name: 'Yom Shavuot' },
-        'Rosh Hashana': { name: 'Yom Teruah' },
-        'Yom Kippur': { name: 'Yom Kippur' },
-        'Sukkot': { name: 'Chag Sukkot' },
-        'Shmini Atzeret': { name: 'Shemini Atzeret' },
-        'Shemini Atzeret': { name: 'Shemini Atzeret' },
-        'Simchat Torah': { name: 'Simchat Torah' },
-        'Rosh Chodesh': { name: 'Rosh Chodesh' },
-        'Omer': { name: 'Sefirat Omer' }
-    };
+const replacement = ```${marker}
+        const converterUrl = \`https://www.hebcal.com/converter?cfg=json&gy=\${year}&gm=\${month}&gd=\${day}&g2h=1&strict=1\${isAfterSunset ? '&gs=on' : ''}\`;
+        const [hdateData, hebcalData] = await Promise.all([
+            hebcalFetch(converterUrl).catch(() => null),
+            hebcalPromise
+        ]);
 
-    const validCategories = ['holiday', 'parashat', 'fast', 'omer', 'roshchodesh'];
-    const filteredItems = hebcalData.items.filter(item => validCategories.includes(item.category));
+        if (overrideName) {
+            locationName = overrideName;
+        } else if (locData && locData.address) {
+            const addr = locData.address;
+            const city = addr.city || addr.town || addr.village || addr.state;
+            if (addr.country) locationName = city ? '\${city}, \${addr.country}' : addr.country;
+            else locationName = city || "Jerusalem";
+            if (addr.country_code) isIsrael = (addr.country_code.toLowerCase() === 'il');
+        }
 
-    // Collect unique dates so we can fetch each date's sunset individually
-    // Limit to events happening in the next 10 days to keep imminent events hyper-realistic while saving API requests
-    const tenDaysFromNow = new Date().getTime() + (10 * 24 * 60 * 60 * 1000);
-    const uniqueDates = [...new Set(filteredItems.map(item => item.date.split('T')[0]))]
-        .filter(d => new Date(\);
-    fs.writeFileSync('js/main.js', code);
+        if (!hebcalData || !hebcalData.items) {
+            throw new Error('Hebcal fetch failed');
+        }```;
+
+fs.writeFileSync(filePath, code.replace(marker, replacement), 'utf8');
+console.log('fix.js patched js/main.js successfully.');
