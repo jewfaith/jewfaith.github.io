@@ -153,8 +153,6 @@
     box-sizing: border-box;
 }
 
-
-
 .card-subtitle,
 .timer-countdown {
     color: var(--text-muted);
@@ -168,8 +166,8 @@ html {
 }
 
 body {
-    min-height: 100vh;
-    min-width: 100vw;
+    min-height: 100dvh;
+    min-width: 100dvw;
     font-family: var(--font-family);
     background: linear-gradient(135deg, var(--bg-color-1) 0%, var(--bg-color-2) 50%, var(--bg-color-3) 100%);
     color: var(--text-primary);
@@ -191,8 +189,6 @@ body::-webkit-scrollbar {
     display: none !important;
 }
 
-
-
 .offline-badge {
     position: absolute;
     top: 20px;
@@ -210,9 +206,6 @@ body::-webkit-scrollbar {
     z-index: 100;
     backdrop-filter: blur(8px);
 }
-
-
-
 
 .app-loader {
     position: fixed;
@@ -404,8 +397,6 @@ i {
     border: none;
 }
 
-
-
 .card-title,
 .event-name {
     margin-right: 1rem;
@@ -537,7 +528,6 @@ i {
 .timer-countdown.ongoing {
     font-weight: 600;
 }
-
 
 /* Modal Styles */
 .modal-overlay {
@@ -715,8 +705,6 @@ i {
     font-size: var(--font-size-xl);
 }
 
-
-
 /* Opcao B: Cores Tematicas */
 body.ee-color-active {
     background: radial-gradient(circle at top right, var(--ee-bg-1) 0%, #05060b 60%);
@@ -754,7 +742,6 @@ body.ee-color-active .brand-title {
     width: 1em;
     height: 1em;
 }
-
 
 /* Scripture Reading Modal Premium Styling */
 .reading-modal-content {
@@ -1009,7 +996,6 @@ body.ee-color-active .brand-title {
         font-size: var(--font-size-base);
         line-height: 1.7;
     }
-
 
     /* Make chevron highly visible and themed by default on touch screens */
     .event-card:not(.not-ready)::after {

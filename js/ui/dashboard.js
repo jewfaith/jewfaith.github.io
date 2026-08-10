@@ -1,7 +1,7 @@
 import { state } from '../state.js';
 import { applySolarTheme } from './theme.js';
 import { findActiveFestival, transliterateTorah, pickReading } from '../domain/halacha.js';
-import { FESTIVAL_CATS, FESTIVAL_TORAH_READINGS, FESTIVAL_HAFTARA_READINGS, KETUVIM_BOOKS, KETUVIM_TOTAL_WEIGHT, FESTIVAL_TEHILIM, FESTIVAL_DESCRIPTIONS } from '../domain/constants.js';
+import { FESTIVAL_CATS, FESTIVAL_TORAH_READINGS, FESTIVAL_HAFTARA_READINGS, KETUVIM_BOOKS, KETUVIM_TOTAL_WEIGHT, FESTIVAL_TEHILIM, FESTIVAL_TEHILIM_NUMBERS, AVAILABLE_TEHILIM, FESTIVAL_DESCRIPTIONS } from '../domain/constants.js';
 import { getParashaSummary } from '../domain/parashot.js';
 import { LCG, getStringSimilarity } from '../utils/math.js';
 import { getEventIcon } from './icons.js';
@@ -484,7 +484,12 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
                 selector -= b.weight;
             }
 
-            const chapter = (seed2 % selectedBook.chapters) + 1;
+            let chapter;
+            if (selectedBook.name === 'Tehilim') {
+                chapter = AVAILABLE_TEHILIM[seed2 % AVAILABLE_TEHILIM.length];
+            } else {
+                chapter = (seed2 % selectedBook.chapters) + 1;
+            }
             ketuvimRawRef = `${selectedBook.name} ${chapter}`;
         }
 
