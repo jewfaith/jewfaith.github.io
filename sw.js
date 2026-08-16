@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yisrael-date-v18';
+const CACHE_NAME = 'yisrael-date-v31';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -47,16 +47,16 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
-    // Apenas faz cache de origens confiáveis (local, APIs e CDNs necessários)
     const url = event.request.url;
-    const isTrusted = url.startsWith(self.location.origin) ||
-        url.includes('hebcal.com') ||
+    const isLocalOrFont = url.startsWith(self.location.origin) ||
+        url.includes('fonts.googleapis.com') ||
+        url.includes('fonts.gstatic.com') ||
+        url.includes('cdnjs.cloudflare.com');
+
+    const isApi = url.includes('hebcal.com') ||
         url.includes('nominatim.openstreetmap.org') ||
         url.includes('bolls.life') ||
         url.includes('bible-api.com') ||
-        url.includes('cdnjs.cloudflare.com') ||
-        url.includes('fonts.googleapis.com') ||
-        url.includes('fonts.gstatic.com') ||
         url.includes('geojs.io') ||
         url.includes('ipwho.is') ||
         url.includes('ip.sb') ||
@@ -64,27 +64,39 @@ self.addEventListener('fetch', (event) => {
         url.includes('freeipapi.com') ||
         url.includes('ipapi.co');
 
-    if (!isTrusted) return;
+    if (!isLocalOrFont && !isApi) return;
 
-    // Network First, fallback to cache
-    event.respondWith(
-        fetch(event.request)
-            .then((networkResponse) => {
-                // Não faz cache de respostas inválidas ou de erro (exceto opacas que são status 0)
-                if (!networkResponse || (networkResponse.status !== 200 && networkResponse.type !== 'opaque')) {
-                    return networkResponse;
-                }
-                const responseClone = networkResponse.clone();
-                caches.open(CACHE_NAME).then((cache) => {
-                    // Tenta salvar no cache, ignorando erros se a requisição não suportar (ex: extensões)
-                    if (event.request.url.startsWith('http')) {
-                        cache.put(event.request, responseClone).catch(() => { });
+    if (isLocalOrFont) {
+        // Stale-While-Revalidate: Instant response from cache, background refresh
+        event.respondWith(
+            caches.match(event.request).then((cachedResponse) => {
+                const fetchPromise = fetch(event.request).then((networkResponse) => {
+                    if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
+                        const clone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => {
+                            if (url.startsWith('http')) cache.put(event.request, clone).catch(() => {});
+                        });
                     }
-                });
-                return networkResponse;
+                    return networkResponse;
+                }).catch(() => null);
+
+                return cachedResponse || fetchPromise;
             })
-            .catch(() => {
-                return caches.match(event.request);
-            })
-    );
+        );
+    } else {
+        // Network First with fallback to cache for dynamic APIs
+        event.respondWith(
+            fetch(event.request)
+                .then((networkResponse) => {
+                    if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
+                        const clone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => {
+                            if (url.startsWith('http')) cache.put(event.request, clone).catch(() => {});
+                        });
+                    }
+                    return networkResponse;
+                })
+                .catch(() => caches.match(event.request))
+        );
+    }
 });

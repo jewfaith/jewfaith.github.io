@@ -4,6 +4,7 @@ import { hebcalFetch, fetchNominatimReverse } from './api/hebcal.js';
 import { updateUIBlocks, renderEvents, showDashboardSkeletons } from './ui/dashboard.js';
 import { initModals } from './ui/modals.js';
 import { applyEstimatedTheme } from './ui/theme.js';
+import { getFestivalDateRangeText } from './domain/constants.js';
 
 // Registro do Service Worker para PWA e Offline
 if ('serviceWorker' in navigator) {
@@ -15,11 +16,6 @@ if ('serviceWorker' in navigator) {
 }
 
 async function updateDashboard() {
-    document.body.classList.remove('loaded');
-    showDashboardSkeletons();
-
-    const minDelayPromise = new Promise(resolve => setTimeout(resolve, 350));
-
     // Apply estimated theme instantly on start based on saved location to prevent theme flashes
     const exactLocRaw = localStorage.getItem('exactLocation');
     if (exactLocRaw) {
@@ -39,6 +35,31 @@ async function updateDashboard() {
         applyEstimatedTheme();
     }
 
+    // Instant Cache Hydration: Render cached state immediately if available for 0ms startup
+    const offlineDataRaw = localStorage.getItem('hebcal_offline_cache');
+    let hasHydratedFromCache = false;
+    if (offlineDataRaw) {
+        try {
+            const cached = JSON.parse(offlineDataRaw);
+            if (cached.events && cached.events.length) {
+                state.unifiedEvents = cached.events;
+                state.currentZmanim = cached.zmanim || null;
+                state.currentSunsetTime = cached.sunset || 0;
+                updateUIBlocks(cached.events, cached.hdate || { hd: 15, hm: 'Av', hy: 5786 }, cached.locName || "Jerusalém, Israel", cached.sunset || 0, cached.isIsrael !== undefined ? cached.isIsrael : true);
+                renderEvents();
+                document.body.classList.add('loaded');
+                hasHydratedFromCache = true;
+            }
+        } catch (e) { }
+    }
+
+    if (!hasHydratedFromCache) {
+        document.body.classList.remove('loaded');
+        showDashboardSkeletons();
+    }
+
+    const minDelayPromise = hasHydratedFromCache ? Promise.resolve() : new Promise(resolve => setTimeout(resolve, 200));
+
     try {
         if (!state.userLocation) {
             state.userLocation = await getGeolocation();
@@ -49,10 +70,6 @@ async function updateDashboard() {
         const month = today.getMonth() + 1;
         const day = today.getDate();
         const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-        const endDate = new Date(today);
-        endDate.setMonth(endDate.getMonth() + 6);
-        const endDateStr = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
 
         let lat = state.userLocation ? state.userLocation.lat : 31.7683;
         let lon = state.userLocation ? state.userLocation.lon : 35.2137;
@@ -87,11 +104,8 @@ async function updateDashboard() {
             isIsrael = (sysTimezone === 'Asia/Jerusalem');
         }
 
-        const hebcalStartDate = new Date(year, today.getMonth() - 6, 1);
-        const hsYear = hebcalStartDate.getFullYear();
-        const hsMonth = hebcalStartDate.getMonth() + 1;
-        const hsDay = hebcalStartDate.getDate();
-        const hebcalStartStr = `${hsYear}-${String(hsMonth).padStart(2, '0')}-${String(hsDay).padStart(2, '0')}`;
+        const hebcalStartStr = `${year}-01-01`;
+        const endDateStr = `${year + 1}-12-31`;
 
         // Fire all API requests in parallel
         const nomPromise = (geoWasDetected && !overrideName) ? fetchNominatimReverse(lat, lon) : Promise.resolve(null);
@@ -186,7 +200,16 @@ async function updateDashboard() {
 
                     for (const key in biblicalMapping) {
                         if (cleanTitle.includes(key)) {
-                            if (key === 'Rosh Hashana' && (cleanTitle.includes('LaBehemot') || cleanTitle.includes('LaIlanot'))) {
+                            if (key === 'Rosh Hashana' && (cleanTitle.includes('LaBehemot') || cleanTitle.includes('LaIlanot') || cleanTitle.includes('II') || cleanTitle.includes('Erev'))) {
+                                continue;
+                            }
+                            if (key === 'Shavuot' && (cleanTitle.includes('II') || cleanTitle.includes('Erev'))) {
+                                continue;
+                            }
+                            if (key === 'Yom Kippur' && cleanTitle.includes('Erev')) {
+                                continue;
+                            }
+                            if (key === 'Sukkot' && cleanTitle.includes('Erev')) {
                                 continue;
                             }
                             
@@ -197,7 +220,14 @@ async function updateDashboard() {
                             if (key === 'Parashat') {
                                 itemName = 'Yom Shabbat';
                                 customCategory = 'parashat';
+                            } else if (key.includes('Atzeret')) {
+                                itemName = 'Shemini Atzeret';
+                                customCategory = 'sheminiatzeret';
                             } else if (key === 'Rosh Chodesh') {
+                                // Na Torá, Rosh Chodesh é estritamente 1 único dia (o 1º dia do mês hebraico)
+                                if (item.hdate && !item.hdate.startsWith('1 ')) {
+                                    return null;
+                                }
                                 itemName = 'Rosh Chodesh';
                                 customCategory = 'roshchodesh';
                             } else if (key === 'Pesach') {
@@ -218,33 +248,6 @@ async function updateDashboard() {
                         }
                     }
 
-                    if (!isBiblical) {
-                        const traditionalMapping = {
-                            // "Chanukah": "Chag Hanukkah",
-                            // "Purim": "Yom Purim",
-                            // "Ta'anit Esther": "Ta'anit Esther",
-                            // "Tzom Tammuz": "Tzom Tammuz",
-                            // "Tish'a B'Av": "Tisha B'Av",
-                            // "Tu B'Av": "Tu B'Av",
-                            // "Tzom Gedaliah": "Tzom Gedaliah",
-                            // "Asara B'Tevet": "Tzom Tevet"
-                        };
-                        const sortedKeys = Object.keys(traditionalMapping).sort((a, b) => b.length - a.length);
-                        for (const key of sortedKeys) {
-                            if (cleanTitle.includes(key)) {
-                                if (key === 'Chanukah') {
-                                    const match = cleanTitle.match(/(\d+)/);
-                                    itemName = match ? `Hanukkah ${match[1]}` : traditionalMapping[key];
-                                } else {
-                                    itemName = traditionalMapping[key];
-                                }
-                                isTraditional = true;
-                                customCategory = 'traditional';
-                                break;
-                            }
-                        }
-                    }
-
                     if (!isBiblical && !isTraditional) {
                         return null;
                     }
@@ -260,6 +263,67 @@ async function updateDashboard() {
                     };
                 })
                 .filter(Boolean);
+
+            const festivalEvents = state.unifiedEvents.filter(ev => 
+                ev.category !== 'parashat' && 
+                ev.category !== 'omer' && 
+                ev.name !== 'Yom Shabbat' && 
+                !ev.name.includes('laOmer')
+            );
+
+            const formatGDate = (dateStr) => {
+                if (!dateStr) return '';
+                const parts = dateStr.split('T')[0].split('-');
+                return parts.length === 3 ? `${parts[2]}/${parts[1]}` : dateStr;
+            };
+
+            const hebrewMonthsPT = {
+                'Nisan': 'Nisã', 'Iyyar': 'Iyar', 'Sivan': 'Sivã', 'Tammuz': 'Tamuz',
+                'Av': 'Av', 'Elul': 'Elul', 'Tishrei': 'Tishrei', 'Cheshvan': 'Cheshvan',
+                'Kislev': 'Kislev', 'Tevet': 'Tevet', 'Sh\'vat': 'Shevat', 'Shvat': 'Shevat',
+                'Adar I': 'Adar I', 'Adar II': 'Adar II', 'Adar': 'Adar'
+            };
+
+            // Agrupa dias consecutivos da mesma festa baseado diretamente no Hebcal
+            const mergedFestivals = [];
+            for (const ev of festivalEvents) {
+                const hParts = (ev.raw && ev.raw.hdate ? ev.raw.hdate : '').split(' ');
+                const hDay = parseInt(hParts[0], 10) || 1;
+                const hMonthEng = hParts.slice(1, -1).join(' ') || hParts[1] || '';
+                const hMonth = hebrewMonthsPT[hMonthEng] || hMonthEng;
+
+                const last = mergedFestivals[mergedFestivals.length - 1];
+                const isSame = last && last.name === ev.name && last.hMonth === hMonth;
+                const gapDays = last ? (ev.time - last.endTime) / (1000 * 60 * 60 * 24) : 999;
+                
+                if (isSame && gapDays <= 2) {
+                    last.endHDay = hDay;
+                    last.endDate = ev.raw && ev.raw.date ? ev.raw.date.split('T')[0] : last.endDate;
+                    last.endTime = ev.time;
+                } else {
+                    const gDate = ev.raw && ev.raw.date ? ev.raw.date.split('T')[0] : '';
+                    mergedFestivals.push({
+                        name: ev.name,
+                        hMonth: hMonth,
+                        startHDay: hDay,
+                        endHDay: hDay,
+                        hdate: ev.raw && ev.raw.hdate ? ev.raw.hdate : '',
+                        startDate: gDate,
+                        endDate: gDate,
+                        startTime: ev.time,
+                        endTime: ev.time
+                    });
+                }
+            }
+
+            console.log(`%c[Festas do Ano ${year} (Janeiro a Dezembro)]`, 'font-weight: bold; color: #60a5fa;');
+            mergedFestivals.forEach(f => {
+                const hRange = f.startHDay === f.endHDay ? `${f.startHDay} de ${f.hMonth}` : `${f.startHDay} a ${f.endHDay} de ${f.hMonth}`;
+                const sDate = formatGDate(f.startDate);
+                const eDate = formatGDate(f.endDate);
+                const gregRange = (sDate === eDate || !eDate) ? sDate : `${sDate} a ${eDate}`;
+                console.log(`• [${hRange}] ${f.name} (${gregRange})`);
+            });
 
             const offlinePayload = {
                 events: state.unifiedEvents,

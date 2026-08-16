@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Cardo:wght@400;700&display=swap');
-
 :root {
     /* DEFAULT THEME: Deep Midnight */
     --bg-color-1: #090d16;
@@ -104,6 +102,46 @@
     --scrollbar-thumb-bg: rgba(140, 114, 92, 0.15);
     --skeleton-bg: rgba(140, 114, 92, 0.04);
     --skeleton-shimmer: linear-gradient(90deg, rgba(140, 114, 92, 0.04) 25%, rgba(140, 114, 92, 0.1) 50%, rgba(140, 114, 92, 0.04) 75%);
+}
+
+:root[data-theme="afternoon"] {
+    /* Warm Golden Hour / Late Afternoon */
+    --bg-color-1: #1a1510;
+    --bg-color-2: #2a2118;
+    --bg-color-3: #1a1510;
+    --card-bg-start: rgba(42, 33, 24, 0.7);
+    --card-bg-end: rgba(26, 21, 16, 0.4);
+    --card-border-color: rgba(214, 163, 96, 0.1);
+    --text-primary: #f5ead6;
+    --text-muted: #b8a68e;
+    --title-gradient-start: #f5ead6;
+    --title-gradient-end: #d6a360;
+    --icon-bg-start: rgba(214, 163, 96, 0.08);
+    --icon-bg-end: rgba(214, 163, 96, 0.14);
+    --icon-color: #d6a360;
+    --modal-bg: rgba(26, 21, 16, 0.96);
+    --modal-input-bg: rgba(42, 33, 24, 0.6);
+    --shadow-color: rgba(0, 0, 0, 0.35);
+    --shadow-large: rgba(0, 0, 0, 0.5);
+    --suggestion-hover: rgba(214, 163, 96, 0.1);
+    --modal-close-color: #b8a68e;
+    --modal-close-hover: #d6a360;
+    --modal-close-bg: rgba(214, 163, 96, 0.06);
+    --modal-close-bg-hover: rgba(214, 163, 96, 0.14);
+    --font-family: 'Poppins', sans-serif;
+    --blur: 24px;
+
+    --accent-color: #d6a360;
+    --accent-bg: rgba(214, 163, 96, 0.1);
+    --hover-gradient: linear-gradient(135deg, rgba(214, 163, 96, 0.12) 0%, rgba(214, 163, 96, 0.04) 100%);
+    --calendar-event-bg: rgba(214, 163, 96, 0.15);
+    --calendar-event-color: #f5ead6;
+    --calendar-biblical-bg: rgba(214, 163, 96, 0.22);
+    --calendar-biblical-color: #fdf5e8;
+
+    --scrollbar-thumb-bg: rgba(214, 163, 96, 0.1);
+    --skeleton-bg: rgba(214, 163, 96, 0.04);
+    --skeleton-shimmer: linear-gradient(90deg, rgba(214, 163, 96, 0.04) 25%, rgba(214, 163, 96, 0.1) 50%, rgba(214, 163, 96, 0.04) 75%);
 }
 
 :root[data-theme="night"] {

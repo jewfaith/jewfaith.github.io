@@ -784,6 +784,8 @@ export function renderEvents() {
         return;
     }
 
+    const fragment = document.createDocumentFragment();
+
     upcoming.forEach(evt => {
         const icon = getEventIcon(evt.category, evt.name, "");
 
@@ -843,8 +845,10 @@ export function renderEvents() {
         card.setAttribute('data-info-title', evt.name);
         card.setAttribute('data-info-html', infoHtml);
 
-        grid.appendChild(wrapper);
+        fragment.appendChild(wrapper);
     });
+
+    grid.appendChild(fragment);
 
     ['card-local-vigente', 'card-hdate-wrapper', 'card-zmanim-wrapper', 'card-share-wrapper'].forEach(id => {
         const el = document.getElementById(id);

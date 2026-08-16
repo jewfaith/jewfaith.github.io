@@ -31,6 +31,48 @@ export const BOOK_MAP = {
     'Malachi': 'Malachi'
 };
 
+export const HEBREW_MONTHS_PT = {
+    "Nisan": "Nisã", "Iyyar": "Iyar", "Sivan": "Sivã", "Tammuz": "Tamuz",
+    "Av": "Av", "Elul": "Elul", "Tishrei": "Tishrei", "Cheshvan": "Cheshvan",
+    "Kislev": "Kislev", "Tevet": "Tevet", "Sh'vat": "Shevat", "Shvat": "Shevat",
+    "Adar I": "Adar I", "Adar II": "Adar II", "Adar": "Adar"
+};
+
+export const FESTIVAL_RANGES = {
+    'Yom Pessach': '14 de Nisã',
+    'Chag Matzot': '15 a 21 de Nisã',
+    'Pessach Sheni': '14 de Iyar',
+    'Yom Shavuot': '6 de Sivã',
+    'Yom Teruah': '1 de Tishrei',
+    'Yom Kippur': '10 de Tishrei',
+    'Chag Sukkot': '15 a 21 de Tishrei',
+    'Shemini Atzeret': '22 de Tishrei',
+    'Simchat Torah': '22 de Tishrei',
+    'Chag Hanukkah': '25 de Kislev a 2 de Tevet',
+    'Yom Purim': '14 de Adar',
+    'Ta\'anit Esther': '13 de Adar',
+    'Tzom Tammuz': '17 de Tamuz',
+    'Tisha B\'Av': '9 de Av',
+    'Tzom Gedaliah': '3 de Tishrei',
+    'Tzom Tevet': '10 de Tevet'
+};
+
+export function getFestivalDateRangeText(eventName, rawHdate) {
+    if (eventName && FESTIVAL_RANGES[eventName]) {
+        return FESTIVAL_RANGES[eventName];
+    }
+    if (rawHdate) {
+        const parts = rawHdate.split(' ');
+        if (parts.length >= 2) {
+            const day = parts[0];
+            const monthRaw = parts.slice(1, -1).join(' ') || parts[1];
+            const monthPT = HEBREW_MONTHS_PT[monthRaw] || monthRaw;
+            return `${day} de ${monthPT}`;
+        }
+    }
+    return '';
+}
+
 export const FESTIVAL_CATS = [
     'pesach', 'matzot', 'shavuot', 'roshhashana', 'yomkippur',
     'sukkot', 'sheminiatzeret', 'simchattorah'
@@ -273,12 +315,12 @@ export const FESTIVAL_DESCRIPTIONS = {
     },
 
     'Rosh Chodesh': {
-        info: 'É um mandamento da Torá relacionado com o início de cada novo mês e com a organização do calendário de Israel, possuindo também importância própria dentro do serviço e das celebrações de cada mês.',
-        torah: 'A Torá estabelece o primeiro mês e dá a Israel a responsabilidade de organizar o calendário segundo os meses. Shemot 12:1-2 coloca esta determinação no contexto da preparação para Pessach, enquanto Bamidbar 28:11-15 estabelece ofertas específicas para cada novo mês.',
-        neviim: 'Os Neviim mencionam Rosh Chodesh juntamente com Shabbat e outras ocasiões sagradas. Yeshayahu 66:23 descreve um futuro em que toda a humanidade virá perante D-us em cada novo mês e em cada Shabbat.',
-        ketuvim: 'Nos Ketuvim, Rosh Chodesh aparece relacionado com o culto do Templo. Divrei Hayamim I 23:31 inclui os novos meses entre as ocasiões em que eram apresentadas ofertas, enquanto Tehillim 81:4-5 relaciona o novo mês com o calendário de Israel.',
-        talmud: 'A tradição rabínica desenvolveu as leis relacionadas com a determinação do novo mês. Rosh Hashanah 20a-25b discute o testemunho sobre a lua nova, a autoridade do tribunal e o processo utilizado para determinar o início do mês.',
-        sod: 'Na tradição do Sod, a lua é frequentemente utilizada como símbolo de renovação. O Zohar I, 19b relaciona os ciclos da lua com diferentes dimensões espirituais e com a ideia de receber novamente a luz.'
+        info: 'É um mandamento da Torá celebrado estritamente como 1 único dia no primeiro dia de cada novo mês hebraico, marcando a renovação da lua e a organização do calendário sagrado de Israel.',
+        torah: 'A Torá determina que o início de cada mês seja santificado no primeiro dia. Shemot 12:1-2 e Bamidbar 28:11-15 estabelecem que no princípio de cada mês se apresente celebração perante D-us, constituindo sempre um único dia sagrado de renovação.',
+        neviim: 'Os Neviim mencionam Rosh Chodesh juntamente com o Shabbat e as ocasiões sagradas. Yeshayahu 66:23 descreve um futuro em que toda a humanidade virá perante D-us em cada novo mês e em cada Shabbat.',
+        ketuvim: 'Nos Ketuvim, Rosh Chodesh aparece relacionado com o culto do Templo. Divrei Hayamim I 23:31 inclui os novos meses entre as ocasiões sagradas, enquanto Tehillim 81:4-5 relaciona o novo mês com o calendário de Israel.',
+        talmud: 'A tradição talmúdica debateu a determinação visual da lua nova e a adição de um segundo dia de incerteza na diáspora, mas a base bíblica permanece no primeiro dia de cada mês.',
+        sod: 'Na tradição do Sod, a lua nova no primeiro dia simboliza o renascimento contínuo da alma e a capacidade humana de se renovar perante a luz do Criador.'
     },
 
     'Ta\'anit Esther': {

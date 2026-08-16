@@ -14,25 +14,25 @@
     "categories": ["education", "utilities", "lifestyle"],
     "icons": [
         {
-            "src": "https://jewfaith.github.io/icon.png",
+            "src": "./icon.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "https://jewfaith.github.io/icon.png",
+            "src": "./icon.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "maskable"
         },
         {
-            "src": "https://jewfaith.github.io/icon.png",
+            "src": "./icon.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "https://jewfaith.github.io/icon.png",
+            "src": "./icon.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
