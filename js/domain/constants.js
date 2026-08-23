@@ -485,33 +485,6 @@ export const FESTIVAL_DESCRIPTIONS = {
     ],
 
 
-    'Chol HaMoed': [
-        'São os dias intermédios de Pessach e Sukkot, que se encontram entre os dias de início e de conclusão das festas. Possuem um estatuto especial, combinando características de dia festivo com atividades permitidas nos dias comuns.',
-        'Torá estabelece Pessach e Sukkot como períodos sagrados e determina que determinados dias sejam convocados como ocasiões sagradas. A expressão específica Chol HaMoed e as suas regras detalhadas pertencem à tradição rabínica.',
-        'Não existe uma referência direta ao conceito de Chol HaMoed nos Neviim. Os livros proféticos mencionam Pessach e Sukkot e descrevem a importância das festas estabelecidas na Torá.',
-        'Não existe uma referência direta ao termo Chol HaMoed nos Ketuvim. Os livros históricos e poéticos preservam referências às festas e às peregrinações de Israel.',
-        'O Talmud desenvolve extensivamente as leis de Chol HaMoed, incluindo quais trabalhos são permitidos ou proibidos, as regras de luto e casamento e outras práticas específicas. Moed Katan 2a-18a é a principal discussão talmúdica sobre as leis destes dias.',
-        'Na tradição do Sod, Chol HaMoed representa um estado intermédio entre a santidade plena dos dias festivos e a rotina dos dias comuns. A tradição mística associa estes dias à continuidade da influência espiritual do Moed enquanto Israel permanece dentro da atmosfera sagrada da festa.'
-    ],
-
-    'Chutz laAretz': [
-        'É uma designação utilizada para os dias adicionais de Yom Tov tradicionalmente observados fora da Terra de Israel, devido à antiga incerteza sobre o início dos meses determinada pela observação da Lua nova.',
-        'Torá estabelece os dias sagrados das festas e determina a sua duração, mas não estabelece um segundo dia de Yom Tov fora da Terra de Israel. A prática dos dias adicionais desenvolveu-se posteriormente a partir do sistema tradicional de determinação do calendário.',
-        'Não existe referência direta nos Neviim à observância de um segundo dia de Yom Tov fora da Terra de Israel. Os Neviim mencionam as festas estabelecidas na Torá sem desenvolver esta distinção geográfica.',
-        'Não existe referência direta nos Ketuvim ao conceito de Chutz laAretz como categoria de calendário. A distinção entre Israel e outras regiões aparece em diferentes contextos históricos, mas não como uma regra explícita de segundo dia de Yom Tov.',
-        'O Talmud apresenta a razão para a observância de um segundo dia de Yom Tov fora da Terra de Israel, relacionada com a antiga transmissão da determinação de Rosh Chodesh. Beitzah 4b e outros tratados discutem esta prática e as suas implicações haláchicas.',
-        'Na tradição do Sod, os dias adicionais observados fora da Terra de Israel são relacionados com diferentes níveis de manifestação da santidade e com a necessidade de preservar a continuidade da santidade do Moed mesmo fora da Terra de Israel.'
-    ],
-
-    'Kriat HaMoed': [
-        'É a leitura especial da Torá realizada nos dias de Moed, de acordo com a natureza específica da festa ou do dia sagrado. Estas leituras substituem ou complementam a parashá semanal normal durante os dias em que existe uma leitura própria do Moed.',
-        'Torá estabelece as festas e as ocasiões sagradas de Israel e apresenta mandamentos relacionados com a sua observância. As leituras específicas da Torá para cada Moed foram determinadas posteriormente pela tradição rabínica.',
-        'Os Neviim não estabelecem diretamente uma ordem de leituras chamada Kriat HaMoed. Contudo, apresentam diversas referências às festas e aos acontecimentos relacionados com elas.',
-        'Os Ketuvim preservam referências às festas, ao culto e à leitura pública da Torá. Nehemiah 8, por exemplo, descreve a leitura pública da Torá perante o povo e a celebração de Sukkot.',
-        'O Talmud estabelece as leituras da Torá para diferentes festas, jejuns, Rosh Chodesh e outras ocasiões especiais. Megillah 29b-31a apresenta diversas regras relativas às leituras públicas da Torá nos dias festivos e ocasiões especiais.',
-        'Na tradição do Sod, a leitura da Torá própria de cada Moed é entendida como uma expressão da dimensão espiritual específica daquele tempo sagrado. Cada leitura revela ensinamentos e aspectos particulares da santidade associada ao dia.'
-    ],
-
 };
 
 export function getFestivalDescription(festivalName) {

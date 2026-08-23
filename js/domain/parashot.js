@@ -547,7 +547,39 @@ export const PARASHA_DESCRIPTIONS = {
         'Subindo do vale de Moav ao topo do Pisga no Monte Nevo, Moshe contempla toda a extensão da Terra Prometida sob a visão direta do Criador.',
         'Falecendo no Monte Nevo pela palavra divina aos 120 anos, Moshe é sepultado pelo próprio Criador em um local secreto até os dias de hoje.',
         'Encerrando o Pentateuco com o luto de trinta dias, a Torá tributa que nunca mais se levantou em Yisrael um profeta como Moshe, que conheceu a Deus face a face.'
-    ]
+    ],
+    'Chol HaMoed': [
+        'Marcando os dias intermediários do período sagrado, a comunidade permanece dentro da santidade estabelecida pelo Moed, distinguindo estes dias dos dias de Yom Tov.',
+        'Mantendo a continuidade da celebração, o povo permanece reunido em alegria e dedicação ao Criador durante os dias que se encontram entre os momentos solenes do período.',
+        'Preservando a distinção entre os dias de santidade plena e os dias intermediários, determinadas atividades de trabalho são permitidas conforme as necessidades e as normas aplicáveis ao Moed.',
+        'Prosseguindo com os mandamentos próprios do período sagrado, a comunidade continua observando as práticas estabelecidas pela Torá ao longo dos dias intermediários.',
+        'Reunindo a comunidade em torno da santidade do tempo determinado, os dias intermediários prolongam a celebração sem possuir todas as restrições características dos dias de Yom Tov.',
+        'Recordando os acontecimentos que fundamentam a celebração, o povo mantém durante estes dias a memória dos atos do Criador e da relação estabelecida com Seu povo.',
+        'Conservando a alegria característica do Moed, o período conduz a comunidade à gratidão, à comunhão e à dedicação ao Criador durante a continuidade da celebração.',
+        'Concluindo progressivamente o período sagrado, os dias intermediários conduzem a comunidade até o encerramento do Moed estabelecido pela Torá.'
+    ],
+
+    'Chutz laAretz': [
+        'Estabelecendo uma distinção para aqueles que se encontram fora da Terra de Yisrael, o calendário contempla a observância de dias adicionais em determinados períodos sagrados.',
+        'Preservando a continuidade da santidade do Moed entre comunidades distantes da Terra, a observância prolonga determinados momentos estabelecidos pela Torá e pela tradição.',
+        'Mantendo a unidade do ciclo sagrado, os dias adicionais permitem que as comunidades fora da Terra de Yisrael observem o período festivo segundo a prática estabelecida para sua localização.',
+        'Estendendo a observância para além do período originalmente determinado, a comunidade preserva a santidade do tempo enquanto se encontra distante da Terra de Yisrael.',
+        'Orientando a comunidade na contagem e observância dos dias sagrados, o calendário diferencia a prática realizada fora da Terra daquela seguida dentro dela.',
+        'Conservando a memória e a santidade dos tempos determinados, os dias adicionais asseguram a continuidade da observância mesmo perante a dispersão das comunidades.',
+        'Reforçando a ligação entre a comunidade dispersa e os tempos estabelecidos, a observância mantém o ciclo sagrado organizado de acordo com a localização geográfica.',
+        'Concluindo o período adicional de observância, a comunidade retorna ao ciclo regular do calendário após cumprir os dias estabelecidos para aqueles que se encontram fora da Terra de Yisrael.'
+    ],
+
+    'Kriat HaMoed': [
+        'Estabelecendo a leitura pública durante o período sagrado, a comunidade reúne-se para ouvir as palavras da Torá em meio à celebração do Moed.',
+        'Convocando a assembleia para a escuta da instrução divina, a leitura reforça a responsabilidade coletiva diante dos mandamentos transmitidos pelo Criador.',
+        'Preservando a memória dos acontecimentos e dos mandamentos associados ao período, a leitura pública conduz a comunidade à reflexão sobre a palavra da Torá.',
+        'Reunindo homens, mulheres e crianças diante da assembleia, a proclamação pública permite que toda a comunidade participe da escuta e do aprendizado.',
+        'Recordando os ensinamentos estabelecidos para o tempo determinado, a leitura mantém a comunidade ligada às palavras que orientam sua relação com o Criador.',
+        'Concentrando a atenção da assembleia nas Escrituras, a leitura pública transforma o período sagrado em uma ocasião de ensino, recordação e renovação do compromisso com a Torá.',
+        'Fortalecendo a unidade da comunidade por meio da escuta conjunta, a proclamação das palavras sagradas reúne diferentes gerações em torno da mesma instrução.',
+        'Concluindo a leitura estabelecida para o período, a comunidade prossegue na celebração do Moed levando consigo a instrução, a memória e os mandamentos proclamados diante de todos.'
+    ],
 };
 
 function normalizeKey(str) {
