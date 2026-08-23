@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yisrael-date-v48';
+const CACHE_NAME = 'yisrael-date';
 
 // Recursos locais essenciais para o funcionamento offline
 const ASSETS_TO_CACHE = [
