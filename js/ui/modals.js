@@ -365,11 +365,12 @@ function cleanText(text) {
 
 // Bolls.life book ID mapping (Old Testament only, 1-39)
 const BOLLS_BOOK_IDS = {
+    // English names
     'Genesis': 1, 'Exodus': 2, 'Leviticus': 3, 'Numbers': 4, 'Deuteronomy': 5,
     'Joshua': 6, 'Judges': 7, 'Ruth': 8,
-    'I Samuel': 9, 'II Samuel': 10, '1 Samuel': 9, '2 Samuel': 10,
-    'I Kings': 11, 'II Kings': 12, '1 Kings': 11, '2 Kings': 12,
-    'I Chronicles': 13, 'II Chronicles': 14,
+    'I Samuel': 9, 'II Samuel': 10, '1 Samuel': 9, '2 Samuel': 10, 'Samuel': 9,
+    'I Kings': 11, 'II Kings': 12, '1 Kings': 11, '2 Kings': 12, 'Kings': 11,
+    'I Chronicles': 13, 'II Chronicles': 14, '1 Chronicles': 13, '2 Chronicles': 14, 'Chronicles': 13,
     'Ezra': 15, 'Nehemiah': 16, 'Esther': 17,
     'Job': 18, 'Psalms': 19, 'Proverbs': 20,
     'Ecclesiastes': 21, 'Song of Solomon': 22, 'Song of Songs': 22,
@@ -378,12 +379,53 @@ const BOLLS_BOOK_IDS = {
     'Hosea': 28, 'Joel': 29, 'Amos': 30,
     'Obadiah': 31, 'Jonah': 32, 'Micah': 33,
     'Nahum': 34, 'Habakkuk': 35, 'Zephaniah': 36,
-    'Haggai': 37, 'Zechariah': 38, 'Malachi': 39
+    'Haggai': 37, 'Zechariah': 38, 'Malachi': 39,
+
+    // Hebrew / Transliterated names
+    'Bereshit': 1, 'Shemot': 2, 'Vayikra': 3, 'Bamidbar': 4, 'Devarim': 5,
+    'Yehoshua': 6, 'Shoftim': 7,
+    'I Shmuel': 9, 'II Shmuel': 10, '1 Shmuel': 9, '2 Shmuel': 10, 'Shmuel': 9,
+    'I Melachim': 11, 'II Melachim': 12, '1 Melachim': 11, '2 Melachim': 12, 'Melachim': 11,
+    'Yeshayahu': 23, 'Yirmiyahu': 24, 'Yechezkel': 26,
+    'Hoshea': 28, 'Yoel': 29, 'Amos': 30, 'Ovadia': 31, 'Yona': 32, 'Micha': 33,
+    'Nachum': 34, 'Chavakuk': 35, 'Tzefania': 36, 'Chagai': 37, 'Zecharia': 38, 'Malachi': 39,
+    'Tehilim': 19, 'Mishlei': 20, 'Iyov': 18, 'Shir HaShirim': 22,
+    'Eichah': 25, 'Kohelet': 21,
+    'Nechemia': 16,
+    'I Divrei Hayamim': 13, 'II Divrei Hayamim': 14, '1 Divrei Hayamim': 13, '2 Divrei Hayamim': 14,
+    'Divrei Hayamim': 13, 'Divrei HaYamim': 13,
+
+    // Portuguese names
+    'Gênesis': 1, 'Êxodo': 2, 'Levítico': 3, 'Números': 4, 'Deuteronômio': 5,
+    'Josué': 6, 'Juízes': 7, 'Rute': 8,
+    '1 Crônicas': 13, '2 Crônicas': 14, 'I Crônicas': 13, 'II Crônicas': 14, 'Crônicas': 13,
+    '1 Reis': 11, '2 Reis': 12, 'I Reis': 11, 'II Reis': 12, 'Reis': 11,
+    'Esdras': 15, 'Neemias': 16, 'Ester': 17,
+    'Jó': 18, 'Salmos': 19, 'Provérbios': 20, 'Eclesiastes': 21, 'Cânticos': 22, 'Cantares': 22,
+    'Isaías': 23, 'Jeremias': 24, 'Lamentações': 25,
+    'Ezequiel': 26, 'Oséias': 28, 'Oseias': 28, 'Miqueias': 33, 'Naum': 34, 'Habacuque': 35, 'Sofonias': 36, 'Ageu': 37, 'Zacarias': 38, 'Malaquias': 39
 };
 
 function toHebrewBookName(text) {
     if (!text) return '';
     let result = text;
+
+    // Normaliza Divrei Hayamim contínuo para exibição
+    const dhRegex = /^(?:(?:I{1,2}|[12])\s+)?(?:Divrei\s+Ha?yamim|Chronicles|Crônicas)\s+(\d+)(.*)$/i;
+    const dhMatch = result.match(dhRegex);
+    if (dhMatch) {
+        const rawCh = parseInt(dhMatch[1], 10);
+        const rest = dhMatch[2] || '';
+        const isExplicitSecond = /^II\s+|^2\s+/i.test(result);
+        if (rawCh > 29) {
+            return `II Divrei Hayamim ${rawCh - 29}${rest}`;
+        } else if (isExplicitSecond) {
+            return `II Divrei Hayamim ${rawCh}${rest}`;
+        } else {
+            return `I Divrei Hayamim ${rawCh}${rest}`;
+        }
+    }
+
     const mapping = {
         'Genesis': 'Bereshit',
         'Exodus': 'Shemot',
@@ -396,10 +438,12 @@ function toHebrewBookName(text) {
         'I Samuel': 'I Shmuel',
         '2 Samuel': 'II Shmuel',
         '1 Samuel': 'I Shmuel',
+        'Samuel': 'Shmuel',
         'II Kings': 'II Melachim',
         'I Kings': 'I Melachim',
         '2 Kings': 'II Melachim',
         '1 Kings': 'I Melachim',
+        'Kings': 'Melachim',
         'Isaiah': 'Yeshayahu',
         'Jeremiah': 'Yirmiyahu',
         'Ezekiel': 'Yechezkel',
@@ -418,12 +462,21 @@ function toHebrewBookName(text) {
         'Psalms': 'Tehilim',
         'Proverbs': 'Mishlei',
         'Job': 'Iyov',
-        'Ecclesiastes': 'Kohelet',
+        'Song of Solomon': 'Shir HaShirim',
+        'Song of Songs': 'Shir HaShirim',
         'Ruth': 'Ruth',
+        'Lamentations': 'Eichah',
+        'Ecclesiastes': 'Kohelet',
         'Esther': 'Esther',
         'Daniel': 'Daniel',
         'Ezra': 'Ezra',
-        'Nehemiah': 'Nechemia'
+        'Nehemiah': 'Nechemia',
+        'II Chronicles': 'II Divrei Hayamim',
+        'I Chronicles': 'I Divrei Hayamim',
+        '2 Chronicles': 'II Divrei Hayamim',
+        '1 Chronicles': 'I Divrei Hayamim',
+        'Chronicles': 'Divrei Hayamim',
+        'Crônicas': 'Divrei Hayamim'
     };
     for (const [eng, heb] of Object.entries(mapping)) {
         result = result.replace(new RegExp(`\\b${eng}\\b`, 'g'), heb);
@@ -436,9 +489,59 @@ function toHebrewBookName(text) {
  * Examples: "Genesis 12:21-51", "Genesis 12:21-13:5", "Psalms 23", "Ezekiel 1:1-28, 3:12"
  */
 function parseRef(ref) {
-    const clean = ref.trim();
+    if (!ref) return null;
+    let clean = ref.trim();
+
+    // Normaliza Divrei Hayamim / Chronicles / Crônicas (capítulos contínuos 1-65 ou I/II)
+    const dhRegex = /^(?:(?:I{1,2}|[12])\s+)?(?:Divrei\s+Ha?yamim|Chronicles|Crônicas)\s+(\d+)(.*)$/i;
+    const dhMatch = clean.match(dhRegex);
+    if (dhMatch) {
+        const rawCh = parseInt(dhMatch[1], 10);
+        const rest = dhMatch[2] || '';
+        const isExplicitSecond = /^II\s+|^2\s+/i.test(clean);
+        if (rawCh > 29) {
+            clean = `II Chronicles ${rawCh - 29}${rest}`;
+        } else if (isExplicitSecond) {
+            clean = `II Chronicles ${rawCh}${rest}`;
+        } else {
+            clean = `I Chronicles ${rawCh}${rest}`;
+        }
+    }
+
+    // Shmuel / Samuel
+    const shmuelRegex = /^(?:(?:I{1,2}|[12])\s+)?(?:Shmuel|Samuel)\s+(\d+)(.*)$/i;
+    const shMatch = clean.match(shmuelRegex);
+    if (shMatch) {
+        const rawCh = parseInt(shMatch[1], 10);
+        const rest = shMatch[2] || '';
+        const isExplicitSecond = /^II\s+|^2\s+/i.test(clean);
+        if (rawCh > 31) {
+            clean = `II Samuel ${rawCh - 31}${rest}`;
+        } else if (isExplicitSecond) {
+            clean = `II Samuel ${rawCh}${rest}`;
+        } else {
+            clean = `I Samuel ${rawCh}${rest}`;
+        }
+    }
+
+    // Melachim / Kings / Reis
+    const melachimRegex = /^(?:(?:I{1,2}|[12])\s+)?(?:Melachim|Kings|Reis)\s+(\d+)(.*)$/i;
+    const melMatch = clean.match(melachimRegex);
+    if (melMatch) {
+        const rawCh = parseInt(melMatch[1], 10);
+        const rest = melMatch[2] || '';
+        const isExplicitSecond = /^II\s+|^2\s+/i.test(clean);
+        if (rawCh > 22) {
+            clean = `II Kings ${rawCh - 22}${rest}`;
+        } else if (isExplicitSecond) {
+            clean = `II Kings ${rawCh}${rest}`;
+        } else {
+            clean = `I Kings ${rawCh}${rest}`;
+        }
+    }
+
     // Match book name (may start with I/II/1/2 prefix)
-    const match = clean.match(/^((?:I{1,2}\s+|[12]\s+)?[A-Za-z\s]+?)\s+(\d.*)$/);
+    const match = clean.match(/^((?:I{1,2}\s+|[12]\s+)?[A-Za-zÀ-ÿ\s]+?)\s+(\d.*)$/);
     if (!match) return null;
 
     const bookName = match[1].trim();
@@ -529,8 +632,8 @@ async function fetchBibleVerses(parsed, refKey) {
     if (cached) {
         try {
             const parsedCache = JSON.parse(cached);
-            const ptTranslations = ['NVT', 'OL'];
-            if (parsedCache && parsedCache.verses) {
+            const ptTranslations = ['NVT', 'OL', 'AA'];
+            if (parsedCache && parsedCache.verses && parsedCache.verses.length > 0) {
                 if (preferredVersion) {
                     if (parsedCache.translation === preferredVersion) return { ...parsedCache, isCache: true };
                 } else if (ptTranslations.includes(parsedCache.translation)) {
@@ -550,12 +653,30 @@ async function fetchBibleVerses(parsed, refKey) {
     async function getChapterData(ch) {
         if (chapterCache[ch]) return chapterCache[ch];
         
-        let translations = ['NVT', 'OL'];
-        if (preferredVersion && ['NVT', 'OL'].includes(preferredVersion)) {
+        let actualBookId = bookId;
+        let actualCh = ch;
+
+        // Auto-normalização para garantir IDs válidos no Bolls.life
+        if (actualBookId === 13 && actualCh > 29) {
+            actualBookId = 14;
+            actualCh = actualCh - 29;
+        } else if (actualBookId === 9 && actualCh > 31) {
+            actualBookId = 10;
+            actualCh = actualCh - 31;
+        } else if (actualBookId === 11 && actualCh > 22) {
+            actualBookId = 12;
+            actualCh = actualCh - 22;
+        } else if (actualBookId === 15 && actualCh > 10) {
+            actualBookId = 16;
+            actualCh = actualCh - 10;
+        }
+
+        let translations = ['NVT', 'OL', 'AA'];
+        if (preferredVersion && translations.includes(preferredVersion)) {
             translations = [preferredVersion];
         }
         const fetchPromise = (trans) => new Promise(async (resolve, reject) => {
-            const url = `https://bolls.life/get-chapter/${trans}/${bookId}/${ch}/`;
+            const url = `https://bolls.life/get-chapter/${trans}/${actualBookId}/${actualCh}/`;
             const ctrl = new AbortController();
             const tid = setTimeout(() => ctrl.abort(), 8000);
             const startTime = performance.now();
@@ -876,7 +997,8 @@ export function initModals(updateDashboardCallback) {
 
                     const searchInput = document.getElementById('location-search-input');
                     if (searchInput) {
-                        searchInput.value = '';
+                        const currentLoc = document.querySelector('#card-local-vigente .card-title')?.textContent?.trim() || '';
+                        searchInput.value = (currentLoc && currentLoc !== '-' && currentLoc !== 'Calculando...') ? currentLoc : '';
                         renderSuggestions([]);
                         fetchNearbyLocations();
                         setTimeout(() => searchInput.focus(), 100);

@@ -11,8 +11,7 @@ export function getEventIcon(category, name, styleAttr = "color: var(--accent-co
     if (cat === 'yomkippur' || nm.includes('kippur')) return `<i class="fa-solid fa-person-praying"${style}></i>`;
     if (cat === 'sukkot' || nm.includes('sukkot')) return `<i class="fa-solid fa-house-chimney"${style}></i>`;
     if (cat === 'sheminiatzeret' || cat === 'shminiatzeret' || nm.includes('shemini') || nm.includes('shmini') || nm.includes('atzeret')) return `<i class="fa-solid fa-people-group"${style}></i>`;
-    if (cat === 'simchattorah' || nm.includes('simchat torah')) return `<i class="fa-solid fa-scroll"${style}></i>`;
-    if (cat === 'roshchodesh' || nm.includes('rosh chodesh')) return `<i class="fa-solid fa-moon"${style}></i>`;
+    if (cat === 'roshchodesh' || nm.includes('rosh chodesh') || nm.includes('rosh chodashim')) return `<i class="fa-solid fa-moon"${style}></i>`;
     if (cat === 'omer' || nm.includes('omer')) return `<i class="fa-solid fa-wheat-awn"${style}></i>`;
 
     return `<i class="fa-solid fa-star-of-david"${style}></i>`;

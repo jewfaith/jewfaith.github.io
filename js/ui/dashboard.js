@@ -81,8 +81,8 @@ export function showDashboardSkeletons() {
 function generateCalendarHTML(events, currentHdate) {
     if (!currentHdate) return ''; 
     const hebrewMonthsPT = {
-        "Nisan": "Nisã", "Iyyar": "Iyar", "Sivan": "Sivã", "Tammuz": "Tamuz",
-        "Av": "Av", "Elul": "Elul", "Tishrei": "Tishrei", "Cheshvan": "Cheshvan",
+        "Nisan": "Aviv", "Iyyar": "Ziv", "Sivan": "Sivan", "Tammuz": "Tamuz",
+        "Av": "Av", "Elul": "Elul", "Tishrei": "Etanim", "Cheshvan": "Bul",
         "Kislev": "Kislev", "Tevet": "Tevet", "Sh'vat": "Shevat", 
         "Adar I": "Adar I", "Adar II": "Adar II", "Adar": "Adar"
     };
@@ -256,6 +256,18 @@ function generateCalendarHTML(events, currentHdate) {
 function toEnglishRef(ref) {
     if (!ref) return '';
     let result = ref.trim();
+
+    const dhMatch = result.match(/^(?:Divrei\s+Ha?yamim|Chronicles)\s+(\d+)(.*)$/i);
+    if (dhMatch) {
+        const rawCh = parseInt(dhMatch[1], 10);
+        const rest = dhMatch[2] || '';
+        if (rawCh > 29) {
+            return `II Chronicles ${rawCh - 29}${rest}`;
+        } else {
+            return `I Chronicles ${rawCh}${rest}`;
+        }
+    }
+
     const mapping = {
         'Bereshit': 'Genesis',
         'Shemot': 'Exodus',
@@ -266,8 +278,12 @@ function toEnglishRef(ref) {
         'Shoftim': 'Judges',
         'II Shmuel': 'II Samuel',
         'I Shmuel': 'I Samuel',
+        '2 Shmuel': 'II Samuel',
+        '1 Shmuel': 'I Samuel',
         'II Melachim': 'II Kings',
         'I Melachim': 'I Kings',
+        '2 Melachim': 'II Kings',
+        '1 Melachim': 'I Kings',
         'Yeshayahu': 'Isaiah',
         'Yirmiyahu': 'Jeremiah',
         'Yechezkel': 'Ezekiel',
@@ -286,12 +302,19 @@ function toEnglishRef(ref) {
         'Tehilim': 'Psalms',
         'Mishlei': 'Proverbs',
         'Iyov': 'Job',
-        'Kohelet': 'Ecclesiastes',
+        'Shir HaShirim': 'Song of Solomon',
         'Ruth': 'Ruth',
+        'Eichah': 'Lamentations',
+        'Kohelet': 'Ecclesiastes',
         'Esther': 'Esther',
         'Daniel': 'Daniel',
         'Ezra': 'Ezra',
-        'Nechemia': 'Nehemiah'
+        'Nechemia': 'Nehemiah',
+        'II Divrei Hayamim': 'II Chronicles',
+        'I Divrei Hayamim': 'I Chronicles',
+        '2 Divrei Hayamim': 'II Chronicles',
+        '1 Divrei Hayamim': 'I Chronicles',
+        'Divrei Hayamim': 'Chronicles'
     };
     for (const [heb, eng] of Object.entries(mapping)) {
         if (result.startsWith(heb)) {
@@ -493,28 +516,40 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             ketuvimRawRef = `${selectedBook.name} ${chapter}`;
         }
 
+        let displayKetuvim = ketuvimRawRef;
+        const dhMatch = ketuvimRawRef.match(/^(?:Divrei\s+Ha?yamim|Chronicles)\s+(\d+)(.*)$/i);
+        if (dhMatch) {
+            const rawCh = parseInt(dhMatch[1], 10);
+            const rest = dhMatch[2] || '';
+            if (rawCh > 29) {
+                displayKetuvim = `II Divrei Hayamim ${rawCh - 29}${rest}`;
+            } else {
+                displayKetuvim = `I Divrei Hayamim ${rawCh}${rest}`;
+            }
+        }
+
         if (elKetuvimWrapper) {
-            elKetuvimWrapper.setAttribute('data-ref', toEnglishRef(ketuvimRawRef));
+            elKetuvimWrapper.setAttribute('data-ref', toEnglishRef(displayKetuvim));
             const sub = elKetuvimWrapper.querySelector('.card-subtitle');
             if (sub) sub.textContent = 'Escrito Sagrado';
         }
-        elKetuvim.textContent = transliterateTorah(ketuvimRawRef) || '-';
+        elKetuvim.textContent = transliterateTorah(displayKetuvim) || '-';
     }
 
     const elDateWrapper = document.getElementById('card-hdate-wrapper');
     if (elDate) {
         let hm = hdate.hm || '';
         const hbMonths = {
-            "Nisan": "Nisã", "Iyyar": "Iyar", "Sivan": "Sivã", "Tammuz": "Tamuz",
-            "Av": "Av", "Elul": "Elul", "Tishrei": "Tishrei", "Cheshvan": "Cheshvan",
+            "Nisan": "Aviv", "Iyyar": "Ziv", "Sivan": "Sivan", "Tammuz": "Tamuz",
+            "Av": "Av", "Elul": "Elul", "Tishrei": "Etanim", "Cheshvan": "Bul",
             "Kislev": "Kislev", "Tevet": "Tevet", "Sh'vat": "Shevat", 
             "Adar I": "Adar I", "Adar II": "Adar II", "Adar": "Adar"
         };
-        hm = hbMonths[hm] || hm;
-        elDate.textContent = `${hdate.hd} ${hm}`;
+        const displayMonth = hbMonths[hm] || hm;
+        elDate.textContent = `${hdate.hd} ${displayMonth}`;
         
         if (elDateWrapper) {
-            elDateWrapper.setAttribute('data-info-title', `${hm} ${hdate.hy}`);
+            elDateWrapper.setAttribute('data-info-title', `${hdate.hd} ${displayMonth}`);
             let contentHtml = generateCalendarHTML(events, hdate);
             elDateWrapper.setAttribute('data-info-html', contentHtml);
             const sub = elDateWrapper.querySelector('.card-subtitle');

@@ -166,7 +166,7 @@ async function updateDashboard() {
             const defaultSunsetM = sunsetTime ? new Date(sunsetTime).getMinutes() : 0;
 
             state.unifiedEvents = filteredItems
-                .map(item => {
+                .flatMap(item => {
                     const parts = item.date.split('T')[0].split('-');
                     let dateObj;
                     if (parts.length === 3) {
@@ -212,6 +212,36 @@ async function updateDashboard() {
                             if (key === 'Sukkot' && cleanTitle.includes('Erev')) {
                                 continue;
                             }
+
+                            // Caso especial: 1 de Etanim gera 2 cards separados (Yom Teruah E Rosh Chodesh)
+                            if (key === 'Rosh Hashana') {
+                                const rawHdate = item.hdate || '1 Tishrei 5787';
+                                return [
+                                    {
+                                        name: 'Yom Teruah',
+                                        time: dateObj.getTime(),
+                                        category: 'yomteruah',
+                                        rawCategory: item.category,
+                                        isBiblical: true,
+                                        isTraditional: false,
+                                        raw: item
+                                    },
+                                    {
+                                        name: 'Rosh Chodesh',
+                                        time: dateObj.getTime(),
+                                        category: 'roshchodesh',
+                                        rawCategory: 'roshchodesh',
+                                        isBiblical: true,
+                                        isTraditional: false,
+                                        raw: {
+                                            ...item,
+                                            title: `Rosh Chodesh ${rawHdate.split(' ').slice(1, -1).join(' ') || 'Tishrei'}`,
+                                            category: 'roshchodesh',
+                                            hdate: rawHdate
+                                        }
+                                    }
+                                ];
+                            }
                             
                             itemName = biblicalMapping[key].name;
                             isBiblical = true;
@@ -226,9 +256,11 @@ async function updateDashboard() {
                             } else if (key === 'Rosh Chodesh') {
                                 // Na Torá, Rosh Chodesh é estritamente 1 único dia (o 1º dia do mês hebraico)
                                 if (item.hdate && !item.hdate.startsWith('1 ')) {
-                                    return null;
+                                    return [];
                                 }
-                                itemName = 'Rosh Chodesh';
+                                // No mês de Aviv (1º mês), é Rosh Chodashim (Shemot 12:2). Nos restantes, Rosh Chodesh.
+                                const isAviv = item.hdate && (item.hdate.includes('Nisan') || item.hdate.includes('Aviv'));
+                                itemName = isAviv ? 'Rosh Chodashim' : 'Rosh Chodesh';
                                 customCategory = 'roshchodesh';
                             } else if (key === 'Pesach') {
                                 if (cleanTitle.includes('Erev')) {
@@ -248,11 +280,57 @@ async function updateDashboard() {
                         }
                     }
 
-                    if (!isBiblical && !isTraditional) {
-                        return null;
+                    // Mapeamento de tradições (NÃO são lei da Torá)
+                    if (!isBiblical) {
+                        const traditionalMapping = {
+                            'Shabbat Shirah': { name: 'Shabbat Shirah', cat: 'shabbatshirah' },
+                            'Purim Katan': { name: 'Purim Katan', cat: 'purimkatan' },
+                            'Shushan Purim Katan': { name: 'Shushan Purim Katan', cat: 'shushanpurimkatan' },
+                            'Shushan Purim': { name: 'Shushan Purim', cat: 'shushanpurim' },
+                            'Shabbat HaChodesh': { name: 'Shabbat HaChodesh', cat: 'shabbathachodesh' },
+                            'Shabbat HaGadol': { name: 'Shabbat HaGadol', cat: 'shabbathagadol' },
+                            'Lag BaOmer': { name: 'Lag BaOmer', cat: 'lagbaomer' },
+                            'Shabbat Chazon': { name: 'Shabbat Chazon', cat: 'shabbatchazon' },
+                            'Shabbat Nachamu': { name: 'Shabbat Nachamu', cat: 'shabbatnahamu' },
+                            'Leil Selichot': { name: 'Leil Selichot', cat: 'leilselichot' },
+                            'Chanukah': { name: 'Chag Chanukah', cat: 'chanukah' }
+                        };
+
+                        // Tisha B'Av e Tzom Gedaliah da categoria 'fast'
+                        if (cleanTitle === "Tish\u2018a B\u2019Av" || cleanTitle === "Tish'a B'Av") {
+                            itemName = "Tisha B'Av";
+                            isTraditional = true;
+                            customCategory = 'tishabav';
+                        } else if (cleanTitle === 'Tzom Gedaliah') {
+                            itemName = 'Tzom Gedaliah';
+                            isTraditional = true;
+                            customCategory = 'tzomgedaliah';
+                        } else {
+                            for (const tKey in traditionalMapping) {
+                                if (cleanTitle.includes(tKey)) {
+                                    // Chanukah: agrupar todos os dias como um único evento
+                                    if (tKey === 'Chanukah') {
+                                        if (cleanTitle.includes('1 Candle') || cleanTitle === 'Chanukah: 8th Day') {
+                                            itemName = traditionalMapping[tKey].name;
+                                        } else {
+                                            return []; // Ignorar dias intermédios
+                                        }
+                                    } else {
+                                        itemName = traditionalMapping[tKey].name;
+                                    }
+                                    isTraditional = true;
+                                    customCategory = traditionalMapping[tKey].cat;
+                                    break;
+                                }
+                            }
+                        }
                     }
 
-                    return {
+                    if (!isBiblical && !isTraditional) {
+                        return [];
+                    }
+
+                    return [{
                         name: itemName,
                         time: dateObj.getTime(),
                         category: customCategory,
@@ -260,9 +338,8 @@ async function updateDashboard() {
                         isBiblical: isBiblical,
                         isTraditional: isTraditional,
                         raw: item
-                    };
-                })
-                .filter(Boolean);
+                    }];
+                });
 
             const festivalEvents = state.unifiedEvents.filter(ev => 
                 ev.category !== 'parashat' && 
@@ -278,8 +355,8 @@ async function updateDashboard() {
             };
 
             const hebrewMonthsPT = {
-                'Nisan': 'Nisã', 'Iyyar': 'Iyar', 'Sivan': 'Sivã', 'Tammuz': 'Tamuz',
-                'Av': 'Av', 'Elul': 'Elul', 'Tishrei': 'Tishrei', 'Cheshvan': 'Cheshvan',
+                'Nisan': 'Aviv', 'Iyyar': 'Ziv', 'Sivan': 'Sivan', 'Tammuz': 'Tamuz',
+                'Av': 'Av', 'Elul': 'Elul', 'Tishrei': 'Etanim', 'Cheshvan': 'Bul',
                 'Kislev': 'Kislev', 'Tevet': 'Tevet', 'Sh\'vat': 'Shevat', 'Shvat': 'Shevat',
                 'Adar I': 'Adar I', 'Adar II': 'Adar II', 'Adar': 'Adar'
             };
@@ -395,3 +472,10 @@ async function updateDashboard() {
 
 initModals(updateDashboard);
 updateDashboard();
+
+// Atualização automática completa do site a cada 5 minutos (300.000 ms)
+const FIVE_MINUTES_MS = 5 * 60 * 1000;
+setInterval(() => {
+    window.location.reload();
+}, FIVE_MINUTES_MS);
+
