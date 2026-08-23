@@ -124,7 +124,7 @@ async function updateDashboard() {
 
         const isAfterSunset = sunsetTime > 0 && new Date().getTime() > sunsetTime;
         const converterUrl = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${day}&g2h=1&strict=1${isAfterSunset ? '&gs=on' : ''}`;
-        
+
         const [hdateData, hebcalData] = await Promise.all([
             hebcalFetch(converterUrl).catch(() => null),
             hebcalPromise
@@ -215,7 +215,7 @@ async function updateDashboard() {
 
                             // Caso especial: 1 de Etanim gera 2 cards separados (Yom Teruah E Rosh Chodesh)
                             if (key === 'Rosh Hashana') {
-                                const rawHdate = item.hdate || '1 Tishrei 5787';
+                                const rawHdate = item.hdate || '1 Tishrei';
                                 return [
                                     {
                                         name: 'Yom Teruah',
@@ -242,7 +242,7 @@ async function updateDashboard() {
                                     }
                                 ];
                             }
-                            
+
                             itemName = biblicalMapping[key].name;
                             isBiblical = true;
                             customCategory = key.toLowerCase().replace(/ /g, '');
@@ -341,10 +341,10 @@ async function updateDashboard() {
                     }];
                 });
 
-            const festivalEvents = state.unifiedEvents.filter(ev => 
-                ev.category !== 'parashat' && 
-                ev.category !== 'omer' && 
-                ev.name !== 'Yom Shabbat' && 
+            const festivalEvents = state.unifiedEvents.filter(ev =>
+                ev.category !== 'parashat' &&
+                ev.category !== 'omer' &&
+                ev.name !== 'Yom Shabbat' &&
                 !ev.name.includes('laOmer')
             );
 
@@ -372,7 +372,7 @@ async function updateDashboard() {
                 const last = mergedFestivals[mergedFestivals.length - 1];
                 const isSame = last && last.name === ev.name && last.hMonth === hMonth;
                 const gapDays = last ? (ev.time - last.endTime) / (1000 * 60 * 60 * 24) : 999;
-                
+
                 if (isSame && gapDays <= 2) {
                     last.endHDay = hDay;
                     last.endDate = ev.raw && ev.raw.date ? ev.raw.date.split('T')[0] : last.endDate;
@@ -393,13 +393,12 @@ async function updateDashboard() {
                 }
             }
 
-            console.log(`%c[Festas do Ano ${year} (Janeiro a Dezembro)]`, 'font-weight: bold; color: #60a5fa;');
             mergedFestivals.forEach(f => {
-                const hRange = f.startHDay === f.endHDay ? `${f.startHDay} de ${f.hMonth}` : `${f.startHDay} a ${f.endHDay} de ${f.hMonth}`;
+                const hRange = f.startHDay === f.endHDay ? `${f.startHDay} ${f.hMonth}` : `${f.startHDay} - ${f.endHDay} ${f.hMonth}`;
                 const sDate = formatGDate(f.startDate);
                 const eDate = formatGDate(f.endDate);
-                const gregRange = (sDate === eDate || !eDate) ? sDate : `${sDate} a ${eDate}`;
-                console.log(`• [${hRange}] ${f.name} (${gregRange})`);
+                const gregRange = (sDate === eDate || !eDate) ? sDate : `${sDate} - ${eDate}`;
+                console.log(`[${hRange}] ${f.name} (${gregRange})`);
             });
 
             const offlinePayload = {
@@ -422,7 +421,7 @@ async function updateDashboard() {
                     state.unifiedEvents = data.events || [];
                     state.currentZmanim = data.zmanim || null;
                     updateUIBlocks(data.events || [], data.hdate || { hd: 15, hm: 'Av', hy: 5786 }, locationName || data.locName || "Jerusalém, Israel", data.sunset || 0, data.isIsrael !== undefined ? data.isIsrael : true);
-                } catch(e) {
+                } catch (e) {
                     updateUIBlocks([], { hd: 15, hm: 'Av', hy: 5786 }, locationName || "Jerusalém, Israel", 0, isIsrael);
                 }
             } else {
@@ -473,9 +472,8 @@ async function updateDashboard() {
 initModals(updateDashboard);
 updateDashboard();
 
-// Atualização automática completa do site a cada 5 minutos (300.000 ms)
-const FIVE_MINUTES_MS = 5 * 60 * 1000;
+const xMINUTES_MS = 30 * 60 * 1000;
 setInterval(() => {
     window.location.reload();
-}, FIVE_MINUTES_MS);
+}, xMINUTES_MS);
 
