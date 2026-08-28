@@ -191,6 +191,15 @@
     box-sizing: border-box;
 }
 
+a {
+    color: #e2e2e2;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #f7f6f5;
+}
+
 .card-subtitle,
 .timer-countdown {
     color: var(--text-muted);

@@ -150,7 +150,6 @@ async function updateDashboard() {
                 'Sukkot': { name: 'Chag Sukkot' },
                 'Shmini Atzeret': { name: 'Shemini Atzeret' },
                 'Shemini Atzeret': { name: 'Shemini Atzeret' },
-                'Simchat Torah': { name: 'Simchat Torah' },
                 'Rosh Chodesh': { name: 'Rosh Chodesh' },
                 'Omer': { name: 'Sefirat Omer' }
             };
