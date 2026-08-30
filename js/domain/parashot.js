@@ -1,552 +1,682 @@
-export const PARASHA_DESCRIPTIONS = {
-    // Bereshit - Gênesis
+export const PARASHAH_DESCRIPTIONS = {
+
     'Bereshit': [
-        'Inaugurando o texto sagrado, a palavra divina dá forma ao universo em seis dias de ordem cosmogônica, coroando o processo com a instituição do Shabbat como refúgio temporal de pausa e renovação.',
-        'Modelado do pó e vivificado pelo sopro transcendente, o ser humano surge no Éden não apenas como habitante, mas como guardião responsável e parceiro ativo na preservação do mundo.',
-        'Superando a solidão existencial primordial, a emergência da mulher a partir da substância do homem fundamenta a dignidade compartilhada, o companheirismo e a sacralidade das conexões humanas.',
-        'Ao ceder à tentação diante da Árvore do Conhecimento, a humanidade cruza o limiar da inocência ingênua para ingressar na complexa realidade do livre-arbítrio, do esforço terreno e da responsabilidade ético-moral.',
-        'Movidas pelo ciúme e pela rejeição, as ações de Qayin culminam no primeiro assassinato da história, imortalizando o alerta contra as paixões descontroladas e selando o dever inescapável do cuidado mútuo.',
-        'Paralelamente ao distanciamento do plano divino, as gerações seguintes desenvolvem a vida urbana, a música, a tecnologia e a metalurgia, demonstrando o gênio criativo humano em meio às suas ambiguidades morais.',
-        'Com o nascimento de Shet e a manutenção da busca pelo sagrado em sua descendência, preserva-se a centelha de integridade espiritual necessária para a continuidade do propósito humano na terra.',
-        'O encerramento do relato traça a dolorosa espiral de corrupção ao longo de dez gerações até Noach, preparando o terreno existencial para a purificação do mundo e a reconstrução da aliança.'
+        'A criação, a formação da humanidade e o início das primeiras gerações estabelecem os grandes fundamentos da relação entre D\'us, o ser humano e o mundo. A parashah apresenta origem, responsabilidade, escolha, transgressão, trabalho, família e as primeiras consequências da conduta humana.',
+        'Bereshit 1:1-2:3 apresenta a criação dos céus e da terra através de uma sequência ordenada que culmina no sétimo dia. Rashi, citando Bereshit Rabbah 1:1, começa precisamente pela questão de por que motivo a Torá começa com a criação do mundo em vez de começar diretamente pelo primeiro mandamento dado a Israel. O comentário liga a criação à legitimidade da terra e à futura reivindicação de Israel sobre ela.',
+        'Bereshit 1:26-27 apresenta o ser humano como criado à imagem de D\'us. Ibn Ezra procura compreender a expressão através das capacidades específicas do ser humano, enquanto Ramban desenvolve uma leitura mais profunda da constituição humana, distinguindo a dimensão corporal e espiritual. A passagem tornou-se uma das bases da reflexão judaica sobre dignidade e responsabilidade humanas.',
+        'Bereshit 2:15-17 coloca Adam dentro do Gan Eden com uma responsabilidade concreta: trabalhar e guardar o jardim e respeitar um mandamento específico. Rashi observa que a ordem relativa à árvore precede a transgressão e que Adam já possuía uma estrutura clara de responsabilidade antes da entrada do pecado (Rashi sobre Bereshit 2:15-17).',
+        'Bereshit 3:1-24 introduz a serpente, a transgressão e a alteração radical da condição de Adam e Chavah. Rashi utiliza numerosas tradições de Bereshit Rabbah para explicar a sequência e a linguagem do texto, enquanto Ramban procura analisar o episódio também através do seu sentido contextual e da natureza da escolha humana (Rashi e Ramban sobre Bereshit 3:1-24).',
+        'Bereshit 3:9 apresenta D\'us a perguntar a Adam: “Onde estás?”. Rashi, citando Bereshit Rabbah 19:9, explica que a pergunta não significa falta de conhecimento divino, mas funciona como uma forma de iniciar a conversa com Adam e permitir-lhe responder. O diálogo torna-se assim parte importante da forma como a Torá apresenta a responsabilidade depois da transgressão.',
+        'Bereshit 4:1-16 apresenta Kayin e Hevel e a primeira violência letal entre seres humanos. A pergunta “Onde está Hevel, teu irmão?” coloca explicitamente a responsabilidade pelo próximo dentro da narrativa. Rashi e Bereshit Rabbah desenvolvem diferentes interpretações sobre a natureza da inveja de Kayin e sobre o significado da sua resposta (Rashi sobre Bereshit 4:9; Bereshit Rabbah 22).',
+        'Bereshit 4:17-26 descreve o desenvolvimento das primeiras famílias, profissões e formas culturais. O texto apresenta construção de cidades, criação de gado, música e metalurgia, mostrando que a humanidade continua a desenvolver-se mesmo depois da ruptura do Gan Eden.',
+        'Bereshit 5:1-32 apresenta a genealogia de Adam através de Shet até Noach. Chanoch recebe uma descrição excepcional: “andou com D\'us”. Rashi e Bereshit Rabbah interpretam esta expressão como uma referência a uma vida marcada por justiça e por uma relação particular com D\'us.',
+        'Bereshit 6:1-8 prepara o cenário para Noach ao descrever a crescente corrupção da humanidade. Bereshit 6:5 relaciona a condição da humanidade com os pensamentos do coração, criando um contraste com a situação de Noach que será apresentada imediatamente depois.'
     ],
+
     'Noach': [
-        'Diante da degradação ética da sociedade antiga, o patriarca Noach é destacado por sua integridade e justiça, recebendo a diretriz divina para erguer uma Arca destinada à preservação da vida contra a iminente devastação.',
-        'Submergindo a terra em uma purificação cosmológica, o grande Dilúvio extingue a violência generalizada, enquanto a Arca navega sob a proteção providencial abrigando os remanescentes da criação.',
-        'Ao término das águas, a edificação de um altar de gratidão motiva o Criador a estabelecer uma aliança eterna com toda a humanidade, selada pelo sinal do arco-íris e fundamentada no respeito à vida e às leis universais.',
-        'Inaugurando uma nova ordem jurídica global, o mandamento da preservação do sangue e a proibição da crueldade com os animais definem os pilares da ética universal para as nações.',
-        'Marcado pelo episódio da vulnerabilidade de Noach na tenda, o destino de seus filhos Shem, Cham e Yafet delineia a futura distribuição geográfica, cultural e espiritual das nações.',
-        'A tentativa audaciosa da geração seguinte de erguer a Torre de Bavel representa a arrogância humana e o desejo de soberania absoluta, resultando na confusão das línguas e na dispersão dos povos pela terra.',
-        'Surgindo no cenário de Bavel, a figura de Nimrod simboliza a primeira tentativa de imperialismo centralizado, em contraste com o projeto disperso e multifacetado desenhado pelo Criador.',
-        'A desdobrada cronologia de dez gerações através da linhagem de Shem culmina no nascimento de Avram em Ur dos Caldeus, assinalando a transição histórica rumo à revelação monoteísta.'
+        'A corrupção da humanidade conduz a um julgamento abrangente, mas também à preservação de Noach e da sua família. A parashah desenvolve temas de justiça, sobrevivência, aliança, reconstrução, responsabilidade e formação das nações.',
+        'Bereshit 6:9 apresenta Noach como tzaddik e tamim na sua geração. Rashi, citando Sanhedrin 108a, preserva a conhecida discussão sobre a expressão “na sua geração”: pode ser entendida como elogio — mesmo naquela geração ele era justo — ou como relativização — se tivesse vivido numa geração de justos, poderia ter sido ainda maior.',
+        'Bereshit 6:11-13 caracteriza a terra como cheia de chamass e corrupção. Rashi, citando Sanhedrin 57a, destaca o roubo como o pecado decisivo que selou o julgamento da geração. A tradição rabínica atribui assim grande importância à violência económica e social, não apenas à idolatria ou à imoralidade.',
+        'As instruções relativas à teivah em Bereshit 6:14-16 são extremamente detalhadas. Rashi utiliza Midrash para explicar a função de elementos como o tsohar, enquanto Ramban procura compreender a arquitetura e a organização da arca também a partir das necessidades práticas da preservação da vida.',
+        'Bereshit 7 descreve a entrada na teivah e o avanço das águas. A narrativa alterna entre a experiência de Noach e uma descrição abrangente do julgamento da humanidade. A expressão utilizada para a duração do dilúvio e a progressão das águas receberam extensa análise de Rashi, Ibn Ezra e Ramban.',
+        'Bereshit 8 acompanha a diminuição das águas e a saída da teivah. Rashi explica a função das aves e a razão de Noach não sair imediatamente. Depois da saída, o primeiro ato de Noach é construir um mizbeach e oferecer korbanot, estabelecendo uma relação entre preservação e culto.',
+        'Bereshit 9:1-17 apresenta a aliança com Noach e a nova realidade da humanidade. O arco nas nuvens torna-se o sinal da aliança. Sanhedrin 56a-b desenvolve, numa perspetiva rabínica, a tradição das sheva mitzvot bnei Noach, relacionando a geração de Noach com um conjunto de responsabilidades universais.',
+        'Bereshit 9:18-29 apresenta a situação de Noach depois do dilúvio e a reação dos seus filhos. Rashi utiliza Bereshit Rabbah e outras fontes midráshicas para ampliar o episódio, enquanto Ramban procura manter a estrutura da narrativa e as consequências familiares do acontecimento.',
+        'Bereshit 10 apresenta a distribuição das famílias descendentes dos filhos de Noach. A lista mostra que a humanidade pós-dilúvio se diversifica em diferentes povos e territórios, preparando a narrativa da torre.',
+        'Bereshit 11:1-9 apresenta Bavel e a dispersão das línguas. Rashi, seguindo Bereshit Rabbah, interpreta a unidade da geração como parte de um projeto coletivo problemático. O texto termina com a dispersão e prepara a entrada numa nova etapa da história de Avraham.'
     ],
-    'Lech-Lecha': [
-        'O imperativo divino a Avram para abandonar sua terra natal, sua parentela e a casa paterna inaugura a jornada da fé monoteísta em direção à Terra Prometida, respaldada pela promessa de tornar-se uma grande nação.',
-        'Enfrentando a fome em Canaã e a subsequente passagem pelo Egito, a vivência de Avram revela a providência divina que o protege e enriquece, fortalecendo sua determinação moral.',
-        'Buscando a paz familiar, a separação nobre entre Avram e Lot demonstra o desprendimento do patriarca pelas riquezas materiais em favor da integridade moral.',
-        'Ao conduzir o heroico resgate militar dos reis da região, Avram recusa despojos e recebe a bênção de Melchizedek, rei de Shalém, reafirmando sua independência espiritual.',
-        'A solene Aliança dos Pedaços sela o destino futuro de seus descendentes, prevendo o exílio egípcio e a posterior libertação gloriosa, garantindo a posse perpétua da terra como herança divina.',
-        'Vivenciando o drama da esterilidade temporária, o casamento com Hagar e o nascimento de Yishmael introduzem a complexa dinâmica familiar e o cumprimento parcial da promessa genérica de descendência.',
-        'Elevando a estatura espiritual do casal, a renovação do pacto manifesta-se na mudança dos nomes para Avraham e Sara, no anúncio do nascimento de Yitzchak e no mandamento eterno da Brit Milá.',
-        'Gravada na carne como sinal perpétuo de santidade, a circuncisão de todos os homens da casa patriarcal consolida o vínculo físico e espiritual da aliança para as gerações vindouras.'
+
+    'Lech Lecha': [
+        'A saída de Avram da sua terra inicia uma nova fase da narrativa, marcada por promessas de descendência, terra e bênção. A parashah acompanha também deslocações, conflitos, alianças, família e o estabelecimento de sinais concretos dessa relação com D\'us.',
+        'Bereshit 12:1 apresenta o primeiro grande chamamento de Avram. Rashi, citando Bereshit Rabbah 39:8, interpreta “Lech Lecha” também como uma ordem para benefício de Avram, isto é, a sua saída não é apresentada apenas como renúncia, mas como caminho para aquilo que lhe será concedido.',
+        'Bereshit 12:2-3 associa Avram a uma promessa de grandeza e bênção. Ramban observa que as promessas possuem dimensões históricas concretas e futuras, enquanto Sforno enfatiza a posição espiritual de Avram como alguém através de quem o conhecimento de D\'us seria divulgado.',
+        'Bereshit 13:5-18 apresenta a separação entre Avram e Lot. Rashi explica que o conflito entre os pastores estava ligado às dimensões das suas posses e à necessidade de evitar uma disputa. Depois da separação, a promessa da terra é reafirmada de forma particularmente ampla (Rashi sobre Bereshit 13:7-17).',
+        'Bereshit 14 apresenta a guerra dos reis e o resgate de Lot. A atitude de Avram depois da vitória também recebe atenção: ele recusa a riqueza oferecida pelo rei de Sedom, afirmando que não quer que este possa dizer que foi ele quem enriqueceu Avram (Bereshit 14:21-24; Rashi sobre Bereshit 14:23).',
+        'Bereshit 15 apresenta a brit bein habetarim. Avram recebe uma promessa relativa à sua descendência e à terra. Rashi e Ramban discutem a estrutura da aliança, a visão noturna e as diferentes imagens que representam o futuro dos descendentes (Rashi e Ramban sobre Bereshit 15:7-18).',
+        'Bereshit 16 introduz Hagar e Yishmael dentro da família. O episódio desenvolve a tensão entre Sarai e Hagar e mostra que a promessa de descendência assume diferentes formas dentro da família de Avram.',
+        'Bereshit 17 estabelece a brit milah como sinal da aliança. Rashi explica diferentes elementos da transformação de Avram para Avraham e de Sarai para Sarah, enquanto Ramban desenvolve a natureza da milah como sinal permanente da aliança (Rashi e Ramban sobre Bereshit 17:1-14).',
+        'Sanhedrin 96b e Bereshit Rabbah apresentam tradições adicionais sobre Avraham e a sua relação com a idolatria do seu ambiente. Essas tradições contribuem para a imagem posterior de Avraham como alguém que procura reconhecer D\'us num mundo dominado por culto idolátrico.',
+        'A parashah estabelece assim a tríade que dominará grande parte da narrativa dos Avot: descendência, terra e aliança. Esses três elementos serão retomados repetidamente nas gerações seguintes.'
     ],
+
     'Vayera': [
-        'Manifestando a virtude suprema do acolhimento no calor do dia, Avraham recebe três viajantes celestiais, obtendo a revelação de que Sara conceberia o filho da promessa no ano seguinte.',
-        'Corajosamente advogando perante o Criador pelas cidades de Sedom e Amora, o patriarca estabelece um paradigma eterno de compaixão e defesa da justiça no diálogo com o divino.',
-        'Sob o peso do julgamento divino pela impiedade irremediável, Sedom e Amora são consumidas, enquanto Lot e suas filhas são resgatados da catástrofe por misericórdia angélica.',
-        'Refugiando-se nas cavernas após a destruição da planície, o episódio sombrio com as filhas de Lot resulta na origem ancestral das nações de Moav e Amon.',
-        'Cumprindo a palavra divina, o nascimento de Yitzchak e sua circuncisão ao oitavo dia trazem alegria, seguidos pela dolorosa separação de Yishmael para preservar a integridade da linhagem.',
-        'Pactuando a paz e o reconhecimento de direitos de poços com Avimelech em Beer Sheva, Avraham estabelece sua presença firme e o culto ao Deus Eterno na terra.',
-        'Culminando a jornada da fé de Avraham, o teste da Akeidá de Yitzchak no Monte Moriah demonstra a prontidão em oferecer o que tinha de mais precioso, sublimando a doação sem sacrifício humano.',
-        'Interrompida pelo brado do anjo e pela substituição do carneiro, a provação da Akeidá assegura a bênção irreversível sobre a descendência do patriarca para todas as eras.'
+        'A parashah apresenta Avraham perante hospitalidade, justiça, destruição, promessa, família e uma prova extrema. As narrativas colocam em tensão confiança em D\'us, responsabilidade perante outras pessoas e fidelidade às instruções recebidas.',
+        'Bereshit 18:1-15 apresenta Avraham junto aos carvalhos de Mamre e a chegada dos visitantes. Rashi, citando Bava Metzia 86b, explica que D\'us visita Avraham enquanto ele se encontra debilitado depois da brit milah e que Avraham interrompe a sua experiência de encontro divino para atender aos visitantes.',
+        'A hospitalidade é desenvolvida com enorme detalhe: água, lavagem dos pés, descanso, pão, carne e serviço. Rashi observa que Avraham promete pouco e faz muito mais, comportamento que se tornou um modelo clássico de hachnasat orchim.',
+        'Bereshit 18:16-33 apresenta Avraham a discutir a situação de Sedom. A série de perguntas sobre cinquenta, quarenta e cinco, quarenta, trinta, vinte e dez justos tornou-se uma das grandes passagens da tradição sobre justiça. Ramban analisa a questão dentro do conhecimento de Avraham e da justiça divina, enquanto Rashi utiliza Bereshit Rabbah para explicar o diálogo.',
+        'Bereshit 19:1-29 apresenta a chegada dos mensageiros a Sedom, a saída de Lot e a destruição das cidades. Rashi explica numerosos detalhes com base em Bereshit Rabbah, incluindo o caráter da cidade e a reação dos seus habitantes.',
+        'Bereshit 19:30-38 apresenta acontecimentos posteriores envolvendo Lot e as suas filhas. O texto estabelece genealogicamente Moav e Amon e cria uma ligação entre os acontecimentos da geração de Avraham e povos que aparecerão posteriormente na história de Israel.',
+        'Bereshit 21:1-21 apresenta finalmente o nascimento de Yitzchak e a saída de Hagar e Yishmael. Rashi e Ramban analisam a decisão relativa à casa de Sarah e o significado da promessa de que Yishmael também seria transformado numa grande nação.',
+        'Bereshit 22:1-19 apresenta a Akedat Yitzchak. Rashi, seguindo Sanhedrin 89b e vários midrashim, explica a progressão do teste e diferentes aspetos da comunicação entre D\'us e Avraham. Ramban dedica atenção especial à questão de como um teste pode beneficiar quem já sabe o resultado.',
+        'A expressão “Hineni” aparece repetidamente na narrativa. A tradição vê nela uma resposta de disponibilidade total perante aquele que chama. Bereshit Rabbah 56 desenvolve ainda a postura de Avraham e de Yitzchak durante o episódio.',
+        'A Akeidah tornou-se depois parte significativa da liturgia e da memória de Israel, especialmente no contexto de Rosh Hashanah. A sua presença posterior não altera o facto de o centro da narrativa ser a relação entre Avraham, Yitzchak e a prova recebida.'
     ],
-    'Chayei Sara': [
-        'Motivado pelo falecimento de Sara aos 127 anos, Avraham realiza a primeira aquisição legal de um território na Terra Prometida ao adquirir a Gruta de Machpelah em Hebron com inteira transparência.',
-        'Honrando a vida e o legado da primeira matriarca, o ritual de funeral e sepultamento de Sara estabelece a ligação física eterna da família patriarcal com a terra de Canaã.',
-        'Visando encontrar uma esposa virtuosa para Yitzchak fora da cultura idólatra local, Avraham envia seu fiel servo Eliezer numa missão sagrada e sob juramento a Aram Naharayim.',
-        'Testando a generosidade e a bondade espontânea das jovens, a oração de Eliezer é respondida junto ao poço pela atitude nobre de Rivka ao ofertar água ao servo e aos seus camelos.',
-        'Demonstrando coragem e determinação existencial, a declaração de Rivka em partir imediatamente com o servo reflete a fé necessária para abraçar o destino histórico de Yisrael.',
-        'Encontrando-se ao entardecer nos campos do Negev, a união entre Yitzchak e Rivka traz consolo pela perda de Sara e restaura a presença da bênção divina na tenda patriarcal.',
-        'Tomando Keturah por esposa e gerando novos descendentes, Avraham concede presentes às demais linhagens, garantindo que o legado primordial permanecesse integralmente com Yitzchak.',
-        'Concluindo uma trajetória monumental aos 175 anos, o sepultamento de Avraham por Yitzchak e Yishmael na Gruta de Machpelah celebra a reconciliação e a transição da liderança.'
+
+    'Chayei Sarah': [
+        'A morte de Sarah, a aquisição de Me\'arat HaMachpelah e a procura de uma esposa para Yitzchak estruturam a continuidade da família de Avraham. A parashah centra-se na passagem de uma geração para outra.',
+        'Bereshit 23:1-20 descreve a morte de Sarah e a negociação de Avraham com os filhos de Chet. A aquisição da caverna é realizada publicamente e com pagamento completo. Rashi e Ramban analisam o diálogo com Efron e a importância de a propriedade ser adquirida de maneira inequívoca.',
+        'Rashi sobre Bereshit 23:16 observa a diferença entre a oferta inicial de Efron e o preço que efetivamente é pago. A tradição utiliza o episódio para enfatizar a diferença entre generosidade verbal e compromisso concreto.',
+        'Bereshit 24 apresenta o servo de Avraham enviado para encontrar uma esposa para Yitzchak. A procura junto ao poço cria uma sequência cuidadosamente construída. Rashi comenta o comportamento do servo e várias das suas decisões, enquanto Bereshit Rabbah desenvolve o caráter de Rivkah.',
+        'A história do servo é repetida quase integralmente quando ele a relata à família de Rivkah. Bereshit Rabbah e Rashi chamam atenção para o espaço excepcional dedicado à repetição, desenvolvendo a ideia de que a conversa do servo possui importância narrativa especial.',
+        'Bereshit 24:60 contém a bênção dada a Rivkah pela sua família. A tradição posterior observa como diferentes elementos dessa bênção serão associados à construção da família de Israel.',
+        'Bereshit 24:67 apresenta Rivkah a tornar-se esposa de Yitzchak e a narrativa nota que Yitzchak é consolado pela perda da mãe. Rashi liga a presença de Rivkah ao desaparecimento e reaparecimento de determinadas características associadas à tenda de Sarah.',
+        'Bereshit 25:1-11 apresenta os últimos anos de Avraham e a sua morte. Yitzchak e Yishmael aparecem juntos no sepultamento. Rashi utiliza esta presença conjunta para desenvolver tradições sobre uma possível reconciliação entre os irmãos.',
+        'A compra de Me\'arat HaMachpelah torna-se a primeira propriedade em Kena\'an adquirida explicitamente por Avraham. A tradição posterior trata o local como um dos grandes pontos de ligação histórica dos Avot com a terra.'
     ],
+
     'Toldot': [
-        'Superando duas décadas de esterilidade pela oração fervorosa, a gravidez complexa de Rivka revela gêmeos no ventre que prenunciam conflitos entre nações futuras.',
-        'Rompendo com a igualdade visual do nascimento, a juventude de Esav voltada à caça contrasta com a dedicação de Yaakov ao estudo e à integridade espiritual nas tendas.',
-        'Desprezando os deveres sagrados da família por um prato de lentilhas vermelhas, a venda da primogenitura por Esav evidencia o fosso de valores entre os dois irmãos.',
-        'Renovando a bênção patriarcal durante a fome, a permanência de Yitzchak em Gerar e a reabertura pacífica dos poços cavados por Avraham comprovam sua resiliência espiritual.',
-        'Confrontado pela hostilidade dos filisteus, o pacto de não agressão firmado entre Yitzchak e Avimelech estabelece a pacificação definitiva da região de Beer Sheva.',
-        'Guiado pelo discernimento profético de Rivka, a obtenção da bênção paternal por Yaakov assegura a continuidade da liderança espiritual da promessa.',
-        'Refletindo a ira de Esav diante da perda da bênção, a recomendação materna força Yaakov a empreender uma fuga estratégica rumo à casa de Lavan em Padan Aram.',
-        'Encerrando a porção com preocupação exogâmica, a ordem de Yitzchak a Yaakov para não tomar esposa cananeia sela o destino de sua jornada em busca da linhagem santa.'
+        'A família de Yitzchak passa a ocupar o centro da narrativa através do nascimento de Esav e Yaakov, da diferença entre os irmãos, das dificuldades de Yitzchak na terra e da transmissão da bênção.',
+        'Bereshit 25:19-26 apresenta Rivkah sem filhos e a oração de Yitzchak. A resposta recebida sobre os dois povos no seu ventre é interpretada por Rashi através de Bereshit Rabbah como uma visão do futuro conflito entre diferentes comunidades.',
+        'Bereshit 25:27-34 apresenta a venda da bekhorah. Rashi explica a situação de Esav ao regressar do campo e relaciona o desprezo pela primogenitura com a sua atitude perante aquilo que não parecia produzir benefício imediato.',
+        'Sanhedrin 62a e outras fontes desenvolvem a discussão sobre a natureza da bekhorah e sobre as consequências espirituais do desprezo de Esav. A tradição posterior vê o episódio como uma questão de prioridades e não apenas como uma troca de comida.',
+        'Bereshit 26 apresenta Yitzchak em Gerar e a repetição de alguns padrões associados a Avraham. Rashi explica as razões para a fome e para a proteção de Yitzchak, enquanto Ramban observa a importância de manter a promessa apesar das dificuldades externas.',
+        'Os poços de Yitzchak tornam-se tema de atenção dos comentaristas. Ramban vê nos nomes e conflitos relacionados com os poços mais do que simples incidentes económicos, interpretando-os também como preparação simbólica para acontecimentos futuros.',
+        'Bereshit 27 apresenta a bênção de Yitzchak. Rashi e Midrash desenvolvem os elementos do engano, da roupa de Esav, da voz de Yaakov e das reações de Yitzchak. Ramban procura analisar como Yitzchak poderia ter compreendido ou não a identidade do filho.',
+        'A bênção de Yaakov termina por produzir uma transformação irreversível na situação familiar. Esav procura obter outra bênção, mas a estrutura da narrativa mostra que a questão central já foi decidida.',
+        'A parashah termina preparando a saída de Yaakov e a próxima fase da sua vida. O conflito familiar passa a estar ligado também ao movimento físico de Yaakov para fora da casa dos seus pais.'
     ],
+
     'Vayetzei': [
-        'Iluminando a jornada solitária de Yaakov em Beit El, a visão monumental da escada celestial com anjos subindo e descendo traz a promessa divina de proteção incondicional.',
-        'Encontrando Rachel junto ao poço em Padan Aram, o choro emocionado de Yaakov marca o início de vinte anos de trabalho dedicado sob a tutela do astuto Lavan.',
-        'Submetido à troca encoberta de Rachel por Lea na noite de núpcias, Yaakov vivencia o mistério da providência divina que tece a estrutura das matriarcas de Yisrael.',
-        'Florescendo em meio às rivalidades domésticas, o nascimento sucessivo dos filhos de Lea, Bilha e Zilpa constrói a fundação das doze tribos da nação.',
-        'Concretizando a promessa da maternidade a Rachel, o nascimento de Yosef renova as forças espirituais de Yaakov para buscar sua independência de Lavan.',
-        'Prosperando mediante sabedoria e ética no pastoreio, a riqueza alcançada por Yaakov desperta o ciúme dos filhos de Lavan e assinala o fim do ciclo mesopotâmico.',
-        'Partindo secretamente com sua família e rebanhos, a fuga de Yaakov culmina no confronto verbal com Lavan e na busca frustrada pelos ídolos domésticos roubados por Rachel.',
-        'Selando a separação definitiva através de um monumento de pedras em Gilad, a pactuação de paz entre Yaakov e Lavan estabelece a fronteira inviolável entre seus povos.'
+        'A saída de Yaakov da terra dos seus pais inicia um período de formação familiar e económica marcado pelo encontro com Rachel e Leah, pela relação com Lavan e pelo crescimento da família que dará origem às tribos de Israel.',
+        'Bereshit 28:10-22 apresenta o sonho da escada. Rashi explica que os anjos que subiam e desciam correspondem à mudança de proteção associada à saída de Yaakov da terra e à entrada num novo território. Ramban desenvolve também a dimensão profética da visão.',
+        'A promessa recebida em Bet-El retoma a linguagem utilizada anteriormente com Avraham e Yitzchak. Ramban observa a continuidade da promessa da terra e da descendência, enquanto Sforno enfatiza a proteção necessária durante o percurso.',
+        'Bereshit 29:1-30 apresenta o encontro com Rachel junto ao poço e o trabalho de Yaakov por ela. A troca realizada por Lavan demonstra uma nova situação de engano que espelha, de maneira complexa, experiências anteriores de Yaakov.',
+        'Rashi comenta a relação entre a fraude de Lavan e a experiência de Yaakov com Esav. A tradição rabínica nota que Yaakov é colocado numa situação em que experimenta sobre si uma forma de comportamento semelhante àquela que anteriormente utilizou.',
+        'Bereshit 29:31-35 apresenta os primeiros filhos de Leah. Rashi dedica atenção especial aos nomes e à esperança de Leah de conquistar o amor de Yaakov.',
+        'Bereshit 30:1-24 acompanha a expansão da família através de Leah, Rachel, Bilhah e Zilpah. Os nomes dos filhos transformam as experiências das mães numa memória incorporada à identidade das futuras tribos.',
+        'Bereshit 30:25-43 descreve a negociação económica entre Yaakov e Lavan. Ramban analisa o desenvolvimento da riqueza de Yaakov e os meios utilizados para estabelecer uma separação financeira entre ambos.',
+        'Bereshit 31 apresenta a decisão de Yaakov de regressar a Kena\'an. A partida ocorre depois de uma mudança no comportamento de Lavan e de uma ordem divina para regressar. Rashi comenta a presença dos terafim e o conflito familiar subsequente.',
+        'O final da parashah estabelece uma separação formal entre Yaakov e Lavan. O acordo entre ambos procura impedir novas hostilidades e fecha um capítulo decisivo da formação de Yaakov.'
     ],
+
     'Vayishlach': [
-        'Articulando preparação militar, diplomacia humilde e fervorosa oração, Yaakov estrutura a estratégia para o reencontro com Esav e seus quatrocentos homens.',
-        'Enfrentando a luta noturna contra o anjo no vau de Yabok, o patriarca emerge vitorioso e ferido na coxa, sendo coroado com o nome glorioso de Yisrael.',
-        'Desarmando a hostilidade através do abraço emocional e da entrega de generosos presentes, o reencontro entre Yaakov e Esav restaura temporariamente a paz fraterna.',
-        'Fixando residência nas proximidades de Shechem, a aquisição de terras e a construção de um altar marcam o assentamento de Yaakov no coração de Canaã.',
-        'Tragada pelo ultraje cometido contra Dina por Shechem, a crise familiar resulta na vingança violenta e zelosa promovida por Shimon e Levi contra a cidade.',
-        'Repudiando a violência dos filhos e expurgando os ídolos estrangeiros do acampamento, Yaakov lidera a comitiva em retorno solene ao altar de Beit El.',
-        'Enlutando a jornada rumo a Hebron, o nascimento de Binyamin culmina com a morte de Rachel na estrada de Efrat e seu sepultamento em Betlem.',
-        'Concluindo o ciclo patriarcal da segunda geração, o reencontro de Yaakov e Esav para o sepultamento de Yitzchak na Gruta de Machpelah celebra o respeito filial final.'
+        'O regresso de Yaakov coloca-o novamente diante de Esav e conduz a acontecimentos que envolvem luta, reconciliação, família, violência, mudança de identidade e consolidação da sua presença na terra.',
+        'Bereshit 32:4-22 apresenta a preparação de Yaakov para o encontro com Esav. Rashi, citando Bereshit Rabbah 75:2, apresenta três estratégias: preparação para a guerra, oração e envio de presentes. A tradição torna esta sequência um modelo de prudência.',
+        'Bereshit 32:23-33 descreve a luta noturna junto ao Yabok. Rashi identifica o adversário através da tradição de Bereshit Rabbah e Chullin 91a, associando-o ao sar de Esav. A luta culmina na mudança do nome Yaakov para Yisrael.',
+        'A nova identidade não elimina o nome Yaakov. A tradição rabínica desenvolve posteriormente a relação entre os dois nomes e os diferentes contextos em que cada um é utilizado.',
+        'Bereshit 33 apresenta o encontro com Esav. Rashi comenta o beijo, o abraço e diferentes formas de compreender a sinceridade do momento, incluindo a conhecida discussão rabínica sobre se Esav tentou morder Yaakov ou se o encontro foi genuinamente reconciliador.',
+        'Bereshit 34 apresenta o episódio de Dinah. Ramban desenvolve uma análise extensa da resposta de Shimon e Levi e das ações dos habitantes de Shechem, discutindo também as responsabilidades políticas e jurídicas dos envolvidos.',
+        'Bereshit 35 apresenta o regresso a Bet-El, a morte de Rachel ao dar à luz Binyamin e a morte de Yitzchak. Rashi observa a importância de Bet-El dentro da trajetória de Yaakov e a continuidade da promessa.',
+        'A narrativa de Rachel e Binyamin também altera a estrutura da família. Rachel morre, mas o seu segundo filho torna-se uma das futuras tribos de Israel.',
+        'A genealogia de Esav em Bereshit 36 encerra a parashah ampliando a narrativa para além da família de Yaakov. Edom é apresentado como uma realidade nacional própria, que continuará a aparecer na Tanakh.'
     ],
+
     'Vayeshev': [
-        'Destacando a afeição predileta de Yaakov por Yosef através da túnica listrada, a dinâmica familiar é abalada pela inveja e pelo ciúme dos irmãos.',
-        'Aprofundando o ressentimento fraterno, o compartilhamento dos sonhos proféticos de Yosef sobre os feixes de trigo e os astros sugere sua futura liderança sobre a casa.',
-        'Conspirando contra a vida do jovem em Shechem, os irmãos lançam Yosef em uma cova vazia e decidem vendê-lo a uma caravana de mercadores a caminho do Egito.',
-        'Mergulhando Yaakov em um luto inconsolável, a apresentação da túnica manchada com sangue de bode forja a falsa morte do filho amado.',
-        'Chegando ao Egito como escravo, a compra de Yosef por Potifar, oficial da guarda do Faraó, marca o início da providência divina na terra do exílio.',
-        'Intercalando a narrativa patriarcal, o episódio de Yehuda e Tamar revela a providência oculta que preservou a linhagem real e messiânica em meio a provações morais.',
-        'Resistindo com firmeza inabalável às seduções diárias da esposa de Potifar, a integridade de Yosef custa-lhe a liberdade ao ser injustamente encarcerado.',
-        'Demonstrando dom profético na prisão real, Yosef interpreta com precisão os sonhos do copeiro e do padeiro, permanecendo porém esquecido no cárcere.'
+        'A família de Yaakov entra numa fase marcada por favoritismo, sonhos, rivalidade e separação. A história de Yosef começa a desenvolver-se através de acontecimentos que alteram profundamente a relação entre os irmãos.',
+        'Bereshit 37:1-11 apresenta Yosef como filho especialmente amado por Yaakov. Rashi observa a influência da relação especial entre Yaakov e Yosef e a importância da roupa que lhe é dada, enquanto Shabbat 10b utiliza a situação como advertência contra o favoritismo parental.',
+        'Os sonhos de Yosef introduzem uma dimensão de antecipação. Rashi interpreta os elementos do sonho através de Midrash, enquanto Ramban observa que os sonhos possuem uma relação concreta com acontecimentos futuros dentro da narrativa.',
+        'Bereshit 37:12-36 acompanha Yosef enviado pelos irmãos. A tradição rabínica discute as razões pelas quais Yaakov o envia apesar do perigo e analisa o comportamento dos irmãos. Ramban procura reconstruir as decisões que levaram à venda de Yosef.',
+        'Bereshit 38 introduz a história de Yehudah e Tamar. Rashi e Ramban discutem especialmente a decisão de Yehudah, a identidade de Tamar e o momento em que Yehudah reconhece a sua responsabilidade.',
+        'Bereshit 39 apresenta Yosef na casa de Potifar. A recusa diante da esposa de Potifar tornou-se um modelo clássico de resistência à tentação. Rashi utiliza Midrash para explicar as circunstâncias, incluindo a pressão sobre Yosef.',
+        'A prisão de Yosef cria uma situação aparentemente oposta à prosperidade que anteriormente começava a alcançar. Ramban observa a progressão da história e a forma como cada descida prepara uma futura subida.',
+        'Bereshit 40 apresenta Yosef a interpretar os sonhos do copeiro e do padeiro. Yosef insiste que a interpretação pertence a D\'us, estabelecendo uma característica que será fundamental na parashah seguinte.',
+        'A expressão “e lembrou-se, mas esqueceu-se dele” encerra a parashah. Rashi e Midrash desenvolvem a ideia de que a salvação de Yosef não deveria ocorrer ainda, preparando a viragem que virá através dos sonhos de Par\'oh.'
     ],
+
     'Miketz': [
-        'Transcorridos dois anos de esquecimento no cárcere, a convocação urgente de Yosef perante o Faraó ocorre para desvendar os enigmáticos sonhos das vacas e espigas.',
-        'Revelando sabedoria divina, a interpretação de Yosef prevê sete anos de fartura seguidos por sete anos de fome, acompanhada de um plano econômico de estocagem.',
-        'Elevado instantaneamente ao cargo de vice-rei do Egito, Yosef assume a administração suprema do império, recebendo anel, vestes de linho e o nome de Tsafnat Paneach.',
-        'Consolidando sua vida pessoal na corte, o casamento com Asnat e o nascimento dos filhos Menashe e Efrayim simbolizam a reconstrução de sua trajetória no Egito.',
-        'Atingindo toda a região mediterrânea, a fome global força as nações e os irmãos de Yosef a descerem ao Egito em busca de mantimentos.',
-        'Confrontando os irmãos sem ser reconhecido, Yosef adota uma postura severa, acusando-os de espionagem para iniciar um processo de retificação moral.',
-        'Exigindo a presença do irmão caçula Binyamin como prova de veracidade, Yosef retém Shimon como refém e devolve o dinheiro nos sacos de trigo.',
-        'Culminando no enigma da taça de prata oculta na bagagem de Binyamin, o cerco dramático de Yosef coloca os irmãos diante do teste supremo de fidelidade fraterna.'
+        'Os sonhos de Par\'oh transformam a posição de Yosef e colocam-no no centro da administração do Mitzrayim. Ao mesmo tempo, a fome conduz os seus irmãos até ele e começa a criar as condições para um reencontro.',
+        'Bereshit 41:1-36 apresenta os sonhos de Par\'oh. Rashi interpreta as vacas e as espigas através da linguagem económica do Egito e explica a repetição dos sonhos como confirmação da certeza do acontecimento previsto.',
+        'Yosef atribui a D\'us a capacidade de interpretar os sonhos. Sforno destaca a humildade desta resposta, enquanto Ramban observa a relação entre a interpretação e a providência divina.',
+        'A proposta administrativa de Yosef em Bereshit 41:33-36 vai além da simples interpretação. Ele apresenta um plano concreto de armazenamento e gestão. Rashi e Ramban discutem por que motivo a interpretação inclui também uma solução prática.',
+        'A ascensão de Yosef apresenta uma transformação externa radical: roupa nova, posição, nome e autoridade. Rashi comenta vários destes elementos como sinais da nova posição do personagem.',
+        'Bereshit 42 apresenta os irmãos a descerem ao Mitzrayim. Yosef reconhece-os e eles não o reconhecem. Rashi e Ramban discutem como os sonhos anteriores influenciam a forma como Yosef reage ao encontro.',
+        'Yosef exige a presença de Binyamin. A decisão provoca grande tensão na casa de Yaakov e coloca novamente em evidência a diferença entre a geração dos irmãos e a relação especial entre Yaakov e os filhos de Rachel.',
+        'Bereshit 43 apresenta o regresso dos irmãos com Binyamin. A reação de Yosef ao vê-lo demonstra uma dimensão emocional que contrasta com a sua postura pública perante os outros irmãos.',
+        'Bereshit 44 termina com a taça colocada no saco de Binyamin e a nova acusação. A parashah prepara o discurso de Yehudah e não resolve ainda a questão central entre Yosef e os seus irmãos.'
     ],
+
     'Vayigash': [
-        'Discursando com coragem e nobreza, a alocução de Yehuda em defesa de Binyamin oferece sua própria escravidão para poupar o sofrimento do pai Yaakov.',
-        'Rompendo em lágrimas diante da transformação ética dos irmãos, Yosef revela sua verdadeira identidade e perdoa a traição passada como plano da providência.',
-        'Despachando carruagens e suprimentos abundantes, o vice-rei convida toda a família patriarcal a migrar para o Egito a fim de escapar da fome devastadora.',
-        'Recebendo a notícia inacreditável de que Yosef vivia e governava, o espírito de Yaakov renasce, motivando sua imediata decisão de empreender a viagem.',
-        'Abençoado pelo Criador em Beer Sheva durante a noite, Yaakov recebe a confirmação divina para descer ao Egito com a promessa de se tornar uma grande nação.',
-        'Contabilizando setenta almas da casa de Yisrael, a comitiva patriarcal estabelece-se na fértil província de Goshen sob a proteção da corte.',
-        'Protagonizando um reencontro emocionante em Goshen, o abraço entre Yaakov e Yosef sela a restauração da unidade familiar após décadas de separação.',
-        'Administrando a crise agrária com maestria, Yosef centraliza a propriedade das terras egípcias no Faraó, garantindo o sustento e a autonomia de seu povo.'
+        'A intervenção de Yehudah perante Yosef muda a direção da narrativa e abre caminho à reconciliação familiar, à revelação da identidade de Yosef e à descida de Yaakov e da sua casa para o Mitzrayim.',
+        'Bereshit 44:18-34 apresenta o discurso de Yehudah. Ele descreve a relação entre Yaakov e Binyamin e oferece-se em lugar do irmão. Rashi e Ramban veem nesta fala um momento decisivo de responsabilidade e liderança.',
+        'Yehudah não ameaça Yosef diretamente; procura persuadi-lo através da situação de Yaakov e do impacto da perda de Binyamin. O discurso é cuidadosamente construído para mostrar que o problema não é apenas o castigo de um irmão, mas a sobrevivência emocional de um pai.',
+        'Bereshit 45:1-15 apresenta a revelação de Yosef. Yosef interpreta a sua história através da providência: a venda aconteceu por ação dos irmãos, mas D\'us utilizou os acontecimentos para preservar vidas. Ramban dedica atenção especial à relação entre responsabilidade humana e providência em Bereshit 45:5-8.',
+        'A interpretação de Yosef não absolve os irmãos de responsabilidade. O texto mantém simultaneamente a culpa pelos atos cometidos e a possibilidade de esses atos terem produzido consequências que ultrapassam a intenção original.',
+        'Bereshit 46:1-27 apresenta Yaakov a receber a confirmação divina antes de descer ao Mitzrayim. Rashi explica o significado da visão em Be\'er Sheva e a razão pela qual Yaakov precisa de receber uma confirmação antes da viagem.',
+        'A descida ao Mitzrayim é acompanhada pela lista dos descendentes de Yaakov. Rashi e Ramban analisam diferenças de contagem e as razões pelas quais determinadas pessoas são incluídas na genealogia.',
+        'Bereshit 47:1-12 descreve a instalação da família em Goshen. Yosef apresenta os seus irmãos perante Par\'oh e consegue para eles um território adequado à sua atividade pastoril.',
+        'Bereshit 47:13-27 acompanha a administração de Yosef durante a fome. A estrutura económica do Egito altera-se profundamente, e Ramban analisa as consequências políticas da concentração da terra e dos recursos nas mãos do faraó.'
     ],
+
     'Vayechi': [
-        'Desfrutando de dezessete anos de paz em Goshen, a velhice de Yaakov culmina no juramento solene exigido de Yosef para não ser sepultado no solo egípcio.',
-        'Elevando os netos Efrayim e Menashe ao status de tribos independentes, Yaakov cruza os braços na bênção profética, favorecendo a primazia do irmão mais novo.',
-        'Reunindo os doze filhos ao redor do leito de morte, o patriarca projeta visões proféticas sobre o caráter, o território e o destino histórico de cada tribo.',
-        'Conferindo o cetro de liderança e a promessa messiânica a Yehuda, as palavras finais de Yaakov estabelecem a hegemonia política de sua descendência.',
-        'Expirando em serenidade após abençoar a nação, a morte de Yaakov motiva um luto de estado de setenta dias e a mumificação honrosa segundo o costume egípcio.',
-        'Conduzindo um monumental cortejo fúnebre do Egito até Canaã, Yosef e seus irmãos sepultam o pai na Gruta de Machpelah ao lado de Avraham e Yitzchak.',
-        'Tranquilizando o temor dos irmãos quanto a uma possível vingança pós-morte do pai, Yosef reafirma seu perdão sincero e a visão da bondade divina.',
-        'Profetizando a futura redenção e o retorno do povo à Terra Prometida, Yosef faz a comunidade jurar que levaria seus ossos ao saírem do Egito.'
+        'Os últimos anos de Yaakov e Yosef fecham o livro de Bereshit através de bênçãos, despedidas, sucessão e memória. A atenção passa das vidas individuais para o futuro coletivo das tribos.',
+        'Bereshit 47:28-31 apresenta Yaakov a aproximar-se do fim da sua vida e a pedir a Yosef que não o sepulte no Mitzrayim. Rashi e Ramban desenvolvem as razões relacionadas com a terra e com a tradição familiar.',
+        'Bereshit 48 apresenta Yaakov a adotar Efraim e Menasheh. Rashi explica que Yaakov lhes confere uma posição equivalente à de seus próprios filhos, o que terá consequências na estrutura das tribos.',
+        'A preferência de Efraim sobre Menasheh é consciente. Rashi enfatiza que Yaakov não se enganou ao cruzar as mãos, enquanto Ramban procura compreender o significado da bênção e da futura posição de Efraim.',
+        'Bereshit 49 apresenta as palavras de Yaakov aos seus filhos. Rashi recorre extensamente a Midrash para explicar metáforas e alusões, enquanto Ibn Ezra e Ramban procuram frequentemente desenvolver o sentido contextual e histórico.',
+        'A bênção de Yehudah em Bereshit 49:8-12 tornou-se particularmente importante pela linguagem de liderança. Ramban associa o texto à futura posição da casa de Yehudah, enquanto Rashi desenvolve várias tradições sobre o conteúdo da bênção.',
+        'A referência a “Shiloh” em Bereshit 49:10 recebeu interpretações divergentes entre os comentaristas. Rashi e Ramban apresentam leituras diferentes e a tradição posterior discute extensamente a relação entre o versículo e a liderança futura.',
+        'Bereshit 50 apresenta o sepultamento de Yaakov em Me\'arat HaMachpelah. Yosef regressa ao Mitzrayim e os irmãos receiam que a atitude de Yosef mude depois da morte do pai.',
+        'Yosef responde que aquilo que os irmãos intentaram para o mal, D\'us encaminhou para o bem. Rashi e Ramban analisam esta declaração como um dos exemplos clássicos da relação entre ação humana e providência.',
+        'O livro termina com Yosef a pedir que os seus ossos sejam levados quando D\'us visitar Israel. A frase prepara diretamente o tema da saída que dominará Shemot.'
     ],
 
-    // Shemot - Êxodo
     'Shemot': [
-        'Iniciando uma nova era política no Egito, a ascensão de um Faraó que desconhecia a história de Yosef deflagra a escravidão sistemática do povo hebreu.',
-        'Desafiando os decretos infanticidas da corte, a coragem temente a Deus das parteiras Shifrá e Puá preserva a vida dos meninos recém-nascidos.',
-        'Resgatado das águas do Nilo pela filha do Faraó, o bebê Moshe é criado no palácio real sem perder a consciência de sua identidade ancestral.',
-        'Intervindo em defesa de um irmão hebreu agredido, Moshe mata o opressor egípcio e vê-se forçado a fugir para o deserto de Midian após a descoberta do ato.',
-        'Acolhido pelo sacerdote Yitro em Midian, Moshe casa-se com Tzipora e passa a atuar como pastor de rebanhos na solidão do deserto.',
-        'Revelando-se na sarça ardente no Monte Horeb, o Criador comissiona Moshe para liderar a libertação de Yisrael e manifesta Seu Nome Sagrado.',
-        'Vencendo a hesitação e a falta de eloquência com o apoio de seu irmão Aharon, Moshe aceita a missão profética e retorna ao solo egípcio.',
-        'Confrontando o Faraó pela primeira vez com o mandamento de libertação, a recusa do tirano resulta no agravamento imediato da carga de trabalho do povo.'
+        'O crescimento dos descendentes de Yaakov no Mitzrayim conduz à opressão, ao nascimento e formação de Moshe e ao início da missão que levará Israel para fora da escravidão.',
+        'Shemot 1:1-7 apresenta os nomes dos filhos de Yaakov e o crescimento da população. Rashi chama atenção para a repetição dos nomes como sinal do amor de D\'us por Israel e da importância individual de cada membro da família.',
+        'Shemot 1:8-14 apresenta um novo faraó que transforma a multiplicação de Israel numa questão política. Rashi desenvolve a discussão talmúdica sobre se o faraó era literalmente novo ou se renovou os decretos do anterior, enquanto Sforno observa a lógica política da opressão.',
+        'As parteiras Shifrah e Puah resistem à ordem de matar os recém-nascidos. Rashi identifica tradicionalmente Shifrah e Puah com Yocheved e Miriam, enquanto Sotah 11b desenvolve a sua coragem e a recompensa recebida.',
+        'Shemot 2 apresenta o nascimento de Moshe e a sua colocação no rio. Rashi e Shemot Rabbah desenvolvem vários elementos da narrativa, incluindo a participação da irmã de Moshe e a ligação entre a preservação do bebé e a intervenção da sua família.',
+        'Moshe cresce na casa do faraó mas continua ligado ao sofrimento do seu povo. O episódio em que vê um egípcio atacar um hebreu em Shemot 2:11-15 torna-se o primeiro momento explícito da sua identificação com Israel.',
+        'Depois da fuga para Midyan, Moshe forma uma nova família. O encontro junto ao poço e a sua relação com Yitro preparam a fase em que Moshe receberá a missão de regressar ao Egito.',
+        'Shemot 3 apresenta a sarça ardente. Rashi utiliza Midrash para explicar por que razão a sarça arde sem ser consumida e por que razão D\'us escolhe esse lugar para revelar a Moshe a missão de libertar Israel.',
+        'Shemot 3:13-15 apresenta a questão do nome divino. Rashi e Ibn Ezra discutem a expressão e a sua relação com o conhecimento que Moshe deveria transmitir ao povo.',
+        'Shemot 4 apresenta as hesitações de Moshe, os sinais concedidos e a entrada de Aharon como seu porta-voz. A parashah termina com os anciãos de Israel a receberem a mensagem de libertação.'
     ],
+
     'Vaera': [
-        'Reiterando a aliança estabelecida com os patriarcas, a palavra divina proclama as quatro expressões de redenção para renovar a esperança da comunidade.',
-        'Apresentando a genealogia detalhada das tribos de Reuven, Shimon e Levi, o texto consolida a linhagem sacerdotal e a autoridade de Moshe e Aharon.',
-        'Transformando o cajado de Aharon em serpente diante do Faraó, os líderes hebreus superam o primeiro desafio contra os magos da corte egípcia.',
-        'Deflagrando a primeira praga com o golpe do cajado no Nilo, as águas do Egito convertem-se em sangue, exterminando a vida aquática do rio sagrado.',
-        'Infestando os palácios e as habitações egípcias, a segunda praga das rãs força o Faraó a suplicar temporariamente pela intercessão de Moshe.',
-        'Manifestando a impotência dos magos egípcios diante da terceira praga dos piolhos, os próprios sacerdotes pagãos reconhecem o dedo de Deus.',
-        'Distingindo a província de Goshen da devastação provocada pela quarta praga dos insetos, a proteção divina isola o povo hebreu do julgamento.',
-        'Arrasando a economia egípcia com a mortandade do gado, as feridas na pele e a tempestade de granizo e fogo, as pragas revelam a soberania divina.'
+        'A missão de Moshe é reafirmada e as primeiras pragas começam a demonstrar perante o Egito e Israel que a libertação anunciada está ligada à intervenção direta de D\'us.',
+        'Shemot 6:2-8 retoma Avraham, Yitzchak e Yaakov e apresenta as promessas de libertação através de uma sequência de expressões. Rashi explica o contraste entre as formas de revelação recebidas pelos patriarcas e a nova etapa de redenção anunciada a Moshe.',
+        'Shemot 6:9 apresenta Israel a não escutar Moshe por causa da sua falta de espírito e da dureza da servidão. Sforno interpreta esta dificuldade como consequência do sofrimento psicológico causado pela escravidão.',
+        'A genealogia de Shemot 6:14-27 situa Moshe e Aharon dentro da tribo de Levi. Rashi explica por que motivo a Torá interrompe a narrativa para apresentar a genealogia precisamente neste momento.',
+        'Shemot 7 apresenta o confronto inicial entre Moshe, Aharon e Par\'oh. O sinal da vara e a reação dos magos egípcios iniciam uma série em que a capacidade limitada dos magos contrasta com o poder de D\'us.',
+        'Rashi utiliza Midrash para interpretar diferentes elementos das primeiras pragas, enquanto Ramban enfatiza a função das pragas na demonstração de que D\'us governa a natureza e a história.',
+        'A distinção entre Goshen e o restante Egito torna-se particularmente evidente em algumas pragas. Ramban utiliza essas diferenças para explicar que os acontecimentos não devem ser entendidos simplesmente como fenómenos naturais generalizados.',
+        'As pragas da água, rãs, piolhos, animais selvagens, peste, úlceras e granizo aumentam progressivamente a pressão sobre Par\'oh. O texto mantém, porém, a sua resistência até ao final da parashah.',
+        'Shemot 9:13-16 contém uma declaração particularmente importante sobre o objetivo do processo: mostrar o poder de D\'us e fazer o Seu nome conhecido. A tradição rabínica e os comentaristas utilizam esses versículos para compreender por que razão o processo não termina imediatamente.',
+        'A parashah termina com uma situação em que Par\'oh reconhece temporariamente a gravidade de determinado acontecimento, mas volta a endurecer a sua atitude. O conflito permanece aberto.'
     ],
+
     'Bo': [
-        'Devorando o que restou das colheitas após o granizo, a oitava praga dos gafanhotos reduz o império egípcio à completa ruína agrícola.',
-        'Mergulhando o Egito em uma escuridão espessa e palpável por três dias, a nona praga contrasta com a luz contínua presente nas moradas de Yisrael.',
-        'Instituindo o calendário bíblico a partir do mês de Nissan, o mandamento divino estabelece a renovação mensal como marco da liberdade.',
-        'Orientando a imolação do cordeiro pascal e a aspersão do sangue nos umbrais das portas, Yisrael prepara-se para a noite da redenção.',
-        'Atingindo mortalmente os primogênitos egípcios à meia-noite, a décima praga quebra a obstinação do Faraó, que expulsa o povo naquela mesma noite.',
-        'Encerrando quatrocentos e trinta anos de permanência no Egito, seiscentos mil homens a pé iniciam a marcha da libertação carregando despojos.',
-        'Levando os ossos de Yosef em cumprimento ao antigo juramento, a comitiva de Yisrael deixa a terra da escravidão em direção ao deserto.',
-        'Perpetuando a memória do Êxodo através dos tempos, a Torá ordena a consagração dos primogênitos, o uso dos Tefilin e a celebração de Pessach.'
+        'As últimas pragas aproximam a narrativa da saída do Mitzrayim e introduzem instruções fundamentais sobre Pessach, o primeiro mês, a memória da libertação e a educação das gerações seguintes.',
+        'Shemot 10:1-2 explica que os acontecimentos deveriam ser contados aos filhos e netos. Rashi observa que a memória das pragas não tem apenas função histórica, mas também educativa.',
+        'A praga dos gafanhotos apresenta o Egito perante uma destruição agrícola crescente. O próprio ambiente político do faraó muda quando os seus servos começam a pressioná-lo para deixar Israel partir.',
+        'Shemot 10:21-29 apresenta a escuridão. Rashi e Ramban discutem a natureza dessa praga e o contraste com a luz existente nas habitações dos filhos de Israel.',
+        'Shemot 11 anuncia a morte dos primogénitos e prepara a última etapa. Moshe é novamente apresentado como alguém cuja autoridade perante o faraó cresce progressivamente.',
+        'Shemot 12:1 estabelece Aviv como “Rosh Chodashim”. Rashi considera esta uma instrução de importância fundamental para Israel como povo, porque o calendário torna-se imediatamente ligado à redenção.',
+        'Shemot 12:3-14 estabelece o korban Pessach, incluindo a escolha do cordeiro, a preparação, o sangue e a refeição. Rashi e Ramban desenvolvem o significado da prática como memória permanente da libertação.',
+        'Shemot 12:15-20 apresenta as leis de chametz e matzah. Rashi e Ibn Ezra discutem as expressões utilizadas e a relação entre a pressa da saída e o pão não fermentado.',
+        'Shemot 12:26-27 apresenta a pergunta futura dos filhos sobre o serviço de Pessach. A tradição rabínica, especialmente Mekhilta e Pesachim 116b, desenvolve este texto como fundamento da educação e da narrativa de Pessach.',
+        'Shemot 13:1-16 apresenta a consagração dos primogénitos e a obrigação de recordar a saída do Egito. A memória da redenção passa a estar incorporada em práticas familiares e corporais.'
     ],
+
     'Beshalach': [
-        'Guiando o povo pelo caminho do deserto e evitando a rota dos filisteus, a Providência manifesta-se pela coluna de nuvem de dia e de fogo à noite.',
-        'Vendo-se encurralado entre a frota de carruagens do Faraó e as margens do Mar Vermelho, o povo clama em desespero diante da ameaça iminente.',
-        'Estendendo o cajado profético sobre as águas, Moshe contempla o grande milagre da divisão do mar, permitindo a travessia do povo em solo seco.',
-        'Fechando as águas sobre o exército perseguidor, a ruína das forças egípcias resulta no livramento definitivo da tirania do Faraó.',
-        'Entoando o Cântico do Mar, Moshe e Miriam lideram a comunidade em uma efusão sublime de louvor, fé e exaltação à salvação divina.',
-        'Adoçando as águas amargas de Mara através do arremesso de uma madeira indicada por Deus, a primeira prova no deserto ensina a obediência às leis.',
-        'Fornecendo o Maná celestial diariamente e o poço de água, o sustento divino educa o povo no cultivo da confiança diária e no repouso do Shabbat.',
-        'Derrotando o ataque covarde de Amaleque em Rephidim, a vitória de Yehoshua é assegurada pelas mãos erguidas de Moshe em oração no topo do monte.'
+        'A saída do Egito é seguida pela travessia do Yam Suf, pelo Shirat HaYam e pelos primeiros desafios do deserto. Israel começa a experimentar uma existência em que dependência, alimentação, liderança e confiança são testadas continuamente.',
+        'Shemot 13:17-22 explica que D\'us não conduz Israel pelo caminho mais curto. Rashi apresenta diferentes razões para essa decisão, incluindo a possibilidade de o povo regressar perante uma guerra. A rota torna-se parte do processo de formação de Israel.',
+        'Shemot 14 apresenta a situação perante o Yam Suf. Rashi e Mekhilta desenvolvem as diferentes reações das tribos diante do mar. A tradição de Nachshon ben Aminadav entrando na água antes da divisão tornou-se uma das interpretações mais conhecidas do episódio (Sotah 36b-37a).',
+        'O Shirat HaYam em Shemot 15 é uma leitura poética da libertação. Ibn Ezra analisa a sua linguagem e estrutura, enquanto Rashi utiliza Midrash para explicar numerosas expressões.',
+        'Miriam aparece novamente como líder em Shemot 15:20-21. A participação das mulheres no cântico mostra que a experiência nacional de libertação não é apresentada exclusivamente através de Moshe e dos homens.',
+        'Shemot 15:22-27 apresenta Marah e Elim. Rashi interpreta as palavras relativas a “estatuto e julgamento” como referência a determinadas leis ensinadas naquele momento, embora Ramban desenvolva outras possibilidades.',
+        'Shemot 16 apresenta o maná. Rashi relaciona a recolha diária com a necessidade de confiar em D\'us, enquanto Ramban dedica atenção ao carácter extraordinário do alimento e à experiência educativa que representava.',
+        'A regra do sexto dia e do sétimo dia em relação ao maná é uma das bases narrativas importantes para a compreensão da preparação para Shabbat. A tradição rabínica desenvolve extensamente esta passagem em Shabbat 117b-118b.',
+        'Shemot 17 apresenta a falta de água em Refidim e o ataque de Amalek. Rashi e Mekhilta analisam a relação entre o estado espiritual do povo e a vulnerabilidade demonstrada perante Amalek.',
+        'A parashah termina com Yehoshua a conduzir a batalha enquanto Moshe permanece numa posição elevada. O episódio apresenta pela primeira vez uma geração que terá de aprender a lutar e a confiar simultaneamente.'
     ],
+
     'Yitro': [
-        'Reunindo-se com Moshe no acampamento do deserto, a chegada de Yitro trazendo a esposa e os filhos do líder motiva um sacrifício de gratidão a Deus.',
-        'Observando a rotina exaustiva de atendimento judicial, Yitro aconselha Moshe a descentralizar a liderança através de juízes capazes e íntegros.',
-        'Chegando ao deserto do Sinai no terceiro mês, a nação hebreia acampa diante da montanha sagrada como um só homem com um só coração.',
-        'Exigindo três dias de preparação e purificação pessoal, a comunidade delimita as fronteiras do monte para receber a revelação da Torá.',
-        'Estremecendo a criação com trovões, relâmpagos e o som estridente do shofar, o Monte Sinai é coberto pela fumaça da Glória Divina.',
-        'Proclamando diretamente a toda a assembleia os Dez Mandamentos, a voz divina estabelece os pilares da fé monoteísta e da moralidade universal.',
-        'Suplicando por mediação profética diante do terror da manifestação, o povo pede que Moshe fale em lugar da voz direta do Criador.',
-        'Proibindo a confecção de ídolos de prata ou ouro, a seção encerra-se com as instruções para a construção de um altar de terra não lavrada.'
+        'A organização da liderança e a revelação no Sinai deslocam a narrativa da libertação para a formação de uma sociedade sob uma aliança e um sistema de mandamentos.',
+        'Shemot 18 apresenta Yitro a chegar depois de ouvir aquilo que D\'us fez a Israel. Rashi e Mekhilta preservam diferentes interpretações sobre o acontecimento que levou Yitro a chegar ao acampamento.',
+        'O conselho de Yitro em Shemot 18:13-27 introduz uma estrutura de juízes e autoridades. Rashi observa a adequação entre as capacidades dos líderes e os diferentes níveis de responsabilidade, enquanto Ramban desenvolve a dimensão administrativa do sistema.',
+        'A chegada ao Sinai em Shemot 19:1-8 estabelece Israel como povo perante D\'us. A expressão “Mamlechet kohanim ve-goy kadosh” recebeu interpretações de Ibn Ezra, Ramban e Sforno sobre o estatuto e a missão coletiva de Israel.',
+        'Shemot 19:9-15 descreve a preparação do povo. Rashi explica os limites estabelecidos em torno da montanha e a importância da preparação ritual antes da revelação.',
+        'Shemot 20 apresenta os Aseret HaDibrot. Rashi fornece explicações baseadas no Talmud e Midrash, enquanto Ibn Ezra e Ramban oferecem diferentes leituras linguísticas e conceptuais dos mandamentos.',
+        'O Shabbat em Shemot 20:8-11 é associado à criação, enquanto Devarim 5:12-15 irá associá-lo também à saída do Egito. Os comentaristas discutem a complementaridade entre as duas formulações.',
+        'A proibição da idolatria em Shemot 20:3-6 é tratada por Rashi e Ramban através de diferentes distinções entre ter outras divindades, criar imagens e prestar-lhes culto.',
+        'Shemot 20:18-23 apresenta a reação do povo ao Sinai e a aproximação de Moshe à escuridão onde D\'us se encontrava. O encontro prepara as leis que serão desenvolvidas em Mishpatim.',
+        'A estrutura da parashah cria assim uma transição entre experiência nacional e sistema jurídico: Israel foi libertado, reunido e agora recebe uma estrutura para viver como povo da aliança.'
     ],
+
     'Mishpatim': [
-        'Detalhando a legislação civil e social imediatamente após os Dez Mandamentos, o código inicia-se regulando os direitos e a alforria dos servos hebreus.',
-        'Estabelecendo a severidade do sistema penal, as leis punem com rigor o homicídio doloso, o sequestro, o desrespeito aos pais e as agressões físicas.',
-        'Protegendo a integridade patrimonial, as ordenanças fixam restituições financeiras para danos causados por fogo, animais soltos ou roubo de bens.',
-        'Defendendo as camadas vulneráveis da sociedade, a Torá proíbe severamente a opressão de viúvas, órfãos e estrangeiros, e proíbe a cobrança de juros.',
-        'Garantindo a imparcialidade do sistema judiciário, as normas vetam o suborno, o testemunho falso e a inclinação para favorecer ricos ou pobres.',
-        'Estruturando a vida agrícola e comunitária, o texto reitera o descanso do ano Sabático da terra e a observância das três festas de peregrinação.',
-        'Prometendo a condução angélica até a Terra Prometida, a aliança condiciona o sucesso militar à erradicação completa das práticas idólatras cananeias.',
-        'Ratificando o pacto com sacrifícios e a leitura do Livro da Aliança, o povo proclama "Faremos e Ouviremos", antes de Moshe subir o monte por 40 dias.'
+        'Depois da revelação no Sinai, a parashah transforma princípios da aliança em leis concretas sobre propriedade, danos, escravidão, justiça, responsabilidade social, festas e culto.',
+        'Shemot 21:1-6 começa com leis relativas ao servo hebreu. Rashi nota a proximidade desta lei com o Sinai e o Talmud Kiddushin 20a desenvolve a importância de o servo não ser tratado como simples propriedade.',
+        'Shemot 21:12-36 apresenta diferentes formas de lesão e responsabilidade. A tradição talmúdica em Bava Kamma desenvolve profundamente categorias de dano que terão origem nestes princípios.',
+        'As leis do boeh e do animal que causa danos mostram que a responsabilidade pode resultar tanto de ação como de negligência. O sistema jurídico posterior da Mishnah e do Talmud desenvolve estes casos em categorias técnicas.',
+        'Shemot 22:1-14 apresenta roubo, restituição, empréstimos e custódia. Rashi comenta as diferenças entre guardiões e as condições em que existe obrigação de pagar.',
+        'Shemot 22:20-26 apresenta várias proteções para pessoas vulneráveis e repete a experiência de Israel no Egito como fundamento moral para o tratamento do ger. Rashi e Ramban observam a força da memória histórica neste conjunto de leis.',
+        'Shemot 23:1-9 apresenta testemunho, justiça e proibição de suborno. Ibn Ezra e Ramban analisam a linguagem jurídica e a necessidade de impedir que a posição social influencie a sentença.',
+        'Shemot 23:10-19 apresenta shemittah, Shabbat e as três ocasiões de peregrinação. O calendário é integrado na estrutura económica e religiosa da comunidade.',
+        'Shemot 24:1-8 descreve a formalização da aliança e a leitura das palavras perante o povo. A expressão “Naaseh ve-Nishma” recebe interpretação famosa em Shabbat 88a como sinal de aceitação confiante da vontade divina.',
+        'Shemot 24:9-18 termina com Moshe a subir ao Sinai durante quarenta dias e quarenta noites, preparando a próxima secção de instruções sobre o Mishkan.'
     ],
+
     'Terumah': [
-        'Convocando contribuições voluntárias do coração de cada indivíduo, o mandamento divino ordena a coleta de materiais nobres para a construção do Tabernáculo.',
-        'Projetando a Arca da Aliança revestida de ouro puro por dentro e por fora, o design inclui o propiciatório e os Querubins esculpidos de cujas asas emanaria a voz divina.',
-        'Especificando a confecção da Mesa dos Pães da Proposição em madeira de acácia coberta de ouro, o móvel simboliza a fartura e a sustentação material.',
-        'Esculpindo a Menorá de ouro puro batido com seus sete braços e decorações de amêndoa, o candelabro representa a luz espiritual do Santuário.',
-        'Formando a cobertura do Mishkan com cortinas de linho fino trançado e fios de azul, púrpura e carmesim, a estrutura física expressa beleza e harmonia.',
-        'Unindo as tábuas verticais de acácia cobertas de ouro através de travessões e bases de prata, o Santuário é projetado como uma morada desmontável e móvel.',
-        'Erguendo o Altar de Bronze no pátio externo para a oferta de sacrifícios, a estrutura oca de madeira revestida de metal é equipada com utensílios e grelha.',
-        'Delimitando o pátio do Tabernáculo com colunas de bronze e cortinas de linho, o espaço sagrado estabelece gradações claras de aproximação divina.'
+        'As instruções para o Mishkan apresentam um espaço cuidadosamente ordenado onde o serviço, os objetos sagrados e a presença divina estarão organizados segundo medidas e funções específicas.',
+        'Shemot 25:1-9 começa pela recolha de uma terumah proveniente de pessoas cujo coração as move a contribuir. Rashi e Ramban discutem a natureza da contribuição e o significado da frase “Ve-Asu Li Mikdash”.',
+        'Rashi e Bereshit Rabbah interpretam o Mishkan como continuação ou resposta à experiência do Sinai, enquanto Ramban vê uma relação profunda entre o Mishkan e a presença divina que acompanha Israel depois da revelação.',
+        'Shemot 25:10-22 apresenta a Aron HaEdut. Rashi comenta o seu formato e a presença dos keruvim, enquanto Ramban desenvolve a relação entre a Aron, a Torá e a manifestação da Shechinah.',
+        'Shemot 25:23-30 apresenta a Shulchan. As características do pão colocado sobre ela recebem posteriormente atenção haláchica e simbólica.',
+        'Shemot 25:31-40 apresenta a Menorah. Rashi e Ramban discutem a sua construção e a relação entre a luz física e o espaço sagrado.',
+        'Shemot 26 descreve as cortinas, tábuas, bases e divisões do Mishkan. Sforno observa que a estrutura produz diferentes níveis de aproximação ao espaço sagrado.',
+        'Shemot 27:1-8 apresenta o Mizbeach HaOlah. As suas medidas e utensílios são especificados porque o serviço não depende apenas de intenção, mas de uma forma definida.',
+        'Shemot 27:9-19 apresenta o pátio. O conjunto de instruções demonstra que até os limites exteriores do espaço possuem organização própria.',
+        'Shemot 27:20-21 estabelece o azeite para a Menorah, ligando a manutenção da luz ao serviço regular dos kohanim.'
     ],
+
     'Tetzaveh': [
-        'Determinando o fornecimento contínuo de azeite puro de oliva batido, a ordem garante o acendimento perpétuo da Menorá como sinal da presença divina.',
-        'Instituindo o vestuário sagrado para Aharon e seus filhos, o comando visa conferir dignidade, esplendor e representatividade ao serviço sacerdotal.',
-        'Tecendo o Efod com fios de ouro, azul, púrpura e carmesim, a vestimenta inclui duas pedras de ónix nos ombros gravadas com os nomes das doze tribos.',
-        'Confeccionando o Peitoral do Julgamento com doze pedras preciosas distintas, o Sumo Sacerdote carrega a memória do povo continuamente sobre o coração.',
-        'Inserindo o Urim e Tummim no Peitoral, o mecanismo de consulta profética orienta as decisões cruciais da liderança em momentos de crise nacional.',
-        'Moldando a túnica azul com campainhas de ouro e romãs na barra, o som do movimento do Cohen no Santuário adverte sobre a gravidade da aproximação.',
-        'Gravando a inscrição "Santidade ao Criador" na lâmina de ouro da tiara sacerdotal, a peça purifica as ofertas da comunidade perante o altar.',
-        'Descrevendo o ritual de sete dias para a ordenação sacerdotal e a confecção do Altar de Incenso de ouro, o texto encerra a rotina de adoração diária.'
+        'A parashah aprofunda a organização do serviço do Mishkan através do azeite, das vestes de Aharon e dos seus filhos, da consagração sacerdotal e do altar do incenso.',
+        'Shemot 27:20-21 estabelece o azeite puro para a Menorah. Rashi distingue o azeite utilizado para acender a luz daquele que poderia ser utilizado para outros fins.',
+        'Shemot 28:1-5 introduz Aharon e os seus filhos como kohanim e estabelece as vestes sagradas. A aparência exterior é apresentada como parte integrante da função sacerdotal.',
+        'Shemot 28:6-30 apresenta o efod e o Choshen. Os nomes das tribos aparecem nas pedras e o Urim ve-Tumim é associado pelo texto à função de resposta divina. Rashi e Ramban discutem vários detalhes da sua estrutura.',
+        'O Choshen é levado sobre o coração de Aharon. Os comentaristas observam a ligação simbólica entre liderança sacerdotal e responsabilidade por todo Israel.',
+        'Shemot 28:31-43 apresenta o me\'il, a tsits e outras peças. Rashi desenvolve detalhes sobre os sinos e o significado de a voz de Aharon ser ouvida quando entra e sai do espaço sagrado.',
+        'Shemot 29 apresenta a consagração de Aharon e dos seus filhos. Rashi descreve a sequência ritual, enquanto Ramban analisa a relação entre unção, sacrifício e estabelecimento do sacerdócio.',
+        'Shemot 29:38-46 estabelece a oferta diária e termina com uma declaração de que D\'us habitará no meio de Israel. A conclusão liga o serviço sacerdotal à presença divina.',
+        'Shemot 30:1-10 apresenta o Mizbeach HaKetoret. A sua posição diante da Parokhet relaciona o incenso com o espaço mais interior do Mishkan.',
+        'A estrutura da parashah transforma o Mishkan de construção estática em sistema vivo: luz, sacerdócio, vestes, ofertas e encontro com D\'us fazem parte do mesmo serviço.'
     ],
+
     'Ki Tisa': [
-        'Determinando a arrecadação da meia moeda de prata como censo comunitário, a regra estabelece a igualdade de todos os israelitas perante o resgate espiritual.',
-        'Moldando a pia de bronze a partir dos espelhos das mulheres para a purificação de mãos e pés, o ritual assegura a pureza física dos sacerdotes.',
-        'Formulando o azeite da unção sagrada e a mistura aromática do incenso, o texto proíbe o uso profano dessas composições exclusivas do Santuário.',
-        'Designando Bezalel da tribo de Yehuda e Oholiab da tribo de Dan, o Espírito Divino concede-lhes sabedoria artística para executar a obra do Mishkan.',
-        'Reiterando a observância do Shabbat mesmo durante a construção do Tabernáculo, o descanso semanal é reafirmado como sinal eterno da aliança.',
-        'Cedendo à impaciência pela ausência de Moshe no monte, a comitiva exige a fabricação do Bezerro de Ouro, mergulhando o acampamento na idolatria.',
-        'Quebrando as primeiras tábuas da lei ao presenciar a dança idólatra, Moshe lidera a purificação do acampamento através da ação zelosa dos levitas.',
-        'Intercedendo apaixonadamente pelo perdão do povo e contemplando as Costas Divinas, Moshe recebe os Treze Atributos da Misericórdia e as segundas tábuas.'
+        'A parashah combina recenseamento, serviço do Mishkan, Shabbat, o bezerro de ouro, intercessão de Moshe e renovação da aliança, criando uma das maiores crises e restaurações de Shemot.',
+        'Shemot 30:11-16 estabelece o meio-shekel. Rashi explica que não se trata de uma contagem direta de pessoas, mas de uma contribuição associada à expiação e ao serviço.',
+        'Shemot 31:1-11 apresenta Betzalel e Oholiav como responsáveis pelo trabalho artístico. Rashi, citando Berachot 55a, desenvolve a ideia de que Betzalel sabia combinar letras através das quais os céus e a terra tinham sido criados.',
+        'Shemot 31:12-17 apresenta novamente o Shabbat. Rashi e Ramban discutem a prioridade do Shabbat relativamente à construção do Mishkan, sendo a relação posteriormente desenvolvida em Shabbat 97b.',
+        'Shemot 32 apresenta o Egel HaZahav. Rashi e Midrash discutem a origem do pedido por uma imagem, o papel da multidão e a reação de Aharon.',
+        'Moshe desce com as tábuas e reage ao acontecimento. Rashi e Ramban apresentam diferentes leituras sobre a quebra das tábuas e sobre a razão pela qual Moshe decide fazê-lo.',
+        'Shemot 32:11-14 apresenta a intercessão de Moshe. Ele argumenta com base no nome de D\'us entre as nações e na promessa feita aos antepassados. Esta passagem tornou-se central para a tradição sobre tefilah em tempos de crise.',
+        'Shemot 33 apresenta a questão da presença divina. Moshe recusa avançar sem uma garantia da presença de D\'us. Rashi e Ramban desenvolvem a linguagem de “panim” e a relação entre presença, conhecimento e favor.',
+        'Shemot 34 apresenta as novas tábuas e a proclamação dos atributos de misericórdia. Rashi utiliza Rosh Hashanah 17b e tradições anteriores para explicar as middot de rachamim.',
+        'A parashah termina com Moshe a descer do Sinai com o rosto transformado. Rashi e Ramban discutem a origem do brilho e a razão pela qual Moshe passa a utilizar um véu.'
     ],
+
     'Vayakhel': [
-        'Reunindo toda a assembleia de Yisrael, Moshe abre a convocação reiterando o dever estrito de respeitar o repouso do Shabbat antes das obras materiais.',
-        'Apresentando a lista detalhada de matérias-primas e utensílios necessários para o Tabernáculo, o líder convida o povo à doação voluntária de coração.',
-        'Respondendo com entusiasmo extraordinário, homens e mulheres trazem joias, tecidos, peles e metais em quantidade superior ao necessário para a obra.',
-        'Emitindo um comunicado oficial para cessar as doações, os mestres artesãos confirmam a generosidade transbordante e exemplar da comunidade.',
-        'Supervisionando o trabalho sob a liderança de Bezalel e Oholiab, os artesãos tecem as cortinas de linho e montam a estrutura de tábuas de acácia.',
-        'Fabricando a Arca da Aliança com seu propiciatório de ouro e os Querubins, a equipe de artífices concretiza o núcleo do Sanctum Sanctorum.',
-        'Moldando a Mesa dos Pães, a Menorá de sete braços e o Altar de Incenso coberto de ouro, os utensílios do Lugar Santo ganham forma física.',
-        'Fundindo o Altar de Bronze para os sacrifícios e a pia purificadora, os trabalhadores concluem a confecção do pátio externo do Tabernáculo.'
+        'A construção do Mishkan passa da instrução à execução. A parashah mostra a comunidade a contribuir, os artesãos a trabalhar e a obra a avançar segundo a ordem recebida.',
+        'Shemot 35:1-3 começa com Shabbat. Rashi interpreta a ordem como indicação de que o trabalho do Mishkan não autoriza a realização de melachah no sétimo dia. Esta relação tornou-se fundamento para a tradição das trinta e nove melachot.',
+        'Shemot 35:4-29 descreve homens e mulheres a trazerem materiais. Rashi e Midrash destacam a generosidade da comunidade e a variedade das contribuições.',
+        'As mulheres são descritas como trazendo trabalho artesanal com grande capacidade. Rashi sobre Shemot 35:25 utiliza a linguagem do texto para desenvolver a participação das mulheres no trabalho do Mishkan.',
+        'Shemot 35:30-35 apresenta Betzalel e Oholiav. Rashi relaciona a sua sabedoria ao entendimento da intenção divina e ao conhecimento necessário para executar diferentes áreas do Mishkan.',
+        'Shemot 36:1-7 apresenta uma situação incomum: o povo contribui tanto que Moshe precisa pedir que cesse a recolha. A abundância de materiais demonstra o grau de participação comunitária.',
+        'Shemot 36-38 apresenta a execução de cortinas, tábuas, Aron, Shulchan, Menorah, Mizbeach e pátio. A repetição com Terumah demonstra que aquilo que foi ordenado foi realmente construído.',
+        'Ramban considera a repetição importante porque confirma a execução integral da estrutura anteriormente prescrita. A parashah não é apenas uma repetição ornamental, mas o registo da realização.',
+        'A construção do Mishkan também transforma a comunidade num agente coletivo: Israel não recebe simplesmente um santuário pronto, mas participa materialmente da sua construção.'
     ],
+
     'Pekudei': [
-        'Apresentando uma prestação de contas rigorosa e pública, Moshe detalha o peso exato do ouro, prata e bronze doados e empregados na construção.',
-        'Confeccionando as vestes sacerdotais de Aharon e seus filhos em conformidade com as ordens divinas, a equipe conclui a tecelagem do Peitoral e Efod.',
-        'Entregando toda a obra concluída à inspeção de Moshe, o líder verifica o cumprimento escrupuloso das especificações celestiais e abençoa o povo.',
-        'Recebendo a ordem divina no primeiro dia do mês de Nissan, Moshe procede à montagem definitiva das estruturas e posicionamento dos móveis.',
-        'Ungindo o Tabernáculo e seus utensílios com o óleo sagrado, Moshe realiza a consagração solene do espaço e a instalação dos sacerdotes.',
-        'Posicionando os Pães da Proposição e acendendo as lâmpadas da Menorá, o serviço ritual é inaugurado oficialmente pelo próprio Moshe.',
-        'Cobrindo a Tenda da Revelação com a Nuvem Sagrada, a Glória do Criador preenche o Tabernáculo de modo que nem mesmo Moshe podia entrar.',
-        'Encerrando o livro de Êxodo, a presença da nuvem de dia e do fogo à noite sobre o Tabernáculo passa a guiar todas as jornadas de Yisrael no deserto.'
+        'A obra do Mishkan é contabilizada e concluída, as vestes sacerdotais são finalizadas e a presença divina passa a ocupar o santuário. A parashah encerra Shemot com a realização concreta daquilo que foi ordenado.',
+        'Shemot 38:21-31 apresenta a contagem dos materiais. Rashi e Ramban discutem a necessidade de prestar contas da prata, do cobre e do ouro utilizados.',
+        'A prestação de contas demonstra que a santidade não elimina responsabilidade administrativa. Os materiais oferecidos pela comunidade são tratados com transparência e organização.',
+        'Shemot 39 apresenta as vestes de Aharon e dos kohanim. Repetidamente aparece a fórmula segundo a qual fizeram “como D\'us ordenou a Moshe”. Rashi observa a importância dessa repetição como confirmação de fidelidade.',
+        'Shemot 39:32-43 descreve a entrega de toda a obra a Moshe. Moshe examina os elementos e abençoa os trabalhadores quando vê que tudo foi realizado conforme a ordem.',
+        'Shemot 40:1-16 apresenta as instruções finais para a montagem. Os objetos do Mishkan são colocados em ordem e Aharon e os seus filhos são preparados para o serviço.',
+        'Shemot 40:17-33 descreve a montagem efetiva no primeiro dia do primeiro mês do segundo ano. O texto acompanha passo a passo a instalação dos objetos.',
+        'Shemot 40:34-38 apresenta a nuvem cobrindo o Mishkan e a glória de D\'us enchendo o santuário. Rashi e Ramban discutem a relação entre a nuvem e a capacidade de Israel avançar.',
+        'A conclusão de Shemot transforma a libertação num ciclo completo: Israel saiu do Egito, recebeu a aliança, construiu o Mishkan e passou a viajar sob a orientação da presença divina.'
     ],
 
-    // Vayikra - Levítico
     'Vayikra': [
-        'Chamando Moshe do interior da Tenda da Revelação, a voz divina inaugura a legislação sobre as ofertas voluntárias que o indivíduo pode apresentar.',
-        'Detalhando a oferta Olah de gado, ovelhas ou aves, o ritual exige a elevação espiritual do homem através da queima total do animal sobre o altar.',
-        'Apresentando a oferta Mincha de flor de farinha, azeite e incenso, o sacrifício expressa a devoção humilde daqueles que ofertam de seus parcos recursos.',
-        'Regulando a oferta Shelamim de paz, o ritual promove a comunhão comunitária ao dividir a refeição entre o altar divino, o sacerdote e o ofertante.',
-        'Estipulando a oferta Chatat para faltas involuntárias, a lei estabelece graus de expiação específicos para o Sumo Sacerdote, o Sanhedrin, o rei ou o cidadão.',
-        'Exigindo a oferta Asham de reparação para transgressões contra bens sagrados ou fraude interpessoal, o ritual exige a devolução do principal com acréscimo.',
-        'Enfatizando a intenção do coração na aproximação com o Criador, os sacrifícios são apresentados como instrumentos de refazimento do vínculo espiritual.',
-        'Vetando o fermento e o mel nas oferendas de farinha, a norma exige a presença constante do sal como sinal perpétuo da aliança em todos os sacrifícios.'
+        'A abertura de Vayikra introduz diferentes categorias de korbanot e começa a explicar como Israel e os kohanim se aproximam de D\'us através do serviço do Mishkan.',
+        'Vayikra 1 apresenta a olah. Rashi explica vários detalhes dos procedimentos, enquanto Ramban dedica uma longa introdução ao significado dos korbanot e à necessidade de compreender a relação entre aproximação, arrependimento e serviço.',
+        'Vayikra 2 apresenta a minchah, uma oferta baseada em farinha, azeite e outros elementos. Rashi desenvolve diferentes formas da oferta e as proibições de determinados ingredientes.',
+        'Vayikra 3 apresenta o shelamim. O korban permite uma participação diferente do ofertante na refeição e cria uma dimensão de paz e comunhão associada à oferta.',
+        'Vayikra 4 apresenta a chatat para diferentes categorias de pessoas e diferentes situações de pecado não intencional. A posição da pessoa afeta o procedimento a realizar.',
+        'Vayikra 5 apresenta casos adicionais de chatat e diferentes possibilidades económicas. A legislação mostra que a incapacidade financeira não elimina a possibilidade de cumprir a estrutura da expiação.',
+        'Vayikra 5:14-26 apresenta a asham. Ramban distingue entre tipos de transgressão e enfatiza a dimensão de restituição quando a pessoa causou dano.',
+        'Vayikra 6-7 desloca a atenção para os kohanim e os procedimentos do altar. O fogo deve permanecer aceso e as diferentes ofertas possuem regras específicas de consumo e tratamento.',
+        'Sifra de Vayikra desenvolve extensamente as leis destas primeiras secções e tornou-se uma das grandes bases da tradição haláchica sobre korbanot.',
+        'A parashah estabelece desde o começo que o serviço do Mishkan não depende apenas de intenção interior: exige procedimentos, categorias, tempo, santidade, pessoas e objetos definidos.'
     ],
+
     'Tzav': [
-        'Dirigindo-se diretamente a Aharon e seus filhos, o texto instrui os Kohanim sobre as tarefas operacionais e os turnos de manutenção do altar.',
-        'Ordenando a conservação do fogo no altar de modo contínuo, a lei proíbe expressamente que a chama sagrada se apague em qualquer momento.',
-        'Regulando o ritual diário de remoção das cinzas do altar, o sacerdote deve vestir roupas simples de linho para transportar o resíduo fora do acampamento.',
-        'Estipulando as regras para o consumo das porções das ofertas de farinha e de pecado que cabem aos sacerdotes, a norma exige pureza e local sagrado.',
-        'Fixando prazos rigorosos para o consumo da oferta de agradecimento, o texto proíbe a ingestão da carne de sacrifícios além do limite de tempo estipulado.',
-        'Reiterando a proibição absoluta de consumir qualquer tipo de sangue ou gordura animal, a lei estabelece a pena de exclusão para o infrator.',
-        'Ungindo Aharon e seus filhos durante o ritual de sete dias de ordenação, Moshe verte o óleo sagrado e aplica o sangue dos sacrifícios em seus corpos.',
-        'Permanecendo na entrada da Tenda da Revelação por sete dias consecutivos, a família sacerdotal conclui o período de consagração ao serviço divino.'
+        'As instruções dirigidas especialmente aos kohanim aprofundam a forma como as ofertas devem ser mantidas, preparadas e consumidas, enquanto a consagração sacerdotal começa a ganhar forma prática.',
+        'Vayikra 6:1-6 estabelece que o fogo do Mizbeach deve permanecer aceso continuamente. Rashi observa que a ordem de colocar lenha, manter o fogo e retirar as cinzas possui uma sequência precisa.',
+        'A minchah dos kohanim em Vayikra 6 recebe tratamento especial. O Kohen que apresenta uma oferta de farinha possui regras diferentes das de um israelita comum.',
+        'Vayikra 6:17-30 apresenta regras da chatat. O local onde o korban é comido, a forma de cozinhar e o contacto dos recipientes com a carne recebem consequências haláchicas posteriormente desenvolvidas em Zevachim.',
+        'Vayikra 7:1-10 apresenta a asham e especifica as porções destinadas ao altar e aos kohanim. O texto demonstra novamente que diferentes korbanot possuem diferentes estruturas.',
+        'Vayikra 7:11-21 apresenta o shelamim e distingue o korban de todah de outras formas de shelamim. A restrição temporal para comer a carne recebe atenção especial da tradição rabínica.',
+        'Vayikra 7:22-27 apresenta a proibição do sangue e de certas gorduras. Sifra e Zevachim desenvolvem posteriormente a aplicação detalhada destas leis.',
+        'Vayikra 8 apresenta a consagração de Aharon e dos seus filhos. Moshe lava, veste, unge e oferece korbanot em relação aos sacerdotes.',
+        'Rashi interpreta a sequência da consagração através das instruções recebidas em Shemot 29, enquanto Ramban observa a relação entre a parashah e a inauguração do Mishkan.',
+        'A parashah termina preparando a manifestação pública do serviço sacerdotal que será descrita em Shemini.'
     ],
-    'Shmini': [
-        'Culminando no oitavo dia da inauguração do Santuário, a manifestação da Glória Divina é coroada pela descida de um fogo celestial que consome as ofertas.',
-        'Oferecendo fogo estranho não ordenado perante o Criador, os filhos de Aharon, Nadav e Avihu, são consumidos por uma labareda divina no interior do recinto.',
-        'Impondo silêncio resignado a Aharon diante da tragédia familiar, Moshe instrui a comunidade sobre a gravidade da santidade no serviço do Altar.',
-        'Proibindo os sacerdotes de consumirem vinho ou bebidas alcoólicas antes de entrarem no Santuário, a norma exige discernimento claro entre o santo e o profano.',
-        'Apresentando os critérios de Kashrut para animais terrestres, a lei permite apenas as espécies que possuem cascos fendidos e que ruminam.',
-        'Exigindo a presença simultânea de barbatanas e escamas para a permissão de espécies aquáticas, o texto proíbe o consumo de frutos do mar e crustáceos.',
-        'Listando vinte espécies de aves abomináveis e proibidas, a norma veta aves de rapina e de hábitos carnívoros na dieta do povo hebreu.',
-        'Alertando contra o contato com os cadáveres de répteis e insetos rastejantes, o texto estabelece normas de purificação de utensílios e vestes.'
+
+    'Shemini': [
+        'A inauguração do serviço de Aharon, a manifestação da glória divina, a morte de Nadav e Avihu e as leis sobre animais permitidos e proibidos introduzem temas de santidade, limites e discernimento.',
+        'Vayikra 9 apresenta o primeiro serviço de Aharon. Depois das ofertas, a glória de D\'us aparece perante o povo. Rashi e Sifra desenvolvem o significado da inauguração e da participação comunitária.',
+        'Vayikra 10:1-7 apresenta Nadav e Avihu a oferecerem um fogo estranho. Rashi, citando várias fontes talmúdicas e midráshicas, apresenta diferentes interpretações sobre o que exatamente fizeram de errado.',
+        'Sanhedrin 52a e Vayikra Rabbah desenvolvem várias opiniões sobre os pecados de Nadav e Avihu, incluindo decisões não autorizadas e questões relativas ao seu estado naquele momento. A tradição deixa claro que os Sábios não reduziram o episódio a uma única explicação.',
+        'Vayikra 10:8-11 apresenta a proibição de entrar no serviço sob o efeito de vinho e estabelece a obrigação de distinguir entre sagrado e profano, puro e impuro.',
+        'Vayikra 11 apresenta os sinais dos animais terrestres, aquáticos e aves permitidos. Rashi explica vários vocábulos e Sifra desenvolve as consequências haláchicas.',
+        'A distinção alimentar não é apresentada como uma lista arbitrária: Vayikra 11:44-47 relaciona-a com a santidade e com a separação de Israel.',
+        'Devarim 14 apresenta novamente parte das regras alimentares e confirma a sua presença na legislação posterior de Israel.',
+        'A parashah termina transformando santidade em discernimento: é necessário reconhecer diferenças entre o permitido e o proibido, entre o serviço adequado e o inadequado e entre aquilo que é sagrado e aquilo que não é.'
     ],
+
     'Tazria': [
-        'Estabelecendo o ciclo de purificação espiritual da mulher após o parto, a Torá destaca o valor da vida e o processo de restauração da força vital.',
-        'Reafirmando o mandamento da Brit Milá ao oitavo dia de vida do recém-nascido masculino, a lei marca a inclusão da criança na aliança patriarcal.',
-        'Diagnosticando a aflição de Tsaraat manifestada por manchas na pele, a Torá atribui ao sacerdote a tarefa exclusiva de examinar e declarar a impureza.',
-        'Impondo o isolamento temporário do indivíduo afetado fora dos limites do acampamento, a medida visa promover o autoexame moral e o arrependimento.',
-        'Exigindo que o Metzora habite só, com vestes rasgadas e cabelo desgrenhado, o ritual adverte os transeuntes sobre sua condição de impureza.',
-        'Estendendo o diagnóstico de Tsaraat às vestuários de lã, linho ou peças de couro, a infestação revela a influência espiritual sobre o meio material.',
-        'Queimando as peças de vestuário quando a praga de Tsaraat se mostra persistente, a norma previne a proliferação da impureza na comunidade.',
-        'Enfatizando a raiz espiritual da enfermidade associada ao discurso malévolo, a seção alerta contra a deterioração das relações humanas.'
+        'A parashah desenvolve leis relativas ao nascimento, à pureza ritual e aos sinais corporais que podem levar à avaliação de um indivíduo ou de um tecido.',
+        'Vayikra 12 apresenta os períodos associados ao nascimento de uma criança e os procedimentos posteriores de purificação. Rashi explica diferentes elementos do ritual e a relação entre os períodos de pureza e impureza.',
+        'Vayikra 13 começa com leis sobre tzaraat. O Kohen examina manchas, pelos e alterações de cor antes de determinar qualquer estatuto.',
+        'Rashi e Sifra mostram que o diagnóstico não é uma simples observação privada: a pessoa passa por uma avaliação ritual realizada pelo Kohen segundo critérios definidos.',
+        'Vayikra 13:9-17 desenvolve diferentes situações de pele que podem parecer semelhantes externamente mas possuem estatutos diferentes. A tradição rabínica dedica grande atenção a estes sinais.',
+        'Vayikra 13:18-46 continua com diferentes tipos de lesões e termina com a possibilidade de isolamento do metzora. O objetivo é controlar a impureza e proteger o espaço coletivo.',
+        'Vayikra 13:47-59 aplica a mesma linguagem de deterioração a roupas e tecidos. O objeto pode ser colocado em isolamento ou destruído conforme o resultado da inspeção.',
+        'Sifra sobre Tazria e as sugyot de Negaim desenvolvem a legislação relativa à tzaraat de forma extremamente detalhada, transformando as regras bíblicas num sistema de classificação ritual.',
+        'A tradição rabínica também associará posteriormente tzaraat a transgressões como lashon hara, sobretudo através de Arachin 15b, mas essa aplicação moral é uma interpretação posterior do fenómeno e não a definição explícita apresentada por Vayikra 13.'
     ],
+
     'Metzora': [
-        'Descrevendo o minucioso ritual de purificação do Metzora curado, o sacerdote utiliza dois pássaros vivos, água corrente, madeira de cedro e tecido carmesim.',
-        'Aspergindo o sangue da ave abatida sobre o indivíduo que se purifica, a libertação do segundo pássaro nos campos abertos simboliza a restauração da vida.',
-        'Aplicando o sangue do sacrifício e o azeite na orelha, polegar e pé do purificado, o ritual reconagra seus sentidos e ações ao serviço divino.',
-        'Avaliando o surgimento de manchas de Tsaraat nas paredes das casas em Canaã, a lei ordena o esvaziamento prévio da residência para evitar perdas materiais.',
-        'Removendo as pedras afetadas e raspando o reboco interno do lar, a casa é submetida a observação antes de ser declarada pura ou condenada à demolição.',
-        'Regulando a impureza decorrente de secreções corporais masculinas atípicas ou naturais, o texto estipula imersões rituais em água e lavagem de vestes.',
-        'Organizando o ciclo de pureza familiar feminina, as ordenanças tratam do período menstrual e das secreções fora do tempo habitual de fluxo.',
-        'Santificando a vida íntima do casal através da imersão no Mikve, a norma encerra o código de pureza corporal elevando o lar a um minissantuário.'
+        'A purificação do metzora, a tzaraat das casas e as leis relativas a diferentes fluxos corporais desenvolvem a segunda parte do sistema de pureza iniciado em Tazria.',
+        'Vayikra 14:1-20 descreve o primeiro estágio de purificação do metzora. São utilizadas aves, madeira, tecido escarlate, hissopo, água e sangue, seguidos de uma segunda etapa com korbanot.',
+        'Rashi e Sifra explicam cada um dos elementos do ritual. A tradição vê na sequência uma progressão de saída do isolamento para reintegração completa.',
+        'Vayikra 14:21-32 adapta as ofertas à situação económica da pessoa. O estatuto ritual é o mesmo, mas a obrigação é ajustada para que a pobreza não impeça a purificação.',
+        'Vayikra 14:33-53 apresenta a possibilidade de tzaraat numa casa. O Kohen não entra simplesmente e declara a casa impura: existem procedimentos de observação, isolamento e decisão.',
+        'A Mishnah Negaim desenvolve detalhadamente o sistema de sinais, tempos e procedimentos relativos a tzaraat em pessoas, roupas e casas.',
+        'Vayikra 15 apresenta diferentes fluxos corporais e os seus efeitos sobre pureza. O texto distingue situações masculinas e femininas e estabelece períodos e procedimentos específicos.',
+        'Rashi explica vários detalhes linguísticos e jurídicos, enquanto Sifra estabelece as derivações haláchicas que serão desenvolvidas posteriormente no Talmud.',
+        'A parashah encerra reforçando que a separação das impurezas não é uma questão puramente física: envolve o espaço do Mishkan e a santidade da comunidade.'
     ],
+
     'Acharei Mot': [
-        'Estruturando o serviço solene do Sumo Sacerdote no Yom Kippur após a morte dos filhos de Aharon, a norma restringe a entrada no Sanctum Sanctorum a uma data anual.',
-        'Despindo as vestes de ouro para usar túnicas simples de linho branco, o Sumo Sacerdote ingressa no Holy of Holies impregnado por uma nuvem de incenso.',
-        'Realizando o sorteio sobre dois bodes expiatórios, o sacerdote destina um animal como sacrifício a Deus e o outro para ser enviado ao deserto de Azazel.',
-        'Confessando as transgressões de toda a nação de Yisrael sobre a cabeça do bode emissário, o ritual simboliza a remoção completa das culpas comunitárias.',
-        'Proibindo o abate de animais destinados ao consumo fora do pátio do Tabernáculo, a ordem previne a idolatria nos campos e centraliza o culto divino.',
-        'Reiterando com severidade a proibição de consumir sangue, a Torá exige que o sangue de aves e animais caçados seja coberto com terra após o abate.',
-        'Proibindo categoricamente as uniões incestuosas e práticas abomináveis, a lei condena os costumes imorais vigentes no Egito e na terra de Canaã.',
-        'Advertindo que a Terra de Yisrael vomita os seus habitantes quando poluída pela imoralidade sexual, a norma exige a preservação da santidade no viver.'
+        'A parashah apresenta o serviço de Yom Kippur, leis relativas ao sangue e limites de relações sexuais, colocando expiação, santidade e separação no centro da vida de Israel.',
+        'Vayikra 16 começa recordando a morte de Nadav e Avihu antes de apresentar as instruções para Aharon entrar no espaço mais sagrado. Rashi destaca a ligação entre os acontecimentos e a necessidade de compreender corretamente o perigo da aproximação ao sagrado.',
+        'O serviço de Yom Kippur inclui o Kohen Gadol, o ketoret, dois bodes, sangue e diferentes atos de purificação. Sifra, Yoma e Rashi desenvolvem extensamente a ordem e os detalhes do serviço.',
+        'Vayikra 16:29-34 estabelece Yom Kippur como um estatuto permanente, incluindo aflição da alma e interrupção do trabalho. A Mishnah Yoma apresenta posteriormente toda a estrutura do serviço.',
+        'Vayikra 17 estabelece regras sobre o abate e o sangue. A ligação entre sangue e vida é explícita, e a sua ingestão é proibida.',
+        'Rashi e Sifra desenvolvem as consequências do consumo de sangue e a relação entre o sangue no altar e a proibição de o consumir.',
+        'Vayikra 18 apresenta uma longa lista de relações proibidas. A abertura é significativa porque Israel é advertido para não seguir os caminhos do Mitzrayim ou de Kena\'an.',
+        'Rashi e Ramban interpretam a referência aos costumes dos povos como uma advertência não apenas contra relações proibidas individuais, mas contra a adoção de sistemas culturais e religiosos que contradigam a santidade de Israel.',
+        'Vayikra 18:24-30 associa a terra à reação contra práticas de impureza. A terra de Kena\'an é apresentada como espaço que não deve ser contaminado.',
+        'A parashah liga assim dois grandes temas: aproximação correta a D\'us no serviço de Yom Kippur e separação correta daquilo que é incompatível com a santidade da comunidade.'
     ],
+
     'Kedoshim': [
-        'Proclamando a toda a congregação o imperativo "Sede santos, porque Eu, o Criador vosso Deus, sou Santo", a leitura estabelece o modelo ético da nação.',
-        'Vinculando a santidade ao respeito devido aos pais, à observância do Shabbat e à erradicação absoluta de cultos a ídolos esculpidos.',
-        'Ordenando a caridade agrícola, a lei exige que os cantos dos campos e os frutos caídos das colheitas sejam deixados para os pobres e estrangeiros.',
-        'Vetando o roubo, a negação de débitos, o juramento falso e o atraso no pagamento do salário diário do trabalhador assalariado.',
-        'Proibindo amaldiçoar o surdo ou colocar tropeço diante do cego, a Torá exige a proteção irrestrita aos vulneráveis e portadores de necessidades.',
-        'Impondo imparcialidade nos julgamentos judiciais, a lei proíbe o favorecimento de pobres ou a deferência a poderosos, exigindo justiça estrita.',
-        'Proclamando a norma suprema "Amarás o teu próximo como a ti mesmo", o texto veta a vingança, o rancor e o ódio oculto no coração contra qualquer irmão.',
-        'Exigindo a honestidade absoluta em pesos, balanças e medidas comerciais, a seção encerra-se com o dever de respeitar os idosos e acolher o estrangeiro.'
+        'A exigência de santidade é traduzida em comportamentos concretos relacionados com família, culto, justiça, agricultura, honestidade, estrangeiros, pobres e relações humanas.',
+        'Vayikra 19:1-4 começa com “Kedoshim tihyu”. Rashi e Sifra interpretam a santidade através da separação e da obediência aos mandamentos, e não como uma condição puramente interior.',
+        'Vayikra 19:9-10 estabelece a obrigação de deixar parte da colheita para o pobre e para o ger. A lei transforma a produção agrícola em responsabilidade social.',
+        'Vayikra 19:11-18 apresenta proibições de roubo, mentira, retenção indevida de salário, maldição dos surdos e tropeço perante os cegos. O mandamento “Veahavta lereacha kamocha” surge precisamente dentro desta estrutura prática de justiça (Vayikra 19:18).',
+        'Rabi Akiva identifica em Sifra a expressão “amar o próximo” como um grande princípio da Torá. Ben Azzai, por outro lado, aponta para Bereshit 5:1 como um princípio ainda mais abrangente, mostrando diferentes maneiras rabínicas de identificar a base da ética.',
+        'Vayikra 19:19-31 apresenta diversas separações e proibições, incluindo misturas, práticas mágicas e determinadas formas de culto. A santidade envolve o controlo de diferentes dimensões da vida.',
+        'Vayikra 19:32-37 volta à relação com idosos, ger, pesos e medidas. O respeito pelo ger é explicitamente relacionado com a experiência de Israel no Mitzrayim.',
+        'Vayikra 20 desenvolve consequências para diferentes práticas proibidas e reforça a distinção entre Israel e os povos.',
+        'Rashi, Sforno e Ramban interpretam a estrutura da parashah como um programa abrangente de santidade: não existe uma divisão rígida entre culto, ética e vida quotidiana.'
     ],
+
     'Emor': [
-        'Impondo restrições elevadas de pureza aos sacerdotes, a norma proíbe o contato com cadáveres humanos, exceto no falecimento de parentes de primeiro grau.',
-        'Proibindo os Kohanim de fazerem calvície na cabeça, rasgarem a barba ou fazerem incisões na pele em rituais de luto pelas mortes.',
-        'Elevando os critérios de santidade para o Sumo Sacerdote, a lei proíbe-o de desgrenhar os cabelos, rasgar as vestes ou contaminar-se mesmo por seus pais.',
-        'Impedindo sacerdotes que possuam defeitos físicos de apresentarem as ofertas de fogo sobre o altar, a norma preserva a integridade visual do serviço.',
-        'Exigindo a perfeição física dos animais oferecidos no Altar, a Torá veta o sacrifício de espécimes cegos, aleijados, feridos ou com deformidades.',
-        'Apresentando o calendário anual de festas sagradas, o texto destaca a santidade semanal do Shabbat e a observância solene de Pessach e Matzot.',
-        'Ordenando a contagem de quarenta e nove dias do Omer a partir da oferta de cevada, a jornada espiritual culmina na celebração da Festa de Shavuot.',
-        'Detalhando o ciclo outonal com Rosh Hashana, Yom Kippur e Sukkot, a porção encerra-se com as regras de acendimento da Menorá e os Pães da Proposição.'
+        'As responsabilidades dos kohanim, a santidade das ofertas, o calendário dos moadim e algumas leis comunitárias formam uma sequência que combina culto, tempo e santidade.',
+        'Vayikra 21 apresenta as restrições específicas dos kohanim. Rashi explica as diferentes regras de contacto com mortos, casamento e estatuto sacerdotal.',
+        'As leis sobre Kohen Gadol são mais rigorosas. Ramban observa que a maior santidade corresponde a uma maior distância de determinadas situações comuns.',
+        'Vayikra 22 apresenta as condições para os kohanim comerem das coisas sagradas e as regras sobre ofertas com defeitos. A tradição rabínica desenvolve posteriormente uma vasta legislação em Zevachim e Menachot.',
+        'Vayikra 23 começa a secção dos moadim. Shabbat é mencionado antes das festas, e Rashi observa a importância de compreender as ocasiões sagradas dentro da estrutura geral do calendário.',
+        'Pessach, Chag Matzot, o Omer e Shavuot aparecem em sequência. Rashi e Sifra analisam a linguagem temporal e a relação entre a contagem e Shavuot.',
+        'Yom Teruah é apresentado pelo seu carácter de zikhron teruah. A tradição rabínica mais tarde desenvolve Rosh Hashanah, os sons do shofar e o julgamento associado ao dia.',
+        'Yom Kippur recebe uma legislação própria, incluindo aflição e descanso. Sukkot e Shemini Atzeret completam a secção com alegria, sukkah, arbaat haminim e uma convocação adicional.',
+        'Vayikra 24 apresenta o azeite da Menorah, o Lechem HaPanim e o episódio do blasfemador. A parashah termina assim saindo momentaneamente do calendário para questões de santidade comunitária e responsabilidade penal.'
     ],
+
     'Behar': [
-        'Proclamando a lei do Ano Sabático da Shemitá no Monte Sinai, a Torá exige que a Terra de Yisrael descanse sem plantio ou colheita a cada sete anos.',
-        'Garantindo a bênção da fartura no sexto ano, a promessa divina assegura colheita tripla para abastecer a comunidade durante o período de repouso da terra.',
-        'Instituindo o Ano de Jubileu após sete ciclos Sabáticos, o toque do Shofar no Yom Kippur do quinquagésimo ano proclama a liberdade na terra.',
-        'Restituindo as propriedades rurais vendidas aos seus proprietários originais no Jubileu, a norma impede a concentração permanente de terras.',
-        'Proibindo a cobrança de juros em empréstimos concedidos a irmãos empobrecidos, a lei exige o amparo financeiro com dignidade e fraternidade.',
-        'Ordenando a libertação compulsória de todos os servos hebreus no Ano de Jubileu, o princípio afirma que o povo pertence unicamente ao Criador.',
-        'Regulando o resgate de propriedades urbanas e a venda de casas em cidades muradas, a norma protege o patrimônio habitacional das famílias.',
-        'Vetando o tratamento cruel ou escravagista a trabalhadores, o texto encerra com a proibição de erguer pedras esculpidas para adoração na terra.'
+        'As leis da shemittah, Yovel, propriedade, redenção e servidão apresentam uma visão económica em que a terra, o trabalho e a liberdade não podem ser tratados como realidades absolutamente permanentes.',
+        'Vayikra 25:1-7 estabelece o descanso da terra no sétimo ano. Sifra e Rashi desenvolvem a relação entre a shemittah e a confiança de que D\'us continuará a sustentar Israel.',
+        'Rashi sobre Vayikra 25:2 cita a conhecida questão de Sifra: por que razão a Torá apresenta especificamente o Shabbat da terra com a expressão “no Har Sinai”? A tradição usa isto para mostrar que detalhes e princípios das leis também foram dados no Sinai.',
+        'Vayikra 25:8-24 apresenta o Yovel. Depois de sete ciclos de sete anos, o quinquagésimo ano introduz libertação e retorno de propriedades.',
+        'Ramban interpreta o Yovel como uma estrutura que limita a concentração permanente da terra. A propriedade deve regressar ao sistema tribal original.',
+        'Vayikra 25:25-34 estabelece diferentes regras de redenção de terras. O parentesco e o tipo de propriedade influenciam a possibilidade e o processo de recuperação.',
+        'Vayikra 25:35-55 apresenta leis sobre israelitas que empobrecem e se tornam dependentes. A Torá proíbe tratá-los como escravos comuns e exige que sejam mantidos dentro de uma relação de irmandade.',
+        'A proibição de cobrar juros a um irmão israelita aparece também dentro desta secção. Rashi e Sforno relacionam a lei com a ideia de evitar que a pobreza produza uma espiral de dependência.',
+        'A parashah termina ligando a liberdade económica à saída do Mitzrayim: Israel pertence a D\'us e não deve ser transformado em propriedade absoluta de outro israelita.'
     ],
+
     'Bechukotai': [
-        'Prometendo chuvas na época devida, colheitas fartas e árvores frutíferas se o povo caminhar fielmente nos mandamentos e Leis do Criador.',
-        'Garantindo a paz nas fronteiras, a ausência de feras nocivas e a vitória militar de um pequeno número de guerreiros sobre exércitos superiores.',
-        'Assegurando a habitação da Presença Divina no meio da comunidade, a aliança reitera a bênção da multiplicação da descendência na terra.',
-        'Advertindo sobre as consequências dolorosas do abandono da lei, o texto descreve cenários de escassez, enfermidades, derrotas e pavor.',
-        'Projetando o exílio da nação e a desolação da terra durante os anos em que os anos Sabáticos foram negligenciados pela comunidade.',
-        'Prometendo misericórdia nos confins do exílio, a palavra divina assegura que a aliança eterna com Avraham, Yitzchak e Yaakov jamais será quebrada.',
-        'Estabelecendo os parâmetros de valoração financeira para votos voluntários de pessoas, animais, casas ou campos dedicados ao Santuário.',
-        'Regulando a entrega do dízimo dos rebanhos e dos frutos da terra, a porção e o livro de Levítico encerram-se com os mandamentos outorgados no Sinai.'
+        'A parashah apresenta bênçãos pela fidelidade, consequências progressivas da desobediência e, finalmente, a possibilidade de reconhecimento da culpa e restauração da relação com D\'us.',
+        'Vayikra 26:1-13 apresenta as bênçãos associadas à escuta dos mandamentos. Rashi e Sifra desenvolvem a relação entre estudo da Torá, observância e prosperidade.',
+        'A promessa de chuva “no seu tempo” é interpretada pela tradição como uma das formas mais importantes de bênção porque determina a capacidade agrícola de Israel.',
+        'Vayikra 26:14-26 apresenta uma sequência de consequências cada vez mais fortes. A expressão “sete vezes” é analisada por Rashi, Sifra e outros comentaristas como uma progressão e intensificação do julgamento.',
+        'Vayikra 26:27-39 apresenta guerra, fome, destruição e exílio. Ramban desenvolve a relação entre o comportamento de Israel e a condição da terra.',
+        'Vayikra 26:40-46 introduz a possibilidade de confissão. Israel reconhece a sua iniquidade e a de seus antepassados, e D\'us recorda o pacto com Yaakov, Yitzchak e Avraham.',
+        'Rashi explica que a lembrança do pacto não significa que a culpa desapareça sem teshuvah. O texto coloca o reconhecimento da iniquidade antes da recordação da aliança.',
+        'Vayikra 27 apresenta leis sobre votos e coisas dedicadas. Sifra e Arakhin desenvolvem as avaliações e procedimentos relacionados com pessoas, casas, campos e animais.',
+        'A conclusão de Vayikra mostra que santidade envolve também aquilo que uma pessoa promete entregar. Um voto transforma uma intenção pessoal numa questão juridicamente vinculativa.'
     ],
 
-    // Bamidbar - Números
     'Bamidbar': [
-        'Ordenando o censo populacional dos homens de Yisrael acima de vinte anos no deserto do Sinai, a contagem prepara a estrutura militar e comunitária.',
-        'Contabilizando seiscentos e três mil quinhentos e cinquenta homens aptos para o exército, o resultado evidencia o crescimento da nação no deserto.',
-        'Organizando a disposição estratégica das doze tribos em quatro acampamentos ao redor do Tabernáculo, a ordem garante o centro espiritual.',
-        'Isentando a tribo de Levi do censo militar, os levitas são encarregados exclusivamente da guarda, desmontagem e transporte das peças do Mishkan.',
-        'Designando as famílias levíticas de Gershon, Kehat e Merari para tarefas específicas de carregamento dos utensílios sagrados sob o comando dos Kohanim.',
-        'Substituindo os primogênitos de todas as tribos de Yisrael pelos levitas no serviço sacerdotal, o resgate financeiro equilibra as diferenças numéricas.',
-        'Instituindo rigorosas normas de aproximação ao Tabernáculo, o texto proíbe a presença de pessoas não autorizadas sob pena de sanções severas.',
-        'Estabelecendo o alinhamento das bandeiras tribais, a marcha do povo pelo deserto passa a refletir a ordem e a harmonia da visão celestial.'
-    ],
-    'Nasso': [
-        'Concluindo a contagem específica dos homens levitas entre trinta e cinquenta anos aptos para o trabalho pesado de transporte do Tabernáculo.',
-        'Ordenando o afastamento temporário de indivíduos impuros do acampamento para preservar a santidade da habitação divina no meio do povo.',
-        'Estipulando a lei de restituição por roubos acrescida de um quinto do valor e a apresentação de um sacrifício de reparação ao sacerdote.',
-        'Apresentando o ritual da Sotah para solucionar suspeitas graves de infidelidade conjugal e restaurar a confiança e a paz no ambiente doméstico.',
-        'Regulando o voto do Nazireu, a norma exige a abstenção de vinho, o cultivo do cabelo sem cortar e a proibição de contaminação por cadáveres.',
-        'Transmitindo a Aharon e seus filhos a sublime Bênção Sacerdotal para abençoar o povo com proteção, graça, iluminação e paz permanente.',
-        'Recebendo as oferendas idênticas e generosas dos príncipes das doze tribos durante doze dias consecutivos de inauguração do altar.',
-        'Registrando que Moshe escutava a voz divina emanar de entre os dois Querubins sobre o propiciatório quando entrava na Tenda da Revelação.'
-    ],
-    'Beha\'alotcha': [
-        'Instruindo Aharon a acender as sete lâmpadas da Menorá de modo que a luz das ramificações se voltasse para a haste central do candelabro.',
-        'Purificando e apresentando os levitas perante a comunidade em uma cerimônia de imposição de mãos para o início de suas funções rituais.',
-        'Instituindo a observância de Pessach Sheni no mês de Iyar para acolher aqueles que estavam impuros ou distantes na data oficial da Páscoa.',
-        'Guiando os deslocamentos do acampamento através da elevação ou repouso da Nuvem de Glória e dos toques das duas trombetas de prata.',
-        'Registrando as murmurações do povo por carne e o desabafo de Moshe sobre o peso insustentável de liderar sozinho toda a multidão.',
-        'Nomeando setenta anciãos para compartilharem a efusão do espírito profético e auxiliarem Moshe na condução administrativa da nação.',
-        'Enviando o vento que trouxe um bando massivo de codornizes do mar, o consumo ganancioso resulta em uma severa praga no acampamento.',
-        'Repreendendo Miriam e Aharon por criticarem Moshe, a profetisa é afligida com Tsaraat e curada após a oração intercessora de seu irmão.'
-    ],
-    'Sh\'lach': [
-        'Enviando doze príncipes representativos das tribos para explorarem a terra de Canaã e avaliarem a força das suas cidades e habitantes.',
-        'Percorrendo a terra durante quarenta dias, os espias recolhem frutos imensos como cachos de uvas, romãs e figos na região de Hebron.',
-        'Apresentando um relatório desmoralizante, dez dos doze espias espalham o pavor na comunidade ao afirmarem que os habitantes eram gigantes imbatíveis.',
-        'Elevando a voz com coragem e fé, Yehoshua bin Nun e Calev ben Yefune tentam em vão convencer o povo da capacidade de conquistar a terra com o apoio divino.',
-        'Chorando em desespero durante aquela noite, a comunidade ameaça nomear um novo líder para retornar à escravidão no Egito.',
-        'Decretando quarenta anos de perambulação no deserto até a extinção daquela geração, a justiça divina impede a entrada dos rebeldes na terra.',
-        'Derrotando a tentativa impetuosa e tardia dos Maapilim de invadir Canaã sem a presença da Arca da Aliança e a autorização de Moshe.',
-        'Legislando sobre as ofertas de libação de vinho e óleo e instituindo o mandamento dos Tzitzit nos cantos das vestes como lembrete dos mandamentos.'
-    ],
-    'Korach': [
-        'Deflagrando uma rebelião aberta contra a liderança de Moshe e a primazia sacerdotal de Aharon, Korach une-se aos rubenitas Datan e Aviram e a 250 líderes.',
-        'Propondo o teste dos incensários perante o Tabernáculo, Moshe convoca os rebeldes a apresentarem incenso para que o Criador escolha o Seu sacerdote.',
-        'Recusando categoricamente os chamados de Moshe para o diálogo, Datan e Aviram acusam a liderança de ter tirado o povo do Egito para matá-lo no deserto.',
-        'Alertando a comunidade a se afastar das tendas dos rebeldes, Moshe profetiza um evento sobrenatural como prova de sua missão divina.',
-        'Abrindo a terra sob os pés dos revoltosos, o chão engole Korach, Datan, Aviram e suas famílias, enquanto o fogo divino consome os 250 homens dos incensários.',
-        'Cessando a praga que começou a dizimar o povo revoltado no dia seguinte, Aharon corre para o meio da multidão com o incensário aceso para fazer expiação.',
-        'Florescendo milagrosamente o cajado de Aharon com brotos e amêndoas na Tenda da Revelação, a prova encerra definitivamente os questionamentos sobre o sacerdócio.',
-        'Fixando os direitos econômicos dos Kohanim e Levitas, a norma atribui os dízimos e os presentes sagrados como compensação pelo serviço no Santuário.'
-    ],
-    'Chukat': [
-        'Promulgando a enigmática lei da Vaca Vermelha, o ritual produz as cinzas purificadoras necessárias para remover a contaminação causada por cadáveres humanos.',
-        'Enlutando o acampamento em Kadesh, o falecimento da profetisa Miriam é seguido imediatamente pelo desaparecimento do poço de água milagroso.',
-        'Exigindo água em desespero, o povo murmura novamente contra Moshe e Aharon, levando-os a buscar a orientação divina diante da Tenda.',
-        'Batendo na rocha com o cajado em vez de falar a ela em Merivá, a desobediência de Moshe e Aharon resulta no decreto de que não introduziriam o povo na terra.',
-        'Recusando a passagem pacífica de Yisrael através do seu território, o rei de Edom força a comitiva hebreia a realizar um longo desvio geográfico.',
-        'Falecendo no Monte Hor, Aharon transfere as vestes sacerdotais a seu filho Elazar e é chorado por toda a comunidade durante trinta dias.',
-        'Curando a praga de serpentes queimadoras enviada após novas murmurações, a contemplação da serpente de bronze erguida na haste por Moshe traz a cura.',
-        'Derrotando militarmente os reis amorreus Sihon de Heshbon e Og de Bashan, o exército de Yisrael conquista e ocupa a Transjordânia.'
-    ],
-    'Balak': [
-        'Temendo o avanço militar de Yisrael, Balak, rei de Moav, alia-se aos anciãos de Midian para contratar o profeta pagão Bilaam a fim de amaldiçoar o povo.',
-        'Hesitando após o primeiro veto divino, Bilaam cede à insistência dos mensageiros ricos de Balak e empreende a viagem montado em sua jumenta.',
-        'Confrontada pelo anjo armado na estrada, a jumenta de Bilaam desvia-se três vezes do caminho e ganha a fala para repreender a cegueira do profeta.',
-        'Abrindo os olhos de Bilaam para enxergar o anjo, o Criador permite a continuidade da viagem sob a condição estrita de pronunciar apenas a palavra inspirada.',
-        'Construindo sete altares em Bamboth Baal, a primeira tentativa de amaldiçoar Yisrael resulta na proclamação de uma profunda bênção de multiplicação.',
-        'Tentando novamente no topo de Pisga, a segunda oráculo de Bilaam reitera a impossibilidade de amaldiçoar uma nação abençoada e sem iniquidade.',
-        'Proclamando o oráculo famoso "Quão boas são as tuas tendas, ó Yaakov!", a visão do acampamento harmonioso em Peor inspira a terceira e sublime bênção.',
-        'Caindo na conspiração de sedução das mulheres moabitas em Baal Peor, a devassidão e idolatria resultam em uma praga travada pela ação zelosa de Pinchas.'
-    ],
-    'Pinchas': [
-        'Recompensando a ação resoluta de Pinchas em defesa da santidade, o Criador concede-lhe a Aliança de Paz e o sacerdócio perpétuo para sua descendência.',
-        'Realizando o segundo censo geral nas planícies de Moav, a contagem contabiliza 601.730 homens da nova geração pronta para entrar na Terra Prometida.',
-        'Atendendo à justa reivindicação das filhas de Tzelofchad, a lei estipula que mulheres têm direito à herança da terra na ausência de filhos homens.',
-        'Subindo ao Monte Avarim para contemplar a Terra Prometida, Moshe acolhe o anúncio de seu breve falecimento sem amargura.',
-        'Investindo Yehoshua bin Nun como sucessor público de Moshe, o ritual de imposição de mãos diante de Elazar e da assembleia garante a transição.',
-        'Estipulando a rotina dos sacrifícios diários de manhã e à tarde, a norma fixa a constância como pilar do culto comunitário.',
-        'Detalhando as ofertas adicionais para os Shabbats, Luas Novas e festas da Primavera, a Torá organiza o calendário Litúrgico.',
-        'Prescrevendo os rituais das festas do sétimo mês, a porção encerra as normas de ofertas festivas.'
-    ],
-    'Matot': [
-        'Estabelecendo as leis rígidas sobre a validade, obrigatoriedade e anulação de votos e promessas proferidos por homens e mulheres.',
-        'Concedendo ao pai ou marido o direito de anular promessas femininas no próprio dia em que as escuta, se afetarem a aflição pessoal ou paz conjugal.',
-        'Organizando a expedição militar punitiva de doze mil guerreiros contra Midian para vingar o complô de Baal Peor.',
-        'Vencendo a batalha sem a perda de um único soldado hebreu, o exército elimina os reis midianitas e o próprio profeta nefasto Bilaam.',
-        'Purificando os metais capturados através do fogo e da água de purificação antes de distribuir de forma justa os saques entre soldados e o povo.',
-        'Solicitando a fixação das tribos de Reuven e Gad nas terras férteis da Transjordânia, o pedido desperta a severa repreensão inicial de Moshe.',
-        'Comparando o pedido à desmoralização causada pelos espias no passado, Moshe exige que as tribos participem ativamente da conquista de Canaã.',
-        'Firmando o acordo solene, as tribos de Reuven, Gad e metade de Menashe comprometem-se a marchar na vanguarda da conquista antes de se assentarem.'
-    ],
-    'Masei': [
-        'Registrando com precisão o itinerário detalhado das quarenta e duas etapas da jornada do povo desde a saída do Egito até as planícies de Moav.',
-        'Ordenando a expulsão completa dos habitantes cananeus e a destruição total de seus ídolos esculpidos e altares de pedra nos morros.',
-        'Advertindo que a permanência dos cananeus na terra resultará em espinhos nos olhos do povo e na posterior expulsão de Yisrael do solo.',
-        'Delimitando as fronteiras geográficas exatas da Terra Prometida e nomeando os príncipes responsáveis pela partilha territorial entre as tribos.',
-        'Designando quarenta e oito cidades espalhadas pelo território tribal para habitação dos levitas, acompanhadas de seus campos de pastagem.',
-        'Estabelecendo seis Cidades de Refúgio para acolher o homicida involuntário e protegê-lo contra a vingança do resgatador de sangue até o julgamento.',
-        'Exigindo a presença de pelo menos duas testemunhas para a aplicação da pena capital em casos de homicídio doloso, proibindo resgates financeiros.',
-        'Regulando o casamento de herdeiras de terras dentro da própria tribo para impedir a transferência de territórios de uma tribo para outra no Jubileu.'
+        'A abertura de Bamidbar organiza Israel para a marcha através do deserto, estabelecendo contagem, disposição das tribos, responsabilidades dos Leviim e relação espacial com o Mishkan.',
+        'Bamidbar 1 apresenta o recenseamento dos homens aptos para a guerra. Rashi e Sforno discutem por que razão o texto limita o recenseamento a determinados homens e qual é a relação entre a contagem e a organização nacional.',
+        'Levi não é contado juntamente com as outras tribos porque possui uma função especial relacionada com o Mishkan. Bamidbar 1:47-54 explica que os Leviim devem desmontar, transportar e proteger o espaço sagrado.',
+        'Bamidbar 2 apresenta a disposição das tribos em quatro grupos ao redor do Mishkan. Rashi e Midrash desenvolvem o significado da ordem em que as tribos acampam e marcham.',
+        'Bamidbar 3 apresenta os descendentes de Aharon e estabelece os Leviim como substitutos dos primogénitos para o serviço do Mishkan.',
+        'Bamidbar 3:40-51 apresenta a contagem dos primogénitos e o cálculo do resgate. A tradição rabínica utiliza esta secção para desenvolver o conceito de pidyon haben.',
+        'Bamidbar 4 diferencia as funções de Kehat, Gershon e Merari. Cada grupo recebe objetos e responsabilidades específicas, evitando contacto inadequado com os elementos mais sagrados.',
+        'Rashi e Sifrei Bamidbar desenvolvem regras relacionadas com o transporte da Aron e dos objetos do Mishkan. A estrutura demonstra que santidade também significa saber como transportar aquilo que é sagrado.',
+        'O acampamento é apresentado como uma organização precisa em torno da presença divina. A distribuição das tribos não é arbitrária, mas parte de uma estrutura de ordem nacional e cultual.'
     ],
 
-    // Devarim - Deuteronômio
+    'Nasso': [
+        'A organização do acampamento continua através das responsabilidades dos Leviim, leis de pureza, restituição, sotah, nazir e Birkat Kohanim, antes de a parashah terminar com as ofertas dos líderes tribais.',
+        'Bamidbar 5:1-4 estabelece que determinadas pessoas ritualmente impuras devem ser afastadas do acampamento. A razão apresentada é impedir que contaminem o espaço no qual D\'us habita.',
+        'Bamidbar 5:5-10 apresenta restituição por pecado cometido contra outra pessoa. Rashi e Sifrei desenvolvem a ordem segundo a qual a culpa perante o próximo deve ser reparada concretamente.',
+        'Bamidbar 5:11-31 apresenta o procedimento da sotah. Mishnah Sotah e Sotah 2a-9b desenvolvem extensamente os elementos do ritual, os requisitos jurídicos e as limitações da aplicação.',
+        'Bamidbar 6:1-21 apresenta o nazir. A pessoa assume voluntariamente restrições relativas a vinho, cabelo e contacto com mortos. Mishnah Nazir desenvolve posteriormente estas regras de maneira detalhada.',
+        'Bamidbar 6:22-27 apresenta a Birkat Kohanim. A fórmula “Yevarechecha Hashem” tornou-se uma das bênçãos litúrgicas mais reconhecidas da tradição.',
+        'Bamidbar 7 apresenta as ofertas dos líderes das tribos para a dedicação do altar. Todas as ofertas são equivalentes, mas cada príncipe recebe o seu dia específico.',
+        'Rashi e Midrash Bamidbar Rabbah discutem por que razão a Torá repete detalhadamente ofertas que são aparentemente iguais. A tradição considera que a repetição dá dignidade e individualidade a cada líder.',
+        'A parashah termina com Moshe a ouvir a voz que fala de entre os keruvim sobre a Aron. O espaço construído nas parashot anteriores transforma-se agora num lugar ativo de comunicação.'
+    ],
+
+    'Beha\'alotcha': [
+        'A parashah acompanha a organização do Mishkan, a preparação dos Leviim, a celebração de Pessach, a marcha pelo deserto e os primeiros grandes sinais de tensão dentro da comunidade.',
+        'Bamidbar 8:1-4 apresenta Aharon a acender a Menorah. Rashi utiliza a tradição de que Aharon deveria ter uma participação especial e contínua neste serviço.',
+        'Bamidbar 8:5-26 apresenta a purificação e dedicação dos Leviim. Sifrei e Rashi desenvolvem as idades e responsabilidades relativas ao serviço.',
+        'Bamidbar 9 apresenta Pessach no deserto e a questão daqueles que estavam impuros. A partir desta situação surge Pessach Sheni em Bamidbar 9:9-14.',
+        'Bamidbar 9:15-23 descreve a nuvem sobre o Mishkan. O movimento de Israel depende da manifestação da nuvem, criando uma forma de disciplina coletiva que impede decisões individuais sobre quando partir.',
+        'Bamidbar 10:1-10 apresenta as chatzotzrot de prata. Existem diferentes toques para convocar a comunidade, os líderes ou anunciar a partida.',
+        'Bamidbar 10:11-36 descreve a saída do Sinai e a organização das tribos durante a marcha. A expressão “Vayehi binsoa haAron” recebe posteriormente estatuto especial na tradição rabínica.',
+        'Bamidbar 11:1-15 apresenta queixas do povo. Moshe sente o peso da liderança e chega a expressar exaustão perante a responsabilidade.',
+        'Bamidbar 11:16-30 apresenta os setenta anciãos que recebem parte do espírito de Moshe. A tradição rabínica utiliza este episódio para discutir liderança partilhada.',
+        'Bamidbar 11:31-35 apresenta as codornizes e as consequências da exigência de carne. A parashah termina com uma nova demonstração das tensões existentes dentro da comunidade.'
+    ],
+
+    'Shlach': [
+        'O envio dos meraglim para observar Kena\'an conduz a uma crise de confiança que altera o futuro da geração do deserto. A parashah apresenta ainda leis sobre ofertas, erros, Shabbat e tzitzit.',
+        'Bamidbar 13:1-24 apresenta os doze homens enviados para explorar a terra. Rashi pergunta por que razão o episódio ocorre e explica a missão à luz da história anterior de Israel.',
+        'Bamidbar 13:25-33 mostra os diferentes relatos dos exploradores. Dez apresentam uma avaliação extremamente negativa, enquanto Kalev e Yehoshua defendem a possibilidade de entrar na terra.',
+        'Rashi desenvolve os diferentes elementos do relatório e a tradição rabínica associa o episódio também a problemas de confiança, linguagem e influência coletiva.',
+        'Bamidbar 14 apresenta a reação da comunidade e a intercessão de Moshe. A sua oração utiliza novamente os atributos divinos de misericórdia e procura impedir a destruição completa do povo.',
+        'Rashi e Ramban analisam o diálogo entre Moshe e D\'us, especialmente a referência ao poder do Egito e à reputação de D\'us entre as nações.',
+        'A decisão de tentar entrar na terra depois de D\'us ter determinado o contrário demonstra outra forma de desobediência. O texto mostra que “coragem” fora do momento correto também pode ser desobediência.',
+        'Bamidbar 15 volta a falar da terra e apresenta leis de ofertas “quando entrarem na terra”. A estrutura funciona como sinal de que a promessa continua, embora a geração atual não a viva plenamente.',
+        'O episódio do homem que recolhe lenha no Shabbat é tratado em Bamidbar 15:32-36. A tradição talmúdica discute o procedimento jurídico e a natureza da decisão.',
+        'Os tzitzit em Bamidbar 15:37-41 encerram a parashah com uma prática visual de memória: Israel deve olhar para as franjas e recordar os mandamentos.'
+    ],
+
+    'Korach': [
+        'A revolta contra Moshe e Aharon coloca em questão liderança, sacerdócio e autoridade. A resposta da comunidade e os sinais posteriores reafirmam as responsabilidades de cada grupo.',
+        'Bamidbar 16:1-18 apresenta Korach, Datan, Aviram e duzentos e cinquenta líderes. Rashi e Midrash desenvolvem as motivações atribuídas a Korach e o significado da sua pergunta sobre a santidade de toda a comunidade.',
+        'Rashi sobre Bamidbar 16:1 utiliza Midrash Tanchuma para apresentar a revolta como mais complexa do que simples oposição pessoal. Korach utiliza argumentos aparentemente ligados à santidade coletiva.',
+        'Moshe propõe um teste através do ketoret. A situação demonstra que sacerdócio não é determinado apenas por reivindicação pessoal, mas por uma escolha formal.',
+        'Bamidbar 16:19-35 apresenta as consequências da revolta. Rashi e Sanhedrin 110a desenvolvem a natureza do julgamento de Korach e as discussões sobre quem partilhou da sua revolta.',
+        'Bamidbar 16:36-40 transforma os incensários dos duzentos e cinquenta homens numa cobertura para o Mizbeach. O objeto passa a servir como memória permanente do acontecimento.',
+        'Uma nova crise ocorre quando a comunidade acusa Moshe e Aharon pela morte dos revoltosos. A praga que começa é interrompida quando Aharon entra no meio do povo com o ketoret.',
+        'Bamidbar 17 apresenta as doze varas e o florescimento da vara de Aharon. Rashi e Midrash desenvolvem este milagre como confirmação da escolha sacerdotal.',
+        'Bamidbar 18 apresenta direitos e responsabilidades dos kohanim e Leviim. Os kohanim recebem determinadas porções das ofertas e os Leviim recebem dízimos como compensação pelo serviço.',
+        'A parashah termina transformando a disputa sobre autoridade numa estrutura concreta de responsabilidades, mostrando que cada função possui limites e deveres próprios.'
+    ],
+
+    'Chukat': [
+        'As leis da paráh adumah, a morte de Miriam, a falta de água, a morte de Aharon e as vitórias sobre Sichon e Og acompanham Israel numa fase decisiva da viagem pelo deserto.',
+        'Bamidbar 19 apresenta a paráh adumah. Rashi cita Yoma 67b e Midrash para explicar a sua natureza como um chok cuja lógica completa não é totalmente acessível.',
+        'A combinação entre a cinza purificadora e a impureza adquirida por quem prepara a purificação tornou-se um dos exemplos clássicos de uma lei cuja lógica ultrapassa uma explicação racional simples.',
+        'Bamidbar 20 apresenta a morte de Miriam e a falta de água. Rashi relaciona a ausência do poço à morte de Miriam através da tradição talmúdica sobre os três presentes associados a Moshe, Aharon e Miriam.',
+        'Moshe recebe instruções sobre como obter água, mas o acontecimento de Mei Merivah conduz à sentença de que Moshe e Aharon não entrarão na terra. Rashi e Ramban discutem extensamente qual foi precisamente a falha.',
+        'Bamidbar 20:14-21 apresenta a recusa de Edom em permitir a passagem de Israel. A viagem é desviada e começa a exigir novos movimentos.',
+        'Bamidbar 20:22-29 apresenta a morte de Aharon e a transferência das suas vestes para Elazar. Rashi e Talmud desenvolvem a diferença entre a despedida de Aharon e outras mortes.',
+        'Bamidbar 21 apresenta as serpentes e a serpente de cobre. Rashi, citando Rosh Hashanah 29a, explica que não era a serpente em si que curava, mas o olhar direcionado para cima que levava Israel a recordar D\'us.',
+        'A guerra contra Sichon e Og demonstra uma nova capacidade militar de Israel. A terra a leste do Yarden começa a passar efetivamente para as mãos de Israel.',
+        'A parashah termina com a expansão territorial e prepara o conflito com Balak e Bilam.'
+    ],
+
+    'Balak': [
+        'Balak procura utilizar Bilam contra Israel, mas a narrativa transforma repetidamente a tentativa de maldição em bênção. A parashah combina poderes políticos, linguagem profética, ironia e acontecimentos inesperados.',
+        'Bamidbar 22 apresenta Balak a enviar mensageiros a Bilam. Rashi e Midrash desenvolvem a reputação de Bilam e procuram explicar por que motivo D\'us inicialmente proíbe e depois permite a sua partida em determinadas condições.',
+        'O episódio da jumenta é uma das narrativas mais singulares da Torá. Rashi utiliza Midrash para explicar por que razão o animal vê o malach antes de Bilam e como a cena expõe a diferença entre a suposta visão de Bilam e a sua incapacidade de perceber aquilo que está diante dele.',
+        'Bamidbar 23 apresenta o primeiro conjunto de palavras de Bilam. Em vez de amaldiçoar Israel, ele descreve-o como um povo distinto.',
+        'A bênção “Ma ekov lo Kov...” torna-se uma das frases mais conhecidas da narrativa. Rashi explica a linguagem através de diferentes tradições e desenvolve a ideia de que Israel não pode ser amaldiçoado quando D\'us o abençoa.',
+        'Bamidbar 23:21 contém a expressão “lo hibit aven beYaakov”. Os comentaristas discutem como compreender a frase e a sua relação com a situação espiritual de Israel.',
+        'As tentativas seguintes de Balak mudam de local, mas não de resultado. Cada novo ponto de observação produz uma declaração diferente sem destruir a proteção de Israel.',
+        'Bamidbar 24 apresenta a última série de palavras de Bilam, incluindo expressões sobre o futuro de Israel e de diferentes povos. Rashi e Midrash desenvolvem várias destas imagens.',
+        'A tradição rabínica dedica atenção especial ao facto de Bilam possuir grande reputação como profeta entre as nações mas acabar incapaz de controlar aquilo que diz. A sua linguagem é submetida à vontade de D\'us.',
+        'Bamidbar 25 inicia imediatamente uma nova crise em Shittim. A passagem cria uma ligação narrativa importante: depois das bênçãos de Bilam, Israel enfrenta outro perigo através da sedução e da idolatria.'
+    ],
+
+    'Pinchas': [
+        'A parashah trata das consequências do episódio de Shittim, da recompensa atribuída a Pinchas, do novo recenseamento, da questão da herança, da sucessão de Moshe e das ofertas associadas aos moadim.',
+        'Bamidbar 25:10-15 apresenta a declaração de D\'us sobre Pinchas e a brit shalom. Rashi e Talmud Zevachim 101b discutem a natureza da recompensa e a situação particular de Pinchas dentro do sacerdócio.',
+        'Bamidbar 25:16-18 anuncia o conflito com Midyan. O episódio liga-se diretamente ao acontecimento anterior e estabelece o contexto da guerra que será narrada em Matot.',
+        'Bamidbar 26 apresenta o recenseamento da nova geração. Rashi observa várias informações sobre famílias individuais e associa algumas mudanças numéricas às consequências da geração anterior.',
+        'Bamidbar 27:1-11 apresenta as filhas de Tzelofchad. O seu pedido sobre a herança leva a uma nova legislação. Sifrei e Bava Batra 119b desenvolvem a sua atitude e o caráter jurídico da questão.',
+        'Bamidbar 27:12-23 apresenta Moshe a receber a instrução para observar a terra e depois preparar a transição de liderança. Yehoshua é escolhido para sucedê-lo.',
+        'Rashi e Sifrei explicam por que razão Yehoshua é escolhido e como a sua relação com Moshe se torna parte da preparação para a nova fase de Israel.',
+        'Bamidbar 28-29 apresenta as ofertas diárias, de Shabbat, Rosh Chodesh e dos diferentes moadim. A sequência constitui uma das principais bases bíblicas para a ordem dos korbanot públicos.',
+        'Sifrei Bamidbar e Menachot desenvolvem os detalhes jurídicos destas ofertas, incluindo quantidades e associações temporais.'
+    ],
+
+    'Matot': [
+        'As leis dos votos, a guerra contra Midyan, a purificação do despojo e a questão das terras a leste do Yarden formam uma parashah centrada em palavra, responsabilidade, guerra e compromisso.',
+        'Bamidbar 30 começa com as leis dos nedarim. Rashi explica a situação dos votos e a autoridade necessária para anulá-los em diferentes relações familiares.',
+        'A Mishnah Nedarim e o tratado Nedarim desenvolvem extensamente os princípios iniciados aqui, criando uma grande área da halachah sobre linguagem, intenção e compromissos voluntários.',
+        'Bamidbar 31 apresenta a guerra contra Midyan. Pinchas participa e leva os utensílios sagrados e as chatzotzrot. Rashi e Midrash discutem o papel de Pinchas e a razão da participação dos diferentes grupos.',
+        'A resposta de Moshe quando os soldados regressam inclui críticas relativas ao modo como determinadas mulheres foram tratadas. A narrativa apresenta a guerra também como uma situação que exige disciplina jurídica.',
+        'Bamidbar 31:25-47 estabelece a divisão do despojo. Parte vai para os soldados, parte para a comunidade e partes específicas são separadas para D\'us e para os Leviim.',
+        'Os comandantes oferecem ouro voluntariamente depois de descobrirem que nenhum homem tinha desaparecido. A oferta torna-se expressão de gratidão e de reconhecimento.',
+        'Bamidbar 32 apresenta Reuven e Gad a pedir terras a leste do Yarden. Moshe inicialmente teme que a sua decisão desencoraje as restantes tribos.',
+        'O acordo final exige que os homens das tribos atravessam primeiro para ajudar na conquista da terra. Rashi e Sifrei desenvolvem a importância da responsabilidade coletiva.',
+        'A parashah termina com a distribuição territorial e a construção de cidades. A narrativa mostra que possuir território também exige cumprir compromissos perante o conjunto de Israel.'
+    ],
+
+    'Masei': [
+        'A parashah recapitula as viagens de Israel desde a saída do Mitzrayim e depois estabelece regras relativas à terra, às cidades dos Leviim e às cidades de refúgio, preparando a entrada efetiva em Kena\'an.',
+        'Bamidbar 33 apresenta quarenta e duas etapas da viagem. Rashi pergunta por que razão a Torá dedica espaço a uma lista aparentemente repetitiva e explica que cada etapa possui significado dentro da trajetória.',
+        'A lista inclui Rameses, Sukkot, Refidim, Sinai, Kadesh e outros lugares. Ramban analisa diferentes questões geográficas e históricas relacionadas com os movimentos de Israel.',
+        'Bamidbar 33:50-56 estabelece que Israel deve expulsar os habitantes da terra e destruir os seus lugares de culto. A ordem é apresentada dentro da estrutura de conquista da terra.',
+        'Bamidbar 34 apresenta os limites da terra de Kena\'an. Os comentaristas discutem diferentes fronteiras e a identidade de várias regiões mencionadas.',
+        'Bamidbar 35 apresenta quarenta e oito cidades para os Leviim. Seis delas funcionam também como cidades de refúgio.',
+        'As cidades de refúgio diferenciam homicídio intencional de morte acidental. A Mishnah Makkot e o tratado Makkot desenvolvem extensamente os procedimentos jurídicos e a proteção concedida ao homicida involuntário.',
+        'A permanência do homicida involuntário na cidade de refúgio até à morte do Kohen Gadol recebe interpretações rabínicas. Mishnah Makkot 2 e Makkot 11a discutem a influência da morte do Kohen Gadol e a responsabilidade comunitária.',
+        'Bamidbar 36 volta à questão da herança das filhas de Tzelofchad e estabelece limites para evitar a transferência permanente de propriedades entre tribos.',
+        'O livro de Bamidbar termina, assim, não simplesmente com uma fronteira geográfica, mas com uma estrutura de justiça, propriedade, proteção e responsabilidade necessária para a vida na terra.'
+    ],
+
     'Devarim': [
-        'Iniciando os discursos de despedida às margens do Jordão no décimo primeiro mês, Moshe revisita a jornada histórica com exortações pedagógicas.',
-        'Recordando a nomeação de juízes e oficiais capazes no Horeb, o líder enfatiza a exigência de imparcialidade e coragem na aplicação da justiça.',
-        'Reconstituindo o episódio traumático dos espias em Kadesh, Moshe relembra como a falta de fé daquela geração adiou por quarenta anos a conquista.',
-        'Relatando os anos de perambulação ao redor das montanhas de Seir, o texto destaca as ordens de respeitar a soberania dos povos irmãos de Edom, Moav e Amon.',
-        'Rememorando a vitória decisiva sobre Sihon, rei de Heshbon, Moshe destaca a posse inicial das terras férteis da Transjordânia.',
-        'Descrevendo a conquista do reino de Og em Bashan e o tamanho de seu leito de ferro, a memória fortalece a confiança da nova geração.',
-        'Entregando os territórios conquistados na Transjordânia às tribos de Reuven, Gad e metade de Menashe sob a condição de marcharem na vanguarda.',
-        'Encorajando Yehoshua bin Nun a não temer os reis cananeus, Moshe lembra que o próprio Criador lutará à frente das divisões de Yisrael.'
+        'Moshe começa o seu grande discurso final recapitulando a viagem de Israel, os principais acontecimentos do deserto, os conflitos e as instruções recebidas antes da entrada na terra.',
+        'Devarim 1:1-8 estabelece o contexto geográfico e temporal do discurso. Israel está junto ao Yarden e a terra prometida está diante da nova geração.',
+        'Devarim 1:9-18 retoma a estrutura de juízes e líderes apresentada anteriormente em Shemot 18. Moshe apresenta a necessidade de dividir a responsabilidade e reforça que o julgamento deve ser justo.',
+        'Devarim 1:19-45 apresenta novamente o episódio dos meraglim. A versão de Moshe enfatiza a reação da geração e a sua responsabilidade pela falta de confiança.',
+        'Rashi compara frequentemente Devarim com os relatos anteriores e explica diferenças de linguagem através das necessidades do discurso de Moshe.',
+        'Devarim 2 apresenta as relações com Edom, Moav e Amon. Israel recebe ordens para não conquistar territórios que não lhe foram destinados.',
+        'Devarim 2:24-37 descreve a guerra contra Sichon e a conquista do seu território. A nova geração começa a experimentar vitórias militares.',
+        'Devarim 3 apresenta a derrota de Og e a distribuição das terras a leste do Yarden. Moshe volta a pedir para atravessar e recebe a ordem de subir ao topo para contemplar a terra.',
+        'Ramban vê no discurso de Devarim uma preparação para a vida de Israel dentro da terra, transformando a memória das viagens numa ferramenta de educação para a nova geração.',
+        'A parashah estabelece o tom do livro de Devarim: não é apenas repetição, mas releitura da história a partir do momento em que Israel está prestes a entrar na terra.'
     ],
+
     'Vaetchanan': [
-        'Suplicando com fervor ao Criador permissão para cruzar o Jordão e contemplar a boa terra, Moshe acolhe a recusa e a ordem de instruir Yehoshua.',
-        'Exortando o povo a não acrescentar nem diminuir os mandamentos, Moshe afirma que a observância da lei constitui a sabedoria de Yisrael perante as nações.',
-        'Alertando contra o esquecimento da experiência no Sinai, o discurso proíbe a confecção de imagens ou esculturas para representar o divino.',
-        'Designando três Cidades de Refúgio no lado oriental do rio Jordão, Moshe concretiza a proteção aos homicidas involuntários na Transjordânia.',
-        'Reiterando a proclamação dos Dez Mandamentos diante da nova geração, o texto reafirma a vigência perpétua do pacto firmado no Horeb.',
-        'Proclamando o versículo supremo do Shemá Yisrael: "Ouve, ó Yisrael, o Criador nosso Deus é o Criador Único", a fé monoteísta é selada.',
-        'Ordenando amar ao Criador com todo o coração, alma e recursos, o mandamento exige o ensino aos filhos, a amarração dos Tefilin e a afixação de Mezuzot.',
-        'Impondo a destruição dos altares pagãos e proibindo casamentos inter-religiosos com os sete povos de Canaã para preservar a integridade espiritual.'
+        'Moshe continua o discurso final reforçando a importância da obediência, da memória do Sinai, da rejeição da idolatria e da transmissão da aliança às gerações seguintes.',
+        'Devarim 3:23-29 apresenta Moshe a pedir para entrar na terra. A resposta de D\'us permite-lhe observar a terra, mas não atravessar o Yarden.',
+        'Rashi e Sifrei desenvolvem a oração de Moshe e as razões pelas quais a sua entrada não seria permitida. A tradição vê a persistência de Moshe como expressão de profundo desejo pela terra.',
+        'Devarim 4:1-14 chama Israel a ouvir e cumprir os estatutos. Moshe recorda Baal Peor e o Sinai para mostrar a importância de não acrescentar nem retirar dos mandamentos.',
+        'Devarim 4:15-24 adverte contra imagens. Rashi e Ramban discutem a diferença entre recordar a manifestação divina e tentar materializá-la através de formas físicas.',
+        'Devarim 4:25-31 introduz a possibilidade de retorno depois da dispersão. Mesmo dentro de uma advertência sobre idolatria, existe uma abertura explícita para teshuvah.',
+        'Devarim 5 apresenta novamente os Aseret HaDibrot. Rashi compara a formulação com Shemot 20, enquanto Ibn Ezra procura explicar diferenças de linguagem.',
+        'A versão de Shabbat em Devarim 5:12-15 associa o descanso semanal à memória da escravidão no Mitzrayim, acrescentando uma dimensão social à formulação de Shemot.',
+        'Devarim 6:4-9 apresenta o Shema. Rashi explica “Hashem Echad” e os diferentes níveis de amor, ensino e lembrança exigidos pela passagem.',
+        'Devarim 6:20-25 apresenta a pergunta futura de uma criança sobre os mandamentos e estabelece a resposta através da memória da saída do Mitzrayim.'
     ],
+
     'Eikev': [
-        'Prometendo saúde, fertilidade agrícola e vitórias militares como consequência natural da escuta atenta e do cumprimento fiel dos mandamentos divinos.',
-        'Recordando a pedagogia do deserto e a concessão do Maná, o discurso ensina que "nem só de pão viverá o homem, mas de tudo o que sai da boca de Deus".',
-        'Exaltando a excelência da Terra Prometida como uma terra de águas abundantes, trigo, cevada, videiras, figueiras, romãzeiras, azeite e mel.',
-        'Advertindo severamente contra a tentação do orgulho que surge com a fartura, proibindo a atitude de atribuir o sucesso à própria força física.',
-        'Relembrando as falhas do passado como a tragédia do Bezerro de Ouro para cultivar a humildade e demonstrar a eficácia da intercessão profética.',
-        'Descrevendo a confecção da Arca de madeira e o recebimento das segundas tábuas da lei, o texto confirma a restauração da aliança quebrada.',
-        'Exigindo a circuncisão do coração e o amor ao estrangeiro, a norma lembra que Yisrael viveu como estrangeiro na terra da escravidão no Egito.',
-        'Apresentando o segundo parágrafo do Shemá, a chuva e a prosperidade da terra são condicionadas à fidelidade comunitária contra o culto a ídolos.'
+        'Moshe continua a preparar Israel para a vida na terra, advertindo contra orgulho e esquecimento e recordando a dependência que marcou os quarenta anos de deserto.',
+        'Devarim 7:12-26 apresenta bênçãos pela observância e advertências sobre os povos da terra. Rashi e Ramban discutem a relação entre fidelidade, proteção e conquista.',
+        'Devarim 8:1-10 recorda o maná e o período do deserto. Rashi explica que a experiência teve uma função educativa: ensinar que o ser humano não vive apenas através do pão.',
+        'Devarim 8:11-20 contém uma das advertências mais fortes contra o orgulho económico. Casas, gado, prata, ouro e riqueza podem levar Israel a dizer “a minha força e o poder da minha mão fizeram esta riqueza”.',
+        'Ramban e Sforno desenvolvem a relação entre prosperidade material e esquecimento. A questão não é a riqueza em si, mas a atribuição da sua origem exclusivamente ao ser humano.',
+        'Devarim 9:1-29 recorda o Egel HaZahav e a intercessão de Moshe. Rashi e Ramban desenvolvem a argumentação de Moshe e o peso que assume perante a ruptura da aliança.',
+        'Devarim 10 apresenta as segundas tábuas e os Leviim. O texto retoma a restauração depois do Egel e mostra que a relação de aliança continua.',
+        'Devarim 10:12-22 resume as exigências de D\'us: temor, amor, serviço e obediência. O ger aparece explicitamente entre aqueles a quem D\'us presta cuidado.',
+        'Devarim 11:1-25 volta a ligar a obediência à terra e à chuva. A educação dos filhos aparece novamente como instrumento para preservar a memória.',
+        'A parashah apresenta, portanto, o perigo mais subtil da terra: não o sofrimento que faz Israel esquecer D\'us, mas a abundância que pode produzir o mesmo resultado.'
     ],
+
     'Re\'eh': [
-        'Colocando o livre-arbítrio no centro da existência, a abertura da leitura convoca o povo a contemplar as consequências de suas decisões, apresentando a bênção e a maldição como caminhos que decorrem da adesão ou rejeição aos mandamentos.',
-        'Determinando a erradicação completa de todos os resquícios de culto idólatra na Terra de Yisrael, a norma bíblica estabelece a centralização do serviço divino em um único local sagrado escolhido pelo Criador.',
-        'Mediante o refinamento da vida cotidiana, as leis de Kashrut são reafirmadas com rigor, estabelecendo a distinção entre animais permitidos e proibidos, a absoluta interdição do consumo de sangue e a proibição de cozer o cabrito no leite da mãe.',
-        'Alertando contra os perigos da sedução ideológica e da apostasia, o texto prescreve o combate intransigente aos falsos profetas e àqueles que tentam desviar a comunidade para o culto de entidades estranhas.',
-        'Estruturando uma sociedade baseada na solidariedade, os mandamentos do dízimo social e do ano de Shemitá impõem o perdão periódico das dívidas e a obrigação contínua de suprir as necessidades do irmão necessitado.',
-        'Inspirando-se na memória histórica do Éxodo, a lei da alforria exige a libertação obrigatória dos servos hebreus ao fim de seis anos de trabalho, acompanhada de generosos mantimentos para seu recomeço em dignidade.',
-        'Com o objetivo de cultivar a gratidão permanente pela subsistência, a Torá exige a consagração dos animais primogênitos machos ao serviço sagrado, consumindo-os em refeições festivas no local do Santuário.',
-        'Concluindo a visão de uma comunidade santificada, a celebração anual de Pessach, Shavuot e Sukkot reúne todo o povo em celebração, vinculando a memória histórica, a gratidão agrícola e a alegria compartilhada.'
+        'A parashah apresenta bênção e maldição, culto centralizado, idolatria, leis alimentares, dízimos, shemittah, servidão e as três festas de peregrinação.',
+        'Devarim 11:26-32 começa com a escolha entre bênção e maldição. Rashi e Sifrei relacionam esta escolha com a cerimónia que será realizada nos montes Gerizim e Eival.',
+        'Devarim 12 estabelece que Israel deve procurar o lugar que D\'us escolher para o culto. Ramban vê nesta legislação uma rejeição dos sistemas dispersos de culto associados aos povos de Kena\'an.',
+        'A proibição de imitar os povos em Devarim 12:29-31 recebe atenção especial. A tradição rabínica diferencia entre formas de culto proibidas, práticas aparentemente neutras e costumes cuja adoção pode conduzir à idolatria.',
+        'Devarim 13 apresenta diferentes situações de incitação à idolatria. Mesmo um profeta, familiar ou cidade não pode justificar uma prática contrária à relação com D\'us.',
+        'Devarim 14 apresenta as leis alimentares. Rashi, Sifrei e Chullin desenvolvem as regras sobre sinais, espécies e a forma como o povo deve distinguir entre animais permitidos e proibidos.',
+        'Devarim 14:22-29 apresenta dízimos e responsabilidade social. A presença do Levi e dos vulneráveis demonstra que a agricultura não é apenas um benefício privado.',
+        'Devarim 15 apresenta shemittah das dívidas e libertação do servo hebreu. A tradição rabínica em Sheviit e Kiddushin desenvolve a legislação económica iniciada aqui.',
+        'Devarim 16 apresenta Pessach, Shavuot e Sukkot. A presença repetida dos pobres, Leviim, estrangeiros, órfãos e viúvas demonstra que a alegria das festas deve possuir uma dimensão comunitária.'
     ],
+
     'Shoftim': [
-        'Ordenando a nomeação de juízes e policiais íntegros em todas as portas das cidades com o comando supremo: "Justiça, justiça perseguirás".',
-        'Proibindo o plantio de árvores rituais ao lado do altar ou a ereção de colunas de pedra para culto, a lei preserva a pureza do serviço divino.',
-        'Exigindo investigações minuciosas e o testemunho de pelo menos duas pessoas para a aplicação da pena capital a praticantes de idolatria.',
-        'Instituindo o Tribunal Superior no local escolhido pelo Criador para resolver questões jurídicas complexas indeferidas pelas instâncias locais.',
-        'Regulando a instituição da monarquia em Yisrael, o rei é proibido de multiplicar cavalos, esposas ou fortunas, devendo escrever seu próprio rolo da Torá.',
-        'Garantindo o sustento dos sacerdotes e levitas através dos dízimos e ofertas, o texto veta terminantemente o recurso a adivinhos, feiticeiros e necromantes.',
-        'Prometendo o surgimento contínuo de profetas legítimos semelhantes a Moshe, a norma fixa regras para desmascarar e punir os falsos profetas.',
-        'Estabelecendo normas éticas de guerra, o texto veta o abate de árvores frutíferas em cercos e exige o ritual da novilha descepadada para homicídios não solucionados.'
+        'A parashah estabelece estruturas de justiça, liderança e autoridade para Israel viver na terra, incluindo juízes, sacerdotes, rei, profetas, cidades de refúgio e testemunhas.',
+        'Devarim 16:18-20 estabelece juízes e oficiais. Rashi observa que a justiça deve ser procurada continuamente e que o suborno distorce a capacidade de julgar corretamente.',
+        'Devarim 17:8-13 apresenta casos judiciais demasiado difíceis para uma decisão local. A autoridade superior recebe uma função de decisão e a comunidade é instruída a respeitar a sentença.',
+        'Devarim 17:14-20 apresenta as leis do rei. Rashi e Sanhedrin 20b desenvolvem os limites da autoridade real, incluindo cavalos, mulheres e riqueza.',
+        'A obrigação de o rei escrever e ler a Torá é especialmente significativa. O rei possui grande poder, mas está sujeito à mesma Torá e deve estudar diariamente para não se elevar acima dos seus irmãos.',
+        'Devarim 18 apresenta os Leviim e kohanim e depois proíbe divinação, magia e práticas associadas aos povos. Rashi e Ramban discutem as diferenças entre práticas proibidas e a função legítima do profeta.',
+        'Devarim 18:15 apresenta a promessa de um profeta “como tu” a partir de entre os irmãos. Ibn Ezra, Ramban e outros comentaristas discutem o sentido da passagem dentro da profecia de Israel.',
+        'Devarim 19 apresenta cidades de refúgio e diferentes regras relativas ao homicídio involuntário. Makkot desenvolve posteriormente os procedimentos e responsabilidades.',
+        'Devarim 19:15-21 apresenta a regra de duas ou três testemunhas e o caso da testemunha falsa. A tradição rabínica desenvolve em Sanhedrin toda a legislação sobre testemunho e punição.',
+        'A parashah apresenta, assim, uma sociedade em que nenhuma forma de poder — judicial, sacerdotal, militar, real ou profética — existe sem limites.'
     ],
+
     'Ki Teitzei': [
-        'Regulando a ética militar e o respeito à dignidade humana no tratamento de mulheres prisioneiras tomadas em campanhas de guerra.',
-        'Garantindo os direitos de primogenitura do filho da esposa menos favorecida, impedindo a arbitrariedade paternal na distribuição da herança.',
-        'Ordenando o dever de devolver animais e pertences perdidos ao próximo e a obrigação de erguer um parapeito de proteção nos telhados residenciais.',
-        'Proibindo misturas indevidas como arar com boi e jumento juntos, semear sementes rituais misturadas ou vestir lã trançada com linho.',
-        'Defendendo a honra matrimonial, a lei fixa sanções severas para acusações falsas de virgindade e pune com rigor o adultério e o estupro.',
-        'Regulando o processo formal de divórcio através da entrega de um documento escrito e a proteção à nova união da mulher liberada.',
-        'Exigindo a cobrança ética de penhores e o pagamento diário e pontual do salário dos trabalhadores pobres antes do pôr do sol.',
-        'Exigindo a manutenção de pesos e medidas comerciais perfeitos e honestos, a porção encerra com a ordem de jamais esquecer o ataque de Amaleque.'
+        'Uma longa sequência de leis aborda casamento, família, propriedade, trabalho, justiça, pureza, empréstimos, servidão e guerra, mostrando como a Torá regula situações concretas da vida quotidiana.',
+        'Devarim 21:10-14 apresenta a mulher capturada na guerra. Rashi e Kiddushin 21b desenvolvem a necessidade de controlar a situação em vez de permitir uma relação imediata.',
+        'Devarim 21:15-17 apresenta os direitos do primogénito mesmo quando o pai ama mais outra esposa. Ramban analisa a regra como limitação da arbitrariedade dentro da sucessão familiar.',
+        'Devarim 22 apresenta diferentes leis relativas a objetos perdidos, animais, segurança e relações entre homens e mulheres. Rashi e Sifrei desenvolvem várias das categorias jurídicas.',
+        'A obrigação de construir uma proteção no telhado em Devarim 22:8 tornou-se uma fonte clássica para o princípio de remover perigos de propriedade privada. Bava Kamma 15b e outras fontes desenvolvem a responsabilidade por danos.',
+        'Devarim 23 apresenta regras sobre o acampamento, escravos fugitivos, empréstimos, votos e relações com grupos específicos. A santidade também é aplicada ao espaço físico da comunidade.',
+        'Devarim 24 apresenta regras sobre divórcio, salários, garantias, justiça e colheitas. A repetição da memória do Egito transforma acontecimentos históricos em fundamentos jurídicos.',
+        'Devarim 25 apresenta legislação sobre punição corporal, casamento levirato, pesos e medidas honestos e Amalek.',
+        'Sifrei Devarim e Mishnah Yevamot desenvolvem profundamente a lei do yibum e da chalitzah. A situação familiar deixa de ser apenas uma narrativa e transforma-se numa categoria jurídica.',
+        'A parashah termina com Amalek, ligando memória histórica, responsabilidade e dever coletivo de recordar um ataque cometido contra Israel no passado.'
     ],
+
     'Ki Tavo': [
-        'Estruturando a cerimônia de apresentação dos Primeiros Frutos no Santuário, o agricultor recita a declaração de gratidão histórica.',
-        'Exigindo a declaração solene da entrega honesta dos dízimos agrícolas no terceiro ano perante o altar, confirmando o compromisso com os necessitados.',
-        'Selando a reciprocidade da aliança, a comunidade declara Yisrael como povo tesouro do Criador, e Deus como o único Senhor da nação.',
-        'Ordenando a erupção de grandes pedras caiadas no Monte Ebal gravando nelas todas as palavras da Torá ao cruzar o rio Jordão.',
-        'Erguendo um altar de pedras não lavradas no Monte Ebal para a apresentação de sacrifícios de elevação e paz no ingresso na terra.',
-        'Proclamando as doze maldições rituais no Monte Ebal contra delitos cometidos em segredo, recebendo o "Amém" de toda a assembleia.',
-        'Expondo a extensa seção das bênçãos brilhantes que acompanharão a nação em sua terra se ela obedecer aos mandamentos com alegria.',
-        'Detalhando as dolorosas e trágicas consequências nacionais decorrentes do abandono prolongado da Torá e do esquecimento da aliança.'
+        'A entrada na terra é acompanhada por gratidão, memória, responsabilidade social e compromisso com a aliança. A parashah apresenta a vida na terra como inseparável da fidelidade aos mandamentos.',
+        'Devarim 26:1-11 apresenta os bikkurim. A pessoa leva os primeiros frutos e declara a história desde Yaakov até à entrada na terra. A riqueza presente é assim interpretada através da memória da libertação.',
+        'Rashi e Sifrei desenvolvem especialmente a declaração “Arami oved avi”. A leitura rabínica interpreta a narrativa como uma síntese da história de Israel, e Pesachim 116a utiliza estes versículos na Haggadah de Pessach.',
+        'Devarim 26:12-15 apresenta a declaração ligada ao ma\'aser. A pessoa enumera os destinatários sociais — Levi, ger, órfão e viúva — e depois pede a bênção de D\'us sobre Israel e sobre a terra.',
+        'Devarim 26:16-19 transforma os mandamentos num compromisso explícito entre D\'us e Israel. Rashi e Sifrei analisam a linguagem de pertencimento mútuo e a relação entre obediência e identidade.',
+        'Devarim 27:1-10 apresenta pedras com as palavras da Torá e um altar no Har Eval. Sotah 32a-37b desenvolve a cerimónia, os locais e a participação das tribos.',
+        'Devarim 27:11-26 apresenta as declarações de maldição e a resposta “Amen”. Rashi e Sifrei analisam as diferentes transgressões, muitas delas relacionadas com injustiça secreta e exploração de pessoas vulneráveis.',
+        'Devarim 28:1-14 apresenta as bênçãos pela obediência. Rashi e Sifrei desenvolvem a ordem das bênçãos e a relação entre chuva, produção, segurança e superioridade de Israel.',
+        'Devarim 28:15-68 apresenta a Tochachah. Ramban interpreta a progressão das consequências em relação à permanência de Israel na terra e à quebra da aliança.',
+        'Devarim 29:1-8 retoma a experiência do deserto e termina lembrando vitórias, proteção e provisão. A parashah transforma a memória em preparação para a renovação da aliança.'
     ],
+
     'Nitzavim': [
-        'Convocando toda a assembleia de Yisrael perante o Criador, a aliança renovada abrange desde os líderes das tribos até os carregadores de água.',
-        'Estendendo o pacto solene às gerações futuras que ainda não estavam presentes, a aliança sela a responsabilidade histórica coletiva.',
-        'Advertindo severamente contra a ilusão da impunidade individual daquele que presuma paz enquanto caminha na teimosia de seu próprio coração.',
-        'Prevendo a desolação da terra e a curiosidade das nações estrangeiras sobre os motivos do julgamento que atingiu a nação no exílio.',
-        'Prometendo o retorno compassivo dos dispersos de todos os confins da terra quando o povo retornar ao Criador de todo o coração e alma.',
-        'Afirmando a acessibilidade da Torá, a palavra divina ensina que a norma não está nos céus nem além dos mares, mas próxima na boca e no coração.',
-        'Apresentando a escolha suprema entre a vida e o bem versus a morte e o mal, o texto convoca as testemunhas dos céus e da terra.',
-        'Concluindo com o imperativo existencial "Escolhe, pois, a vida", o discurso motiva a comunidade a apegar-se ao Criador para prolongar seus dias.'
+        'Todo Israel é reunido perante D\'us para renovar a aliança, reconhecer a responsabilidade individual e coletiva e ouvir uma declaração decisiva sobre retorno, vida e fidelidade.',
+        'Devarim 29:9-14 apresenta líderes, homens, mulheres, crianças e o ger reunidos perante D\'us. Rashi e Sifrei destacam a abrangência da aliança.',
+        'Devarim 29:15-28 adverte contra quem decide servir outras divindades secretamente. A expressão relativa à pessoa que segue o desejo do seu coração recebe forte desenvolvimento rabínico.',
+        'Devarim 30:1-10 apresenta uma visão de retorno depois da dispersão. Mesmo quando Israel se encontra espalhado entre as nações, a teshuvah abre caminho para reunião e restauração.',
+        'Rashi interpreta a expressão “Hashem Elokecha et shevutecha” com discussões rabínicas sobre a própria Shechinah e a situação de Israel no exílio.',
+        'Devarim 30:11-14 afirma que o mandamento não está no céu nem além-mar. Rashi explica que a Torá foi dada de modo a poder ser procurada e praticada pelos seres humanos.',
+        'Devarim 30:15-20 apresenta a escolha entre vida e morte, bênção e maldição. Moshe apela diretamente a Israel para escolher a vida através do amor, da escuta e da fidelidade.',
+        'Devarim 31 introduz a transição de Moshe para Yehoshua e apresenta uma instrução de leitura pública da Torá. A parashah coloca lado a lado a renovação da aliança e a preparação da geração seguinte.'
     ],
+
     'Vayeilech': [
-        'Comunicando à assembleia a conclusão de sua jornada terrena aos 120 anos de idade, Moshe declara sua impossibilidade de cruzar o Jordão.',
-        'Encaminhando a liderança pública a Yehoshua bin Nun, Moshe exorta-o diante de todo o povo a ser forte e corajoso para liderar a conquista.',
-        'Concluindo a escrita completa do rolo do Livro da Torá, Moshe entrega o texto sagrado aos sacerdotes levitas para ser guardado ao lado da Arca.',
-        'Instituindo o mandamento do Hakhel, a lei exige a reunião de homens, mulheres, crianças e estrangeiros a cada sete anos para ouvir a leitura da lei.',
-        'Convocando Moshe e Yehoshua à Tenda da Revelação, a Presença Divina manifesta-se na coluna de nuvem para instruir os líderes sobre o futuro.',
-        'Revelando a futura apostasia do povo após a fartura na terra, o Criador ordena a escrita de um cântico profético como testemunho permanente.',
-        'Impondo aos levitas o dever de colocar o Livro da Torá ao lado da Arca da Aliança como testemunha contra a rebeldia da comunidade.',
-        'Reunindo os anciãos e oficiais de todas as tribos, Moshe declama as palavras do cântico profético até o seu encerramento completo.'
+        'Moshe aproxima-se do fim da sua liderança e organiza a transmissão da autoridade e da Torá, preparando Israel para avançar sem a sua presença física.',
+        'Devarim 31:1-8 apresenta Moshe a declarar que já não atravessará o Yarden. Rashi observa que a idade de Moshe não é apresentada como simples fraqueza física, mas como cumprimento da palavra recebida.',
+        'Yehoshua é apresentado publicamente e recebe a ordem de ser forte e corajoso. A liderança não é transferida apenas através de nomeação privada, mas diante de todo Israel.',
+        'Devarim 31:9-13 apresenta a escrita e leitura pública da Torá. A cerimónia de Hakhel destina-se também a mulheres e crianças, mostrando a importância da transmissão coletiva.',
+        'Sotah 41a desenvolve posteriormente o Hakhel e as características da leitura pública. A tradição rabínica vê na cerimónia uma das grandes formas de educação nacional.',
+        'Devarim 31:14-23 apresenta Moshe e Yehoshua perante D\'us. O texto prepara uma futura situação em que Israel se desviará, mas também apresenta a possibilidade de retorno através do cântico.',
+        'Devarim 31:24-29 apresenta Moshe a concluir a escrita da Torá e a colocá-la junto à Aron. Rashi e Talmud Bava Batra 14b desenvolvem debates posteriores sobre a localização e natureza desse texto.',
+        'A parashah termina introduzindo Haazinu. O cântico será testemunha perante Israel e funcionará como memória e advertência.'
     ],
-    'Ha\'Azinu': [
-        'Invocando os céus e a terra como testemunhas celestiais, o cântico poético de Moshe compara seu ensino à chuva suave que fertiliza a erva.',
-        'Exaltando a perfeição e a justiça da Rocha Divina em contraste com a perversidade e a instabilidade da geração que corruptamente agiu.',
-        'Recordando a condução amorosa do povo no deserto, a poesia compara a Providência a uma águia que paira sobre o ninho e carrega os filhotes nas asas.',
-        'Denunciando a ingratidão decorrente da fartura, o texto descreve o abandono de Deus em favor de ídolos novos.',
-        'Descrevendo a ocultação da face divina e o envio de provações, o cântico revela o julgamento justo sobre a infidelidade da comunidade.',
-        'Impedindo a aniquilação total da nação para evitar que os inimigos atribuam a vitória à sua própria força e não à mão do Criador.',
-        'Prometendo a vindicação de Seus servos e a expiação da terra de Seu povo quando as forças de Yisrael se mostrarem completamente esgotadas.',
-        'Recebendo a ordem divina final para subir ao Monte Nevo na terra de Moav e contemplar Canaã antes de ser recolhido ao seu povo.'
+
+    'Haazinu': [
+        'O cântico de Moshe apresenta poeticamente a relação entre D\'us e Israel, recordando cuidado, prosperidade, afastamento, julgamento e, finalmente, a soberania divina.',
+        'Devarim 32:1-4 convoca céus e terra como testemunhas. Rashi e Sifrei explicam por que razão precisamente essas duas realidades são chamadas como testemunhas da aliança.',
+        'Devarim 32:5-14 descreve a formação e crescimento de Israel. A imagem da águia em Devarim 32:11 torna-se um símbolo da proteção e educação do povo.',
+        'Devarim 32:15-18 apresenta Yeshurun a tornar-se próspero e a afastar-se. Rashi desenvolve a ideia de que a abundância pode criar esquecimento.',
+        'Devarim 32:19-35 apresenta o julgamento através de várias imagens de fogo, doenças, fome, inimigos e dispersão. Ramban e Sforno analisam a relação entre o pecado e as consequências.',
+        'Devarim 32:36-43 altera novamente a tonalidade e apresenta uma visão da soberania de D\'us sobre Israel e sobre as nações. A canção não termina simplesmente em destruição.',
+        'Rashi e Sifrei identificam múltiplas alusões históricas dentro do cântico, relacionando diferentes expressões com acontecimentos posteriores.',
+        'Devarim 32:44-47 apresenta Moshe a transmitir o cântico ao povo. A insistência de que as palavras não são “vazias” transforma a poesia numa fonte de vida e instrução.',
+        'A literatura rabínica vê Haazinu como um resumo profético da história de Israel. O texto é curto em forma, mas extremamente abrangente no alcance.'
     ],
-    'Vezot Haberakhah': [
-        'Abençoando individualmente as tribos de Yisrael antes de sua morte, o homem de Deus Moshe projeta o destino e a herança de cada linhagem.',
-        'Exaltando a outorga da Torá no Sinai como a herança eterna e inalienável da congregação de Yaakov e a majestade do Criador em Yeshurun.',
-        'Abençoando Yehuda com liderança e vitórias, Levi com o ensino da lei e o serviço do altar, e Binyamin com a habitação do Santuário em seu solo.',
-        'Destacando a fertilidade abundante das terras de Yosef e a prosperidade comercial e marítima de Zevulun e Yissachar.',
-        'Celebrando a bravura militar de Gad e Dan, a favorável satisfação de Naftali e a riqueza dos olivais e segurança de Asher.',
-        'Subindo do vale de Moav ao topo do Pisga no Monte Nevo, Moshe contempla toda a extensão da Terra Prometida sob a visão direta do Criador.',
-        'Falecendo no Monte Nevo pela palavra divina aos 120 anos, Moshe é sepultado pelo próprio Criador em um local secreto até os dias de hoje.',
-        'Encerrando o Pentateuco com o luto de trinta dias, a Torá tributa que nunca mais se levantou em Yisrael um profeta como Moshe, que conheceu a Deus face a face.'
+
+    'Vezot Habracha': [
+        'As últimas palavras de Moshe são dirigidas às tribos de Israel antes da sua morte. A parashah combina bênçãos tribais, grandeza divina, unidade nacional e a despedida final de Moshe.',
+        'Devarim 33:1-5 apresenta a introdução às bênçãos. Rashi e Sifrei desenvolvem as imagens de Seir, Paran e Sinai e relacionam-nas à entrega da Torá e à manifestação divina.',
+        'Devarim 33:6-11 apresenta Reuven, Yehudah e Levi. A bênção de Levi recebe especial atenção porque envolve o seu estatuto sacerdotal e a responsabilidade de ensinar e preservar o serviço.',
+        'Devarim 33:12 apresenta Binyamin como aquele que habita entre os ombros de D\'us. Rashi e Midrash relacionam esta imagem com a localização futura do Mikdash dentro do território de Binyamin.',
+        'Devarim 33:13-17 apresenta Yosef através de imagens de fertilidade, riqueza agrícola e força. Ramban desenvolve o sentido das diferentes imagens e a relação com Efraim e Menasheh.',
+        'Devarim 33:18-25 apresenta Zevulun, Yissachar, Gad, Dan, Naftali e Asher. Rashi e Sifrei interpretam as diferentes bênçãos em relação às funções e territórios de cada tribo.',
+        'Devarim 33:26-29 encerra as bênçãos descrevendo Israel como um povo único, protegido por D\'us. A expressão relativa à ausência de outro semelhante é desenvolvida pela tradição como síntese da identidade coletiva.',
+        'Devarim 34 apresenta Moshe a subir ao monte Nevo para contemplar a terra. Rashi e Sifrei discutem aquilo que Moshe vê para além da simples geografia.',
+        'A morte de Moshe é descrita de forma singular. Devarim 34:5 diz que morreu “pela boca de D\'us”, e a tradição rabínica em Sotah 13b interpreta a expressão como referência a uma morte através de um beijo divino.',
+        'Devarim 34:8 apresenta o luto de Israel por trinta dias, enquanto Yehoshua recebe o espírito de sabedoria. Rashi e Sifrei mostram que a transição não representa o fim da Torá, mas a continuidade da liderança e do ensino.',
+        'A Torá termina afirmando que nenhum profeta surgiu em Israel como Moshe, em sinais, maravilhas, força e conhecimento da relação com D\'us. O fim do livro fecha a vida de Moshe sem encerrar a missão de Israel.'
     ],
     'Chol HaMoed': [
         'Marcando os dias intermediários do período sagrado, a comunidade permanece dentro da santidade estabelecida pelo Moed, distinguindo estes dias dos dias de Yom Tov.',
@@ -570,6 +700,156 @@ export const PARASHA_DESCRIPTIONS = {
         'Concluindo o período adicional de observância, a comunidade retorna ao ciclo regular do calendário após cumprir os dias estabelecidos para aqueles que se encontram fora da Terra de Yisrael.'
     ],
 
+    'Vayakhel-Pekudei': [
+        'A união das parashot Vayakhel e Pekudei encerra o livro de Shemot, conectando a mobilização do povo e a execução fiel das obras do Mishkan à sua conclusão, prestação de contas e consagração final.',
+        'A leitura conjunta reforça a precedência do Shabbat sobre o trabalho do santuário, demonstrando que a santidade do tempo estabelecida pelo Criador transcende a edificação material.',
+        'Homens e mulheres trazem materiais com generosidade e devoção exemplares, a ponto de Moshe solicitar a interrupção das doações perante a abundância de recursos oferecidos pela congregação.',
+        'Betzalel e Oholiav lideram a confecção precisa de cada elemento sagrado — cortinas, tábuas, Aron, Shulchan, Menorah e Mizbeach — exatamente conforme o modelo transmitido no monte.',
+        'A prestação de contas detalhada de todo o ouro, prata e cobre demonstra que a administração sagrada exige absoluta transparência e responsabilidade perante a comunidade.',
+        'As vestes sacerdotais de Aharon e de seus filhos são concluídas com fidelidade e apresentadas a Moshe, que examina toda a obra e abençoa a congregação por seu cumprimento exemplar.',
+        'O Mishkan é erguido no primeiro dia do primeiro mês e a glória de D\'us enche o santuário através da nuvem que passa a guiar todas as jornadas de Israel pelo deserto.'
+    ],
+
+    'Tazria-Metzora': [
+        'A combinação de Tazria e Metzora desenvolve o sistema de pureza e santidade na vida cotidiana e comunitária de Israel, abrangendo o nascimento, a avaliação de afecções corporais e a reintegração espiritual.',
+        'As etapas de purificação e as ofertas trazidas após o nascimento ressaltam o valor da vida humana e o retorno ordenado ao espaço sagrado da congregação.',
+        'A avaliação das afecções da pele pelo Kohen demonstra que a determinação do estado de pureza ritual exige discernimento formal baseado nos mandamentos da Torá.',
+        'A extensão dos exames rituais a tecidos e vestimentas evidencia a abrangência da vigilância sobre a pureza material e espiritual no seio da comunidade.',
+        'O processo de purificação do metzora — com as aves, a madeira de cedro, o tecido escarlate, o hissopo e as ofertas — simboliza a transição do isolamento para a restauração coletiva.',
+        'A Torá contempla procedimentos adaptados à condição socioeconômica do ofertante e estende a inspeção sacerdotal às habitações, protegendo a integridade do lar.',
+        'A legislação final sobre fluxos e imersões conclui o ciclo, reforçando que a pureza ritual preserva o ambiente necessário para a presença da santidade divina entre o povo.'
+    ],
+
+    'Acharei Mot-Kedoshim': [
+        'A leitura conjunta de Acharei Mot e Kedoshim une o ponto culminante do serviço de expiação no Tabernáculo ao chamado universal para que todo o povo viva em santidade prática e retidão ética.',
+        'Acharei Mot estabelece a ordem solene do serviço de Yom Kippur conduzido pelo Kohen Gadol, com o incenso sagrado, as aspersões e a expiação anual pela congregação.',
+        'A santidade da vida manifesta-se na proibição do sangue e na definição rigorosa dos limites das relações familiares, distinguindo a comunidade dos costumes das nações vizinhas.',
+        'Kedoshim proclama o mandamento de viver em santidade perante o Criador, traduzindo esse princípio em honra aos pais, guarda do Shabbat e rejeição de toda forma de idolatria.',
+        'A obrigação de deixar partes da colheita para o pobre e para o estrangeiro consolida a compaixão e a responsabilidade social como mandamentos inseparáveis do culto.',
+        'A parashah estabelece a proibição do ódio, da maledicência e da vingança, culminando no preceito fundamental de amar o próximo como a si mesmo e de manter medidas e juízos justos.',
+        'O ciclo encerra reafirmando a separação entre o puro e o impuro e a fidelidade exclusiva a D\'us, assegurando a permanência abençoada de Israel na terra da promessa.'
+    ],
+
+    'Achrei Mot-Kedoshim': [
+        'A leitura conjunta de Acharei Mot e Kedoshim une o ponto culminante do serviço de expiação no Tabernáculo ao chamado universal para que todo o povo viva em santidade prática e retidão ética.',
+        'Acharei Mot estabelece a ordem solene do serviço de Yom Kippur conduzido pelo Kohen Gadol, com o incenso sagrado, as aspersões e a expiação anual pela congregação.',
+        'A santidade da vida manifesta-se na proibição do sangue e na definição rigorosa dos limites das relações familiares, distinguindo a comunidade dos costumes das nações vizinhas.',
+        'Kedoshim proclama o mandamento de viver em santidade perante o Criador, traduzindo esse princípio em honra aos pais, guarda do Shabbat e rejeição de toda forma de idolatria.',
+        'A obrigação de deixar partes da colheita para o pobre e para o estrangeiro consolida a compaixão e a responsabilidade social como mandamentos inseparáveis do culto.',
+        'A parashah estabelece a proibição do ódio, da maledicência e da vingança, culminando no preceito fundamental de amar o próximo como a si mesmo e de manter medidas e juízos justos.',
+        'O ciclo encerra reafirmando a separação entre o puro e o impuro e a fidelidade exclusiva a D\'us, assegurando a permanência abençoada de Israel na terra da promessa.'
+    ],
+
+    'Acharei-Kedoshim': [
+        'A leitura conjunta de Acharei Mot e Kedoshim une o ponto culminante do serviço de expiação no Tabernáculo ao chamado universal para que todo o povo viva em santidade prática e retidão ética.',
+        'Acharei Mot estabelece a ordem solene do serviço de Yom Kippur conduzido pelo Kohen Gadol, com o incenso sagrado, as aspersões e a expiação anual pela congregação.',
+        'A santidade da vida manifesta-se na proibição do sangue e na definição rigorosa dos limites das relações familiares, distinguindo a comunidade dos costumes das nações vizinhas.',
+        'Kedoshim proclama o mandamento de viver em santidade perante o Criador, traduzindo esse princípio em honra aos pais, guarda do Shabbat e rejeição de toda forma de idolatria.',
+        'A obrigação de deixar partes da colheita para o pobre e para o estrangeiro consolida a compaixão e a responsabilidade social como mandamentos inseparáveis do culto.',
+        'A parashah estabelece a proibição do ódio, da maledicência e da vingança, culminando no preceito fundamental de amar o próximo como a si mesmo e de manter medidas e juízos justos.',
+        'O ciclo encerra reafirmando a separação entre o puro e o impuro e a fidelidade exclusiva a D\'us, assegurando a permanência abençoada de Israel na terra da promessa.'
+    ],
+
+    'Achrei-Kedoshim': [
+        'A leitura conjunta de Acharei Mot e Kedoshim une o ponto culminante do serviço de expiação no Tabernáculo ao chamado universal para que todo o povo viva em santidade prática e retidão ética.',
+        'Acharei Mot estabelece a ordem solene do serviço de Yom Kippur conduzido pelo Kohen Gadol, com o incenso sagrado, as aspersões e a expiação anual pela congregação.',
+        'A santidade da vida manifesta-se na proibição do sangue e na definição rigorosa dos limites das relações familiares, distinguindo a comunidade dos costumes das nações vizinhas.',
+        'Kedoshim proclama o mandamento de viver em santidade perante o Criador, traduzindo esse princípio em honra aos pais, guarda do Shabbat e rejeição de toda forma de idolatria.',
+        'A obrigação de deixar partes da colheita para o pobre e para o estrangeiro consolida a compaixão e a responsabilidade social como mandamentos inseparáveis do culto.',
+        'A parashah estabelece a proibição do ódio, da maledicência e da vingança, culminando no preceito fundamental de amar o próximo como a si mesmo e de manter medidas e juízos justos.',
+        'O ciclo encerra reafirmando a separação entre o puro e o impuro e a fidelidade exclusiva a D\'us, assegurando a permanência abençoada de Israel na terra da promessa.'
+    ],
+
+    'Behar-Bechukotai': [
+        'A união de Behar e Bechukotai encerra o livro de Vayikra, articulando a soberania divina sobre a terra e o tempo com a aliança eterna, suas bênçãos, advertências e compromissos sagrados.',
+        'Behar introduz o descanso sabático da terra no sétimo ano, desafiando a comunidade à confiança na provisão do Criador e lembrando que a terra pertence a D\'us.',
+        'O ano do Jubileu proclama a libertação em toda a terra, restabelecendo as propriedades familiares originais e protegendo os servos empobrecidos contra a escravidão perpétua.',
+        'A legislação garante o direito permanente de resgate e proíbe o empréstimo com usura entre irmãos, reafirmando que todos são servos resgatados por D\'us do Egito.',
+        'Bechukotai apresenta as grandes bênçãos da obediência à Torá: chuvas na estação própria, colheitas abundantes, segurança, paz na terra e a presença da aliança divina.',
+        'A Tochachah adverte solenemente sobre as consequências da quebra da aliança, assegurando profeticamente que, mesmo perante o exílio, a aliança com os patriarcas não será esquecida.',
+        'O livro de Vayikra conclui com as regras sobre votos, avaliações e dízimos consagrados, selando a entrega integral da vida do povo à instrução revelada no Monte Sinai.'
+    ],
+
+    'Behar-Behukotai': [
+        'A união de Behar e Bechukotai encerra o livro de Vayikra, articulando a soberania divina sobre a terra e o tempo com a aliança eterna, suas bênçãos, advertências e compromissos sagrados.',
+        'Behar introduz o descanso sabático da terra no sétimo ano, desafiando a comunidade à confiança na provisão do Criador e lembrando que a terra pertence a D\'us.',
+        'O ano do Jubileu proclama a libertação em toda a terra, restabelecendo as propriedades familiares originais e protegendo os servos empobrecidos contra a escravidão perpétua.',
+        'A legislação garante o direito permanente de resgate e proíbe o empréstimo com usura entre irmãos, reafirmando que todos são servos resgatados por D\'us do Egito.',
+        'Bechukotai apresenta as grandes bênçãos da obediência à Torá: chuvas na estação própria, colheitas abundantes, segurança, paz na terra e a presença da aliança divina.',
+        'A Tochachah adverte solenemente sobre as consequências da quebra da aliança, assegurando profeticamente que, mesmo perante o exílio, a aliança com os patriarcas não será esquecida.',
+        'O livro de Vayikra conclui com as regras sobre votos, avaliações e dízimos consagrados, selando a entrega integral da vida do povo à instrução revelada no Monte Sinai.'
+    ],
+
+    'Chukat-Balak': [
+        'A combinação de Chukat e Balak reúne a profunda lei de purificação e os desafios da travessia pelo deserto com a tentativa frustrada dos povos vizinhos de amaldiçoar Israel, transformada em profecia e bênção.',
+        'Chukat apresenta o estatuto da Parah Adumah, cujas cinzas realizam a purificação da contaminação pela morte, revelando a transcendência dos decretos divinos.',
+        'A parashah relata o falecimento de Miriam e Aharon, o episódio das águas de Merivah, a serpente de bronze que orienta o olhar para o Alto e as vitórias sobre Sichon e Og.',
+        'Diante do avanço de Israel, o rei Balak contrata Bilam para proferir maldições contra a congregação, desencadeando um confronto entre desígnios humanos e a soberania divina.',
+        'O episódio da jumenta de Bilam expõe a soberania do Criador, demonstrando que a visão e as palavras do profeta estão inteiramente subordinadas à vontade de D\'us.',
+        'Ao contemplar a ordem e a harmonia das tendas de Israel, Bilam proclama bênçãos gloriosas e profecias duradouras sobre a grandeza presente e o futuro do povo.',
+        'A narrativa conclui advertindo contra os perigos da sedução e da idolatria em Shittim, mostrando que a verdadeira proteção de Israel decorre de sua lealdade à aliança com D\'us.'
+    ],
+
+    'Chukkat-Balak': [
+        'A combinação de Chukat e Balak reúne a profunda lei de purificação e os desafios da travessia pelo deserto com a tentativa frustrada dos povos vizinhos de amaldiçoar Israel, transformada em profecia e bênção.',
+        'Chukat apresenta o estatuto da Parah Adumah, cujas cinzas realizam a purificação da contaminação pela morte, revelando a transcendência dos decretos divinos.',
+        'A parashah relata o falecimento de Miriam e Aharon, o episódio das águas de Merivah, a serpente de bronze que orienta o olhar para o Alto e as vitórias sobre Sichon e Og.',
+        'Diante do avanço de Israel, o rei Balak contrata Bilam para proferir maldições contra a congregação, desencadeando um confronto entre desígnios humanos e a soberania divina.',
+        'O episódio da jumenta de Bilam expõe a soberania do Criador, demonstrando que a visão e as palavras do profeta estão inteiramente subordinadas à vontade de D\'us.',
+        'Ao contemplar a ordem e a harmonia das tendas de Israel, Bilam proclama bênçãos gloriosas e profecias duradouras sobre a grandeza presente e o futuro do povo.',
+        'A narrativa conclui advertindo contra os perigos da sedução e da idolatria em Shittim, mostrando que a verdadeira proteção de Israel decorre de sua lealdade à aliança com D\'us.'
+    ],
+
+    'Hukat-Balak': [
+        'A combinação de Chukat e Balak reúne a profunda lei de purificação e os desafios da travessia pelo deserto com a tentativa frustrada dos povos vizinhos de amaldiçoar Israel, transformada em profecia e bênção.',
+        'Chukat apresenta o estatuto da Parah Adumah, cujas cinzas realizam a purificação da contaminação pela morte, revelando a transcendência dos decretos divinos.',
+        'A parashah relata o falecimento de Miriam e Aharon, o episódio das águas de Merivah, a serpente de bronze que orienta o olhar para o Alto e as vitórias sobre Sichon e Og.',
+        'Diante do avanço de Israel, o rei Balak contrata Bilam para proferir maldições contra a congregação, desencadeando um confronto entre desígnios humanos e a soberania divina.',
+        'O episódio da jumenta de Bilam expõe a soberania do Criador, demonstrando que a visão e as palavras do profeta estão inteiramente subordinadas à vontade de D\'us.',
+        'Ao contemplar a ordem e a harmonia das tendas de Israel, Bilam proclama bênçãos gloriosas e profecias duradouras sobre a grandeza presente e o futuro do povo.',
+        'A narrativa conclui advertindo contra os perigos da sedução e da idolatria em Shittim, mostrando que a verdadeira proteção de Israel decorre de sua lealdade à aliança com D\'us.'
+    ],
+
+    'Matot-Masei': [
+        'A união de Matot e Masei conclui o livro de Bamidbar, estabelecendo o valor da palavra empenhada, a disciplina comunitária e a organização minuciosa das fronteiras e da justiça para a entrada em Canaã.',
+        'Matot estabelece a legislação sobre votos e juramentos, reafirmando a santidade da linguagem e a responsabilidade indeclinável pelo cumprimento de cada promessa.',
+        'A campanha contra Midyan e a partilha dos despojos entre guerreiros, congregação, sacerdotes e levitas demonstram a ordem e a equidade exigidas na condução da comunidade.',
+        'As tribos de Reuven e Gad assumem o compromisso solene de marchar na vanguarda da conquista antes de se estabelecerem nas terras férteis a leste do Jordão.',
+        'Masei recapitula as quarenta e duas etapas da jornada desde a saída do Egito até as campinas de Moav, preservando a memória histórica da condução divina pelo deserto.',
+        'São delineadas as fronteiras da Terra Prometida e designadas quarenta e oito cidades para os levitas, assegurando a difusão da instrução e do serviço sagrado por todo o território.',
+        'O estabelecimento das cidades de refúgio e as normas sobre herança tribal concluem o livro com uma sólida estrutura de justiça, refúgio e preservação dos direitos de cada família.'
+    ],
+
+    'Matot-Massei': [
+        'A união de Matot e Masei conclui o livro de Bamidbar, estabelecendo o valor da palavra empenhada, a disciplina comunitária e a organização minuciosa das fronteiras e da justiça para a entrada em Canaã.',
+        'Matot estabelece a legislação sobre votos e juramentos, reafirmando a santidade da linguagem e a responsabilidade indeclinável pelo cumprimento de cada promessa.',
+        'A campanha contra Midyan e a partilha dos despojos entre guerreiros, congregação, sacerdotes e levitas demonstram a ordem e a equidade exigidas na condução da comunidade.',
+        'As tribos de Reuven e Gad assumem o compromisso solene de marchar na vanguarda da conquista antes de se estabelecerem nas terras férteis a leste do Jordão.',
+        'Masei recapitula as quarenta e duas etapas da jornada desde a saída do Egito até as campinas de Moav, preservando a memória histórica da condução divina pelo deserto.',
+        'São delineadas as fronteiras da Terra Prometida e designadas quarenta e oito cidades para os levitas, assegurando a difusão da instrução e do serviço sagrado por todo o território.',
+        'O estabelecimento das cidades de refúgio e as normas sobre herança tribal concluem o livro com uma sólida estrutura de justiça, refúgio e preservação dos direitos de cada família.'
+    ],
+
+    'Nitzavim-Vayeilech': [
+        'A leitura combinada de Nitzavim e Vayeilech reúne a assembleia de todo o povo para a renovação solene da aliança, a transição da liderança para Yehoshua e a conclusão da Torá escrita.',
+        'Nitzavim convoca todas as gerações e estratos da comunidade — líderes, anciãos, mulheres, crianças e o estrangeiro — para firmarem o compromisso perpétuo perante D\'us.',
+        'A parashah ensina o caminho da Teshuvah como retorno acolhido pelo Criador e declara que a palavra da Torá está próxima, na boca e no coração de cada ser humano.',
+        'Moshe coloca diante de Israel a vida e o bem, a morte e o mal, convocando com amor a congregação a escolher a vida e a apegar-se fielmente aos mandamentos.',
+        'Vayeilech relata a comovente despedida de Moshe aos cento e vinte anos, investindo Yehoshua diante de todo o povo e assegurando que a presença de D\'us os guiará com coragem.',
+        'O mandamento de Hakhel estabelece a convocação de toda a congregação ao final do ano sabático durante a festa de Sukkot para ouvir e aprender as palavras da Lei.',
+        'Moshe conclui a escrita do rolo da Torá, confia-o aos levitas junto à Arca da Aliança e introduz o cântico profético como testemunho eterno para as futuras gerações de Israel.'
+    ],
+
+    'Nitzavim-Vayelech': [
+        'A leitura combinada de Nitzavim e Vayeilech reúne a assembleia de todo o povo para a renovação solene da aliança, a transição da liderança para Yehoshua e a conclusão da Torá escrita.',
+        'Nitzavim convoca todas as gerações e estratos da comunidade — líderes, anciãos, mulheres, crianças e o estrangeiro — para firmarem o compromisso perpétuo perante D\'us.',
+        'A parashah ensina o caminho da Teshuvah como retorno acolhido pelo Criador e declara que a palavra da Torá está próxima, na boca e no coração de cada ser humano.',
+        'Moshe coloca diante de Israel a vida e o bem, a morte e o mal, convocando com amor a congregação a escolher a vida e a apegar-se fielmente aos mandamentos.',
+        'Vayeilech relata a comovente despedida de Moshe aos cento e vinte anos, investindo Yehoshua diante de todo o povo e assegurando que a presença de D\'us os guiará com coragem.',
+        'O mandamento de Hakhel estabelece a convocação de toda a congregação ao final do ano sabático durante a festa de Sukkot para ouvir e aprender as palavras da Lei.',
+        'Moshe conclui a escrita do rolo da Torá, confia-o aos levitas junto à Arca da Aliança e introduz o cântico profético como testemunho eterno para as futuras gerações de Israel.'
+    ],
+
     'Kriat HaMoed': [
         'Estabelecendo a leitura pública durante o período sagrado, a comunidade reúne-se para ouvir as palavras da Torá em meio à celebração do Moed.',
         'Convocando a assembleia para a escuta da instrução divina, a leitura reforça a responsabilidade coletiva diante dos mandamentos transmitidos pelo Criador.',
@@ -590,10 +870,12 @@ function normalizeKey(str) {
         .replace(/[^a-z0-9]/g, '');
 }
 
-const NORMALIZED_PARASHA_MAP = Object.entries(PARASHA_DESCRIPTIONS).reduce((acc, [key, val]) => {
+const NORMALIZED_PARASHA_MAP = Object.entries(PARASHAH_DESCRIPTIONS).reduce((acc, [key, val]) => {
     acc[normalizeKey(key)] = val;
     return acc;
 }, {});
+
+export const PARASHA_DESCRIPTIONS = PARASHAH_DESCRIPTIONS;
 
 /**
  * Remove caracteres indesejados e filtra elementos duplicados mantendo a ordem.
@@ -605,20 +887,7 @@ function cleanAndDeduplicate(arr) {
 }
 
 /**
- * Seleciona 7 itens únicos a partir do array original de 8 posições.
- */
-function pickSevenItems(arr) {
-    if (!arr) return null;
-    if (arr.length <= 7) return cleanAndDeduplicate(arr);
-
-    // Pula exatamente a posição 3, pegando 7 posições totalmente distintas
-    return cleanAndDeduplicate([
-        arr[0], arr[1], arr[2], arr[4], arr[5], arr[6], arr[7]
-    ]);
-}
-
-/**
- * Retorna no mínimo 7 parágrafos da Parashá sem duplicatas e sem () ou /.
+ * Retorna os parágrafos da Parashá (simples ou dupla).
  */
 export function getParashaSummary(parashaName) {
     if (!parashaName) return null;
@@ -626,34 +895,30 @@ export function getParashaSummary(parashaName) {
     const cleanRaw = parashaName.replace(/^Parashat\s+/i, '').replace(/[()\/]/g, '').trim();
     const searchKey = normalizeKey(cleanRaw);
 
-    // 1. Busca por porção simples (7 itens únicos)
+    // 1. Busca direta no mapa normalizado (porções simples e porções duplas já definidas)
     if (NORMALIZED_PARASHA_MAP[searchKey]) {
-        return pickSevenItems(NORMALIZED_PARASHA_MAP[searchKey]);
+        return cleanAndDeduplicate(NORMALIZED_PARASHA_MAP[searchKey]);
     }
 
-    // 2. Trata porções duplas: 3 itens da 1ª + 4 itens da 2ª (7 itens únicos no total)
+    // 2. Fallback de compatibilidade caso haja variação de grafia em porção dupla
     if (cleanRaw.includes('-')) {
         const [p1, p2] = cleanRaw.split('-').map(p => p.trim());
-        const list1 = NORMALIZED_PARASHA_MAP[normalizeKey(p1)];
-        const list2 = NORMALIZED_PARASHA_MAP[normalizeKey(p2)];
+        const k1 = normalizeKey(p1);
+        const k2 = normalizeKey(p2);
+
+        if (NORMALIZED_PARASHA_MAP[k1 + k2]) {
+            return cleanAndDeduplicate(NORMALIZED_PARASHA_MAP[k1 + k2]);
+        }
+
+        const list1 = NORMALIZED_PARASHA_MAP[k1];
+        const list2 = NORMALIZED_PARASHA_MAP[k2];
 
         if (list1 && list2) {
-            const combined = [
-                // 3 itens totalmente distintos da 1ª Parashá
-                list1[0],
-                list1[3],
-                list1[7],
-                // 4 itens totalmente distintos da 2ª Parashá
-                list2[0],
-                list2[2],
-                list2[5],
-                list2[7]
-            ];
-            return cleanAndDeduplicate(combined);
+            return cleanAndDeduplicate([...list1, ...list2]);
         } else if (list1) {
-            return pickSevenItems(list1);
+            return cleanAndDeduplicate(list1);
         } else if (list2) {
-            return pickSevenItems(list2);
+            return cleanAndDeduplicate(list2);
         }
     }
 

@@ -73,17 +73,41 @@ export const FESTIVAL_RANGES = {
     'Pessach Sheni': '14 Ziv',
     'Yom Shavuot': '6 Sivan',
     'Yom Teruah': '1 Etanim',
+    'Rosh Hashana': '1 - 2 Etanim',
+    'Rosh Hashanah': '1 - 2 Etanim',
     'Yom Kippur': '10 Etanim',
     'Chag Sukkot': '15 - 21 Etanim',
     'Shemini Atzeret': '22 Etanim',
     'Simchat Torah': '22 Etanim',
     'Chag Hanukkah': '25 Kislev - 2 Tevet',
+    'Tu BiShvat': '15 Shevat',
+    'Tu B\'Shevat': '15 Shevat',
+    'Tu B\'Av': '15 Av',
+    'Hoshana Rabbah': '21 Etanim',
+    'Lag BaOmer': '18 Ziv',
+    'Rosh Hashana LaBehemot': '1 Elul',
+    'Rosh Elul': '1 Elul',
+    'Leil Selichot': 'Final de Elul',
+    'Elul': '1 - 29 Elul',
+    'Mês de Elul': '1 - 29 Elul',
     'Yom Purim': '14 Adar',
+    'Shushan Purim': '15 Adar',
+    'Purim Katan': '14 Adar I',
+    'Shushan Purim Katan': '15 Adar I',
     'Ta\'anit Esther': '13 Adar',
     'Tzom Tammuz': '17 Tamuz',
     'Tisha B\'Av': '9 Av',
     'Tzom Gedaliah': '3 Etanim',
-    'Tzom Tevet': '10 Tevet'
+    'Tzom Tevet': '10 Tevet',
+    'Shabbat Shekalim': 'Adar',
+    'Shabbat Zachor': 'Adar',
+    'Shabbat Parah': 'Adar / Aviv',
+    'Shabbat HaChodesh': 'Aviv',
+    'Shabbat HaGadol': 'Aviv',
+    'Shabbat Shirah': 'Shevat',
+    'Shabbat Chazon': 'Av',
+    'Shabbat Nachamu': 'Av',
+    'Shabbat Shuvah': 'Etanim'
 };
 
 /**
@@ -109,8 +133,11 @@ export const FESTIVAL_ALIASES = {
     'Unleavened Bread': 'Chag Matzot',
     'Shavuot': 'Yom Shavuot',
     'Pentecost': 'Yom Shavuot',
-    'Rosh Hashanah': 'Yom Teruah',
-    'Rosh Hashana': 'Yom Teruah',
+    'Rosh Hashanah': 'Rosh Hashana',
+    'Rosh Hashana': 'Rosh Hashana',
+    'Rosh Hashana LaBehemot': 'Rosh Hashana LaBehemot',
+    'Rosh Hashanah LaBehemot': 'Rosh Hashana LaBehemot',
+    'Rosh Elul': 'Rosh Hashana LaBehemot',
     'Yom Teru\'ah': 'Yom Teruah',
     'Kippur': 'Yom Kippur',
     'Sukkot': 'Chag Sukkot',
@@ -118,12 +145,24 @@ export const FESTIVAL_ALIASES = {
     'Hanukkah': 'Chag Chanukah',
     'Chanukah': 'Chag Chanukah',
     'Purim': 'Yom Purim',
-    'Fast of Esther': 'Ta\'anit Esther',
-    'Fast of Tammuz': 'Tzom Tammuz',
-    '17 of Tammuz': 'Tzom Tammuz',
+    'Tu B\'Shevat': 'Tu BiShvat',
+    'Tu Bishevat': 'Tu BiShvat',
+    'Tu Bishvat': 'Tu BiShvat',
+    'Tu B\'Av': 'Tu B\'Av',
+    'Hoshana Raba': 'Hoshana Rabbah',
+    'Hoshana Rabbah': 'Hoshana Rabbah',
+    'Shabbat Shuva': 'Shabbat Shuvah',
+    'Ta\'anit Esther': 'Taanit Esther',
+    'Fast of Esther': 'Taanit Esther',
+    'Tzom Tammuz': 'Tzom Tamuz',
+    'Fast of Tammuz': 'Tzom Tamuz',
+    '17 of Tammuz': 'Tzom Tamuz',
     'Fast of Gedaliah': 'Tzom Gedaliah',
     'Fast of Tevet': 'Tzom Tevet',
-    '10 of Tevet': 'Tzom Tevet'
+    '10 of Tevet': 'Tzom Tevet',
+    'Asara B\'Tevet': 'Tzom Tevet',
+    'Mes de Elul': 'Elul',
+    'Mês de Elul': 'Elul'
 };
 
 export function getFestivalDateRangeText(eventName, rawHdate) {
@@ -3680,6 +3719,106 @@ export const FESTIVAL_DESCRIPTIONS = {
         'Em termos cabalísticos posteriores, a tradição do Ari e da escola de Tzfat reforçou a associação de Lag BaOmer com Rabbi Shimon bar Yochai, Meron, o estudo do Zohar e a celebração da revelação espiritual.',
         'Em termos de costumes populares, fogueiras, peregrinação, música, dança, upsherin, arco e flecha, refeições e canções desenvolveram-se em períodos diferentes e não possuem todos o mesmo estatuto haláchico.',
         'Lag BaOmer é, portanto, uma data rabínica posterior situada no trigésimo terceiro dia da Sefirat Omer. A sua associação mais antiga está ligada à tradição sobre os discípulos de Rabbi Akiva e à cessação das mortes segundo a tradição recebida dos Geonim; a halachah codificou posteriormente esse dia como uma pausa parcial nos costumes de luto; e a Kabbalah transformou-o também numa hilula de Rabbi Shimon bar Yochai, associada à revelação da Torah nistar, ao Zohar, a Meron e às fogueiras. É precisamente a combinação dessas camadas históricas que explica a forma rica e diversificada de Lag BaOmer nas comunidades atuais.'
+    ],
+
+    'Rosh Hashana': [
+        'É a designação rabínica e tradicional para o início do ano civil e o Dia do Julgamento no primeiro e segundo dias do sétimo mês (Tishrei), integrando o mandamento bíblico de Yom Teruah a um vasto conjunto de orações, toques de shofar e reflexão espiritual.',
+        'Mishnah Rosh Hashanah 1:1 estabelece o primeiro de Tishrei como o início do ano para a contagem dos anos civis, anos sabáticos (Shemittah), Jubileus (Yovel) e dízimos das árvores e vegetais.',
+        'A teologia rabínica de Yom HaDin (Dia do Julgamento) é desenvolvida em Rosh Hashanah 16a-b, segundo a qual todas as criaturas passam perante o Criador como um rebanho diante do pastor, abrindo os livros simbólicos da vida e do destino.',
+        'A observância de dois dias (Yoma Arichta - "um único dia longo") foi instituída pelo Sinédrio para assegurar que todas as comunidades, inclusive na Diáspora, cumprissem a santidade do Moed sem incerteza na fixação lunar do novilúnio.',
+        'A liturgia do serviço de Mussaf inclui as três bênçãos singulares: Malchuyot (proclamação da Soberania de D\'us), Zichronot (lembrança da aliança e dos atos de cada ser humano) e Shofarot (revelação divina e redenção futura).',
+        'O toque do Shofar de carneiro segue as três sequências rituais fundamentadas na tradição rabínica (Tekiah, Shevarim, Teruah), simbolizando o clamor da alma, o despertar para o arrependimento e a memória da Akedat Yitzchak.',
+        'Os costumes tradicionais incluem as refeições festivas com Simanim (alimentos simbólicos como maçã com mel, romã e cabeça de peixe), expressando os votos de um ano doce e frutífero, além do início dos Dez Dias de Retorno (Aseret Yemei Teshuvah) rumo a Yom Kippur.'
+    ],
+
+    'Rosh Hashanah': [
+        'É a designação rabínica e tradicional para o início do ano civil e o Dia do Julgamento no primeiro e segundo dias do sétimo mês (Tishrei), integrando o mandamento bíblico de Yom Teruah a um vasto conjunto de orações, toques de shofar e reflexão espiritual.',
+        'Mishnah Rosh Hashanah 1:1 estabelece o primeiro de Tishrei como o início do ano para a contagem dos anos civis, anos sabáticos (Shemittah), Jubileus (Yovel) e dízimos das árvores e vegetais.',
+        'A teologia rabínica de Yom HaDin (Dia do Julgamento) é desenvolvida em Rosh Hashanah 16a-b, segundo a qual todas as criaturas passam perante o Criador como um rebanho diante do pastor, abrindo os livros simbólicos da vida e do destino.',
+        'A observância de dois dias (Yoma Arichta - "um único dia longo") foi instituída pelo Sinédrio para assegurar que todas as comunidades, inclusive na Diáspora, cumprissem a santidade do Moed sem incerteza na fixação lunar do novilúnio.',
+        'A liturgia do serviço de Mussaf inclui as três bênçãos singulares: Malchuyot (proclamação da Soberania de D\'us), Zichronot (lembrança da aliança e dos atos de cada ser humano) e Shofarot (revelação divina e redenção futura).',
+        'O toque do Shofar de carneiro segue as três sequências rituais fundamentadas na tradição rabínica (Tekiah, Shevarim, Teruah), simbolizando o clamor da alma, o despertar para o arrependimento e a memória da Akedat Yitzchak.',
+        'Os costumes tradicionais incluem as refeições festivas com Simanim (alimentos simbólicos como maçã com mel, romã e cabeça de peixe), expressando os votos de um ano doce e frutífero, além do início dos Dez Dias de Retorno (Aseret Yemei Teshuvah) rumo a Yom Kippur.'
+    ],
+
+    'Tu BiShvat': [
+        'É o Ano Novo das Árvores (Rosh Hashanah LaIlanot) celebrado em 15 de Shevat, data fixada pela Mishnah para delimitar o ciclo agrícola anual dos dízimos das árvores e dos frutos.',
+        'Mishnah Rosh Hashanah 1:1 estabelece a escola de Hillel determinando o dia 15 de Shevat como o ponto em que a maior parte das chuvas do inverno já caiu e a seiva começa a subir nas árvores da Terra de Israel.',
+        'A data possui grande relevância haláchica para o cálculo de Orlah (proibição dos primeiros três anos de frutos), Neta Revai (quarto ano consagrado) e Ma\'aser (dízimos agrícolas da Torá).',
+        'A tradição dos Sábios desenvolveu o costume de consumir frutos associados à Terra de Israel — em especial as sete espécies mencionadas em Devarim 8:8 (trigo, cevada, videira, figueira, romãzeira, oliveira e tamareira).',
+        'Os cabalistas de Safed instituíram a tradição do Seder de Tu BiShvat, combinando quatro copos de vinho com diferentes frutos para meditar sobre os quatro mundos da criação e a renovação da natureza.',
+        'O dia é marcado por alegria, bênçãos de agradecimento pela fertilidade da terra e omissão da oração de Tachanun na liturgia comunitária.'
+    ],
+
+    'Tu B\'Av': [
+        'É uma celebração rabínica de alegria e reconciliação em 15 de Av, considerada pelo Talmud em Ta\'anit 26b como um dos dias mais alegres de todo o calendário de Israel.',
+        'A tradição talmúdica em Bava Batra 121a associa a data ao fim da morte da geração do deserto e à permissão para que as tribos de Israel pudessem realizar casamentos entre si.',
+        'O dia celebra a reconciliação nacional e o amor fraternal, sendo associado na antiguidade às danças das jovens nos vinhedos de Shiloh para a formação de novas famílias em santidade.',
+        'A data também recorda o fim do corte de lenha para o Altar do Templo e a remoção dos bloqueios que impediam a peregrinação a Jerusalém por Yerovam ben Nevat.',
+        'A liturgia marca o dia com a omissão de Tachanun e a renovação do ânimo comunitário após o período de luto de Tisha B\'Av.'
+    ],
+
+    'Hoshana Rabbah': [
+        'É o sétimo dia de Chag Sukkot (21 de Tishrei/Etanim), considerado pela tradição rabínica como o encerramento solene e a entrega dos decretos do julgamento anual iniciado em Rosh Hashaná.',
+        'O dia é marcado pelas sete voltas (Hakafot) ao redor da Bimah com os Arbaat HaMinim (quatro espécies) e a recitação das preces intensas de Hoshanot por água, salvação e vida.',
+        'A cerimônia singular do bater dos ramos de salgueiro (Aravot) simboliza a humildade, a súplica por chuvas de bênção e a purificação dos pecados perante D\'us.',
+        'A vigília noturna (Tikkun Leil Hoshana Rabbah) reúne a comunidade para o estudo do Livro de Devarim e a recitação dos Tehilim (Salmos), preparando a passagem para Shemini Atzeret e Simchat Torah.'
+    ],
+
+    'Shabbat Shekalim': [
+        'É o primeiro dos quatro Shabbatot especiais antes de Pessach, celebrado no Shabbat anterior ou coincidente com Rosh Chodesh Adar.',
+        'A leitura adicional da Torá (Maftir de Shemot 30:11-16) recorda o mandamento do meio siclo (Machatzit HaShekel) entregue por todo israelita para a manutenção do Mishkan e dos sacrifícios públicos diários no Templo.'
+    ],
+
+    'Shabbat Zachor': [
+        'É o segundo Shabbat especial, observado imediatamente antes da festa de Purim.',
+        'A leitura do Maftir (Devarim 25:17-19) cumpre a obrigação bíblica positiva de recordar o ataque covarde de Amalek contra os fracos da retaguarda de Israel no deserto.'
+    ],
+
+    'Shabbat Parah': [
+        'É o terceiro Shabbat especial, observado antes de Shabbat HaChodesh no final de Adar.',
+        'A leitura do Maftir (Bamidbar 19:1-22) recorda o estatuto da Parah Adumah (Vaca Vermelha), preparando espiritualmente a comunidade para a purificação necessária antes da peregrinação e da oferta de Pessach em Jerusalém.'
+    ],
+
+    'Shabbat HaChodesh': [
+        'É o quarto Shabbat especial, observado no Shabbat anterior ou no próprio dia 1 de Nisan (Aviv).',
+        'A leitura do Maftir (Shemot 12:1-20) proclama o primeiro mês da redenção como o cabeça dos meses do ano para Israel e instrui sobre os preparativos do sacrifício de Pessach.'
+    ],
+
+    'Shabbat HaGadol': [
+        'É o grande Shabbat que antecede imediatamente o festival de Pessach.',
+        'Recorda o milagre ocorrido no Egito em 10 de Nisan, quando os israelitas amarraram os cordeiros aos pés de suas camas diante dos egípcios sem serem impedidos, preparando a redenção.',
+        'A tradição inclui uma drashá (sermão) aprofundada do rabino sobre as complexas leis e costumes de Pessach.'
+    ],
+
+    'Shabbat Shirah': [
+        'É o Shabbat em que se lê a Parashat Beshalach, contendo a Shira Hayam (Cântico do Mar) em Shemot 15, louvando a D\'us pela divisão do Mar Vermelho e a salvação de Israel.'
+    ],
+
+    'Shabbat Chazon': [
+        'É o Shabbat que precede o jejum de Tisha B\'Av, cujo nome provém da Haftará de abertura: a profecia e visão de Yeshayahu ("Chazon Yeshayahu", cap. 1) sobre a transgressão e o chamado ao arrependimento.'
+    ],
+
+    'Shabbat Nachamu': [
+        'É o Shabbat imediatamente posterior a Tisha B\'Av, iniciando o ciclo das sete semanas de consolação com a Haftará de Yeshayahu 40:1 ("Nachamu, nachamu ami" - Consolai, consolai o Meu povo).'
+    ],
+
+    'Shabbat Shuvah': [
+        'É o Shabbat que ocorre durante os Dez Dias de Arrependimento (Aseret Yemei Teshuvah) entre Rosh Hashanah e Yom Kippur.',
+        'Seu nome provém da Haftará de Hoshea 14:2 ("Shuvah Yisrael ad Hashem Elokecha" - Retorna, ó Israel, até Hashem teu D\'us), dedicada à Teshuvah profunda e ao perdão divino.'
+    ],
+
+    'Rosh Hashana LaBehemot': [
+        'É o Ano Novo para o Dízimo do Gado (Rosh Hashanah LeMa\'asar Behemah), fixado no dia 1º de Elul segundo a Mishnah Rosh Hashanah 1:1.',
+        'Esta data estabelece o marco regulatório para o ciclo anual de nascimento dos animais puros. Os animais nascidos a partir de 1 de Elul até o final de Av do ano seguinte são agrupados conjuntamente para o cumprimento do mandamento do dízimo animal (Vayikra 27:32 e Mishnah Bechorot 9:5-6).',
+        'O dízimo do gado era consagrado e levado a Jerusalém para ser oferecido no Templo e consumido em santidade durante as celebrações festivas.'
+    ],
+
+    'Elul': [
+        'É o sexto mês do calendário bíblico (a partir de Aviv) e o último mês do ciclo anual que antecede o início de Tishrei/Etanim, tradicionalmente consagrado como o Mês do Arrependimento (Chodesh HaRachamim veHaSelichot).',
+        'A tradição rabínica e cabalística associa o nome do mês ao acrônimo hebraico de Shir HaShirim 6:3: "Ani leDodi veDodi Li" ("Eu sou do meu amado, e o meu amado é meu"), simbolizando a proximidade e o retorno amoroso entre Israel e o Criador.',
+        'Durante todo o mês de Elul, a tradição inclui o toque diário do Shofar após as orações matinais (no rito ashkenazi) e a recitação das orações penitenciais de Selichot (diariamente no rito sefardita a partir de Rosh Chodesh Elul, e nos últimos dias antes de Rosh Hashaná no rito ashkenazi).',
+        'Os quarenta dias que vão desde 1º de Elul até Yom Kippur correspondem ao período bíblico em que Moisés permaneceu no Monte Sinai para receber as segundas Tábuas da Lei (Shemot 34:28), sendo um tempo propício para reflexão pessoal, oração, caridade (Tzedakah) e reparação de condutas.'
     ]
 
 };

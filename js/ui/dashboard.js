@@ -8,6 +8,103 @@ import { getEventIcon } from './icons.js';
 import { startTimers } from './timers.js';
 import { reopenModals } from './modals.js';
 
+const PROMO_CONFIG = {
+    active: true,
+    title: 'Prit Nivchar',
+    subtitle: 'Artigo selecionado',
+    iconClass: 'fa-solid fa-bag-shopping',
+
+    items: [
+        // {
+        //     title: 'Ciclos Tempo',
+        //     subtitle: 'Livro Digital',
+        //     iconClass: 'fa-solid fa-gem',
+        //     link: 'https://exemplo.com/produto1'
+        // },
+        // {
+        //     title: 'Guia Estudos',
+        //     subtitle: 'Edição Anual',
+        //     iconClass: 'fa-solid fa-book',
+        //     link: 'https://exemplo.com/produto2'
+        // }
+    ]
+};
+
+function createAdOrProductCardHTML(config) {
+    if (!config || !config.active || !config.items || !Array.isArray(config.items) || config.items.length === 0) {
+        return undefined;
+    }
+
+    const totalItems = config.items.length;
+
+    if (totalItems === 1) {
+        const item = config.items[0];
+        const cardTitle = item.title || config.title;
+        const cardSubtitle = item.subtitle || config.subtitle;
+        const link = item.link || '#';
+
+        return `
+            <div class="event-card event-item glass-panel ad-product-card" tabindex="0" role="button" onclick="window.open('${link}', '_blank')">
+                <div class="icon-circle ad-badge">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </div>
+                <div class="card-content">
+                    <div>
+                        <h2 class="card-title">${cardTitle}</h2>
+                    </div>
+                    <span class="card-subtitle">${cardSubtitle}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    const listHtml = config.items.map(item => `
+        <li onclick="window.open('${item.link}', '_blank')" 
+            style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.025); border: 1px solid var(--card-border-color); box-sizing: border-box; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease;"
+            onmouseover="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='var(--accent-color)';" 
+            onmouseout="this.style.background='rgba(255, 255, 255, 0.025)'; this.style.borderColor='var(--card-border-color)';">
+            
+            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
+                <div style="width: 34px; height: 34px; border-radius: 10px; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255, 255, 255, 0.06); color: var(--accent-color); font-size: 14px;">
+                    <i class="${item.iconClass || 'fa-solid fa-box'}"></i>
+                </div>
+                <div style="display: flex; flex-direction: column; text-align: left; min-width: 0; flex: 1;">
+                    <span style="font-size: var(--font-size-base); font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.title}</span>
+                    <span style="font-size: var(--font-size-xs); color: var(--text-muted); line-height: 1.4; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.subtitle}</span>
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: var(--text-muted);"></i>
+        </li>
+    `).join('');
+
+    const modalContent = `
+        <div class="calendar-wrapper">
+            <div class="calendar-legend">
+                <ul class="legend-list" style="padding: 0; margin: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">
+                    ${listHtml}
+                </ul>
+            </div>
+        </div>
+    `;
+
+    const safeTitle = config.title.replace(/"/g, '&quot;');
+    const safeHtml = modalContent.replace(/"/g, '&quot;');
+
+    return `
+        <div class="event-card event-item glass-panel ad-product-card info-trigger" tabindex="0" role="button" data-info-title="${safeTitle}" data-info-html="${safeHtml}">
+            <div class="icon-circle ad-badge">
+                <i class="${config.iconClass || 'fa-solid fa-bag-shopping'}"></i>
+            </div>
+            <div class="card-content">
+                <div>
+                    <h2 class="card-title">${config.title}</h2>
+                </div>
+                <span class="card-subtitle">${config.subtitle}</span>
+            </div>
+        </div>
+    `;
+}
+
 const HEBREW_MONTHS_MAP = {
     "Nisan": "Aviv", "Iyyar": "Ziv", "Sivan": "Sivan", "Tammuz": "Tamuz",
     "Av": "Av", "Elul": "Elul", "Tishrei": "Etanim", "Cheshvan": "Bul",
@@ -213,7 +310,7 @@ function generateCalendarHTML(events, currentHdate) {
         return (b.isBiblical ? 1 : 0) - (a.isBiblical ? 1 : 0);
     });
 
-    const multiDayCategories = ['matzot', 'sukkot', 'hanukkah', 'omer'];
+    const multiDayCategories = ['matzot', 'sukkot', 'hanukkah', 'omer', 'roshhashana'];
     const mergedLegend = [];
     for (const item of legendItems) {
         const last = mergedLegend[mergedLegend.length - 1];
@@ -260,9 +357,11 @@ function generateCalendarHTML(events, currentHdate) {
         }
         html += `</ul></div>`;
     } else {
-        html += `<div class="calendar-legend" style="margin-top: 10px; text-align: center; color: var(--text-muted); padding: 20px 0;">
-            Nenhuma festa em ${displayMonth}.
-        </div>`;
+        html += `<div class="info-modal-card" style="margin-bottom: 0; white-space:normal; overflow:visible;">
+            <div class="info-modal-value" style="font-weight: 400; font-size: var(--font-size-sm); line-height: 1.6; color: var(--text-primary); text-align: left; padding: 4px 0;">
+                Nenhuma festa registada no mês de ${displayMonth}.
+            </div>
+        </div></div>`;
     }
 
     html += `</div>`;
@@ -388,7 +487,6 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         let contentHtml = '';
 
         if (parashaSummary) {
-            // Garante array de parágrafos e renderiza cada um dos 7 itens em seu próprio card
             const paragraphs = Array.isArray(parashaSummary) ? parashaSummary : [parashaSummary];
             contentHtml = `
         <div class="levels-container" style="display:flex; flex-direction:column;">
@@ -507,6 +605,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         elDate.textContent = `${hdate.hd} ${displayMonth}`;
 
         if (elDateWrapper) {
+            elDateWrapper.classList.add('info-trigger');
             elDateWrapper.setAttribute('data-info-title', `${hdate.hd} ${displayMonth}`);
             elDateWrapper.setAttribute('data-info-html', generateCalendarHTML(events, hdate));
             const sub = elDateWrapper.querySelector('.card-subtitle');
@@ -533,9 +632,42 @@ export function renderEvents() {
 
     const now = new Date().getTime();
     const twentyFourHoursMs = 24 * 60 * 60 * 1000;
+    const threeHoursMs = 3 * 60 * 60 * 1000;
+
+    const currentHm = state.currentHdate?.hm;
+    const currentHy = state.currentHdate?.hy;
+
+    const promoHTML = createAdOrProductCardHTML(PROMO_CONFIG);
+
+    const isFestivalActiveOrNear = state.unifiedEvents.some(evt => {
+        const eventStart = evt.time;
+        const eventEnd = eventStart + twentyFourHoursMs;
+        const blockStart = eventStart - threeHoursMs;
+        const blockEnd = eventEnd + threeHoursMs;
+
+        return now >= blockStart && now <= blockEnd;
+    });
+
+    const canShowPromo = promoHTML !== undefined && !isFestivalActiveOrNear;
+
+    // DEFINE O LIMITE: 3 eventos com promo (Total 4) ou 4 eventos sem promo (Total 4)
+    const MAX_EVENTS = canShowPromo ? 3 : 4;
 
     const sorted = state.unifiedEvents
-        .filter(evt => (evt.time + twentyFourHoursMs) > now)
+        .filter(evt => {
+            if ((evt.time + twentyFourHoursMs) <= now) return false;
+            if (currentHm && evt.raw && evt.raw.hdate) {
+                const parts = evt.raw.hdate.split(' ');
+                if (parts.length >= 3) {
+                    const hMonth = parts.slice(1, -1).join(' ');
+                    const hYear = parseInt(parts[parts.length - 1], 10);
+                    if (hMonth !== currentHm || (currentHy && hYear !== currentHy)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        })
         .sort((a, b) => a.time - b.time);
 
     const firstOmer = sorted.find(e => e.category === 'omer');
@@ -557,7 +689,6 @@ export function renderEvents() {
     const unique = [];
     const seenNames = new Set();
     let shabbatCount = 0;
-    let majorCount = 0;
 
     for (const item of merged) {
         if (!item.name) continue;
@@ -567,6 +698,8 @@ export function renderEvents() {
         const isTooSimilar = unique.some(added => getStringSimilarity(item.name, added.name) >= 0.70);
         if (isTooSimilar) continue;
 
+        if (unique.length >= MAX_EVENTS) break;
+
         if (item.name === 'Yom Shabbat') {
             if (shabbatCount < 1) {
                 unique.push(item);
@@ -574,24 +707,41 @@ export function renderEvents() {
                 seenNames.add(normalized);
             }
         } else {
-            if (majorCount < 3) {
-                unique.push(item);
-                majorCount++;
-                seenNames.add(normalized);
-            }
+            unique.push(item);
+            seenNames.add(normalized);
         }
-        if (shabbatCount >= 1 && majorCount >= 3) break;
     }
 
     const upcoming = unique.sort((a, b) => a.time - b.time);
+    const fragment = document.createDocumentFragment();
 
-    if (upcoming.length === 0) {
-        grid.innerHTML = '';
+    // Adiciona o cartão da Promoção (se existir)
+    if (canShowPromo) {
+        const adWrapper = document.createElement('div');
+        adWrapper.innerHTML = promoHTML;
+        if (adWrapper.firstElementChild) {
+            fragment.appendChild(adWrapper.firstElementChild);
+        }
+    }
+
+    if (upcoming.length === 0 && !canShowPromo) {
+        const displayMonth = HEBREW_MONTHS_MAP[currentHm] || currentHm || 'este mês';
+        grid.innerHTML = `
+            <div class="event-card event-item glass-panel" style="grid-column: 1 / -1; cursor: default;">
+                <div class="icon-circle" style="background: rgba(255, 255, 255, 0.05);">
+                    <i class="fa-regular fa-calendar-xmark" style="color: var(--text-muted);"></i>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title" style="font-size: var(--font-size-base); font-weight: 500; color: var(--text-muted);">Sem festas agendadas</h2>
+                    <span class="card-subtitle">Nenhum evento adicional para ${displayMonth}</span>
+                </div>
+            </div>
+        `;
+        removeNotReadyState(['card-local-vigente', 'card-hdate-wrapper']);
         return;
     }
 
-    const fragment = document.createDocumentFragment();
-
+    // Renderiza os cartões dos eventos
     upcoming.forEach(evt => {
         const icon = getEventIcon(evt.category, evt.name, "");
 
@@ -625,7 +775,6 @@ export function renderEvents() {
     });
 
     grid.appendChild(fragment);
-
     removeNotReadyState(['card-local-vigente', 'card-hdate-wrapper']);
 
     startTimers();

@@ -7,37 +7,32 @@ let manualThemeOverride = false;
 const OFFSET_MS = 30 * 60 * 1000;
 
 function getSolarTimes() {
-    let sunrise, sunset, solarNoon;
+    let sunrise, sunset;
 
     if (state.currentZmanim?.sunrise && state.currentZmanim?.sunset) {
         sunrise = new Date(state.currentZmanim.sunrise).getTime();
         sunset = new Date(state.currentZmanim.sunset).getTime();
-        solarNoon = sunrise + (sunset - sunrise) / 2;
     } else {
         const now = new Date();
         sunrise = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 6, 0, 0).getTime();
         sunset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 0, 0).getTime();
-        solarNoon = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0).getTime();
     }
 
     return {
         sunrise,
         sunset,
-        solarNoon,
         morningStart: sunrise - OFFSET_MS,
-        afternoonStart: solarNoon - OFFSET_MS,
         nightStart: sunset - OFFSET_MS
     };
 }
 
 function getThemeForTime(nowMs, solar) {
-    if (nowMs >= solar.morningStart && nowMs < solar.afternoonStart) return 'day';
-    if (nowMs >= solar.afternoonStart && nowMs < solar.nightStart) return 'afternoon';
+    if (nowMs >= solar.morningStart && nowMs < solar.nightStart) return 'day';
     return 'night';
 }
 
 function getNextTransitionMs(nowMs, solar) {
-    const transitions = [solar.morningStart, solar.afternoonStart, solar.nightStart];
+    const transitions = [solar.morningStart, solar.nightStart];
     const next = transitions.find(t => t > nowMs);
 
     if (next) return next - nowMs;
@@ -47,7 +42,7 @@ function getNextTransitionMs(nowMs, solar) {
 }
 
 function getThemeLabel(theme) {
-    const labels = { day: 'Manhã', afternoon: 'Tarde', night: 'Noite' };
+    const labels = { day: 'Dia', night: 'Noite' };
     return labels[theme] || theme;
 }
 
@@ -65,11 +60,11 @@ export function applyEstimatedTheme(lat, lon) {
     }
 
     let theme = 'night';
-    if (localHour >= 5.5 && localHour < 11.5) theme = 'day';
-    else if (localHour >= 11.5 && localHour < 17.5) theme = 'afternoon';
+    if (localHour >= 5.5 && localHour < 17.5) theme = 'day';
 
     document.documentElement.setAttribute('data-theme', theme);
-    console.log(`[ACTION] Tema ${getThemeLabel(theme)}`);
+    // Log estimated theme application based on current local hour/longitude
+    console.log(`[ACTION] Theme set to estimated: ${theme.toUpperCase()}`);
 }
 
 export function applySolarTheme() {
@@ -102,13 +97,14 @@ export function applySolarTheme() {
 
     const theme = getThemeForTime(nowMs, solar);
     document.documentElement.setAttribute('data-theme', theme);
-    console.log(`[ACTION] Tema ${getThemeLabel(theme)}`);
+    // Log solar-calculated theme application
+    console.log(`[ACTION] Theme set by solar zmanim: ${theme.toUpperCase()}`);
 
     scheduleAutoReload(solar, nowMs);
 }
 
 function scheduleAutoReload(solar, nowMs) {
-    const transitions = [solar.morningStart, solar.afternoonStart, solar.nightStart];
+    const transitions = [solar.morningStart, solar.nightStart];
     let nextReload = transitions.find(t => t > nowMs + 5000);
 
     if (!nextReload) {
@@ -117,38 +113,49 @@ function scheduleAutoReload(solar, nowMs) {
 
     const msToReload = nextReload - nowMs;
 
-    // Limite máximo do setTimeout no JS é ~24.8 dias (2147483647 ms)
+    // Maximum setTimeout delay in JavaScript is ~24.8 days (2147483647 ms)
     if (msToReload > 0 && msToReload <= 2147483647) {
         autoReloadTimeout = setTimeout(() => {
-            console.log('[ACTION] Auto-reload na transição de tema');
+            // Log automatic page reload triggered at solar theme transition boundary
+            console.log('[ACTION] Automatic page reload triggered at theme transition boundary');
             window.location.reload();
         }, msToReload + 1000);
     }
 }
 
-// Recalcula/reaplica quando a aba volta a ficar visível
-document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && !manualThemeOverride) {
+// Recalculate/reapply theme when browser tab regains visibility
+if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && !manualThemeOverride) {
+            applySolarTheme();
+        }
+    });
+}
+
+// Global Developer Console APIs
+if (typeof window !== 'undefined') {
+    window.setTheme = (themeName) => {
+        manualThemeOverride = true;
+        if (solarThemeTimeout) clearTimeout(solarThemeTimeout);
+        if (autoReloadTimeout) clearTimeout(autoReloadTimeout);
+
+        const validThemes = ['day', 'night'];
+        if (validThemes.includes(themeName)) {
+            if (typeof document !== 'undefined') {
+                document.documentElement.setAttribute('data-theme', themeName);
+            }
+            // Log manual theme override command
+            console.log(`[MANUAL] Theme override applied: ${themeName.toUpperCase()}`);
+        } else {
+            // Warn developer about invalid theme name
+            console.warn(`[THEME] Invalid theme name: "${themeName}". Please choose one of: ${validThemes.join(', ')}`);
+        }
+    };
+
+    window.resetTheme = () => {
+        manualThemeOverride = false;
+        // Log reset to automatic solar theme calculation
+        console.log('[ACTION] Theme override cleared, reverting to solar automatic theme');
         applySolarTheme();
-    }
-});
-
-// APIs Globais para Console
-window.setTheme = (themeName) => {
-    manualThemeOverride = true;
-    if (solarThemeTimeout) clearTimeout(solarThemeTimeout);
-    if (autoReloadTimeout) clearTimeout(autoReloadTimeout);
-
-    const validThemes = ['day', 'afternoon', 'night'];
-    if (validThemes.includes(themeName)) {
-        document.documentElement.setAttribute('data-theme', themeName);
-        console.log(`[MANUAL] Tema ${getThemeLabel(themeName)}`);
-    } else {
-        console.warn(`[Tema] Nome inválido. Escolha um destes: ${validThemes.join(', ')}`);
-    }
-};
-
-window.resetTheme = () => {
-    manualThemeOverride = false;
-    applySolarTheme();
-};
+    };
+}

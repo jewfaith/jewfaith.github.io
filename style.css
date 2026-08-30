@@ -334,6 +334,87 @@ body.modal-open .dashboard-wrapper {
     gap: 24px;
 }
 
+/* Promotion / Ad Banner */
+.promo-banner {
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.promo-banner:hover {
+    transform: scale(1.01);
+    border-color: var(--accent-color);
+}
+
+.promo-link {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+}
+
+.promo-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+}
+
+.promo-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--accent-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--accent-color);
+    font-size: 16px;
+}
+
+.promo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.promo-title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.promo-subtitle {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.promo-media {
+    width: 100%;
+}
+
+.promo-media img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+    display: block;
+    border-radius: 0 0 28px 28px;
+}
+
 .event-cards-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));

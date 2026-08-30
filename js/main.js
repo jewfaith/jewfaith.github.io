@@ -199,7 +199,8 @@ async function updateDashboard() {
                             const rawHdate = item.hdate || '1 Tishrei';
                             return [
                                 { name: 'Yom Teruah', time: dateObj.getTime(), category: 'yomteruah', rawCategory: item.category, isBiblical: true, isTraditional: false, raw: item },
-                                { name: 'Rosh Chodesh', time: dateObj.getTime(), category: 'roshchodesh', rawCategory: 'roshchodesh', isBiblical: true, isTraditional: false, raw: { ...item, title: `Rosh Chodesh ${rawHdate.split(' ').slice(1, -1).join(' ') || 'Tishrei'}`, category: 'roshchodesh', hdate: rawHdate } }
+                                { name: 'Rosh Chodesh', time: dateObj.getTime(), category: 'roshchodesh', rawCategory: 'roshchodesh', isBiblical: true, isTraditional: false, raw: { ...item, title: `Rosh Chodesh ${rawHdate.split(' ').slice(1, -1).join(' ') || 'Tishrei'}`, category: 'roshchodesh', hdate: rawHdate } },
+                                { name: 'Rosh Hashana', time: dateObj.getTime(), category: 'roshhashana', rawCategory: item.category, isBiblical: false, isTraditional: true, raw: item }
                             ];
                         }
 
@@ -231,31 +232,88 @@ async function updateDashboard() {
 
                 if (!isBiblical) {
                     const traditionalMapping = {
-                        'Shabbat Shirah': 'shabbatshirah', 'Purim Katan': 'purimkatan', 'Shushan Purim Katan': 'shushanpurimkatan',
-                        'Shushan Purim': 'shushanpurim', 'Shabbat HaChodesh': 'shabbathachodesh', 'Shabbat HaGadol': 'shabbathagadol',
-                        'Lag BaOmer': 'lagbaomer', 'Shabbat Chazon': 'shabbatchazon', 'Shabbat Nachamu': 'shabbatnahamu',
-                        'Leil Selichot': 'leilselichot', 'Chanukah': 'chanukah'
+                        // Purim e dias associados
+                        'Shushan Purim Katan': 'shushanpurimkatan',
+                        'Purim Katan': 'purimkatan',
+                        'Shushan Purim': 'shushanpurim',
+                        'Purim': 'purim',
+                        'Ta\'anit Esther': 'taanitesther',
+                        'Taanit Esther': 'taanitesther',
+                        'Fast of Esther': 'taanitesther',
+
+                        // Chanukah
+                        'Chanukah': 'chanukah',
+                        'Hanukkah': 'chanukah',
+
+                        // Festas e Datas do Calendário Rabínico
+                        'Rosh Hashana LaBehemot': 'roshhashanalabehemot',
+                        'Rosh Hashana': 'roshhashana',
+                        'Rosh Hashanah': 'roshhashana',
+                        'Simchat Torah': 'simchattorah',
+                        'Simchas Torah': 'simchattorah',
+                        'Hoshana Raba': 'hoshanarabbah',
+                        'Hoshana Rabbah': 'hoshanarabbah',
+                        'Tu BiShvat': 'tubishvat',
+                        'Tu B\'Shevat': 'tubishvat',
+                        'Tu B\'Av': 'tubaav',
+                        'Lag BaOmer': 'lagbaomer',
+                        'Lag B\'Omer': 'lagbaomer',
+                        'Leil Selichot': 'leilselichot',
+
+                        // Quatro Jejuns Rabínicos
+                        'Tzom Gedaliah': 'tzomgedaliah',
+                        'Fast of Gedaliah': 'tzomgedaliah',
+                        'Asara B\'Tevet': 'tzomtevet',
+                        'Tzom Tevet': 'tzomtevet',
+                        'Fast of Tevet': 'tzomtevet',
+                        '10 of Tevet': 'tzomtevet',
+                        'Tzom Tammuz': 'tzomtammuz',
+                        '17 of Tammuz': 'tzomtammuz',
+                        'Fast of Tammuz': 'tzomtammuz',
+                        'Tish\'a B\'Av': 'tishabav',
+                        'Tisha B\'Av': 'tishabav',
+                        'Fast of Av': 'tishabav',
+
+                        // Shabbatot Especiais
+                        'Shabbat Shekalim': 'shabbatshekalim',
+                        'Shabbat Zachor': 'shabbatzachor',
+                        'Shabbat Parah': 'shabbatparah',
+                        'Shabbat HaChodesh': 'shabbathachodesh',
+                        'Shabbat HaGadol': 'shabbathagadol',
+                        'Shabbat Shirah': 'shabbatshirah',
+                        'Shabbat Chazon': 'shabbatchazon',
+                        'Shabbat Nachamu': 'shabbatnahamu',
+                        'Shabbat Shuva': 'shabbatshuvah',
+                        'Shabbat Shuvah': 'shabbatshuvah'
                     };
 
-                    if (cleanTitle.includes("Tish'a B'Av") || cleanTitle.includes("Tish\u2018a B\u2019Av")) {
-                        itemName = "Tisha B'Av";
-                        isTraditional = true;
-                        customCategory = 'tishabav';
-                    } else if (cleanTitle === 'Tzom Gedaliah') {
-                        itemName = 'Tzom Gedaliah';
-                        isTraditional = true;
-                        customCategory = 'tzomgedaliah';
-                    } else {
-                        for (const tKey in traditionalMapping) {
-                            if (cleanTitle.includes(tKey)) {
-                                if (tKey === 'Chanukah' && !(cleanTitle.includes('1 Candle') || cleanTitle === 'Chanukah: 8th Day')) {
-                                    return [];
-                                }
-                                itemName = tKey === 'Chanukah' ? 'Chag Chanukah' : tKey;
-                                isTraditional = true;
-                                customCategory = traditionalMapping[tKey];
-                                break;
+                    for (const tKey in traditionalMapping) {
+                        if (cleanTitle.includes(tKey)) {
+                            if ((tKey === 'Chanukah' || tKey === 'Hanukkah') && !(cleanTitle.includes('1 Candle') || cleanTitle.includes('8th Day') || cleanTitle === 'Chanukah' || cleanTitle === 'Hanukkah')) {
+                                return [];
                             }
+                            let mappedName = tKey;
+                            if (tKey === 'Chanukah' || tKey === 'Hanukkah') mappedName = 'Chag Chanukah';
+                            else if (tKey === 'Rosh Hashana LaBehemot') mappedName = 'Rosh Elul';
+                            else if (tKey === 'Purim' && !cleanTitle.includes('Katan') && !cleanTitle.includes('Shushan')) mappedName = 'Yom Purim';
+                            else if (tKey === 'Shushan Purim Katan') mappedName = 'Shushan Purim';
+                            else if (tKey.startsWith('Rosh Hashana')) mappedName = 'Rosh Hashana';
+                            else if (tKey === 'Ta\'anit Esther' || tKey === 'Taanit Esther' || tKey === 'Fast of Esther') mappedName = 'Ta\'anit Esther';
+                            else if (tKey === 'Tzom Tammuz' || tKey === '17 of Tammuz' || tKey === 'Fast of Tammuz') mappedName = 'Tzom Tammuz';
+                            else if (tKey === 'Asara B\'Tevet' || tKey === 'Tzom Tevet' || tKey === '10 of Tevet' || tKey === 'Fast of Tevet') mappedName = 'Tzom Tevet';
+                            else if (tKey.includes('Tish') || tKey === 'Fast of Av') mappedName = "Tisha B'Av";
+                            else if (tKey === 'Tzom Gedaliah' || tKey === 'Fast of Gedaliah') mappedName = 'Tzom Gedaliah';
+                            else if (tKey.includes('Hoshana')) mappedName = 'Hoshana Rabbah';
+                            else if (tKey.includes('Shuva')) mappedName = 'Shabbat Shuvah';
+                            else if (tKey.includes('Simchat') || tKey.includes('Simchas')) mappedName = 'Simchat Torah';
+                            else if (tKey.includes('Tu BiShvat') || tKey.includes('Tu B\'Shevat')) mappedName = 'Tu BiShvat';
+                            else if (tKey.includes('Tu B\'Av')) mappedName = 'Tu B\'Av';
+                            else if (tKey.includes('Lag B')) mappedName = 'Lag BaOmer';
+
+                            itemName = mappedName;
+                            isTraditional = true;
+                            customCategory = traditionalMapping[tKey];
+                            break;
                         }
                     }
                 }

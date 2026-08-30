@@ -123,6 +123,7 @@ async function fetchNearbyLocations() {
                     uniqueItems.push({ item, displayText, distSq });
                 }
             } catch (e) {
+                // Log failure when querying a specific locality type from Nominatim
                 console.error(`Error querying nearby locations for type ${q}:`, e);
             }
 
@@ -158,6 +159,7 @@ async function fetchNearbyLocations() {
         binnedItems.sort((a, b) => a.distanceKm - b.distanceKm);
         nearbyLocationsCache = binnedItems;
     } catch (err) {
+        // Log unexpected error when fetching nearby localities
         console.error('Error fetching nearby locations:', err);
     } finally {
         isFetchingNearby = false;
@@ -218,14 +220,16 @@ function renderSuggestions(results) {
 
         li.addEventListener('click', () => {
             if (resItem.isCurrent) {
-                console.log('[ACTION] Localização Automática');
+                // User selected automatic GPS / IP location detection
+                console.log('[ACTION] Location selected: Auto-detected (GPS/IP)');
                 localStorage.removeItem('exactLocation');
             } else {
                 const lat = parseFloat(resItem.item.lat);
                 const lon = parseFloat(resItem.item.lon);
                 const isIl = resItem.item.address && (resItem.item.address.country_code === 'il' || resItem.item.address.country === 'Israel');
                 const tz = isIl ? 'Asia/Jerusalem' : Intl.DateTimeFormat().resolvedOptions().timeZone;
-                console.log(`[ACTION] ${resItem.displayText}`);
+                // User selected a custom manual locality
+                console.log(`[ACTION] Location selected: ${resItem.displayText}`);
                 localStorage.setItem('exactLocation', JSON.stringify({ lat, lon, name: resItem.displayText, isIsrael: isIl, tz: tz }));
                 applyEstimatedTheme(lat, lon);
             }
@@ -716,9 +720,11 @@ async function openReadingModal(ref, cardTitle) {
         titleEl.textContent = toHebrewBookName(cardTitle);
 
         if (isCache) {
-            console.log(`[CACHE] ${translation} - ${toHebrewBookName(ref)}`);
+            // Log successful scripture retrieval from local browser cache
+            console.log(`[CACHE] Reading served from local cache: ${translation} - ${ref}`);
         } else {
-            console.log(`[API] ${translation} - ${toHebrewBookName(ref)}`);
+            // Log successful scripture retrieval from remote Bible API
+            console.log(`[API] Reading served from remote API: ${translation} - ${ref}`);
         }
 
         let html = '<div class="verses-container">';
@@ -740,7 +746,8 @@ async function openReadingModal(ref, cardTitle) {
         bodyEl.scrollTop = 0;
 
     } catch (err) {
-        console.group("[ERRO CRITICO] Scripture Reader Fetch Failure");
+        // Log structured critical error diagnostics when scripture retrieval fails
+        console.group("[CRITICAL ERROR] Scripture Reader Fetch Failure");
         console.error("Technical Context Summary:", {
             requestedReference: ref,
             bookOriginal: cardTitle,
@@ -770,13 +777,14 @@ export function initModals(updateDashboardCallback) {
     updateDashboardCallbackGlobal = updateDashboardCallback;
 
     document.addEventListener('click', (event) => {
-        // Trata os cards do dashboard
+        // Handle dashboard interactive cards
         const card = event.target.closest('.event-card, .legend-card');
         if (!card) return;
 
         if (card.id === 'card-local-vigente') {
             if (card.classList.contains('not-ready')) return;
-            console.log('[MODAL] Pesquisa de Localização');
+            // Log opening of location search modal dialog
+            console.log('[MODAL] Opening Location Search Modal');
             const modal = document.getElementById('location-modal');
             if (modal) {
                 modal.style.display = 'flex';
@@ -824,7 +832,8 @@ export function initModals(updateDashboardCallback) {
                 const htmlContent = card.getAttribute('data-info-html') || '';
 
                 if (htmlContent) {
-                    console.log(`[MODAL] ${titleText}`);
+                    // Log opening of info description modal dialog
+                    console.log(`[MODAL] Opening Info Modal: ${titleText}`);
                     titleEl.textContent = titleText;
                     bodyEl.innerHTML = getSkeletonHTML();
                     modal.style.display = 'flex';
@@ -866,7 +875,8 @@ export function initModals(updateDashboardCallback) {
                     }, 1200);
                 }
             }).catch(err => {
-                console.error('Falha ao copiar texto: ', err);
+                // Log failure to write to system clipboard
+                console.error('Failed to copy text to clipboard: ', err);
             });
         }
     });
@@ -901,7 +911,8 @@ export function initModals(updateDashboardCallback) {
             return;
         }
 
-        console.log(`[ACTION] Pesquisa "${query}"`);
+        // Log location search action query
+        console.log(`[ACTION] Location query search: "${query}"`);
 
         searchTimeout = setTimeout(async () => {
             const currentQuery = e.target.value.trim();
@@ -948,7 +959,8 @@ export function initModals(updateDashboardCallback) {
 
                 renderSuggestions(finalResults);
             } catch (err) {
-                console.error('Search API error:', err);
+                // Log network or JSON parsing error from Nominatim search API
+                console.error('Location Search API error:', err);
             } finally {
                 const spinner = document.getElementById('search-spinner');
                 if (spinner) spinner.style.display = 'none';
@@ -1004,7 +1016,7 @@ export function reopenModals() {
     }
 }
 
-// Helpers para troca de versão bíblica no Console
+// Developer Console Helpers for Bible translation switching
 window.setBibleVersion = (version) => {
     if (!version) {
         window.listBibleVersions();
@@ -1027,9 +1039,11 @@ window.setBibleVersion = (version) => {
                 }
             });
         } catch (e) { }
-        console.log(`[ACTION] Bible Version ${target}`);
+        // Log active Bible translation version switch
+        console.log(`[ACTION] Bible translation version set to: ${target}`);
     } else {
-        console.warn(`[ACTION] Bible Version Invalid ${version}`);
+        // Warn developer of unsupported Bible translation code
+        console.warn(`[ACTION] Invalid Bible version requested: "${version}". Supported versions: NVT, OL, AA`);
         window.listBibleVersions();
     }
 };
@@ -1045,11 +1059,13 @@ window.resetBibleVersion = () => {
             }
         });
     } catch (e) { }
-    console.log('[ACTION] Bible Version Reset');
+    // Log Bible version preference reset
+    console.log('[ACTION] Bible translation version reset to default (NVT)');
 };
 
 window.listBibleVersions = () => {
-    console.log('[ACTION] Bible Version List');
+    // Log table listing all supported Bible translations
+    console.log('[ACTION] Listing available Bible translation versions:');
     console.table([
         { Version: 'NVT', Name: 'Nova Versão Transformadora', Language: 'PT-BR', Command: "setBibleVersion('NVT')" },
         { Version: 'OL', Name: 'O Livro', Language: 'PT-PT', Command: "setBibleVersion('OL')" },

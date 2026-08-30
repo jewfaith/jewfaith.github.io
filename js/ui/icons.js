@@ -7,7 +7,7 @@ export function getEventIcon(category, name, styleAttr = "color: var(--accent-co
     if (cat === 'pesach' || nm.includes('pessach') || nm.includes('pesach')) return `<i class="fa-solid fa-suitcase-rolling"${style}></i>`;
     if (cat === 'matzot' || nm.includes('matzot')) return `<i class="fa-solid fa-bread-slice"${style}></i>`;
     if (cat === 'shavuot' || nm.includes('shavuot')) return `<i class="fa-solid fa-seedling"${style}></i>`;
-    if (cat === 'roshhashana' || cat === 'yomteruah' || nm.includes('teruah') || nm.includes('rosh hashana')) return `<i class="fa-solid fa-bell"${style}></i>`;
+    if (cat === 'yomteruah' || nm.includes('teruah')) return `<i class="fa-solid fa-bell"${style}></i>`;
     if (cat === 'yomkippur' || nm.includes('kippur')) return `<i class="fa-solid fa-hands-praying"${style}></i>`;
     if (cat === 'sukkot' || nm.includes('sukkot')) return `<i class="fa-solid fa-house-chimney"${style}></i>`;
     if (cat === 'sheminiatzeret' || cat === 'shmini' || nm.includes('shemini') || nm.includes('shmini') || nm.includes('atzeret')) return `<i class="fa-solid fa-people-group"${style}></i>`;
