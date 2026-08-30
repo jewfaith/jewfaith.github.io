@@ -86,7 +86,7 @@ export const FESTIVAL_RANGES = {
     'Hoshana Rabbah': '21 Etanim',
     'Lag BaOmer': '18 Ziv',
     'Rosh Hashana LaBehemot': '1 Elul',
-    'Rosh Elul': '1 Elul',
+    'Rosh LaBehemot': '1 Elul',
     'Leil Selichot': 'Final de Elul',
     'Elul': '1 - 29 Elul',
     'Mês de Elul': '1 - 29 Elul',
@@ -137,7 +137,7 @@ export const FESTIVAL_ALIASES = {
     'Rosh Hashana': 'Rosh Hashana',
     'Rosh Hashana LaBehemot': 'Rosh Hashana LaBehemot',
     'Rosh Hashanah LaBehemot': 'Rosh Hashana LaBehemot',
-    'Rosh Elul': 'Rosh Hashana LaBehemot',
+    'Rosh LaBehemot': 'Rosh Hashana LaBehemot',
     'Yom Teru\'ah': 'Yom Teruah',
     'Kippur': 'Yom Kippur',
     'Sukkot': 'Chag Sukkot',
@@ -3731,16 +3731,6 @@ export const FESTIVAL_DESCRIPTIONS = {
         'Os costumes tradicionais incluem as refeições festivas com Simanim (alimentos simbólicos como maçã com mel, romã e cabeça de peixe), expressando os votos de um ano doce e frutífero, além do início dos Dez Dias de Retorno (Aseret Yemei Teshuvah) rumo a Yom Kippur.'
     ],
 
-    'Rosh Hashanah': [
-        'É a designação rabínica e tradicional para o início do ano civil e o Dia do Julgamento no primeiro e segundo dias do sétimo mês (Tishrei), integrando o mandamento bíblico de Yom Teruah a um vasto conjunto de orações, toques de shofar e reflexão espiritual.',
-        'Mishnah Rosh Hashanah 1:1 estabelece o primeiro de Tishrei como o início do ano para a contagem dos anos civis, anos sabáticos (Shemittah), Jubileus (Yovel) e dízimos das árvores e vegetais.',
-        'A teologia rabínica de Yom HaDin (Dia do Julgamento) é desenvolvida em Rosh Hashanah 16a-b, segundo a qual todas as criaturas passam perante o Criador como um rebanho diante do pastor, abrindo os livros simbólicos da vida e do destino.',
-        'A observância de dois dias (Yoma Arichta - "um único dia longo") foi instituída pelo Sinédrio para assegurar que todas as comunidades, inclusive na Diáspora, cumprissem a santidade do Moed sem incerteza na fixação lunar do novilúnio.',
-        'A liturgia do serviço de Mussaf inclui as três bênçãos singulares: Malchuyot (proclamação da Soberania de D\'us), Zichronot (lembrança da aliança e dos atos de cada ser humano) e Shofarot (revelação divina e redenção futura).',
-        'O toque do Shofar de carneiro segue as três sequências rituais fundamentadas na tradição rabínica (Tekiah, Shevarim, Teruah), simbolizando o clamor da alma, o despertar para o arrependimento e a memória da Akedat Yitzchak.',
-        'Os costumes tradicionais incluem as refeições festivas com Simanim (alimentos simbólicos como maçã com mel, romã e cabeça de peixe), expressando os votos de um ano doce e frutífero, além do início dos Dez Dias de Retorno (Aseret Yemei Teshuvah) rumo a Yom Kippur.'
-    ],
-
     'Tu BiShvat': [
         'É o Ano Novo das Árvores (Rosh Hashanah LaIlanot) celebrado em 15 de Shevat, data fixada pela Mishnah para delimitar o ciclo agrícola anual dos dízimos das árvores e dos frutos.',
         'Mishnah Rosh Hashanah 1:1 estabelece a escola de Hillel determinando o dia 15 de Shevat como o ponto em que a maior parte das chuvas do inverno já caiu e a seiva começa a subir nas árvores da Terra de Israel.',
@@ -3808,17 +3798,10 @@ export const FESTIVAL_DESCRIPTIONS = {
         'Seu nome provém da Haftará de Hoshea 14:2 ("Shuvah Yisrael ad Hashem Elokecha" - Retorna, ó Israel, até Hashem teu D\'us), dedicada à Teshuvah profunda e ao perdão divino.'
     ],
 
-    'Rosh Hashana LaBehemot': [
+    'Rosh LaBehemot': [
         'É o Ano Novo para o Dízimo do Gado (Rosh Hashanah LeMa\'asar Behemah), fixado no dia 1º de Elul segundo a Mishnah Rosh Hashanah 1:1.',
         'Esta data estabelece o marco regulatório para o ciclo anual de nascimento dos animais puros. Os animais nascidos a partir de 1 de Elul até o final de Av do ano seguinte são agrupados conjuntamente para o cumprimento do mandamento do dízimo animal (Vayikra 27:32 e Mishnah Bechorot 9:5-6).',
         'O dízimo do gado era consagrado e levado a Jerusalém para ser oferecido no Templo e consumido em santidade durante as celebrações festivas.'
-    ],
-
-    'Elul': [
-        'É o sexto mês do calendário bíblico (a partir de Aviv) e o último mês do ciclo anual que antecede o início de Tishrei/Etanim, tradicionalmente consagrado como o Mês do Arrependimento (Chodesh HaRachamim veHaSelichot).',
-        'A tradição rabínica e cabalística associa o nome do mês ao acrônimo hebraico de Shir HaShirim 6:3: "Ani leDodi veDodi Li" ("Eu sou do meu amado, e o meu amado é meu"), simbolizando a proximidade e o retorno amoroso entre Israel e o Criador.',
-        'Durante todo o mês de Elul, a tradição inclui o toque diário do Shofar após as orações matinais (no rito ashkenazi) e a recitação das orações penitenciais de Selichot (diariamente no rito sefardita a partir de Rosh Chodesh Elul, e nos últimos dias antes de Rosh Hashaná no rito ashkenazi).',
-        'Os quarenta dias que vão desde 1º de Elul até Yom Kippur correspondem ao período bíblico em que Moisés permaneceu no Monte Sinai para receber as segundas Tábuas da Lei (Shemot 34:28), sendo um tempo propício para reflexão pessoal, oração, caridade (Tzedakah) e reparação de condutas.'
     ]
 
 };

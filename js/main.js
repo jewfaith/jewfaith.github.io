@@ -294,7 +294,7 @@ async function updateDashboard() {
                             }
                             let mappedName = tKey;
                             if (tKey === 'Chanukah' || tKey === 'Hanukkah') mappedName = 'Chag Chanukah';
-                            else if (tKey === 'Rosh Hashana LaBehemot') mappedName = 'Rosh Elul';
+                            else if (tKey === 'Rosh Hashana LaBehemot') mappedName = 'Rosh LaBehemot';
                             else if (tKey === 'Purim' && !cleanTitle.includes('Katan') && !cleanTitle.includes('Shushan')) mappedName = 'Yom Purim';
                             else if (tKey === 'Shushan Purim Katan') mappedName = 'Shushan Purim';
                             else if (tKey.startsWith('Rosh Hashana')) mappedName = 'Rosh Hashana';
