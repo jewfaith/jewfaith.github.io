@@ -73,8 +73,8 @@
     --text-primary: #2d2b28;
     /* Deep limestone graphite */
     --text-muted: #6e6a64;
-    --title-gradient-start: #3a3733;
-    --title-gradient-end: #8c725c;
+    ---gradient-start: #3a3733;
+    ---gradient-end: #8c725c;
     /* Neutral warm bronze */
     --icon-bg-start: rgba(140, 114, 92, 0.05);
     --icon-bg-end: rgba(140, 114, 92, 0.12);
@@ -114,8 +114,8 @@
     --card-border-color: rgba(214, 163, 96, 0.1);
     --text-primary: #f5ead6;
     --text-muted: #b8a68e;
-    --title-gradient-start: #f5ead6;
-    --title-gradient-end: #d6a360;
+    ---gradient-start: #f5ead6;
+    ---gradient-end: #d6a360;
     --icon-bg-start: rgba(214, 163, 96, 0.08);
     --icon-bg-end: rgba(214, 163, 96, 0.14);
     --icon-color: #d6a360;
@@ -153,8 +153,8 @@
     --card-border-color: rgba(255, 255, 255, 0.06);
     --text-primary: #f1f5f9;
     --text-muted: #94a3b8;
-    --title-gradient-start: #ffffff;
-    --title-gradient-end: #7dd3fc;
+    ---gradient-start: #ffffff;
+    ---gradient-end: #7dd3fc;
     --icon-bg-start: rgba(125, 211, 252, 0.08);
     --icon-bg-end: rgba(56, 189, 248, 0.12);
     --icon-color: #7dd3fc;
@@ -200,7 +200,7 @@ a:hover {
     color: #f7f6f5;
 }
 
-.card-subtitle,
+.card-sub,
 .timer-countdown {
     color: var(--text-muted);
 }
@@ -528,7 +528,7 @@ i {
 .card-title,
 .event-name {
     margin-right: 1rem;
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-md);
     font-weight: 600;
     color: var(--text-primary);
     letter-spacing: -0.2px;
