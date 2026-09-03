@@ -814,8 +814,6 @@ body.modal-open {
         overflow: visible !important;
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        padding-bottom: 40px;
     }
 
     /* Living Astronomy Solar Arc Card */
