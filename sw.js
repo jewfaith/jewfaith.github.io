@@ -1,4 +1,4 @@
-const CACHE_NAME = 'yisrael-date';
+const CACHE_NAME = 'yisrael-date-v4';
 
 // Recursos locais essenciais para o funcionamento offline
 const ASSETS_TO_CACHE = [
@@ -6,6 +6,7 @@ const ASSETS_TO_CACHE = [
     './index.html',
     './style.css',
     './manifest.json',
+    './icon.png',
     './js/state.js',
     './js/main.js',
     './js/api/geolocation.js',
@@ -13,13 +14,21 @@ const ASSETS_TO_CACHE = [
     './js/domain/constants.js',
     './js/domain/halacha.js',
     './js/domain/parashot.js',
+    './js/ui/appNavigation.js',
     './js/ui/dashboard.js',
+    './js/ui/festivalsView.js',
     './js/ui/icons.js',
     './js/ui/modals.js',
+    './js/ui/pcDisplayManager.js',
+    './js/ui/premiumView.js',
+    './js/ui/solarArc.js',
     './js/ui/theme.js',
+    './js/ui/themeSwitcher.js',
     './js/ui/timers.js',
+    './js/ui/zmanimTable.js',
     './js/utils/math.js',
-    './icon.png'
+    './js/utils/persistence.js',
+    './js/utils/smartUpdater.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -54,7 +63,28 @@ self.addEventListener('fetch', (event) => {
         url.hostname.includes('bolls.life') ||
         url.hostname.includes('bible-api.com');
 
-    if (!isLocal && !isApi) return;
+    const isFontOrIcon = url.hostname.includes('cdnjs.cloudflare.com') ||
+        url.hostname.includes('fonts.googleapis.com') ||
+        url.hostname.includes('fonts.gstatic.com');
+
+    if (!isLocal && !isApi && !isFontOrIcon) return;
+
+    // 1. Estratégia para Fontes & Ícones (Font Awesome & Google Fonts): Cache-First / Stale-While-Revalidate
+    if (isFontOrIcon) {
+        event.respondWith(
+            caches.match(event.request).then((cachedResponse) => {
+                const fetchPromise = fetch(event.request).then((networkResponse) => {
+                    if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
+                        const clone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+                    }
+                    return networkResponse;
+                }).catch(() => null);
+                return cachedResponse || fetchPromise;
+            })
+        );
+        return;
+    }
 
     // 1. Estratégia para APIs Externas: Network-First com Fallback para Cache
     if (isApi) {
@@ -72,19 +102,16 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // 2. Estratégia para Ativos Locais (CSS, JS, HTML, Ícones): Stale-While-Revalidate
-    // Serve instantaneamente da cache e atualiza a cache em segundo plano
+    // 2. Estratégia para Ativos Locais (CSS, JS, HTML, Ícones): Network-First com Fallback para Cache
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            const fetchPromise = fetch(event.request).then((networkResponse) => {
+        fetch(event.request)
+            .then((networkResponse) => {
                 if (networkResponse && networkResponse.status === 200) {
                     const clone = networkResponse.clone();
                     caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
                 }
                 return networkResponse;
-            }).catch(() => {/* Redesconectada ou offline */ });
-
-            return cachedResponse || fetchPromise;
-        })
+            })
+            .catch(() => caches.match(event.request))
     );
 });
