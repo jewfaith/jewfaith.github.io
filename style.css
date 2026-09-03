@@ -159,7 +159,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    overscroll-behavior-y: none;
+    /* overscroll-behavior-y: none; <- REMOVER ESTA LINHA */
 }
 
 *,
@@ -182,6 +182,7 @@ button,
 .ios-tab-item {
     touch-action: manipulation;
 }
+
 .desktop-nav-btn,
 .event-card,
 .icon-circle,
@@ -238,6 +239,10 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y !important;
+    scroll-behavior: smooth;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -566,10 +571,14 @@ body.modal-open {
         margin: 0 auto;
         min-height: 100vh;
         min-height: 100dvh;
+        height: auto !important;
+        max-height: none !important;
         display: flex;
         flex-direction: column;
-        padding: max(10px, env(safe-area-inset-top)) 12px calc(84px + env(safe-area-inset-bottom));
+        padding: max(10px, env(safe-area-inset-top)) 12px calc(96px + env(safe-area-inset-bottom));
         box-sizing: border-box;
+        overflow-x: hidden;
+        overflow-y: visible !important;
     }
 
     /* Mobile Premium App Title Header - Compact with Location Card Below Title */
@@ -798,10 +807,15 @@ body.modal-open {
     }
 
     .app-main-area {
-        width: 100%;
         flex: 1;
+        min-width: 0;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
         display: flex;
         flex-direction: column;
+        gap: 16px;
+        padding-bottom: 40px;
     }
 
     /* Living Astronomy Solar Arc Card */
@@ -1181,7 +1195,7 @@ body.modal-open {
         margin: 0 auto 12px;
         flex-shrink: 0;
         cursor: grab;
-        touch-action: none;
+        touch-action: pan-y;
         position: relative;
     }
 
@@ -1192,12 +1206,12 @@ body.modal-open {
         left: -60px;
         right: -60px;
         bottom: -18px;
-        touch-action: none;
+        touch-action: pan-y;
     }
 
     .reading-header,
     .search-container {
-        touch-action: none;
+        touch-action: pan-y;
     }
 
     .modal-content,
@@ -1245,33 +1259,38 @@ body.modal-open {
 
     html,
     body {
-        height: 100vh !important;
-        max-height: 100vh !important;
-        overflow: hidden !important;
+        height: auto !important;
+        min-height: 100vh;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
     }
 
     .app-layout {
         position: relative;
         z-index: 1;
         width: 100%;
-        max-width: 1380px;
+        max-width: 480px;
         margin: 0 auto;
-        height: 100vh !important;
-        max-height: 100vh !important;
-        overflow: hidden !important;
+        min-height: 100%;
+        height: auto !important;
+        max-height: none !important;
         display: flex;
-        flex-direction: row;
-        padding: 20px 24px;
-        gap: 24px;
+        flex-direction: column;
+        padding: max(10px, env(safe-area-inset-top)) 12px calc(96px + env(safe-area-inset-bottom));
         box-sizing: border-box;
+        overflow-x: hidden;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
     }
 
     /* Fixed macOS Glass Studio Sidebar - Sempre 100% visível e fixa */
     .desktop-sidebar {
+        position: sticky;
+        top: 20px;
         width: 280px;
         min-width: 280px;
-        height: 100% !important;
-        max-height: 100% !important;
+        height: calc(100vh - 40px) !important;
+        max-height: calc(100vh - 40px) !important;
         flex-shrink: 0;
         display: flex;
         flex-direction: column;
@@ -1731,7 +1750,7 @@ body.modal-open {
     margin: 0 auto 12px;
     flex-shrink: 0;
     cursor: grab;
-    touch-action: none;
+    touch-action: pan-y;
 }
 
 .reading-header,
