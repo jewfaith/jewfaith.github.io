@@ -23,16 +23,22 @@ export function initSmartUpdater(callback) {
         lastSunsetStatus = Date.now() >= state.currentSunsetTime;
     }
 
-    // 1. Heartbeat constante a cada 15 segundos
-    if (heartbeatTimer) clearInterval(heartbeatTimer);
-    heartbeatTimer = setInterval(performHeartbeatCheck, 15000);
+    // 1. Inicia o agendamento adaptativo e alinhado aos limites do relógio
+    scheduleNextPulse();
 
     // 2. Ouvintes de ciclo de vida do dispositivo e da rede
     if (typeof window !== 'undefined') {
-        // Ao voltar à aba (desbloquear celular ou alternar abas)
+        // Ao alternar abas ou desbloquear ecrã do telemóvel
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
                 evaluateFreshness('visibilitychange');
+                scheduleNextPulse();
+            } else {
+                // Suspende o temporizador quando oculto para poupar bateria e evitar estrangulamento
+                if (heartbeatTimer) {
+                    clearTimeout(heartbeatTimer);
+                    heartbeatTimer = null;
+                }
             }
         });
 
@@ -53,6 +59,63 @@ export function initSmartUpdater(callback) {
             }
         });
     }
+}
+
+/**
+ * Avalia se o momento atual está próximo (<= 90s) de um evento astronómico crítico
+ * (Pôr do Sol ou marcos principais de Zmanim). Nesses instantes, o pulso é acelerado
+ * para garantir transição suave e imediata da data e das orações.
+ */
+function isNearCriticalAstronomicalEvent(now) {
+    if (state.currentSunsetTime > 0) {
+        const diffSunset = Math.abs(state.currentSunsetTime - now);
+        if (diffSunset <= 90000) return true;
+    }
+    if (state.currentZmanim) {
+        const z = state.currentZmanim;
+        const criticalTimes = [
+            z.alotHaShachar,
+            z.sunrise,
+            z.chatzot,
+            z.tzeit7083deg,
+            z.tzeit85deg
+        ].filter(Boolean).map(t => new Date(t).getTime());
+
+        for (const t of criticalTimes) {
+            if (Math.abs(t - now) <= 90000) return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Agenda o próximo pulso adaptativo com alinhamento exato ao segundo 00 do minuto seguinte.
+ * Elimina o desfasamento (timer drift) e evita desperdícios contínuos de CPU.
+ */
+function scheduleNextPulse() {
+    if (heartbeatTimer) {
+        clearTimeout(heartbeatTimer);
+        heartbeatTimer = null;
+    }
+
+    if (typeof document !== 'undefined' && document.hidden) {
+        return;
+    }
+
+    const now = Date.now();
+
+    // Alinhamento exato ao segundo 00 do próximo minuto civil (+80ms para compensar latência)
+    let delay = 60000 - (now % 60000) + 80;
+
+    // Se estiver próximo de uma transição astronómica, pulsa a cada 5 segundos
+    if (isNearCriticalAstronomicalEvent(now)) {
+        delay = Math.min(delay, 5000);
+    }
+
+    heartbeatTimer = setTimeout(() => {
+        performHeartbeatCheck();
+        scheduleNextPulse();
+    }, delay);
 }
 
 /**

@@ -1,117 +1,35 @@
-const CACHE_NAME = 'yisrael-date-v4';
-
-// Recursos locais essenciais para o funcionamento offline
-const ASSETS_TO_CACHE = [
-    './',
-    './index.html',
-    './style.css',
-    './manifest.json',
-    './icon.png',
-    './js/state.js',
-    './js/main.js',
-    './js/api/geolocation.js',
-    './js/api/hebcal.js',
-    './js/domain/constants.js',
-    './js/domain/halacha.js',
-    './js/domain/parashot.js',
-    './js/ui/appNavigation.js',
-    './js/ui/dashboard.js',
-    './js/ui/festivalsView.js',
-    './js/ui/icons.js',
-    './js/ui/modals.js',
-    './js/ui/pcDisplayManager.js',
-    './js/ui/premiumView.js',
-    './js/ui/solarArc.js',
-    './js/ui/theme.js',
-    './js/ui/themeSwitcher.js',
-    './js/ui/timers.js',
-    './js/ui/zmanimTable.js',
-    './js/utils/math.js',
-    './js/utils/persistence.js',
-    './js/utils/smartUpdater.js'
-];
+/**
+ * Service Worker - Yisrael Date PWA
+ * 
+ * Mantém o suporte à instalação da aplicação (PWA) no ecrã principal (mobile/desktop)
+ * sem armazenamento offline agressivo em cache, garantindo que o Umami Analytics
+ * e as atualizações em tempo real recebam e enviem todos os dados sem interferências.
+ */
 
 self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
-    );
+    // Ativação imediata da nova versão sem reter a versão anterior
     self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
+    // Purga e limpa todas as caches residuais antigas que possam reter versões desatualizadas
+    // ou impedir o envio de métricas pelo Umami Analytics
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                    }
+                    console.log('[Service Worker] Purgando cache antigo:', cacheName);
+                    return caches.delete(cacheName);
                 })
             );
-        })
+        }).then(() => self.clients.claim())
     );
-    self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-    if (event.request.method !== 'GET') return;
-
-    const url = new URL(event.request.url);
-    const isLocal = url.origin === self.location.origin;
-    const isApi = url.hostname.includes('hebcal.com') ||
-        url.hostname.includes('nominatim.openstreetmap.org') ||
-        url.hostname.includes('bolls.life') ||
-        url.hostname.includes('bible-api.com');
-
-    const isFontOrIcon = url.hostname.includes('cdnjs.cloudflare.com') ||
-        url.hostname.includes('fonts.googleapis.com') ||
-        url.hostname.includes('fonts.gstatic.com');
-
-    if (!isLocal && !isApi && !isFontOrIcon) return;
-
-    // 1. Estratégia para Fontes & Ícones (Font Awesome & Google Fonts): Cache-First / Stale-While-Revalidate
-    if (isFontOrIcon) {
-        event.respondWith(
-            caches.match(event.request).then((cachedResponse) => {
-                const fetchPromise = fetch(event.request).then((networkResponse) => {
-                    if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
-                        const clone = networkResponse.clone();
-                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-                    }
-                    return networkResponse;
-                }).catch(() => null);
-                return cachedResponse || fetchPromise;
-            })
-        );
-        return;
-    }
-
-    // 1. Estratégia para APIs Externas: Network-First com Fallback para Cache
-    if (isApi) {
-        event.respondWith(
-            fetch(event.request)
-                .then((networkResponse) => {
-                    if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
-                        const clone = networkResponse.clone();
-                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-                    }
-                    return networkResponse;
-                })
-                .catch(() => caches.match(event.request))
-        );
-        return;
-    }
-
-    // 2. Estratégia para Ativos Locais (CSS, JS, HTML, Ícones): Network-First com Fallback para Cache
-    event.respondWith(
-        fetch(event.request)
-            .then((networkResponse) => {
-                if (networkResponse && networkResponse.status === 200) {
-                    const clone = networkResponse.clone();
-                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-                }
-                return networkResponse;
-            })
-            .catch(() => caches.match(event.request))
-    );
+    // Pass-through direto para a rede:
+    // Não intercepta nem bloqueia requisições.
+    // Todas as chamadas analíticas (cloud.umami.is, gateway.umami.is), APIs externas e páginas
+    // são enviadas e recebidas com 100% de integridade diretamente pela rede.
+    return;
 });

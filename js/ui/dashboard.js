@@ -1,6 +1,6 @@
 import { state } from '../state.js';
 import { applySolarTheme } from './theme.js';
-import { findActiveFestival, transliterateTorah, pickReading, getNextShabbatEvent } from '../domain/halacha.js';
+import { findActiveFestival, transliterateTorah, pickReading, getNextShabbatEvent, checkSacredRestStatus } from '../domain/halacha.js';
 import { FESTIVAL_CATS, FESTIVAL_TORAH_READINGS, FESTIVAL_HAFTARA_READINGS, KETUVIM_BOOKS, KETUVIM_TOTAL_WEIGHT, FESTIVAL_TEHILIM, AVAILABLE_TEHILIM, FESTIVAL_DESCRIPTIONS } from '../domain/constants.js';
 import { getParashaSummary } from '../domain/parashot.js';
 import { LCG, getStringSimilarity } from '../utils/math.js';
@@ -397,6 +397,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             haftaraRef = (hOptions[0] || '').split(' | ')[0].trim();
         }
 
+        elParashaWrapper.classList.add('info-trigger');
         elParashaWrapper.setAttribute('data-info-title', pName);
 
         let parashaSummary = getParashaSummary(pName);
@@ -550,6 +551,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
     }
 
     if (elParashaWrapper) {
+        elParashaWrapper.classList.add('info-trigger');
         const sub = elParashaWrapper.querySelector('.settings-card-desc');
         if (sub) sub.textContent = 'Ciclo Anual';
     }
@@ -579,6 +581,262 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
 
     removeNotReadyState(document.querySelectorAll('.not-ready'));
     initUtilities();
+    renderSupportCards(events, hdate, sunsetTime, isIsrael);
+}
+
+/**
+ * Renderiza dinamicamente os cartões de apoio e créditos da barra lateral,
+ * respeitando com exatidão a santidade do Shabat e Yom Tov (proibição de comércio na Torá/Halachá).
+ */
+export function renderSupportCards(events = null, hdate = null, sunsetTime = null, isIsrael = null) {
+    const cards = document.querySelectorAll('.app-support-card');
+    const sidebarCredits = document.querySelector('.sidebar-credits');
+    if (!cards.length && !sidebarCredits) return;
+
+    const evs = events || state.unifiedEvents || [];
+    const hd = hdate || state.currentHdate;
+    const sunset = sunsetTime || state.currentSunsetTime || 0;
+    const isIsr = isIsrael ?? state.userLocation?.isIsrael ?? true;
+
+    const restStatus = checkSacredRestStatus(Date.now(), evs, hd, sunset, isIsr);
+
+    let cardHtml = '';
+    if (restStatus.isRest) {
+        const festTitle = restStatus.title || 'Yom Tov';
+        const subType = restStatus.subType || 'yomtov';
+
+        let authorFest = festTitle;
+        let badgeText = 'Santidade do Tempo';
+        let bodyDesc = '';
+        let btnText = `Pausado (${festTitle})`;
+
+        if (subType === 'erev_yomtov' || subType === 'erev_shabbat') {
+            const isShab = subType === 'erev_shabbat';
+            const cleanTitle = festTitle.replace(/\s*\(6h antes\)/, '');
+            authorFest = isShab ? 'Erev Shabat' : `Erev ${cleanTitle}`;
+            bodyDesc = isShab
+                ? `Em preparação para o Shabat, as doações encontram-se temporariamente pausadas. Partilhar a aplicação apoia o projeto.`
+                : `Em preparação para ${cleanTitle}, as doações encontram-se temporariamente pausadas. Partilhar a aplicação apoia o projeto.`;
+            btnText = isShab ? `Pausado (Erev Shabat)` : `Pausado (Erev ${cleanTitle})`;
+        } else if (subType === 'motzei_yomtov' || subType === 'motzei_shabbat') {
+            const isShab = subType === 'motzei_shabbat';
+            const cleanTitle = festTitle.replace(/\s*\(6h depois\)/, '');
+            authorFest = isShab ? 'Motzei Shabat' : `Motzei ${cleanTitle}`;
+            bodyDesc = isShab
+                ? `Em respeito ao término do Shabat, as doações permanecem temporariamente pausadas.`
+                : `Em respeito ao término de ${cleanTitle}, as doações permanecem temporariamente pausadas.`;
+            btnText = isShab ? `Pausado (Motzei Shabat)` : `Pausado (Motzei ${cleanTitle})`;
+        } else if (subType === 'shabbat') {
+            authorFest = 'Yom Shabbat';
+            bodyDesc = `Em observância ao Shabat, as doações encontram-se pausadas até à Havdalá.`;
+            btnText = `Pausado (Shabat)`;
+        } else {
+            authorFest = festTitle;
+            bodyDesc = `Em observância a ${festTitle}, as doações encontram-se temporariamente pausadas.`;
+            btnText = `Pausado (${festTitle})`;
+        }
+
+        cardHtml = `
+            <div class="support-mini-header">
+              <div class="support-mini-author">
+                <i class="fa-solid fa-menorah"></i>
+                <span>Autoria de <strong>Mikhael</strong> &bull; <span class="support-mini-fest-name">${authorFest}</span></span>
+              </div>
+            </div>
+
+            <p class="support-mini-desc">
+              ${bodyDesc}
+            </p>
+
+            <div class="support-mini-actions">
+              <button type="button" class="support-btn-primary is-disabled" disabled aria-disabled="true" title="Transações financeiras desativadas durante o período sagrado">
+                <i class="fa-solid fa-lock"></i>
+                <span>${btnText}</span>
+              </button>
+              <button type="button" class="support-btn-secondary yomtov-active app-share-trigger" aria-label="Partilhar o link do site Yisrael Date" title="Partilhar o site">
+                <i class="fa-solid fa-share-nodes"></i>
+                <span>Partilhar Aplicação</span>
+              </button>
+            </div>
+        `;
+    } else {
+        cardHtml = `
+            <div class="support-mini-header">
+              <div class="support-mini-author">
+                <i class="fa-solid fa-code"></i>
+                <span>Autoria e Criação de <strong>Mikhael</strong></span>
+              </div>
+            </div>
+
+            <p class="support-mini-desc">
+              O <strong>Yisrael Date</strong> é uma obra autoral concebida e desenvolvida de forma independente por <strong>Mikhael</strong>. Se é útil no seu dia e estudo da Torá, considere apoiar a sua manutenção ou partilhar com amigos.
+            </p>
+
+            <div class="support-mini-actions">
+              <a href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer"
+                class="support-btn-primary" aria-label="Apoiar Mikhael no PayPal com qualquer valor">
+                <i class="fa-brands fa-paypal"></i>
+                <span>Apoiar via PayPal</span>
+              </a>
+              <button type="button" class="support-btn-secondary app-share-trigger" aria-label="Partilhar o link do site Yisrael Date" title="Partilhar o site">
+                <i class="fa-solid fa-share-nodes"></i>
+                <span>Partilhar</span>
+              </button>
+            </div>
+
+            <div class="support-mini-policy">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              <span>Doações pausadas no Shabat e em Yom Tov.</span>
+            </div>
+        `;
+    }
+
+    cards.forEach(card => {
+        if (restStatus.isRest) {
+            card.classList.add('is-sacred-rest');
+            card.setAttribute('aria-label', `Apoio pausado em observância a ${restStatus.title || 'Yom Tov'}`);
+        } else {
+            card.classList.remove('is-sacred-rest');
+            card.setAttribute('aria-label', 'Apoiar o criador');
+        }
+        card.innerHTML = cardHtml;
+    });
+
+    if (sidebarCredits) {
+        if (restStatus.isRest) {
+            const festTitle = restStatus.title || 'Yom Tov';
+            sidebarCredits.innerHTML = `
+                <span class="sidebar-credits-author">Autoria de <strong>Mikhael</strong></span>
+                <div class="sidebar-credits-actions">
+                  <button type="button" class="sidebar-share-btn app-share-trigger" aria-label="Partilhar o site" title="Partilhar Yisrael Date">
+                    <i class="fa-solid fa-share-nodes"></i>
+                  </button>
+                  <span class="sidebar-paypal-link is-disabled" title="Doações pausadas durante ${festTitle} em observância haláchica" aria-disabled="true">
+                    <i class="fa-solid fa-lock" style="font-size: 10px;"></i>
+                    <span>Pausado (${festTitle})</span>
+                  </span>
+                </div>
+            `;
+        } else {
+            sidebarCredits.innerHTML = `
+                <span class="sidebar-credits-author">Autoria de <strong>Mikhael</strong></span>
+                <div class="sidebar-credits-actions">
+                  <button type="button" class="sidebar-share-btn app-share-trigger" aria-label="Partilhar o site" title="Partilhar Yisrael Date">
+                    <i class="fa-solid fa-share-nodes"></i>
+                  </button>
+                  <a href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer"
+                    class="sidebar-paypal-link" aria-label="Apoiar Mikhael no PayPal" title="Apoiar criador no PayPal">
+                    <i class="fa-brands fa-paypal"></i>
+                    <span>Apoiar</span>
+                    <i class="fa-solid fa-heart" style="font-size: 8px; color: #ff6b81; margin-left: 2px;"></i>
+                  </a>
+                </div>
+            `;
+        }
+    }
+}
+
+if (typeof window !== 'undefined') {
+    window.simulateYomTov = (simulate = true) => {
+        try {
+            localStorage.setItem('yisrael_simulate_yomtov', simulate ? 'true' : 'false');
+        } catch (e) { }
+        renderSupportCards();
+    };
+
+    window.addEventListener('hashchange', () => {
+        if (window.location.hash === '#teste-yomtov' || window.location.hash === '#yomtov-6h') {
+            renderSupportCards();
+        }
+    });
+}
+
+// Hidratação imediata na inicialização do script (0ms)
+if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => renderSupportCards());
+    } else {
+        renderSupportCards();
+    }
+}
+
+let toastTimeout = null;
+
+export function showShareToast(message = 'Link copiado com sucesso!') {
+    let toast = document.getElementById('app-share-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'app-share-toast';
+        toast.className = 'app-share-toast';
+        toast.innerHTML = '<i class="fa-solid fa-check"></i> <span class="toast-msg"></span>';
+        document.body.appendChild(toast);
+    }
+
+    const msgSpan = toast.querySelector('.toast-msg');
+    if (msgSpan) msgSpan.textContent = message;
+
+    toast.classList.add('show');
+
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2400);
+}
+
+export async function shareAppUrl() {
+    const shareUrl = (window.location.origin && window.location.origin.startsWith('http') && !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1'))
+        ? (window.location.origin + window.location.pathname)
+        : 'https://jewfaith.github.io';
+
+    const shareData = {
+        title: 'Yisrael Date',
+        text: 'Yisrael Date — Calendário da Torá, Horários Haláchicos (Zmanim) e Festas Bíblicas',
+        url: shareUrl
+    };
+
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+            return;
+        } catch (err) {
+            if (err.name === 'AbortError') return;
+        }
+    }
+
+    // Fallback: cópia direta para a área de transferência
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(shareUrl);
+        } else {
+            const textarea = document.createElement('textarea');
+            textarea.value = shareUrl;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+        showShareToast('Link copiado para a área de transferência!');
+    } catch (e) {
+        prompt('Copia o link do Yisrael Date:', shareUrl);
+    }
+}
+
+let isShareInitialized = false;
+
+export function initShareListeners() {
+    if (isShareInitialized) return;
+    isShareInitialized = true;
+
+    document.addEventListener('click', (e) => {
+        const trigger = e.target.closest('.app-share-trigger');
+        if (trigger) {
+            e.preventDefault();
+            e.stopPropagation();
+            shareAppUrl();
+        }
+    });
 }
 
 let isUtilitiesInitialized = false;
@@ -586,6 +844,7 @@ let isUtilitiesInitialized = false;
 export function initUtilities() {
     initThemeSwitcher();
     initSolarArc();
+    initShareListeners();
     if (!isUtilitiesInitialized) {
         isUtilitiesInitialized = true;
         initZmanimModal();

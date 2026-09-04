@@ -1,7 +1,7 @@
 /* ==========================================================================
    YISRAEL DATE • DUAL ARCHITECTURE: MOBILE IOS 18 vs PC MACOS STUDIO LAYOUT
-   Same Color Palettes (Escuro & Sépia) • Completely Different PC Desktop Design
-   Strict Max 2 Lines • 100% Tokenized • Apple Spatial Glass Materials
+   Copyright (c) 2026 Mikhael. Todos os direitos reservados.
+   Conceção visual e engenharia de interface desenvolvida por Mikhael.
    ========================================================================== */
 
 /* ==========================================================================
@@ -38,6 +38,14 @@
     --accent-color: #388BFD;
     --accent-bg: rgba(56, 139, 253, 0.12);
     --hover-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+
+    /* Error Card Palette (Obsidian Dark) */
+    --error-color: #F85149;
+    --error-card-bg: linear-gradient(145deg, rgba(38, 16, 20, 0.92) 0%, rgba(24, 12, 15, 0.88) 100%);
+    --error-card-border: rgba(248, 81, 73, 0.32);
+    --error-card-glow: 0 4px 20px rgba(0, 0, 0, 0.40), 0 0 16px rgba(248, 81, 73, 0.10);
+    --error-title-color: #FF7B72;
+    --error-desc-color: #C9D1D9;
 
     /* Unified Modals & Sheets */
     --modal-bg: rgba(22, 27, 34, 0.96);
@@ -111,6 +119,14 @@
     --accent-color: #8C531B;
     --accent-bg: rgba(140, 83, 27, 0.10);
     --hover-gradient: linear-gradient(135deg, rgba(140, 83, 27, 0.04) 0%, rgba(140, 83, 27, 0.01) 100%);
+
+    /* Error Card Palette (Warm Sepia Parchment) */
+    --error-color: #CF222E;
+    --error-card-bg: linear-gradient(145deg, rgba(254, 238, 238, 0.96) 0%, rgba(250, 230, 230, 0.92) 100%);
+    --error-card-border: rgba(207, 34, 46, 0.28);
+    --error-card-glow: 0 4px 16px rgba(185, 28, 28, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    --error-title-color: #991B1B;
+    --error-desc-color: #574B40;
 
     --modal-bg: rgba(238, 232, 222, 0.96);
     --modal-input-bg: rgba(90, 78, 65, 0.07);
@@ -1056,84 +1072,135 @@ body.modal-open {
         margin-top: 2px;
     }
 
-    /* Floating Dock Tab Bar */
-    .mobile-only-tabbar {
+    /* Floating Dock Tab Bar - Apple iOS 18 Spatial Floating Pill */
+    .mobile-only-tabbar,
+    .app-floating-tabbar.mobile-only-tabbar {
         position: fixed;
-        bottom: max(12px, env(safe-area-inset-bottom));
+        bottom: max(14px, env(safe-area-inset-bottom, 14px));
         left: 50%;
         transform: translateX(-50%);
-        width: calc(100% - 24px);
-        max-width: 440px;
-        height: 62px;
-        border-radius: 31px;
+        width: min(324px, calc(100% - 28px));
+        height: 56px;
+        border-radius: 9999px;
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
         align-items: center;
-        padding: 0 6px;
+        padding: 4px;
+        gap: 4px;
         z-index: 9000;
-        background: var(--card-bg-start);
-        border: 0.5px solid var(--card-border-color);
-        box-shadow: var(--card-specular), 0 16px 40px rgba(0, 0, 0, 0.55);
-        backdrop-filter: blur(28px) saturate(190%);
-        -webkit-backdrop-filter: blur(28px) saturate(190%);
+        background: rgba(22, 27, 34, 0.78);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.65), 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(28px) saturate(190%) brightness(105%);
+        -webkit-backdrop-filter: blur(28px) saturate(190%) brightness(105%);
         box-sizing: border-box;
     }
 
     .app-tab-btn {
-        border: none;
+        border: 1px solid transparent;
         background: transparent;
-        color: var(--text-muted);
+        color: #8B949E;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         gap: 2px;
-        padding: 6px 10px;
-        border-radius: 18px;
+        padding: 0;
+        border-radius: 9999px;
         cursor: pointer;
         flex: 1;
-        min-height: 48px;
-        transition: color 0.15s ease, background-color 0.15s ease, transform 0.12s ease;
+        height: 48px;
+        transition: background-color 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                    box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                    border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                    color 0.18s ease,
+                    transform 0.12s ease;
         -webkit-tap-highlight-color: transparent;
+        position: relative;
     }
 
     .tab-icon-wrap {
-        width: 28px;
-        height: 24px;
+        width: 24px;
+        height: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .tab-icon-wrap i {
-        font-size: 16px;
-        transition: transform 0.2s ease, color 0.2s ease;
+        font-size: 15px;
+        line-height: 1;
+        transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.18s ease, filter 0.18s ease;
     }
 
     .app-tab-btn span {
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 600;
-        letter-spacing: 0.1px;
-        transition: color 0.2s ease, font-weight 0.2s ease;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+        transition: color 0.18s ease, font-weight 0.18s ease;
     }
 
     .app-tab-btn:active {
-        transform: scale(0.90);
+        transform: scale(0.93);
     }
 
+    /* Dark Mode Active Pill */
     .app-tab-btn.active {
-        color: var(--accent-color);
-        background: var(--accent-bg);
+        color: #58A6FF;
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.18);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
 
     .app-tab-btn.active .tab-icon-wrap i {
-        transform: scale(1.12) translateY(-1px);
-        color: var(--accent-color);
+        transform: translateY(-1px) scale(1.08);
+        color: #58A6FF;
+        filter: drop-shadow(0 0 6px rgba(88, 166, 255, 0.45));
     }
 
     .app-tab-btn.active span {
-        font-weight: 800;
+        font-weight: 700;
+        color: #F0F6FC;
+    }
+
+    /* Day Mode (Warm Sepia Parchment) - Apple Light Spatial Pill */
+    :root[data-theme="day"] .mobile-only-tabbar,
+    :root[data-theme="day"] .app-floating-tabbar.mobile-only-tabbar {
+        background: rgba(246, 241, 233, 0.84);
+        border: 1px solid rgba(140, 83, 27, 0.14);
+        box-shadow: 0 14px 32px -4px rgba(60, 48, 36, 0.14),
+                    0 3px 8px rgba(60, 48, 36, 0.05),
+                    inset 0 1px 1px 0 rgba(255, 255, 255, 0.90);
+        backdrop-filter: blur(28px) saturate(180%) brightness(102%);
+        -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(102%);
+    }
+
+    :root[data-theme="day"] .app-tab-btn {
+        color: #7A6F62;
+    }
+
+    :root[data-theme="day"] .app-tab-btn:hover {
+        color: #2B231D;
+    }
+
+    :root[data-theme="day"] .app-tab-btn.active {
+        color: var(--accent-color);
+        background: #FFFFFF;
+        border-color: rgba(140, 83, 27, 0.10);
+        box-shadow: 0 3px 10px rgba(60, 48, 36, 0.10),
+                    0 1px 2px rgba(60, 48, 36, 0.06),
+                    inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    :root[data-theme="day"] .app-tab-btn.active .tab-icon-wrap i {
+        transform: translateY(-1px) scale(1.08);
+        color: var(--accent-color);
+        filter: drop-shadow(0 1px 2px rgba(140, 83, 27, 0.20));
+    }
+
+    :root[data-theme="day"] .app-tab-btn.active span {
+        font-weight: 700;
         color: var(--accent-color);
     }
 
@@ -1251,7 +1318,8 @@ body.modal-open {
         display: none !important;
     }
 
-    .mobile-only-tabbar {
+    .mobile-only-tabbar,
+    .app-floating-tabbar {
         display: none !important;
     }
 
@@ -2930,8 +2998,9 @@ body.modal-open {
     gap: 6px;
     padding: 18px 16px;
     border-radius: 12px;
-    background: rgba(255, 69, 58, 0.08);
-    border: 0.5px solid rgba(255, 69, 58, 0.25);
+    background: var(--error-card-bg);
+    border: 0.5px solid var(--error-card-border);
+    box-shadow: var(--error-card-glow);
     text-align: center;
     align-items: center;
 }
@@ -2939,7 +3008,7 @@ body.modal-open {
 .reading-error-title {
     font-size: var(--font-size-sm);
     font-weight: 700;
-    color: #FF453A;
+    color: var(--error-title-color);
 }
 
 .reading-error-message {
@@ -3448,4 +3517,706 @@ body.modal-open {
     background: var(--accent-bg);
     border-color: var(--accent-color);
     color: var(--text-primary);
+}
+
+/* ==========================================================================
+   MINIMALIST PERSUASIVE SUPPORT CARD (PAYPAL + SHARE + AUTHORSHIP)
+   ========================================================================== */
+
+.app-support-card {
+    position: relative;
+    overflow: hidden;
+    margin-top: 20px;
+    margin-bottom: 12px;
+    padding: 15px 18px;
+    border-radius: var(--card-radius, 16px);
+    background: linear-gradient(135deg, var(--card-bg-start) 0%, var(--card-bg-end) 100%);
+    border: 0.5px solid var(--card-border-color);
+    box-shadow: var(--card-specular), var(--shadow-subtle);
+    transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.app-support-card:hover {
+    border-color: var(--card-border-hover);
+    box-shadow: var(--card-specular), 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+
+/* Minimalist Header Row */
+.support-mini-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.support-mini-author {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+}
+
+.support-mini-author i {
+    color: var(--accent-color);
+    font-size: 11px;
+}
+
+.support-mini-author strong {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.support-mini-fest-name {
+    color: #f1c40f;
+    font-weight: 600;
+}
+
+/* Minimalist Persuasive Pitch */
+.support-mini-desc {
+    font-size: 0.81rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin: 0 0 12px 0;
+}
+
+.support-mini-desc strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.support-mini-desc em {
+    color: #e0aa3e;
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* Minimalist Actions Row */
+.support-mini-actions {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+
+.support-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #0070BA 0%, #003087 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #FFFFFF !important;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    box-shadow: 0 3px 10px rgba(0, 112, 186, 0.30);
+    transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s ease, filter 0.15s ease;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.support-btn-primary i.fa-paypal {
+    font-size: 13px;
+    color: #FFFFFF;
+}
+
+.support-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 112, 186, 0.42);
+    filter: brightness(1.08);
+}
+
+.support-btn-primary:active {
+    transform: scale(0.98);
+}
+
+.support-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 9999px;
+    background: var(--modal-input-bg);
+    border: 0.5px solid var(--card-border-color);
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.14s ease, box-shadow 0.15s ease;
+}
+
+.support-btn-secondary i {
+    font-size: 11px;
+    color: var(--accent-color);
+    transition: transform 0.16s ease;
+}
+
+.support-btn-secondary:hover {
+    background: var(--accent-bg);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.support-btn-secondary:hover i {
+    transform: scale(1.15);
+}
+
+.support-btn-secondary:active {
+    transform: scale(0.98);
+}
+
+/* Day Mode Optimizations */
+:root[data-theme="day"] .app-support-card {
+    background: linear-gradient(145deg, rgba(246, 241, 233, 0.95) 0%, rgba(238, 231, 222, 0.92) 100%);
+    border-color: rgba(90, 78, 65, 0.15);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 480px) {
+    .app-support-card {
+        padding: 13px 14px;
+        margin-top: 16px;
+    }
+
+    .support-mini-header {
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
+    .support-mini-actions {
+        width: 100%;
+        gap: 8px;
+    }
+
+    .support-btn-primary,
+    .support-btn-secondary {
+        flex: 1 1 130px;
+        text-align: center;
+        padding: 9px 12px;
+        font-size: 0.80rem;
+    }
+}
+
+/* Rodapé de Créditos na Barra Lateral (Desktop) */
+.sidebar-credits {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 12px;
+    margin-top: 4px;
+    border-top: 0.5px solid var(--card-border-color);
+    font-size: 0.74rem;
+}
+
+.sidebar-credits-author {
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-credits-author strong {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.sidebar-paypal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 8px;
+    background: var(--accent-bg);
+    border: 0.5px solid var(--card-border-color);
+    color: var(--accent-color);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+}
+
+.sidebar-paypal-link:hover {
+    background: var(--accent-color);
+    color: #FFFFFF !important;
+    transform: translateY(-1px);
+}
+
+.sidebar-paypal-link:hover i {
+    color: #FFFFFF !important;
+}
+
+.sidebar-paypal-link:active {
+    transform: scale(0.95);
+}
+
+/* Minimalist Policy Notice (Shabbat & Yom Tov) */
+.support-mini-policy {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 11px;
+    padding-top: 9px;
+    border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.70rem;
+    color: var(--text-muted);
+    letter-spacing: 0.01em;
+    line-height: 1.35;
+    opacity: 0.85;
+}
+
+.support-mini-policy i {
+    font-size: 10px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    opacity: 0.9;
+}
+
+:root[data-theme="day"] .support-mini-policy {
+    border-top-color: rgba(0, 0, 0, 0.07);
+    color: #636e72;
+}
+
+:root[data-theme="day"] .support-mini-policy i {
+    color: #636e72;
+}
+
+/* ==========================================================================
+   YOM TOV & SHABBAT SACRED REST CARD (MINIMALIST HALACHA)
+   ========================================================================== */
+
+.app-support-card.is-sacred-rest {
+    border-color: rgba(212, 175, 55, 0.35);
+    background: linear-gradient(145deg, rgba(28, 25, 18, 0.94) 0%, rgba(18, 16, 12, 0.97) 100%);
+    box-shadow: var(--card-specular), 0 6px 24px rgba(212, 175, 55, 0.08);
+}
+
+.app-support-card.is-sacred-rest:hover {
+    border-color: rgba(241, 196, 15, 0.50);
+    box-shadow: var(--card-specular), 0 8px 28px rgba(212, 175, 55, 0.14);
+}
+
+.app-support-card.is-sacred-rest .support-mini-author i {
+    color: #f1c40f;
+}
+
+/* Botão de Doação Desativado no Yom Tov / Shabat */
+.support-btn-primary.is-disabled {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 0.5px solid rgba(212, 175, 55, 0.28) !important;
+    color: rgba(255, 255, 255, 0.60) !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    transform: none !important;
+    filter: none !important;
+}
+
+.support-btn-primary.is-disabled i.fa-lock {
+    color: #f1c40f !important;
+    font-size: 11px;
+}
+
+/* Share button highlight in Sacred Rest */
+.support-btn-secondary.yomtov-active {
+    background: rgba(241, 196, 15, 0.12);
+    border-color: rgba(241, 196, 15, 0.40);
+    color: #f1c40f;
+    box-shadow: 0 2px 10px rgba(241, 196, 15, 0.10);
+}
+
+.support-btn-secondary.yomtov-active i {
+    color: #f1c40f;
+}
+
+.support-btn-secondary.yomtov-active:hover {
+    background: rgba(241, 196, 15, 0.22);
+    border-color: #f1c40f;
+    color: #ffffff;
+    box-shadow: 0 4px 18px rgba(241, 196, 15, 0.25);
+}
+
+/* Sidebar Link Desativado */
+.sidebar-paypal-link.is-disabled {
+    background: rgba(241, 196, 15, 0.08) !important;
+    border-color: rgba(241, 196, 15, 0.25) !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    transform: none !important;
+}
+
+.sidebar-paypal-link.is-disabled i {
+    color: #f1c40f !important;
+}
+
+/* Day Mode para Card Yom Tov */
+:root[data-theme="day"] .app-support-card.is-sacred-rest {
+    background: linear-gradient(145deg, rgba(253, 248, 238, 0.97) 0%, rgba(245, 237, 222, 0.94) 100%);
+    border-color: rgba(180, 130, 20, 0.35);
+    box-shadow: 0 4px 18px rgba(180, 130, 20, 0.08);
+}
+
+:root[data-theme="day"] .app-support-card.is-sacred-rest .support-mini-author i {
+    color: #8c6310;
+}
+
+:root[data-theme="day"] .support-mini-fest-name {
+    color: #8c6310;
+}
+
+:root[data-theme="day"] .support-mini-desc em {
+    color: #8c6310;
+}
+
+:root[data-theme="day"] .support-btn-primary.is-disabled {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(180, 130, 20, 0.30) !important;
+    color: rgba(60, 45, 20, 0.65) !important;
+}
+
+:root[data-theme="day"] .support-btn-primary.is-disabled i.fa-lock {
+    color: #8c6310 !important;
+}
+
+:root[data-theme="day"] .support-btn-secondary.yomtov-active {
+    background: rgba(180, 130, 20, 0.09);
+    border-color: rgba(180, 130, 20, 0.35);
+    color: #8c6310;
+}
+
+:root[data-theme="day"] .support-btn-secondary.yomtov-active i {
+    color: #8c6310;
+}
+
+:root[data-theme="day"] .support-btn-secondary.yomtov-active:hover {
+    background: rgba(180, 130, 20, 0.18);
+    border-color: #8c6310;
+    color: #593e06;
+}
+
+:root[data-theme="day"] .sidebar-paypal-link.is-disabled i {
+    color: #8c6310 !important;
+}
+
+/* ==========================================================================
+   APP SHARE FEATURE (HEADER, SUPPORT CARD, SIDEBAR & TOAST)
+   ========================================================================== */
+
+/* Mobile header actions wrapper */
+.mobile-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Sidebar credits actions */
+.sidebar-credits-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.sidebar-share-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--modal-input-bg);
+    border: 0.5px solid var(--card-border-color);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+}
+
+.sidebar-share-btn:hover {
+    background: var(--accent-bg);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    transform: translateY(-1px);
+}
+
+.sidebar-share-btn:active {
+    transform: scale(0.92);
+}
+
+/* Toast feedback when copied */
+.app-share-toast {
+    position: fixed;
+    bottom: calc(var(--tabbar-height, 70px) + 16px);
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(15, 18, 26, 0.95);
+    color: #FFFFFF;
+    padding: 10px 18px;
+    border-radius: 9999px;
+    border: 0.5px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.app-share-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.app-share-toast i {
+    color: #2ecc71;
+    font-size: 13px;
+}
+
+:root[data-theme="day"] .app-share-toast {
+    background: rgba(250, 246, 240, 0.96);
+    color: #2b251e;
+    border-color: rgba(90, 78, 65, 0.20);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================================
+   SYSTEM ERROR NOTICE - SINGLE CRITICAL ERROR, MINIMALIST & CONCENTRIC
+   ========================================================================== */
+
+.system-error-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0 0 10px 0;
+    padding: 12px 14px;
+    border-radius: var(--card-radius, 16px);
+    background: var(--error-card-bg);
+    border: 1px solid var(--error-card-border);
+    box-shadow: var(--card-specular), var(--error-card-glow);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    width: 100%;
+    box-sizing: border-box;
+    opacity: 0;
+    transform: translateY(-3px);
+    transition: opacity 0.2s ease, transform 0.2s ease, background 0.3s ease, border-color 0.3s ease;
+    z-index: 20;
+}
+
+@media (min-width: 768px) {
+    .system-error-block {
+        gap: 14px;
+        margin: 0 0 16px 0;
+        padding: 14px 18px;
+        border-radius: 18px;
+    }
+}
+
+.system-error-block.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.system-error-item-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--error-color);
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.system-error-item-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.system-error-item-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--error-title-color);
+    line-height: 1.25;
+    margin-bottom: 2px;
+}
+
+.system-error-item-desc {
+    font-size: 0.76rem;
+    line-height: 1.40;
+    color: var(--error-desc-color);
+    margin: 0;
+}
+
+/* Privacy Tab Real-Time Telemetry Minimalist Line (No Tags) */
+.umami-privacy-card-wrap {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 0.5px solid var(--card-border-color);
+}
+
+.umami-live-clean {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.umami-live-clean i {
+    font-size: 11px;
+}
+
+.umami-live-clean.is-ok {
+    color: #2ecc71;
+}
+
+:root[data-theme="day"] .umami-live-clean.is-ok {
+    color: #27ae60;
+}
+
+.umami-live-clean.is-error {
+    color: var(--error-color);
+}
+
+.umami-privacy-subnote {
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    margin: 6px 0 0 0;
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   WIFI / INTERNET REQUIRED BARRIER (100% ONLINE MANDATORY FOR TELEMETRY)
+   ========================================================================== */
+
+.wifi-required-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: rgba(13, 17, 23, 0.92);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    animation: wifiFadeIn 0.25s ease-out;
+}
+
+:root[data-theme="day"] .wifi-required-overlay {
+    background: rgba(228, 221, 210, 0.92);
+}
+
+.wifi-required-card {
+    max-width: 360px;
+    width: 100%;
+    padding: 28px 24px;
+    border-radius: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--card-specular), 0 20px 48px rgba(0, 0, 0, 0.45);
+    border: 1px solid var(--card-border-color);
+}
+
+.wifi-required-icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-color);
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.wifi-required-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.wifi-required-desc {
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.wifi-required-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    background: var(--modal-input-bg);
+    border: 0.5px solid var(--card-border-color);
+}
+
+.wifi-ping-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--error-color);
+    animation: wifiPulse 1.6s infinite ease-in-out;
+}
+
+.wifi-status-text {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+@keyframes wifiPulse {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(0.85);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+}
+
+@keyframes wifiFadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+body.connection-blocked {
+    overflow: hidden !important;
 }

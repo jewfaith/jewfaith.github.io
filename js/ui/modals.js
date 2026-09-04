@@ -3,6 +3,7 @@ import { state } from '../state.js';
 import { applyEstimatedTheme } from './theme.js';
 import { savePersistentSetting, setCookie, isUserPremium, setUserPremium } from '../utils/persistence.js';
 import { ICONS } from './icons.js';
+import { trackMicroAction } from '../utils/umamiMonitor.js';
 
 // Sanitiza strings para prevencao de XSS
 function escapeHtml(str) {
@@ -774,6 +775,8 @@ export function closeModalSafely(modal, skipHistory = false) {
     if (modal.style.display === 'none' || modal.style.display === '') return;
     if (modal.classList.contains('is-closing')) return;
 
+    trackMicroAction('modal_close', { modalId: modal.id });
+
     const content = modal.querySelector('.modal-content, .reading-modal-content');
 
     modal.classList.add('is-closing');
@@ -988,6 +991,8 @@ export async function openReadingModal(ref, cardTitle) {
     const bodyEl = document.getElementById('reading-modal-body');
     if (!modal || !titleEl || !bodyEl) return;
 
+    trackMicroAction('modal_open', { modal: 'reading', ref, title: cardTitle });
+
     closeOtherModalsOnDesktop('reading-modal');
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -1063,6 +1068,8 @@ export async function openReadingModal(ref, cardTitle) {
 export function openLocationModal() {
     const modal = document.getElementById('location-modal');
     if (!modal) return;
+
+    trackMicroAction('modal_open', { modal: 'location' });
     closeOtherModalsOnDesktop('location-modal');
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -1241,14 +1248,33 @@ export function initModals(updateDashboardCallback) {
 
             try {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=15&accept-language=pt&email=contato@yisraeldate.app`);
-                if (!res.ok) return;
+                if (!res.ok) {
+                    const suggestionsList = document.getElementById('location-suggestions');
+                    if (suggestionsList) {
+                        suggestionsList.innerHTML = `
+                            <li class="reading-error" style="margin: 8px 0; list-style: none;">
+                                <span class="reading-error-title">Serviço Indisponível</span>
+                                <span class="reading-error-message">Não foi possível consultar os servidores de localização.</span>
+                            </li>
+                        `;
+                    }
+                    return;
+                }
                 const data = await res.json();
 
                 const afterQuery = document.getElementById('location-search-input')?.value.trim();
                 if (afterQuery !== query) return;
 
                 if (data.length === 0) {
-                    renderSuggestions([]);
+                    const suggestionsList = document.getElementById('location-suggestions');
+                    if (suggestionsList) {
+                        suggestionsList.innerHTML = `
+                            <li class="reading-error" style="margin: 8px 0; list-style: none; background: var(--hover-gradient); border-color: var(--card-border-color); box-shadow: none;">
+                                <span class="reading-error-title" style="color: var(--text-primary);">Nenhum Resultado</span>
+                                <span class="reading-error-message" style="color: var(--text-muted);">Não foi encontrada nenhuma localidade com este nome.</span>
+                            </li>
+                        `;
+                    }
                     return;
                 }
 
@@ -1280,6 +1306,15 @@ export function initModals(updateDashboardCallback) {
             } catch (err) {
                 // Log network or JSON parsing error from Nominatim search API
                 console.error('Location Search API error:', err);
+                const suggestionsList = document.getElementById('location-suggestions');
+                if (suggestionsList) {
+                    suggestionsList.innerHTML = `
+                        <li class="reading-error" style="margin: 8px 0; list-style: none;">
+                            <span class="reading-error-title">Conexão Indisponível</span>
+                            <span class="reading-error-message">Verifique a sua ligação à internet para pesquisar cidades.</span>
+                        </li>
+                    `;
+                }
             }
         }, 260);
     });

@@ -14,6 +14,48 @@
   <link rel="manifest" href="manifest.json" />
   <title>Yisrael Date</title>
 
+  <!-- Metadados Formais de Autoria, Criação e Propriedade Intelectual -->
+  <meta name="author" content="Mikhael" />
+  <meta name="creator" content="Mikhael" />
+  <meta name="publisher" content="Mikhael" />
+  <meta name="copyright" content="Copyright (c) 2026 Mikhael. Todos os direitos reservados." />
+  <meta name="application-name" content="Yisrael Date" />
+
+  <!-- Open Graph / Atribuição em Partilhas -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Yisrael Date" />
+  <meta property="og:title" content="Yisrael Date • Por Mikhael" />
+  <meta property="og:description" content="Calendário bíblico e hebraico independente concebido, desenhado e desenvolvido exclusivamente por Mikhael." />
+  <meta property="og:image" content="icon.png" />
+  <meta property="article:author" content="Mikhael" />
+
+  <!-- Schema.org JSON-LD (Atribuição Canónica e Direitos Autorais) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Yisrael Date",
+    "url": "https://jewfaith.github.io",
+    "description": "Calendário baseado na Torá com cálculos litúrgicos e astronómicos independentes.",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "author": {
+      "@type": "Person",
+      "name": "Mikhael",
+      "url": "https://github.com/jewfaith"
+    },
+    "creator": {
+      "@type": "Person",
+      "name": "Mikhael"
+    },
+    "copyrightHolder": {
+      "@type": "Person",
+      "name": "Mikhael"
+    },
+    "copyrightYear": "2026"
+  }
+  </script>
+
   <!-- Restauração imediata do tema da memória (0ms, sem flash) -->
   <script>
     (function () {
@@ -35,14 +77,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="dns-prefetch" href="https://www.hebcal.com" />
   <link rel="dns-prefetch" href="https://nominatim.openstreetmap.org" />
+  <link rel="preconnect" href="https://cloud.umami.is" crossorigin />
+  <link rel="preconnect" href="https://gateway.umami.is" crossorigin />
   <link rel="dns-prefetch" href="https://cloud.umami.is" />
+  <link rel="dns-prefetch" href="https://gateway.umami.is" />
   <link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
 
   <!-- Umami Analytics (Cookieless, Privacy-First, RGPD & LGPD Compliant) -->
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="6cd4c599-d27b-4542-aced-dcef8e470f0c"></script>
+  <script id="umami-script" defer src="https://cloud.umami.is/script.js" data-website-id="6cd4c599-d27b-4542-aced-dcef8e470f0c" data-auto-track="true" data-do-not-track="false" onerror="window.__umamiScriptFailed = true; if (window.umamiMonitor) window.umamiMonitor.runDiagnostics(false);"></script>
 </head>
 
 <body>
@@ -92,6 +137,21 @@
             <span>Dark</span>
           </button>
         </div>
+        <div class="sidebar-credits">
+          <span class="sidebar-credits-author">Autoria de <strong>Mikhael</strong></span>
+          <div class="sidebar-credits-actions">
+            <button type="button" class="sidebar-share-btn app-share-trigger" aria-label="Partilhar o site"
+              title="Partilhar Yisrael Date">
+              <i class="fa-solid fa-share-nodes"></i>
+            </button>
+            <a href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer"
+              class="sidebar-paypal-link" aria-label="Apoiar Mikhael no PayPal" title="Apoiar criador no PayPal">
+              <i class="fa-brands fa-paypal"></i>
+              <span>Apoiar</span>
+              <i class="fa-solid fa-heart" style="font-size: 8px; color: #ff6b81; margin-left: 2px;"></i>
+            </a>
+          </div>
+        </div>
       </div>
     </aside>
 
@@ -104,15 +164,30 @@
       <header class="mobile-only-header">
         <div class="mobile-header-top-row">
           <h1 class="mobile-brand-title">Yisrael Date</h1>
-          <button id="mobile-theme-toggle-btn" class="mobile-theme-btn" aria-label="Alternar tema visual"
-            title="Alternar tema visual">
-            <i class="fa-solid fa-circle-half-stroke" data-icon="themeDark"></i>
-          </button>
+          <div class="mobile-header-actions">
+            <button id="mobile-share-btn" class="mobile-theme-btn app-share-trigger" aria-label="Partilhar o site"
+              title="Partilhar o site">
+              <i class="fa-solid fa-share-nodes"></i>
+            </button>
+            <button id="mobile-theme-toggle-btn" class="mobile-theme-btn" aria-label="Alternar tema visual"
+              title="Alternar tema visual">
+              <i class="fa-solid fa-circle-half-stroke" data-icon="themeDark"></i>
+            </button>
+          </div>
         </div>
       </header>
 
       <!-- App Views Wrapper -->
       <main class="app-content-views">
+
+        <!-- Alerta do Sistema (Exibe o erro mais crítico por vez, minimalista e sem tags) -->
+        <div id="system-error-block" class="system-error-block glass-panel" style="display: none;" role="status" aria-live="polite">
+          <div class="system-error-item-icon" id="system-error-icon"></div>
+          <div class="system-error-item-body">
+            <div class="system-error-item-title" id="system-error-title"></div>
+            <div class="system-error-item-desc" id="system-error-desc"></div>
+          </div>
+        </div>
 
         <!-- ==========================================
              ABA 1: LEITURA (ARCO SOLAR, DATA & ESCRITURAS)
@@ -144,7 +219,7 @@
           </div>
           <div class="event-cards-row">
 
-            <div class="settings-card event-card glass-panel not-ready" id="card-parasha-wrapper" tabindex="0"
+            <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-parasha-wrapper" tabindex="0"
               role="button" aria-label="Detalhes da Parashá" style="cursor: pointer;">
               <div class="settings-card-left">
                 <i class="fa-solid fa-scroll settings-icon" data-icon="scroll"></i>
@@ -274,16 +349,37 @@
                 style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
           </div>
-        <div style="margin-top: 20px;display: flex;justify-content: space-between;">
-          <div class="">
-            <a style="color: var(--text-primary); font-weight: 600; text-decoration: none;"
-              href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer">Apoiar criador</a>
-          </div>
-          <div>
-            <p>Criado por Mikhael</p>
+          <!-- Card de Apoio Minimalista & Persuasivo -->
+          <div class="app-support-card glass-panel" role="region" aria-label="Apoiar o criador">
+            <div class="support-mini-header">
+              <div class="support-mini-author">
+                <i class="fa-solid fa-code"></i>
+                <span>Autoria e Criação de <strong>Mikhael</strong></span>
+              </div>
+            </div>
+
+            <p class="support-mini-desc">
+              O <strong>Yisrael Date</strong> é uma obra autoral concebida e desenvolvida de forma independente por <strong>Mikhael</strong>. Se é útil no seu dia e estudo da Torá, considere apoiar a sua manutenção ou partilhar com amigos.
+            </p>
+
+            <div class="support-mini-actions">
+              <a href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer"
+                class="support-btn-primary" aria-label="Apoiar Mikhael no PayPal com qualquer valor">
+                <i class="fa-brands fa-paypal"></i>
+                <span>Apoiar via PayPal</span>
+              </a>
+              <button type="button" class="support-btn-secondary app-share-trigger" aria-label="Partilhar o link do site Yisrael Date" title="Partilhar o site">
+                <i class="fa-solid fa-share-nodes"></i>
+                <span>Partilhar</span>
+              </button>
+            </div>
+
+            <div class="support-mini-policy">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              <span>Doações pausadas no Shabat e em Yom Tov.</span>
+            </div>
           </div>
         </section>
-        </div>
 
         <!-- ==========================================
              ABA 2: FESTAS (BÍBLICAS E RABÍNICAS UNIFICADAS)
@@ -445,13 +541,34 @@
             </div>
           </div>
 
-          <div style="margin-top: 20px;display: flex;justify-content: space-between;">
-            <div class="">
-              <a style="color: var(--text-primary); font-weight: 600; text-decoration: none;"
-                href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer">Apoiar criador</a>
+          <!-- Card de Apoio Minimalista & Persuasivo -->
+          <div class="app-support-card glass-panel" role="region" aria-label="Apoiar o criador">
+            <div class="support-mini-header">
+              <div class="support-mini-author">
+                <i class="fa-solid fa-code"></i>
+                <span>Autoria e Criação de <strong>Mikhael</strong></span>
+              </div>
             </div>
-            <div>
-              <p>Criado por Mikhael</p>
+
+            <p class="support-mini-desc">
+              O <strong>Yisrael Date</strong> é uma obra autoral concebida e desenvolvida de forma independente por <strong>Mikhael</strong>. Se é útil no seu dia e estudo da Torá, considere apoiar a sua manutenção ou partilhar com amigos.
+            </p>
+
+            <div class="support-mini-actions">
+              <a href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer"
+                class="support-btn-primary" aria-label="Apoiar Mikhael no PayPal com qualquer valor">
+                <i class="fa-brands fa-paypal"></i>
+                <span>Apoiar via PayPal</span>
+              </a>
+              <button type="button" class="support-btn-secondary app-share-trigger" aria-label="Partilhar o link do site Yisrael Date" title="Partilhar o site">
+                <i class="fa-solid fa-share-nodes"></i>
+                <span>Partilhar</span>
+              </button>
+            </div>
+
+            <div class="support-mini-policy">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              <span>Doações pausadas no Shabat e em Yom Tov.</span>
             </div>
           </div>
         </section>
@@ -463,15 +580,36 @@
         <section id="view-privacy" class="app-tab-view">
           <div id="privacy-content-container" style="display: contents;"></div>
           
-        <div style="margin-top: 20px;display: flex;justify-content: space-between;">
-          <div class="">
-            <a style="color: var(--text-primary); font-weight: 600; text-decoration: none;"
-              href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer">Apoiar criador</a>
+          <!-- Card de Apoio Minimalista & Persuasivo -->
+          <div class="app-support-card glass-panel" role="region" aria-label="Apoiar o criador">
+            <div class="support-mini-header">
+              <div class="support-mini-author">
+                <i class="fa-solid fa-code"></i>
+                <span>Autoria e Criação de <strong>Mikhael</strong></span>
+              </div>
+            </div>
+
+            <p class="support-mini-desc">
+              O <strong>Yisrael Date</strong> é uma obra autoral concebida e desenvolvida de forma independente por <strong>Mikhael</strong>. Se é útil no seu dia e estudo da Torá, considere apoiar a sua manutenção ou partilhar com amigos.
+            </p>
+
+            <div class="support-mini-actions">
+              <a href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer"
+                class="support-btn-primary" aria-label="Apoiar Mikhael no PayPal com qualquer valor">
+                <i class="fa-brands fa-paypal"></i>
+                <span>Apoiar via PayPal</span>
+              </a>
+              <button type="button" class="support-btn-secondary app-share-trigger" aria-label="Partilhar o link do site Yisrael Date" title="Partilhar o site">
+                <i class="fa-solid fa-share-nodes"></i>
+                <span>Partilhar</span>
+              </button>
+            </div>
+
+            <div class="support-mini-policy">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              <span>Doações pausadas no Shabat e em Yom Tov.</span>
+            </div>
           </div>
-          <div>
-            <p>Criado por Mikhael</p>
-          </div>
-        </div>
         </section>
 
       </main>
@@ -562,6 +700,21 @@
   </div>
 
 
+
+  <!-- Bloqueio de Conexão Obrigatória (100% Online para Acesso à Telemetria) -->
+  <div id="wifi-required-overlay" class="wifi-required-overlay" style="display: none;" role="alertdialog" aria-modal="true" aria-labelledby="wifi-required-title">
+    <div class="wifi-required-card glass-panel">
+      <div class="wifi-required-icon-wrap">
+        <i class="fa-solid fa-wifi"></i>
+      </div>
+      <h2 id="wifi-required-title" class="wifi-required-title">Conexão Obrigatória</h2>
+      <p class="wifi-required-desc">O aplicativo requer acesso contínuo à internet para funcionar.</p>
+      <div class="wifi-required-indicator">
+        <span class="wifi-ping-dot"></span>
+        <span class="wifi-status-text">Aguardando rede...</span>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="js/main.js"></script>
 </body>

@@ -1,4 +1,5 @@
 import { renderPrivacyView } from './premiumView.js';
+import { trackMicroAction } from '../utils/umamiMonitor.js';
 
 const TAB_HASH_MAP = {
     'reading': 'data',
@@ -73,6 +74,8 @@ export function getActiveTabFromUrl() {
 
 export function switchTab(targetTab, updateUrl = true, smoothScroll = true, userGesture = false) {
     if (!targetTab) return;
+
+    trackMicroAction('tab_change', { tab: targetTab });
 
     const allTabButtons = document.querySelectorAll('[data-tab]');
     const tabViews = document.querySelectorAll('.app-tab-view');

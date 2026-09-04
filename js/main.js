@@ -1,3 +1,13 @@
+/**
+ * YISRAEL DATE • CALENDÁRIO DA TORÁ E HALACHÁ
+ * 
+ * Copyright (c) 2026 Mikhael. Todos os direitos reservados.
+ * Conceção, arquitetura de software e desenvolvimento autoral exclusivo de Mikhael.
+ * Repositório Oficial: https://github.com/jewfaith/jewfaith.github.io
+ * 
+ * É expressamente vedada a apropriação indébita, remoção de créditos ou usurpação desta obra.
+ */
+
 import { state } from './state.js';
 import { hebcalFetch } from './api/hebcal.js';
 import { updateUIBlocks, renderEvents, showDashboardSkeletons } from './ui/dashboard.js';
@@ -10,6 +20,7 @@ import { initAppNavigation } from './ui/appNavigation.js';
 import { applyIconsToDOM } from './ui/icons.js';
 import { initPcDisplayManager } from './ui/pcDisplayManager.js';
 import { HEBREW_MONTHS_PT } from './domain/constants.js';
+import { initUmamiMonitor, setConnectionState, trackMicroAction } from './utils/umamiMonitor.js';
 
 // Registro do Service Worker para PWA e Offline
 if ('serviceWorker' in navigator) {
@@ -30,6 +41,7 @@ function loadOfflineCache(defaultLocName = "Jerusalém, Israel", defaultIsIsrael
                 state.unifiedEvents = data.events;
                 state.currentZmanim = data.zmanim || null;
                 state.currentSunsetTime = data.sunset || 0;
+                state.currentHdate = data.hdate || null;
                 updateUIBlocks(
                     data.events,
                     data.hdate || { hd: 15, hm: 'Av'},
@@ -47,6 +59,13 @@ function loadOfflineCache(defaultLocName = "Jerusalém, Israel", defaultIsIsrael
 }
 
 async function updateDashboard(options = {}) {
+    // 100% Online Obrigatório: Aplicação não funciona sem internet
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        setConnectionState(false);
+        showDashboardSkeletons();
+        return;
+    }
+
     const isSilent = !!options.silent;
 
     // 1. Aplicação rápida do tema
@@ -355,6 +374,8 @@ async function updateDashboard(options = {}) {
                 timestamp: Date.now()
             }));
 
+            state.currentHdate = hdateData;
+            state.currentSunsetTime = sunsetTime;
             updateUIBlocks(state.unifiedEvents, hdateData || { hd: 15, hm: 'Av'}, locationName, sunsetTime, isIsrael);
         } else {
             loadOfflineCache(locationName, isIsrael);
@@ -393,5 +414,6 @@ initStoragePersistence();
 initPcDisplayManager();
 initAppNavigation();
 initModals(updateDashboard);
+initUmamiMonitor();
 updateDashboard();
 initSmartUpdater(updateDashboard);

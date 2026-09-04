@@ -2,12 +2,8 @@ import { state } from '../state.js';
 import { openZmanimModal } from './zmanimTable.js';
 import { ICONS } from './icons.js';
 
-let solarArcInterval = null;
-
 export function initSolarArc() {
     renderSolarArcWidget();
-    if (solarArcInterval) clearInterval(solarArcInterval);
-    solarArcInterval = setInterval(updateSolarPosition, 10000);
 }
 
 export function renderSolarArcWidget() {

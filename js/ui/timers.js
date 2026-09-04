@@ -1,4 +1,5 @@
 import { state } from '../state.js';
+import { renderSupportCards } from './dashboard.js';
 
 export function stopTimers() {
     if (state.timerInterval) {
@@ -58,6 +59,8 @@ export function formatTimeRemaining(diffMs, startTimestamp = null) {
     return `Faltam ${pad(totalMinutes)}m`;
 }
 
+let lastRestCheck = 0;
+
 export function startTimers() {
     stopTimers();
 
@@ -65,6 +68,10 @@ export function startTimers() {
         if (document.hidden) return;
 
         const now = Date.now();
+        if (now - lastRestCheck > 30000) {
+            lastRestCheck = now;
+            renderSupportCards();
+        }
         let anyExpired = false;
         let minNextUpdate = 60 * 60 * 1000;
 
@@ -150,11 +157,14 @@ export function startTimers() {
     update();
 }
 
-// Sincroniza e força a atualização assim que a aba voltar a ficar visível
+// Sincroniza e força a atualização assim que a aba voltar a ficar visível, e suspende quando oculta
 if (typeof document !== 'undefined') {
     document.addEventListener('visibilitychange', () => {
         if (!document.hidden) {
             startTimers();
+            renderSupportCards();
+        } else {
+            stopTimers();
         }
     });
 }

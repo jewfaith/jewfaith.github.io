@@ -1,4 +1,5 @@
 import { ICONS } from './icons.js';
+import { getUmamiStatus } from '../utils/umamiMonitor.js';
 
 /**
  * PARECER JURÍDICO DE CONFORMIDADE E DECLARAÇÃO DE PROTEÇÃO DE DADOS
@@ -141,6 +142,17 @@ export function renderPrivacyView() {
                 'Encontram-se preservadas as preferências estéticas de tema visual entre o modo automático solar, o modo claro de pergaminho e o modo escuro de obsidiana.',
                 'No ambiente de computador, o sistema opera de forma fixa no formato de painel lateral com gaveta deslizante acelerada por hardware.',
                 'O prazo de conservação vincula-se com exclusividade à custódia do titular no navegador, persistindo unicamente até a limpeza voluntária ou a ordem formal de expurgo.'
+            ]
+        },
+        {
+            id: 'telemetria-etica',
+            icon: 'fa-solid fa-chart-simple',
+            title: 'Telemetria Ética',
+            desc: 'Métricas Anónimas',
+            paragraphs: [
+                'A plataforma afere o alcance comunitário com esteio na tecnologia aberta e auditável Umami Analytics sem utilização de cookies ou rastreadores invasivos.',
+                'O procedimento respeita a diretiva de não monitoramento Do Not Track e opera com total desvinculação de endereços de rede ou dados identificadores.',
+                `<div id="umami-privacy-card" class="umami-privacy-card-wrap"><span id="umami-live-status-pill" class="umami-live-clean ${getUmamiStatus().isBlocked ? 'is-error' : 'is-ok'}"><i class="fa-solid ${getUmamiStatus().isBlocked ? 'fa-triangle-exclamation' : 'fa-circle-check'}"></i> ${getUmamiStatus().isBlocked ? 'Telemetria Desativada' : 'Telemetria Ativa'}</span><p class="umami-privacy-subnote">${getUmamiStatus().isBlocked ? 'Não consegue agir.' : 'Métricas anónimas ativas sem recolha de dados pessoais.'}</p></div>`
             ]
         }
     ];
@@ -327,12 +339,12 @@ export function renderPrivacyView() {
             id: 'direito-autoral',
             icon: 'fa-solid fa-scroll',
             title: 'Direito Autoral',
-            desc: 'Patrimônio Sagrado',
+            desc: 'Autoria Exclusiva',
             paragraphs: [
-                'O texto sagrado da Torá, os livros proféticos de Neviim e os escritos de Ketuvim constituem patrimônio espiritual inalienável da humanidade e encontram-se em domínio público universal.',
-                'As implementações de código de software, formatações de estilo e rotinas algorítmicas foram estruturadas sob os princípios do software livre e padrões abertos da web.',
-                'É expressamente vedada a apropriação comercial monopolística dos textos sagrados ou a imposição de barreiras remuneradas ao estudo da Palavra Divina.',
-                'A aplicação garante gratuidade eterna e acesso irrestrito a todos os povos e comunidades que buscam o conhecimento da Torá de Israel.'
+                'A conceção original, a arquitetura algorítmica, o design visual e o desenvolvimento integral do software Yisrael Date constituem criação autoral e intelectual exclusiva de Mikhael.',
+                'É expressamente vedada a apropriação indevida, a usurpação de código, a remoção de créditos autorais, o plágio de interface e a exploração comercial não autorizada da obra por terceiros.',
+                'Os textos sagrados da Torá, dos profetas e dos escritos pertencem ao patrimônio imaterial da humanidade sob custódia perpétua do povo de Israel.',
+                'Todos os direitos patrimoniais e morais de autor sobre a compilação, o arranjo tecnológico e a identidade desta aplicação encontram-se reservados a Mikhael.'
             ]
         }
     ];

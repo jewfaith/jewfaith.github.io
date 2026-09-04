@@ -9,6 +9,7 @@ export const state = {
         tz: 'Asia/Jerusalem'
     },
     currentSunsetTime: 0,
+    currentHdate: null,
     currentZmanim: null,
     sunsetTimeout: null,
     // Opcional: estado do tema solar
