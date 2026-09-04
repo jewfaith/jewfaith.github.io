@@ -22,12 +22,23 @@ import { initPcDisplayManager } from './ui/pcDisplayManager.js';
 import { HEBREW_MONTHS_PT } from './domain/constants.js';
 import { initUmamiMonitor, setConnectionState, trackMicroAction } from './utils/umamiMonitor.js';
 
-// Registro do Service Worker para PWA e Offline
+// Registro do Service Worker para PWA com atualização forçada e sem retenção de cache antigo
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => {
+        navigator.serviceWorker.register('./sw.js').then((registration) => {
+            // Força verificação de nova versão do sw.js imediatamente
+            registration.update();
+        }).catch(err => {
             console.log('ServiceWorker registration failed: ', err);
         });
+    });
+
+    let isRefreshing = false;
+    navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'SW_VERSION_UPDATED' && !isRefreshing) {
+            isRefreshing = true;
+            window.location.reload();
+        }
     });
 }
 
