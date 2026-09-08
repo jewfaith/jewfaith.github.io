@@ -4,6 +4,7 @@ import { ICONS } from './icons.js';
 
 export function initSolarArc() {
     renderSolarArcWidget();
+    updateSolarPosition();
 }
 
 export function renderSolarArcWidget() {
@@ -20,9 +21,6 @@ export function renderSolarArcWidget() {
                     <h2 class="solar-title" id="solar-hero-city-title" style="font-size: 1.12rem; font-weight: 800; letter-spacing: -0.02em; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Jerusalém Israel</h2>
                     <span class="solar-subtitle" id="solar-hero-event-sub" style="font-size: var(--font-size-xs); color: var(--accent-color); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Horários Solares</span>
                 </div>
-            </div>
-            <div class="solar-action-chevron" style="display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-left: 10px;">
-                <i class="${ICONS.chevronRight}" data-icon="chevronRight" style="color: var(--text-muted); font-size: 12px;"></i>
             </div>
         </div>
     `;
@@ -65,7 +63,7 @@ export function updateSolarPosition() {
         return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
     };
 
-    let nextEventName = 'Pôr Sol';
+    let nextEventName = 'Sol Poente';
     let targetEventMs = sunsetMs;
     let phaseName = 'DIA HALÁCHICO';
     let iconClass = ICONS.sun;
@@ -86,7 +84,7 @@ export function updateSolarPosition() {
         phaseName = 'MANHÃ HALÁCHICA';
         iconClass = ICONS.sun;
     } else if (nowMs >= noonMs && nowMs < sunsetMs) {
-        nextEventName = 'Pôr Sol';
+        nextEventName = 'Sol Poente';
         targetEventMs = sunsetMs;
         phaseName = 'TARDE MINCHA';
         iconClass = ICONS.cloudSun;
@@ -132,9 +130,14 @@ export function updateSolarPosition() {
         cityTitle.textContent = cleanCity;
     }
     if (eventSub) {
-        eventSub.textContent = 'Horários Solares';
+        eventSub.textContent = nextEventName || 'Horários Solares';
     }
     if (heroIcon) {
         heroIcon.className = iconClass;
+    }
+
+    const festZmanSub = document.getElementById('zmanim-festivals-sub');
+    if (festZmanSub) {
+        festZmanSub.textContent = nextEventName || 'Tabela Solar';
     }
 }

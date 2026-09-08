@@ -200,10 +200,9 @@ export const TORAH_MANDATES = {
 export function getAutomaticFestivals() {
     const isIsrael = isIsraelLocation();
 
+    // Apenas celebrações bíblicas com data fixa no calendário hebraico
     const BIBLICAL_ORDER = [
-        'Yom Shabbat',
         'Rosh Chodashim',
-        'Rosh Chodesh',
         'Yom Pessach',
         'Chag Matzot',
         'Pessach Sheni',
@@ -215,132 +214,88 @@ export function getAutomaticFestivals() {
     ];
 
     const BIBLICAL_SET = new Set([
-        ...BIBLICAL_ORDER,
-        'Rosh Chodesh',
-        'Rosh Chodashim'
+        ...BIBLICAL_ORDER
     ]);
 
     const BIBLICAL_DATES = {
-        'Yom Shabbat': 'Sétimo Dia Semanal',
-        'Rosh Chodashim': '1 de Aviv',
-        'Rosh Chodesh': '1 de Cada Mês',
-        'Yom Pessach': '14 de Aviv',
-        'Chag Matzot': isIsrael ? '15 a 21 de Aviv' : '15 a 22 de Aviv',
-        'Pessach Sheni': '14 de Ziv',
-        'Yom Shavuot': isIsrael ? '6 de Sivan' : '6 e 7 de Sivan',
-        'Yom Teruah': '1 de Etanim',
-        'Yom Kippur': '10 de Etanim',
-        'Chag Sukkot': isIsrael ? '15 a 21 de Etanim' : '15 a 22 de Etanim',
-        'Shemini Atzeret': '22 de Etanim'
+        'Rosh Chodashim': '1 Aviv',
+        'Yom Pessach': '14 Aviv',
+        'Chag Matzot': '15-21 Aviv',
+        'Pessach Sheni': '14 Ziv',
+        'Yom Shavuot': '6 Sivan',
+        'Yom Teruah': '1 Etanim',
+        'Yom Kippur': '10 Etanim',
+        'Chag Sukkot': '15-21 Etanim',
+        'Shemini Atzeret': '22 Etanim'
     };
 
-    const RABBINIC_DATES = {
-        'Rosh Hashana': '1 e 2 de Etanim',
-        'Rosh Hashanah': '1 e 2 de Etanim',
-        'Simchat Torah': isIsrael ? '22 de Etanim' : '23 de Etanim',
-        'Hoshana Rabbah': '21 de Etanim',
-        'Tzom Gedaliah': '3 de Etanim',
-        'Shabbat Shuva': 'Shabbat de Teshuvá',
-        'Chag Chanukah': '25 Kislev a 2 Tevet',
-        'Tzom Tevet': '10 de Tevet',
-        'Tu BiShvat': '15 de Shevat',
-        'Shabbat Shekalim': 'Antes de Adar',
-        'Shabbat Zachor': 'Antes de Purim',
-        "Ta'anit Esther": '13 de Adar',
-        'Yom Purim': '14 de Adar',
-        'Shushan Purim': '15 de Adar',
-        'Purim Katan': '14 de Adar I',
-        'Shabbat Parah': 'Após o Purim',
-        'Shabbat Chodesh': 'Antes de Aviv',
-        'Shabbat Gadol': 'Antes de Pessach',
-        'Lag BaOmer': '18 de Ziv',
-        'Shabbat Shirah': 'Shabbat Beshalach',
-        'Tzom Tamuz': '17 de Tamuz',
-        'Shabbat Chazon': 'Antes de Av',
-        "Tisha B'Av": '9 de Av',
-        'Shabbat Nachamu': 'Após o Av',
-        "Tu B'Av": '15 de Av',
-        'Rosh LaBehemot': '1 de Elul',
-        'Chodesh Elul': 'Mês de Elul',
-        'Leil Selichot': 'Antes de Etanim'
-    };
-
+    // Apenas celebrações rabínicas com data fixa no calendário hebraico
     const CANONICAL_RABBINIC = [
         'Rosh Hashana',
         'Tzom Gedaliah',
-        'Shabbat Shuva',
-        'Simchat Torah',
         'Hoshana Rabbah',
+        'Simchat Torah',
         'Chag Chanukah',
         'Tzom Tevet',
         'Tu BiShvat',
-        'Shabbat Shekalim',
-        'Shabbat Zachor',
         "Ta'anit Esther",
         'Yom Purim',
         'Shushan Purim',
         'Purim Katan',
+        'Lag BaOmer',
+        'Tzom Tamuz',
+        "Tisha B'Av",
+        "Tu B'Av",
+        'Rosh LaBehemot'
+    ];
+
+    const RABBINIC_DATES = {
+        'Rosh Hashana': '1-2 Etanim',
+        'Rosh Hashanah': '1-2 Etanim',
+        'Tzom Gedaliah': '3 Etanim',
+        'Hoshana Rabbah': '21 Etanim',
+        'Simchat Torah': isIsrael ? '22 Etanim' : '23 Etanim',
+        'Chag Chanukah': '25-2 Kislev',
+        'Chag Hanukkah': '25-2 Kislev',
+        'Chanukah': '25-2 Kislev',
+        'Hanukkah': '25-2 Kislev',
+        'Tzom Tevet': '10 Tevet',
+        'Tu BiShvat': '15 Shevat',
+        "Ta'anit Esther": '13 Adar',
+        'Yom Purim': '14 Adar',
+        'Shushan Purim': '15 Adar',
+        'Purim Katan': '14 Adar',
+        'Lag BaOmer': '18 Ziv',
+        'Tzom Tamuz': '17 Tamuz',
+        "Tisha B'Av": '9 Av',
+        "Tu B'Av": '15 Av',
+        'Rosh LaBehemot': '1 Elul'
+    };
+
+    const NON_FIXED_EXCLUSIONS = new Set([
+        'Yom Shabbat',
+        'Rosh Chodesh',
+        'Shabbat Shuva',
+        'Shabbat Shekalim',
+        'Shabbat Zachor',
         'Shabbat Parah',
         'Shabbat Chodesh',
         'Shabbat Gadol',
-        'Lag BaOmer',
         'Shabbat Shirah',
-        'Tzom Tamuz',
         'Shabbat Chazon',
-        "Tisha B'Av",
         'Shabbat Nachamu',
-        "Tu B'Av",
-        'Rosh LaBehemot',
         'Chodesh Elul',
         'Leil Selichot'
-    ];
+    ]);
 
     const rabbinicList = [];
     const seenRabbinic = new Set();
 
-    if (Array.isArray(state.unifiedEvents) && state.unifiedEvents.length > 0) {
-        for (const evt of state.unifiedEvents) {
-            if (!evt || !evt.name) continue;
-            if (evt.category === 'parashat' || evt.category === 'omer') continue;
-            if (evt.name.includes('laOmer')) continue;
-
-            const title = formatTwoWordTitle(evt.name);
-            if (BIBLICAL_SET.has(title) || 
-                title.toLowerCase().includes('rosh chodesh') || 
-                title.toLowerCase().includes('rosh chodashim') || 
-                title.toLowerCase().includes('shabbat')) {
-                continue;
-            }
-
-            if (!seenRabbinic.has(title)) {
-                seenRabbinic.add(title);
-                let dateDesc = RABBINIC_DATES[title];
-                if (!dateDesc && evt.raw?.hdate) {
-                    const parts = evt.raw.hdate.split(' ');
-                    if (parts.length >= 2) {
-                        const rawM = parts[1];
-                        const m = HEBREW_MONTHS_PT[rawM] || rawM;
-                        dateDesc = `${parts[0]} de ${m}`;
-                    }
-                }
-                if (!dateDesc) dateDesc = 'Tradição de Israel';
-
-                rabbinicList.push({
-                    id: title.toLowerCase().replace(/[^a-z0-9]/g, ''),
-                    key: title,
-                    title: title,
-                    date: dateDesc,
-                    icon: getFestivalIcon(title, false)
-                });
-            }
-        }
-    }
-
     for (const rKey of CANONICAL_RABBINIC) {
         const title = formatTwoWordTitle(rKey);
-        if (!seenRabbinic.has(title)) {
+        if (!seenRabbinic.has(title) && !NON_FIXED_EXCLUSIONS.has(title)) {
             seenRabbinic.add(title);
-            const dateDesc = RABBINIC_DATES[title] || RABBINIC_DATES[rKey] || 'Tradição de Israel';
+            const dateDesc = RABBINIC_DATES[title] || RABBINIC_DATES[rKey] || 'Tradição Israel';
             rabbinicList.push({
                 id: title.toLowerCase().replace(/[^a-z0-9]/g, ''),
                 key: rKey,
@@ -422,32 +377,45 @@ export function renderFestivalsView(force = false) {
 
     const renderCard = (f) => {
         const modalHTML = buildFestivalModalHTML(f);
+        const cardTitle = formatTwoWordTitle(f.title);
+        const cardDate = ensureTwoWords(f.date);
         return `
             <div class="settings-card event-card glass-panel info-trigger" 
                  tabindex="0" 
                  role="button" 
-                 data-info-title="${f.title}" 
+                 data-info-title="${cardTitle}" 
                  data-info-html="${modalHTML.replace(/"/g, '&quot;')}"
-                 aria-label="${f.title}"
+                 aria-label="${cardTitle}"
                  style="cursor: pointer;">
                 <div class="settings-card-left">
                     <i class="${f.icon} settings-icon"></i>
                     <div class="settings-card-text">
-                        <span class="settings-card-title">${f.title}</span>
-                        <span class="settings-card-desc">${f.date}</span>
+                        <span class="settings-card-title">${cardTitle}</span>
+                        <span class="settings-card-desc">${cardDate}</span>
                     </div>
                 </div>
-                <i class="${ICONS.chevronRight}" data-icon="chevronRight" style="color: var(--text-muted); font-size: 11px;"></i>
             </div>
         `;
     };
 
     if (tanakhContainer) {
-        tanakhContainer.innerHTML = biblicalList.map(renderCard).join('');
+        tanakhContainer.innerHTML = biblicalList.map(f => renderCard(f)).join('');
     }
 
     if (rabbinicContainer) {
         rabbinicContainer.style.display = '';
-        rabbinicContainer.innerHTML = rabbinicList.map(renderCard).join('');
+        rabbinicContainer.innerHTML = rabbinicList.map(f => renderCard(f)).join('');
     }
+}
+
+export function ensureTwoWords(str, fallback = 'Sagrado') {
+    if (!str) return `Evento ${fallback}`;
+    let clean = String(str).trim();
+    clean = clean.replace(/\bde\b/gi, ' ').replace(/\bdo\b/gi, ' ').replace(/\bda\b/gi, ' ');
+    clean = clean.replace(/(\d+)\s*(?:-|a|à|e)\s*(\d+)/g, '$1-$2');
+    clean = clean.replace(/[\(\),;•]/g, ' ').replace(/\s+/g, ' ').trim();
+    const words = clean.split(/\s+/).filter(Boolean);
+    if (words.length === 0) return `Evento ${fallback}`;
+    if (words.length === 1) return `${words[0]} ${fallback}`;
+    return `${words[0]} ${words[1]}`;
 }

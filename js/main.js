@@ -20,7 +20,7 @@ import { initAppNavigation } from './ui/appNavigation.js';
 import { applyIconsToDOM } from './ui/icons.js';
 import { initPcDisplayManager } from './ui/pcDisplayManager.js';
 import { HEBREW_MONTHS_PT } from './domain/constants.js';
-import { initUmamiMonitor, setConnectionState, trackMicroAction } from './utils/umamiMonitor.js';
+import { initUmamiMonitor, trackMicroAction } from './utils/umamiMonitor.js';
 
 // Registro do Service Worker para PWA com atualização forçada e sem retenção de cache antigo
 if ('serviceWorker' in navigator) {
@@ -33,11 +33,10 @@ if ('serviceWorker' in navigator) {
         });
     });
 
-    let isRefreshing = false;
     navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data && event.data.type === 'SW_VERSION_UPDATED' && !isRefreshing) {
-            isRefreshing = true;
-            window.location.reload();
+        if (event.data && event.data.type === 'SW_VERSION_UPDATED') {
+            console.log('[PWA] Nova versão instalada em segundo plano:', event.data.version);
+            // Atualização silenciosa: sem recarregar a janela para não interromper a leitura do utilizador
         }
     });
 }
@@ -70,10 +69,13 @@ function loadOfflineCache(defaultLocName = "Jerusalém, Israel", defaultIsIsrael
 }
 
 async function updateDashboard(options = {}) {
-    // 100% Online Obrigatório: Aplicação não funciona sem internet
+    // Modo Offline-First: Se estiver sem rede, hidrata a partir da cache local
     if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-        setConnectionState(false);
-        showDashboardSkeletons();
+        const loaded = loadOfflineCache();
+        if (loaded) {
+            renderEvents();
+            document.body.classList.add('loaded');
+        }
         return;
     }
 
@@ -402,21 +404,11 @@ async function updateDashboard(options = {}) {
 
     setTimeout(() => document.body.classList.add('loaded'), 50);
 
-    // Agendar próximo recálculo (ao Pôr do Sol ou à Meia-Noite)
-    if (state.sunsetTimeout) clearTimeout(state.sunsetTimeout);
-
-    const now = Date.now();
-    let delay = 0;
-
-    if (state.currentSunsetTime > now) {
-        delay = state.currentSunsetTime - now + 1000;
-    } else {
-        const nextMidnight = new Date();
-        nextMidnight.setHours(24, 0, 10, 0);
-        delay = nextMidnight.getTime() - now;
+    // Gestão temporal centralizada no smartUpdater.js para evitar timers duplicados
+    if (state.sunsetTimeout) {
+        clearTimeout(state.sunsetTimeout);
+        state.sunsetTimeout = null;
     }
-
-    state.sunsetTimeout = setTimeout(() => updateDashboard(), delay);
 }
 
 // Inicialização

@@ -451,3 +451,10 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
         reason: null
     };
 }
+
+/**
+ * Determina se o momento atual é um período de repouso sagrado (Shabat ou Yom Tov).
+ */
+export function isSacredRestPeriod(now = Date.now(), sunsetTime = null, events = [], hdate = null, isIsrael = false) {
+    return checkSacredRestStatus(now, events, hdate, sunsetTime, isIsrael);
+}

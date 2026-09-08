@@ -2,12 +2,15 @@ import { renderPrivacyView } from './premiumView.js';
 import { trackMicroAction } from '../utils/umamiMonitor.js';
 
 const TAB_HASH_MAP = {
-    'reading': 'data',
-    'festivals': 'rito',
-    'privacy': 'controlo'
+    'reading': 'calendario',
+    'festivals': 'festas',
+    'privacy': 'termos'
 };
 
 const HASH_TAB_MAP = {
+    'calendario': 'reading',
+    'calendário': 'reading',
+    'termos': 'privacy',
     'data': 'reading',
     'rito': 'festivals',
     'controlo': 'privacy',
@@ -126,10 +129,8 @@ export function initAppNavigation() {
     if (isNavInitialized) return;
     isNavInitialized = true;
 
-    // Se o utilizador abriu diretamente na aba de privacidade, renderiza-a
-    if (getActiveTabFromUrl() === 'privacy') {
-        renderPrivacyView();
-    }
+    // Pré-renderiza a aba de termos e privacidade para transição instantânea sem layout shift
+    renderPrivacyView();
 
     const allTabButtons = document.querySelectorAll('[data-tab]');
 

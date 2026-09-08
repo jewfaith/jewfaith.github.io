@@ -251,7 +251,6 @@ function renderSuggestions(results) {
                     <span style="font-size: var(--font-size-xs); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(secondaryText) || 'Localidade'}</span>
                 </div>
             </div>
-            <i class="${ICONS.chevronRight}" data-icon="chevronRight" style="font-size: 11px; color: var(--text-muted); opacity: 0.6; flex-shrink: 0;"></i>
         `;
 
         li.addEventListener('click', () => {
@@ -444,9 +443,9 @@ function toHebrewBookName(text) {
     return result;
 }
 
-function parseRef(ref) {
-    if (!ref) return null;
-    let clean = ref.trim();
+function parseSingleRef(cleanRef, defaultBookName) {
+    if (!cleanRef) return null;
+    let clean = cleanRef.trim();
 
     const dhRegex = /^(?:(?:I{1,2}|[12])\s+)?(?:Divrei\s+Ha?yamim|Chronicles|Crônicas)\s+(\d+)(.*)$/i;
     const dhMatch = clean.match(dhRegex);
@@ -493,11 +492,16 @@ function parseRef(ref) {
         }
     }
 
-    const match = clean.match(/^((?:I{1,2}\s+|[12]\s+)?[A-Za-zÀ-ÿ\s]+?)\s+(\d.*)$/);
-    if (!match) return null;
+    let bookName = defaultBookName;
+    let rest = clean;
 
-    const bookName = match[1].trim();
-    const rest = match[2].trim();
+    const match = clean.match(/^((?:I{1,2}\s+|[12]\s+)?[A-Za-zÀ-ÿ\s]+?)\s+(\d.*)$/);
+    if (match && BOLLS_BOOK_IDS[match[1].trim()]) {
+        bookName = match[1].trim();
+        rest = match[2].trim();
+    }
+
+    if (!bookName) return null;
     const bookId = BOLLS_BOOK_IDS[bookName];
     if (!bookId) return null;
 
@@ -555,7 +559,32 @@ function parseRef(ref) {
         }
     }
 
+    if (ranges.length === 0) return null;
     return { bookId, bookName, ranges };
+}
+
+function parseRef(ref) {
+    if (!ref) return null;
+    const rawSections = ref.split(';').map(s => s.trim()).filter(Boolean);
+    const sections = [];
+    let lastBookName = null;
+
+    for (const sec of rawSections) {
+        const parsed = parseSingleRef(sec, lastBookName);
+        if (parsed) {
+            lastBookName = parsed.bookName;
+            sections.push(parsed);
+        }
+    }
+
+    if (sections.length === 0) return null;
+
+    return {
+        sections,
+        bookId: sections[0].bookId,
+        bookName: sections[0].bookName,
+        ranges: sections[0].ranges
+    };
 }
 
 async function fetchBibleVerses(parsed, refKey) {
@@ -578,13 +607,14 @@ async function fetchBibleVerses(parsed, refKey) {
         } catch (e) { }
     }
 
-    const { bookId, ranges } = parsed;
+    const sections = parsed.sections || [parsed];
     const allVerses = [];
     const chapterCache = {};
     const diagnosticLog = [];
 
-    async function getChapterData(ch) {
-        if (chapterCache[ch]) return chapterCache[ch];
+    async function getChapterData(bookId, ch) {
+        const cKey = `${bookId}_${ch}`;
+        if (chapterCache[cKey]) return chapterCache[cKey];
 
         let actualBookId = bookId;
         let actualCh = ch;
@@ -596,8 +626,9 @@ async function fetchBibleVerses(parsed, refKey) {
 
         let translations = ['NVT', 'OL', 'AA'];
         if (preferredVersion && translations.includes(preferredVersion)) {
-            translations = [preferredVersion];
+            translations = [preferredVersion, ...translations.filter(t => t !== preferredVersion)];
         }
+
         const fetchPromise = (trans) => new Promise(async (resolve, reject) => {
             const url = `https://bolls.life/get-chapter/${trans}/${actualBookId}/${actualCh}/`;
             const ctrl = new AbortController();
@@ -638,7 +669,7 @@ async function fetchBibleVerses(parsed, refKey) {
 
         try {
             const result = await Promise.any(translations.map(t => fetchPromise(t)));
-            chapterCache[ch] = result;
+            chapterCache[cKey] = result;
             window.lastReadingDiagnostic = diagnosticLog;
             return result;
         } catch (err) {
@@ -648,17 +679,51 @@ async function fetchBibleVerses(parsed, refKey) {
     }
 
     let chosenTranslation = '';
-    for (const range of ranges) {
-        const { startChapter, startVerse, endChapter, endVerse } = range;
-        for (let ch = startChapter; ch <= endChapter; ch++) {
-            const { data, trans } = await getChapterData(ch);
-            chosenTranslation = trans;
-            for (const v of data) {
-                const vNum = v.verse;
-                if (ch === startChapter && startVerse !== null && vNum < startVerse) continue;
-                if (ch === endChapter && endVerse !== null && vNum > endVerse) continue;
+    for (const sec of sections) {
+        const { bookId, bookName, ranges } = sec;
+        for (const range of ranges) {
+            const { startChapter, startVerse, endChapter, endVerse } = range;
 
-                allVerses.push({ chapter: ch, verse: vNum, text: cleanText(v.text) });
+            // Tratamento especial: Malachi 3:4-24 abrange Malachi 3 e 4 nas versões cristãs
+            if (bookId === 39 && startChapter === 3 && endChapter === 3 && endVerse && endVerse > 18) {
+                const { data: data3, trans: trans3 } = await getChapterData(39, 3);
+                chosenTranslation = trans3;
+                for (const v of data3) {
+                    if (startVerse !== null && v.verse < startVerse) continue;
+                    if (v.verse > 18) continue;
+                    allVerses.push({ bookName, chapter: 3, verse: v.verse, text: cleanText(v.text) });
+                }
+                const maxCh4 = Math.min(6, endVerse - 18);
+                const { data: data4 } = await getChapterData(39, 4);
+                for (const v of data4) {
+                    if (v.verse > maxCh4) continue;
+                    const hebVerse = 18 + v.verse;
+                    allVerses.push({ bookName, chapter: 3, verse: hebVerse, text: cleanText(v.text) });
+                }
+                continue;
+            }
+
+            for (let ch = startChapter; ch <= endChapter; ch++) {
+                const { data, trans } = await getChapterData(bookId, ch);
+                chosenTranslation = trans;
+
+                // Tratamento especial: Hoshea 14 (Hebraico 14:2-10 corresponde a NVT/OL 14:1-9)
+                if (bookId === 28 && ch === 14) {
+                    for (const v of data) {
+                        const hebVerse = v.verse + 1; // Verso 1 na tradução é o Verso 2 no Tanakh
+                        if (startVerse !== null && hebVerse < startVerse) continue;
+                        if (endVerse !== null && hebVerse > endVerse) continue;
+                        allVerses.push({ bookName, chapter: ch, verse: hebVerse, text: cleanText(v.text) });
+                    }
+                } else {
+                    for (const v of data) {
+                        const vNum = v.verse;
+                        if (ch === startChapter && startVerse !== null && vNum < startVerse) continue;
+                        if (ch === endChapter && endVerse !== null && vNum > endVerse) continue;
+
+                        allVerses.push({ bookName, chapter: ch, verse: vNum, text: cleanText(v.text) });
+                    }
+                }
             }
         }
     }
@@ -1022,20 +1087,89 @@ export async function openReadingModal(ref, cardTitle) {
         }
 
         let html = '<div class="verses-container">';
+        let currentSectionBook = null;
+        const hasMultipleBooks = new Set(verses.map(v => v.bookName).filter(Boolean)).size > 1;
+
         for (const v of verses) {
+            if (hasMultipleBooks && v.bookName && v.bookName !== currentSectionBook) {
+                currentSectionBook = v.bookName;
+                html += `
+                    <div class="reading-section-divider" style="display: flex; align-items: center; gap: 8px; margin: 18px 0 10px 0; padding: 6px 12px; border-radius: 8px; background: var(--accent-bg, rgba(56, 139, 253, 0.1)); border-left: 3px solid var(--accent-color, #388bfd);">
+                        <i class="fa-solid fa-book-bookmark" style="font-size: 11px; color: var(--accent-color, #388bfd);"></i>
+                        <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">${escapeHtml(toHebrewBookName(v.bookName))}</span>
+                    </div>
+                `;
+            }
+
             const displayNum = `${v.chapter}:${v.verse}`;
             html += `
                 <div class="legend-card" style="align-items: flex-start; margin: 0;">
                     <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
-                        <div class="verse-text" style="padding-right: 0; text-align: left; font-size: var(--font-size-sm); white-space: normal; overflow: visible; text-overflow: clip;">${displayNum} ${v.text}</div>
+                        <div class="verse-text" style="padding-right: 0; text-align: left; font-size: var(--font-size-sm); white-space: normal; overflow: visible; text-overflow: clip;"><strong style="font-size: 0.78rem; opacity: 0.75; margin-right: 6px;">${displayNum}</strong>${v.text}</div>
                     </div>
                 </div>
             `;
         }
         html += '</div>';
 
+        // Sugestões de Leitura Sequencial (Discovery Loop)
+        const torahCard = document.getElementById('card-torah-wrapper');
+        const haftaraCard = document.getElementById('card-haftara-wrapper');
+        const ketuvimCard = document.getElementById('card-ketuvim-wrapper');
+
+        const torahRef = torahCard?.getAttribute('data-ref');
+        const haftaraRef = haftaraCard?.getAttribute('data-ref');
+        const ketuvimRef = ketuvimCard?.getAttribute('data-ref');
+
+        const torahTitle = document.getElementById('card-torah')?.textContent?.trim() || 'Torá';
+        const haftaraTitle = document.getElementById('card-haftara')?.textContent?.trim() || 'Haftará';
+        const ketuvimTitle = document.getElementById('card-ketuvim')?.textContent?.trim() || 'Ketuvim';
+
+        const discoveryItems = [];
+        if (torahRef && torahRef !== ref && torahTitle !== '-' && !torahTitle.includes('skeleton')) {
+            discoveryItems.push({ label: 'Leitura Torá', title: torahTitle, ref: torahRef, icon: ICONS.scroll });
+        }
+        if (haftaraRef && haftaraRef !== ref && haftaraTitle !== '-' && !haftaraTitle.includes('skeleton')) {
+            discoveryItems.push({ label: 'Leitura Haftará', title: haftaraTitle, ref: haftaraRef, icon: ICONS.bookOpen });
+        }
+        if (ketuvimRef && ketuvimRef !== ref && ketuvimTitle !== '-' && !ketuvimTitle.includes('skeleton')) {
+            discoveryItems.push({ label: 'Leitura Ketuvim', title: ketuvimTitle, ref: ketuvimRef, icon: ICONS.ketuvim || ICONS.bookOpen });
+        }
+
+        if (discoveryItems.length > 0) {
+            html += `
+                <div class="reading-discovery-section">
+                    <div class="reading-discovery-header">Continuar Leitura</div>
+                    <div class="reading-discovery-grid">
+                        ${discoveryItems.map(item => `
+                            <button type="button" class="reading-discovery-card glass-panel" data-reading-ref="${escapeHtml(item.ref)}" data-reading-title="${escapeHtml(item.label)}">
+                                <div class="reading-discovery-icon">
+                                    <i class="${item.icon}"></i>
+                                </div>
+                                <div class="reading-discovery-info">
+                                    <span class="reading-discovery-type">${escapeHtml(item.label)}</span>
+                                    <span class="reading-discovery-name">${escapeHtml(item.title)}</span>
+                                </div>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
         bodyEl.innerHTML = html;
         bodyEl.scrollTop = 0;
+
+        bodyEl.querySelectorAll('.reading-discovery-card').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const nextRef = btn.getAttribute('data-reading-ref');
+                const nextTitle = btn.getAttribute('data-reading-title');
+                if (nextRef && nextTitle) {
+                    openReadingModal(nextRef, nextTitle);
+                }
+            });
+        });
 
     } catch (err) {
         // Log structured critical error diagnostics when scripture retrieval fails
@@ -1057,8 +1191,8 @@ export async function openReadingModal(ref, cardTitle) {
 
         bodyEl.innerHTML = `
             <div class="reading-error">
-                <span class="reading-error-title">Conexão Indisponível</span>
-                <span class="reading-error-message">Não foi possível carregar o texto sagrado no momento. Verifique sua conexão.</span>
+                <span class="reading-error-title">${!navigator.onLine ? 'Conexão Indisponível' : 'Texto Indisponível'}</span>
+                <span class="reading-error-message">${!navigator.onLine ? 'Não foi possível carregar o texto sagrado no momento. Verifique sua conexão.' : 'Não foi possível carregar a passagem sagrada no momento.'}</span>
                 <small class="reading-error-detail">Detalhe técnico: ${escapeHtml(err.message)}</small>
             </div>
         `;
@@ -1347,9 +1481,20 @@ export function initModals(updateDashboardCallback) {
 
     initModalObserver();
     initModalGestures();
+    reopenModals();
 }
 
 export function reopenModals() {
+    // Blindagem de leitura: Se qualquer modal já estiver aberto e visível, jamais perturba a experiência do utilizador
+    const openOverlay = document.querySelector(
+        '#reading-modal[style*="display: flex"], #reading-modal[style*="display: block"], ' +
+        '#info-modal[style*="display: flex"], #info-modal[style*="display: block"], ' +
+        '#zmanim-modal[style*="display: flex"], #zmanim-modal[style*="display: block"], ' +
+        '#location-modal[style*="display: flex"], #location-modal[style*="display: block"], ' +
+        '.modal-overlay[style*="display: flex"], .modal-overlay[style*="display: block"]'
+    );
+    if (openOverlay) return;
+
     if (sessionStorage.getItem('openLocationModal')) {
         document.getElementById('card-local-vigente')?.click();
     } else if (sessionStorage.getItem('openInfoModalTitle')) {

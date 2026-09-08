@@ -8,9 +8,9 @@
     "name": "Mikhael",
     "url": "https://jewfaith.github.io"
   },
-  "lang": "pt-PT",
+  "lang": "pt",
   "dir": "ltr",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "display_override": [

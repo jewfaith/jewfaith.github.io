@@ -56,31 +56,82 @@ function renderCard({ id, icon, title, desc, paragraphs }) {
                     <span class="settings-card-desc">${desc}</span>
                 </div>
             </div>
-            <i class="fa-solid fa-chevron-right" data-icon="chevronRight" style="color: var(--text-muted); font-size: 11px;"></i>
         </div>
     `;
 }
 
-export function renderPrivacyView() {
+export function renderPrivacyView(force = false) {
     const container = document.getElementById('privacy-content-container') || document.getElementById('tools-list') || document.getElementById('premium-features-list');
     if (!container) return;
-    if (container.children.length > 0) return; // Já renderizado e preservado em cache DOM
+    if (!force && container.children.length > 0) return;
 
-    // 1º CARD: ELIMINAR DADOS (SEM TÍTULO ACIMA)
-    const secPurgeCards = [
+    // CARD DE ABERTURA: TERMOS VIGENTES (EDIÇÃO 2026)
+    const heroCard = {
+        id: 'termos-vigentes',
+        icon: 'fa-solid fa-scale-balanced',
+        title: 'Termos Vigentes',
+        desc: 'Edição 2026',
+        paragraphs: [
+            'A presente declaração consagra os termos gerais de utilização, as salvaguardas de confidencialidade e o parecer técnico de conformidade jurídica da plataforma Yisrael Date.',
+            'O documento encontra-se plenamente harmonizado com cinquenta e cinco regimes internacionais de proteção de dados e com as exigências de privacidade desde a conceção.',
+            'A plataforma rege-se pelos princípios perpétuos de gratuidade universal, ausência de anúncios publicitários, inexistência de comércio eletrónico e salvaguarda irrestrita da intimidade do utilizador.'
+        ]
+    };
+
+    // SEÇÃO 1: TERMOS DE USO
+    const secTermsHeader = renderSectionHeader('Termos Uso', '14px');
+    const secTermsCards = [
         {
-            id: 'expurgo-imediato',
-            icon: 'fa-solid fa-trash-can',
-            title: 'Eliminar Dados',
-            desc: 'Expurgo Imediato',
+            id: 'condicoes-gerais',
+            icon: 'fa-solid fa-file-contract',
+            title: 'Termos Gerais',
+            desc: 'Condições Vigentes',
             paragraphs: [
-                'O acionamento formal do instrumento resolutivo abaixo concretiza o expurgo definitivo e irrevogável de todos os registos locais, repondo a aplicação ao estado de pureza original.',
-                '<button id="modal-btn-purge" class="compliance-purge-btn">Confirmar Expurgo</button>'
+                'O acesso e a utilização contínua da aplicação Yisrael Date implicam a aceitação plena e irrevogável destes termos gerais de utilização e licença de uso pessoal.',
+                'A plataforma é facultada a título universal e gratuito com propósito primordialmente litúrgico espiritual educativo e de facilitação do estudo da Torá.',
+                'O utilizador compromete-se a usar o software de boa fé com respeito às leis e abstendo-se de atos de degradação da infraestrutura ou injeção de código adverso.',
+                'A utilização da aplicação não estabelece qualquer vínculo contratual mercantil de prestação de serviços ou de consultoria formal com o titular.'
+            ]
+        },
+        {
+            id: 'limites-legais',
+            icon: 'fa-solid fa-scale-balanced',
+            title: 'Limites Legais',
+            desc: 'Isenção Garantias',
+            paragraphs: [
+                'Os horários astronómicos denominados Zmanim e as efemérides litúrgicas consubstanciam aproximações matemáticas de alta precisão baseadas em algoritmos consolidados.',
+                'O utilizador reconhece que as decisões rituais práticas de início e término de preceitos sagrados devem ser aferidas segundo o costume comunitário e autoridade rabínica local.',
+                'A aplicação é disponibilizada no estado em que se encontra sem garantias implícitas de adequação a fins comerciais ou de infalibilidade tecnológica contínua.',
+                'O criador da plataforma não assume responsabilidade direta ou indireta por eventuais discrepâncias de minutos resultantes de desvios de relógio de hardware do utilizador.'
+            ]
+        },
+        {
+            id: 'conduta-usuario',
+            icon: 'fa-solid fa-shield-halved',
+            title: 'Conduta Usuário',
+            desc: 'Regras Fruição',
+            paragraphs: [
+                'É permitido o uso livre individual e comunitário do calendário para fins de oração estudo e celebração das datas bíblicas e rabínicas em qualquer território.',
+                'Fica vedada a exploração comercial predatória a engenharia reversa desleal ou a distribuição de versões adulteradas que desvirtuem a autoria original de Mikhael.',
+                'A plataforma reserva-se o direito de atualizar aprimorar ou reestruturar as funcionalidades e algoritmos visando a permanente excelência do serviço público prestado.',
+                'Eventuais dúvidas jurídicas sobre a aplicação destes termos podem ser apresentadas por via do canal formal de atendimento sob a alçada do encarregado.'
+            ]
+        },
+        {
+            id: 'isencao-comercial',
+            icon: 'fa-solid fa-ban',
+            title: 'Isenção Comercial',
+            desc: 'Operação Gratuita',
+            paragraphs: [
+                'Atesta-se perante o ordenamento jurídico a ausência total de módulos de comércio eletrónico, venda de artigos ou cobranças financeiras de qualquer natureza.',
+                'A plataforma opera com exclusão de transações mercantis, dispensando o processamento de cartões de crédito, faturas ou custódia de dados bancários.',
+                'Eventuais contribuições voluntárias destinam-se exclusivamente ao custeio de infraestrutura por via de canais externos e independentes de apoio ao autor.',
+                'Fica assegurada a gratuidade perene e universal de todos os cálculos astronómicos, leituras da Torá e recursos litúrgicos facultados na aplicação.'
             ]
         }
     ];
 
-    // SEÇÃO 1: OPERAÇÃO REAL
+    // SEÇÃO 2: OPERAÇÃO REAL
     const sec1Header = renderSectionHeader('Operação Real', '14px');
     const sec1Cards = [
         {
@@ -145,6 +196,17 @@ export function renderPrivacyView() {
             ]
         },
         {
+            id: 'rede-local',
+            icon: 'fa-solid fa-network-wired',
+            title: 'Rede Local',
+            desc: 'Operação Desfasada',
+            paragraphs: [
+                'A aplicação estrutura-se como aplicação web progressiva sob versão consolidada dois ponto três ponto um do motor de serviço.',
+                'O núcleo do sistema e os dados do ciclo litúrgico anual permanecem pré-armazenados para facultar acesso e leitura plena mesmo sem ligação à rede.',
+                'O mecanismo de atualização assíncrona inteligente preserva a integridade da leitura e previne recarregamentos involuntários de página.'
+            ]
+        },
+        {
             id: 'telemetria-etica',
             icon: 'fa-solid fa-chart-simple',
             title: 'Telemetria Ética',
@@ -152,12 +214,12 @@ export function renderPrivacyView() {
             paragraphs: [
                 'A plataforma afere o alcance comunitário com esteio na tecnologia aberta e auditável Umami Analytics sem utilização de cookies ou rastreadores invasivos.',
                 'O procedimento respeita a diretiva de não monitoramento Do Not Track e opera com total desvinculação de endereços de rede ou dados identificadores.',
-                `<div id="umami-privacy-card" class="umami-privacy-card-wrap"><span id="umami-live-status-pill" class="umami-live-clean ${getUmamiStatus().isBlocked ? 'is-error' : 'is-ok'}"><i class="fa-solid ${getUmamiStatus().isBlocked ? 'fa-triangle-exclamation' : 'fa-circle-check'}"></i> ${getUmamiStatus().isBlocked ? 'Telemetria Desativada' : 'Telemetria Ativa'}</span><p class="umami-privacy-subnote">${getUmamiStatus().isBlocked ? 'Não consegue agir.' : 'Métricas anónimas ativas sem recolha de dados pessoais.'}</p></div>`
+                `<div id="umami-privacy-card" class="umami-privacy-card-wrap"><span id="umami-live-status-pill" class="umami-live-clean ${getUmamiStatus().isBlocked ? 'is-error' : 'is-ok'}">${getUmamiStatus().isBlocked ? 'Telemetria Desativada' : 'Telemetria Ativa'}</span><p class="umami-privacy-subnote">${getUmamiStatus().isBlocked ? 'Não consegue agir.' : 'Métricas anónimas ativas sem recolha de dados pessoais.'}</p></div>`
             ]
         }
     ];
 
-    // SEÇÃO 2: GOVERNANÇA ATIVA
+    // SEÇÃO 3: GOVERNANÇA ATIVA
     const sec2Header = renderSectionHeader('Governança Ativa', '14px');
     const sec2Cards = [
         {
@@ -171,6 +233,7 @@ export function renderPrivacyView() {
                 'Declara-se a total inexistência de transferência internacional de dados pessoais para servidores estrangeiros, porquanto todas as operações ocorrem no aparelho do utilizador.',
                 'Atesta-se a ausência de submissão do titular a qualquer decisão tomada com esteio em tratamento automatizado ou definição de perfis com efeitos jurídicos relevantes.',
                 'Certifica-se a inexistência de módulos de cadastro de utilizadores, contas de acesso ou canais de conversação interpessoal, afastando a guarda de credenciais.',
+                'Atesta-se a ausência absoluta de comércio eletrónico, cobranças comerciais, venda de produtos ou custódia de dados de transações financeiras.',
                 'A imunidade fática alicerça-se na ausência absoluta de servidores centrais de armazenamento, inexistindo custódia remota de arquivos ou bancos de dados remotos.'
             ]
         },
@@ -223,7 +286,7 @@ export function renderPrivacyView() {
         }
     ];
 
-    // SEÇÃO 3: NORMAS MUNDIAIS (55+ ESTATUTOS GLOBAIS)
+    // SEÇÃO 4: NORMAS MUNDIAIS (55+ ESTATUTOS GLOBAIS)
     const sec3Header = renderSectionHeader('Normas Mundiais', '14px');
     const sec3Cards = [
         {
@@ -320,7 +383,7 @@ export function renderPrivacyView() {
         }
     ];
 
-    // SEÇÃO 4: ISENÇÕES LEGAIS
+    // SEÇÃO 5: ISENÇÕES LEGAIS
     const sec4Header = renderSectionHeader('Isenções Legais', '14px');
     const sec4Cards = [
         {
@@ -349,7 +412,7 @@ export function renderPrivacyView() {
         }
     ];
 
-    // SEÇÃO 5: AUTODETERMINAÇÃO PESSOAL
+    // SEÇÃO 6: AUTODETERMINAÇÃO PESSOAL
     const sec5Header = renderSectionHeader('Autodeterminação Pessoal', '14px');
     const sec5Cards = [
         {
@@ -375,12 +438,27 @@ export function renderPrivacyView() {
                 'Inexistem registros de mensagens, salas de conversação ou credenciais de contas de usuários, salvaguardando a absoluta inviolabilidade do espaço privado do cidadão.',
                 'O compromisso de integridade e lealdade com a lei de Israel e com o ordenamento jurídico dos povos permanece inalterável e perpétuo.'
             ]
+        },
+        {
+            id: 'expurgo-imediato',
+            icon: 'fa-solid fa-trash-can',
+            title: 'Eliminar Dados',
+            desc: 'Expurgo Imediato',
+            paragraphs: [
+                'O acionamento formal do instrumento resolutivo abaixo concretiza o expurgo definitivo e irrevogável de todos os registos locais, repondo a aplicação ao estado de pureza original.',
+                '<button id="modal-btn-purge" class="compliance-purge-btn">Confirmar Expurgo</button>'
+            ]
         }
     ];
 
     container.innerHTML = `
         <div class="event-cards-row" style="margin-top: 6px;">
-            ${secPurgeCards.map(renderCard).join('')}
+            ${renderCard(heroCard)}
+        </div>
+
+        ${secTermsHeader}
+        <div class="event-cards-row">
+            ${secTermsCards.map(renderCard).join('')}
         </div>
 
         ${sec1Header}

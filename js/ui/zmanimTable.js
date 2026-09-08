@@ -22,6 +22,14 @@ export function closeZmanimModal() {
 export function initZmanimModal() {
     const closeBtn = document.getElementById('close-zmanim-modal-btn');
     if (closeBtn) closeBtn.addEventListener('click', closeZmanimModal);
+
+    document.addEventListener('click', (e) => {
+        const trigger = e.target.closest('.zmanim-trigger-btn, #card-zmanim-festivals');
+        if (trigger) {
+            e.preventDefault();
+            openZmanimModal();
+        }
+    });
 }
 
 function fmt(isoStr) {
@@ -58,26 +66,22 @@ export function renderZmanimTable() {
     }
 
     const zmanimList = [
-        { label: 'Alot HaShachar', desc: 'Alvorada (Primeira luz)', time: fmt(z.alotHaShachar), icon: ICONS.cloudSun },
-        { label: 'Misheyakir', desc: 'Talit e Tefilin', time: fmt(z.misheyakir || z.misheyakirMachmir), icon: ICONS.handsPraying },
-        { label: 'Netz HaChamah', desc: 'Nascer do Sol', time: fmt(z.sunrise), icon: ICONS.sun, highlight: true },
-        { label: 'Sof Zman Shema (GRA)', desc: 'Hora limite do Shemá', time: fmt(z.sofZmanShma), icon: ICONS.clock },
-        { label: 'Sof Zman Tefilah', desc: 'Hora limite da oração matinal', time: fmt(z.sofZmanTfilla), icon: ICONS.hourglass },
-        { label: 'Chatzot HaYom', desc: 'Meio-dia Solar astronômico', time: fmt(z.chatzot), icon: ICONS.compass },
-        { label: 'Mincha Gedolah', desc: 'Início da oração de Minchá', time: fmt(z.minchaGedola), icon: ICONS.bell },
-        { label: 'Mincha Ketanah', desc: 'Horário ideal da tarde', time: fmt(z.minchaKetana), icon: ICONS.cloudSun },
-        { label: 'Plag HaMincha', desc: 'Fim da tarde (Plag)', time: fmt(z.plagHaMincha), icon: ICONS.cloudMoon },
-        { label: 'Hadlakat Nerot', desc: `Acendimento de Velas (${candleMin} min)`, time: fmt(candleTimeVal), icon: ICONS.candles, highlight: true },
-        { label: 'Shkiah', desc: 'Pôr do Sol astronômico', time: fmt(z.sunset), icon: ICONS.cloudMoon, highlight: true },
-        { label: 'Tzeit HaKochavim', desc: 'Saída das Estrelas (Havdalá)', time: fmt(havdalahTimeVal), icon: ICONS.star, highlight: true },
-        { label: 'Chatzot HaLayla', desc: 'Meia-noite haláchica', time: fmt(z.chatzotNight), icon: ICONS.moon }
+        { label: 'Alot Shachar', desc: 'Primeira Luz', time: fmt(z.alotHaShachar), icon: ICONS.cloudSun },
+        { label: 'Tempo Misheyakir', desc: 'Talit Tefilin', time: fmt(z.misheyakir || z.misheyakirMachmir), icon: ICONS.handsPraying },
+        { label: 'Netz Chamah', desc: 'Nascer Sol', time: fmt(z.sunrise), icon: ICONS.sun, highlight: true },
+        { label: 'Shemá GRA', desc: 'Limite Shemá', time: fmt(z.sofZmanShma), icon: ICONS.clock },
+        { label: 'Sof Tefilah', desc: 'Limite Tefilá', time: fmt(z.sofZmanTfilla), icon: ICONS.hourglass },
+        { label: 'Chatzot Yom', desc: 'Meio-dia Solar', time: fmt(z.chatzot), icon: ICONS.compass },
+        { label: 'Mincha Gedolah', desc: 'Primeira Minchá', time: fmt(z.minchaGedola), icon: ICONS.bell },
+        { label: 'Mincha Ketanah', desc: 'Segunda Minchá', time: fmt(z.minchaKetana), icon: ICONS.cloudSun },
+        { label: 'Plag Mincha', desc: 'Tarde Plag', time: fmt(z.plagHaMincha), icon: ICONS.cloudMoon },
+        { label: 'Hadlakat Nerot', desc: 'Velas Shabat', time: fmt(candleTimeVal), icon: ICONS.candles, highlight: true },
+        { label: 'Shkiah Solar', desc: 'Sol Poente', time: fmt(z.sunset), icon: ICONS.cloudMoon, highlight: true },
+        { label: 'Tzeit Kochavim', desc: 'Saída Estrelas', time: fmt(havdalahTimeVal), icon: ICONS.star, highlight: true },
+        { label: 'Chatzot Layla', desc: 'Meia Noite', time: fmt(z.chatzotNight), icon: ICONS.moon }
     ];
 
     body.innerHTML = `
-        <div class="zmanim-summary-hero glass-panel">
-            <div class="zmanim-hero-location"><i class="${ICONS.location}" data-icon="location"></i> ${locName}</div>
-            <div class="zmanim-hero-date">${hdate}</div>
-        </div>
         <div class="zmanim-grid-list">
             ${zmanimList.map(item => `
                 <div class="zmanim-row-item ${item.highlight ? 'highlight-zman' : ''}">

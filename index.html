@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="night" data-pc-mode="drawer">
+<html lang="pt" data-theme="night" data-pc-mode="drawer">
 
 <head>
+  <script>
+    (function () {
+      if (window.location.pathname.endsWith('/index.html')) {
+        var cleanPath = window.location.pathname.replace(/\/index\.html$/, '/') + window.location.search + window.location.hash;
+        window.history.replaceState(null, '', cleanPath);
+      }
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="description"
+    content="Calendário judaico e hebraico diário com horários haláchicos (Zmanim), leituras da Torá e ciclo de festas de Israel em tempo real." />
+  <link rel="canonical" href="https://jewfaith.github.io/" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -12,7 +23,7 @@
   <link rel="icon" type="image/png" href="icon.png" />
   <link rel="apple-touch-icon" href="icon.png" />
   <link rel="manifest" href="manifest.json" />
-  <title>Yisrael Date</title>
+  <title>Yisrael Date • Calendário Judaico e Hebraico de Israel</title>
 
   <!-- Metadados Formais de Autoria, Criação e Propriedade Intelectual -->
   <meta name="author" content="Mikhael" />
@@ -24,8 +35,10 @@
   <!-- Open Graph / Atribuição em Partilhas -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Yisrael Date" />
-  <meta property="og:title" content="Yisrael Date • Por Mikhael" />
-  <meta property="og:description" content="Calendário bíblico e hebraico independente concebido, desenhado e desenvolvido exclusivamente por Mikhael." />
+  <meta property="og:url" content="https://jewfaith.github.io/" />
+  <meta property="og:title" content="Yisrael Date • Calendário Judaico e Hebraico de Israel" />
+  <meta property="og:description"
+    content="Calendário judaico e hebraico diário com horários haláchicos (Zmanim), leituras da Torá e ciclo de festas de Israel em tempo real." />
   <meta property="og:image" content="icon.png" />
   <meta property="article:author" content="Mikhael" />
 
@@ -39,6 +52,7 @@
     "description": "Calendário baseado na Torá com cálculos litúrgicos e astronómicos independentes.",
     "applicationCategory": "EducationalApplication",
     "operatingSystem": "All",
+    "inLanguage": "pt",
     "author": {
       "@type": "Person",
       "name": "Mikhael",
@@ -84,10 +98,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="style.css?v=2.0.2" />
+  <link rel="stylesheet" href="style.css?v=2.3.0" />
 
   <!-- Umami Analytics (Cookieless, Privacy-First, RGPD & LGPD Compliant) -->
-  <script id="umami-script" defer src="https://cloud.umami.is/script.js" data-website-id="6cd4c599-d27b-4542-aced-dcef8e470f0c" data-auto-track="true" data-do-not-track="false" onerror="window.__umamiScriptFailed = true; if (window.umamiMonitor) window.umamiMonitor.runDiagnostics(false);"></script>
+  <script id="umami-script" defer src="https://cloud.umami.is/script.js"
+    data-website-id="6cd4c599-d27b-4542-aced-dcef8e470f0c" data-auto-track="true" data-do-not-track="false"
+    onerror="window.__umamiScriptFailed = true; if (window.umamiMonitor) window.umamiMonitor.runDiagnostics(false);"></script>
 </head>
 
 <body>
@@ -106,17 +122,21 @@
       </div>
 
       <nav class="sidebar-nav">
-        <button class="desktop-nav-btn active" data-tab="reading" aria-label="Data">
+        <button class="desktop-nav-btn active" data-tab="reading" aria-label="Calendário">
           <div class="nav-icon-wrap"><i class="fa-solid fa-calendar-day" data-icon="calendarDay"></i></div>
-          <span>Data</span>
+          <span>Calendário</span>
         </button>
-        <button class="desktop-nav-btn" data-tab="festivals" aria-label="Rito">
+        <button class="desktop-nav-btn" data-tab="festivals" aria-label="Festas">
           <div class="nav-icon-wrap"><i class="fa-solid fa-menorah" data-icon="menorah"></i></div>
-          <span>Rito</span>
+          <span>Festas</span>
         </button>
-        <button class="desktop-nav-btn" data-tab="privacy" aria-label="Controlo">
-          <div class="nav-icon-wrap"><i class="fa-solid fa-shield-halved" data-icon="privacy"></i></div>
-          <span>Controlo</span>
+        <button class="desktop-nav-btn zmanim-trigger-btn" aria-label="Horários Haláchicos (Zmanim)" title="Horários Haláchicos">
+          <div class="nav-icon-wrap"><i class="fa-solid fa-clock" data-icon="clock"></i></div>
+          <span>Zmanim</span>
+        </button>
+        <button class="desktop-nav-btn" data-tab="privacy" aria-label="Termos">
+          <div class="nav-icon-wrap"><i class="fa-solid fa-scale-balanced" data-icon="privacy"></i></div>
+          <span>Termos</span>
         </button>
       </nav>
 
@@ -130,11 +150,11 @@
           </button>
           <button class="desktop-mode-pill desktop-theme-pill" data-theme-mode="light" title="Modo Claro">
             <i class="fa-solid fa-sun" data-icon="sun"></i>
-            <span>Light</span>
+            <span>Claro</span>
           </button>
           <button class="desktop-mode-pill desktop-theme-pill" data-theme-mode="dark" title="Modo Escuro">
             <i class="fa-solid fa-moon" data-icon="moon"></i>
-            <span>Dark</span>
+            <span>Escuro</span>
           </button>
         </div>
       </div>
@@ -150,9 +170,9 @@
         <div class="mobile-header-top-row">
           <h1 class="mobile-brand-title">Yisrael Date</h1>
           <div class="mobile-header-actions">
-            <button id="mobile-share-btn" class="mobile-theme-btn app-share-trigger" aria-label="Partilhar o site"
-              title="Partilhar o site">
-              <i class="fa-solid fa-share-nodes"></i>
+            <button id="mobile-zmanim-btn" class="mobile-theme-btn zmanim-trigger-btn" aria-label="Horários Haláchicos (Zmanim)"
+              title="Horários Zmanim">
+              <i class="fa-solid fa-clock" data-icon="clock"></i>
             </button>
             <button id="mobile-theme-toggle-btn" class="mobile-theme-btn" aria-label="Alternar tema visual"
               title="Alternar tema visual">
@@ -166,7 +186,8 @@
       <main class="app-content-views">
 
         <!-- Alerta do Sistema (Exibe o erro mais crítico por vez, minimalista e sem tags) -->
-        <div id="system-error-block" class="system-error-block glass-panel" style="display: none;" role="status" aria-live="polite">
+        <div id="system-error-block" class="system-error-block glass-panel" style="display: none;" role="status"
+          aria-live="polite">
           <div class="system-error-item-icon" id="system-error-icon"></div>
           <div class="system-error-item-body">
             <div class="system-error-item-title" id="system-error-title"></div>
@@ -178,10 +199,10 @@
              ABA 1: LEITURA (ARCO SOLAR, DATA & ESCRITURAS)
              ========================================== -->
         <section id="view-reading" class="app-tab-view active">
-          <!-- 1º Card: Localização (Sem título acima) -->
-          <div class="event-cards-row" style="margin-top: 6px;">
+          <!-- 1º Bloco: Posição Ativa (Localidade) -->
+          <div class="event-cards-row">
             <div class="settings-card event-card glass-panel not-ready location-trigger-btn" id="card-local-vigente"
-              tabindex="0" role="button" aria-label="Alterar Localização" style="cursor: pointer;">
+              tabindex="0" role="button" aria-label="Alterar Localização">
               <div class="settings-card-left">
                 <i class="fa-solid fa-location-dot settings-icon" data-icon="locationDot"></i>
                 <div class="settings-card-text">
@@ -191,21 +212,18 @@
                       style="display: inline-block; width: 45%; height: 11px; border-radius: 3px;"></span></span>
                 </div>
               </div>
-              <i class="fa-solid fa-chevron-right" data-icon="chevronRight"
-                style="color: var(--text-muted); font-size: 11px;"></i>
             </div>
           </div>
 
           <!-- Seção 2: Leituras Sagradas (Torá & Tanakh) -->
-          <div class="festival-section-header" style="margin-top: 14px;">
+          <div class="festival-section-header" style="margin-top: 18px;">
             <div class="festival-section-title-wrap">
               <h3 class="festival-section-title">Leituras Sagradas</h3>
             </div>
           </div>
           <div class="event-cards-row">
-
-            <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-parasha-wrapper" tabindex="0"
-              role="button" aria-label="Detalhes da Parashá" style="cursor: pointer;">
+            <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-parasha-wrapper"
+              tabindex="0" role="button" aria-label="Detalhes da Parashá">
               <div class="settings-card-left">
                 <i class="fa-solid fa-scroll settings-icon" data-icon="scroll"></i>
                 <div class="settings-card-text">
@@ -215,12 +233,10 @@
                       style="display: inline-block; width: 45%; height: 11px; border-radius: 3px;"></span></span>
                 </div>
               </div>
-              <i class="fa-solid fa-chevron-right" data-icon="chevronRight"
-                style="color: var(--text-muted); font-size: 11px;"></i>
             </div>
 
             <div class="settings-card event-card glass-panel not-ready" id="card-torah-wrapper" tabindex="0"
-              role="button" aria-label="Ler Lei Escrita" style="cursor: pointer;">
+              role="button" aria-label="Ler Lei Escrita">
               <div class="settings-card-left">
                 <i class="fa-solid fa-book-open settings-icon" data-icon="torah"></i>
                 <div class="settings-card-text">
@@ -230,12 +246,10 @@
                       style="display: inline-block; width: 45%; height: 11px; border-radius: 3px;"></span></span>
                 </div>
               </div>
-              <i class="fa-solid fa-chevron-right" data-icon="chevronRight"
-                style="color: var(--text-muted); font-size: 11px;"></i>
             </div>
 
             <div class="settings-card event-card glass-panel not-ready" id="card-haftara-wrapper" tabindex="0"
-              role="button" aria-label="Ler Olhar Futuro" style="cursor: pointer;">
+              role="button" aria-label="Ler Olhar Futuro">
               <div class="settings-card-left">
                 <i class="fa-solid fa-feather-pointed settings-icon" data-icon="haftara"></i>
                 <div class="settings-card-text">
@@ -245,12 +259,10 @@
                       style="display: inline-block; width: 45%; height: 11px; border-radius: 3px;"></span></span>
                 </div>
               </div>
-              <i class="fa-solid fa-chevron-right" data-icon="chevronRight"
-                style="color: var(--text-muted); font-size: 11px;"></i>
             </div>
 
             <div class="settings-card event-card glass-panel not-ready" id="card-ketuvim-wrapper" tabindex="0"
-              role="button" aria-label="Ler Escrito Sagrado" style="cursor: pointer;">
+              role="button" aria-label="Ler Escrito Sagrado">
               <div class="settings-card-left">
                 <i class="fa-solid fa-book-bookmark settings-icon" data-icon="ketuvim"></i>
                 <div class="settings-card-text">
@@ -260,17 +272,20 @@
                       style="display: inline-block; width: 45%; height: 11px; border-radius: 3px;"></span></span>
                 </div>
               </div>
-              <i class="fa-solid fa-chevron-right" data-icon="chevronRight"
-                style="color: var(--text-muted); font-size: 11px;"></i>
             </div>
           </div>
 
-
-          <!-- Seção 2: Próximas Festas (Ciclo Sagrado) -->
-          <div class="festival-section-header" style="margin-top: 14px;">
+          <!-- Seção 3: Próximas Festas (com link de exploração contextual) -->
+          <div class="festival-section-header"
+            style="margin-top: 20px; display: flex; align-items: center; justify-content: space-between;">
             <div class="festival-section-title-wrap">
               <h3 class="festival-section-title">Próximas Festas</h3>
             </div>
+            <button type="button" class="section-action-link" data-tab="festivals"
+              aria-label="Ver todas as festas bíblicas e rabínicas">
+              <span>Ver todas</span>
+              <i class="fa-solid fa-arrow-right" style="font-size: 10px;"></i>
+            </button>
           </div>
           <div id="upcoming-events-grid" class="event-cards-row">
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
@@ -282,8 +297,6 @@
                     class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -294,8 +307,6 @@
                     class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -306,8 +317,6 @@
                     class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -318,8 +327,6 @@
                     class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -330,38 +337,6 @@
                     class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
-            </div>
-          </div>
-          <!-- Card de Apoio Minimalista & Persuasivo -->
-          <div class="app-support-card glass-panel" role="region" aria-label="Apoiar o criador">
-            <div class="support-mini-header">
-              <div class="support-mini-author">
-                <i class="fa-solid fa-code"></i>
-                <span>Autoria e Criação de <strong>Mikhael</strong></span>
-              </div>
-            </div>
-
-            <p class="support-mini-desc">
-              O <strong>Yisrael Date</strong> é uma obra autoral concebida e desenvolvida de forma independente por <strong>Mikhael</strong>. Se é útil no seu dia e estudo da Torá, considere apoiar a sua manutenção ou partilhar com amigos.
-            </p>
-
-            <div class="support-mini-actions">
-              <a href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer"
-                class="support-btn-primary" aria-label="Apoiar Mikhael no PayPal com qualquer valor">
-                <i class="fa-brands fa-paypal"></i>
-                <span>Apoiar via PayPal</span>
-              </a>
-              <button type="button" class="support-btn-secondary app-share-trigger" aria-label="Partilhar o link do site Yisrael Date" title="Partilhar o site">
-                <i class="fa-solid fa-share-nodes"></i>
-                <span>Partilhar</span>
-              </button>
-            </div>
-
-            <div class="support-mini-policy">
-              <i class="fa-solid fa-clock-rotate-left"></i>
-              <span>Doações pausadas no Shabat e em Yom Tov.</span>
             </div>
           </div>
         </section>
@@ -370,10 +345,10 @@
              ABA 2: FESTAS (BÍBLICAS E RABÍNICAS UNIFICADAS)
              ========================================== -->
         <section id="view-festivals" class="app-tab-view">
-          <!-- Seção 1: Mês Vigente (Data Hebraica & Festas do Mês) -->
+          <!-- Mês Vigente (Data Hebraica) & Horários Haláchicos (Zmanim) -->
           <div class="event-cards-row">
             <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-hdate-wrapper"
-              tabindex="0" role="button" aria-label="Detalhes da Data Hebraica" style="cursor: pointer;">
+              tabindex="0" role="button" aria-label="Detalhes da Data Hebraica">
               <div class="settings-card-left">
                 <i class="fa-solid fa-calendar-day settings-icon" data-icon="calendarDay"></i>
                 <div class="settings-card-text">
@@ -383,13 +358,11 @@
                       style="display: inline-block; width: 45%; height: 11px; border-radius: 3px;"></span></span>
                 </div>
               </div>
-              <i class="fa-solid fa-chevron-right" data-icon="chevronRight"
-                style="color: var(--text-muted); font-size: 11px;"></i>
             </div>
           </div>
 
-          <!-- Seção 2: Festas Bíblicas (Torá Tanakh) -->
-          <div class="festival-section-header" style="margin-top: 14px;">
+          <!-- Seção: Festas Bíblicas (Torá Tanakh) -->
+          <div class="festival-section-header" id="header-biblical" style="margin-top: 14px;">
             <div class="festival-section-title-wrap">
               <h3 class="festival-section-title">Festas Bíblicas</h3>
             </div>
@@ -404,8 +377,6 @@
                     class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -416,8 +387,6 @@
                     class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -428,8 +397,6 @@
                     class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -440,8 +407,6 @@
                     class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -452,13 +417,11 @@
                     class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
           </div>
 
-          <!-- Seção 2: Festas Rabínicas -->
-          <div class="festival-section-header" style="margin-top: 14px;">
+          <!-- Seção: Festas Rabínicas -->
+          <div class="festival-section-header" id="header-rabbinic" style="margin-top: 14px;">
             <div class="festival-section-title-wrap">
               <h3 class="festival-section-title">Festas Rabínicas</h3>
             </div>
@@ -473,8 +436,6 @@
                     class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -485,8 +446,6 @@
                     class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -497,8 +456,6 @@
                     class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -509,8 +466,6 @@
                     class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
@@ -521,39 +476,6 @@
                     class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
                 </div>
               </div>
-              <div class="skeleton-line"
-                style="width: 7px; height: 11px; border-radius: 2px; opacity: 0.25; flex-shrink: 0;"></div>
-            </div>
-          </div>
-
-          <!-- Card de Apoio Minimalista & Persuasivo -->
-          <div class="app-support-card glass-panel" role="region" aria-label="Apoiar o criador">
-            <div class="support-mini-header">
-              <div class="support-mini-author">
-                <i class="fa-solid fa-code"></i>
-                <span>Autoria e Criação de <strong>Mikhael</strong></span>
-              </div>
-            </div>
-
-            <p class="support-mini-desc">
-              O <strong>Yisrael Date</strong> é uma obra autoral concebida e desenvolvida de forma independente por <strong>Mikhael</strong>. Se é útil no seu dia e estudo da Torá, considere apoiar a sua manutenção ou partilhar com amigos.
-            </p>
-
-            <div class="support-mini-actions">
-              <a href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer"
-                class="support-btn-primary" aria-label="Apoiar Mikhael no PayPal com qualquer valor">
-                <i class="fa-brands fa-paypal"></i>
-                <span>Apoiar via PayPal</span>
-              </a>
-              <button type="button" class="support-btn-secondary app-share-trigger" aria-label="Partilhar o link do site Yisrael Date" title="Partilhar o site">
-                <i class="fa-solid fa-share-nodes"></i>
-                <span>Partilhar</span>
-              </button>
-            </div>
-
-            <div class="support-mini-policy">
-              <i class="fa-solid fa-clock-rotate-left"></i>
-              <span>Doações pausadas no Shabat e em Yom Tov.</span>
             </div>
           </div>
         </section>
@@ -564,37 +486,7 @@
              ========================================== -->
         <section id="view-privacy" class="app-tab-view">
           <div id="privacy-content-container" style="display: contents;"></div>
-          
-          <!-- Card de Apoio Minimalista & Persuasivo -->
-          <div class="app-support-card glass-panel" role="region" aria-label="Apoiar o criador">
-            <div class="support-mini-header">
-              <div class="support-mini-author">
-                <i class="fa-solid fa-code"></i>
-                <span>Autoria e Criação de <strong>Mikhael</strong></span>
-              </div>
-            </div>
 
-            <p class="support-mini-desc">
-              O <strong>Yisrael Date</strong> é uma obra autoral concebida e desenvolvida de forma independente por <strong>Mikhael</strong>. Se é útil no seu dia e estudo da Torá, considere apoiar a sua manutenção ou partilhar com amigos.
-            </p>
-
-            <div class="support-mini-actions">
-              <a href="https://www.paypal.com/paypalme/ashkenar" target="_blank" rel="noopener noreferrer"
-                class="support-btn-primary" aria-label="Apoiar Mikhael no PayPal com qualquer valor">
-                <i class="fa-brands fa-paypal"></i>
-                <span>Apoiar via PayPal</span>
-              </a>
-              <button type="button" class="support-btn-secondary app-share-trigger" aria-label="Partilhar o link do site Yisrael Date" title="Partilhar o site">
-                <i class="fa-solid fa-share-nodes"></i>
-                <span>Partilhar</span>
-              </button>
-            </div>
-
-            <div class="support-mini-policy">
-              <i class="fa-solid fa-clock-rotate-left"></i>
-              <span>Doações pausadas no Shabat e em Yom Tov.</span>
-            </div>
-          </div>
         </section>
 
       </main>
@@ -604,17 +496,17 @@
          MOBILE ONLY: FLOATING GLASS TAB BAR (3 TABS)
          ========================================== -->
     <nav class="app-floating-tabbar glass-panel mobile-only-tabbar" aria-label="Navegação Principal do Telemóvel">
-      <button class="app-tab-btn active" data-tab="reading" aria-label="Data">
+      <button class="app-tab-btn active" data-tab="reading" aria-label="Calendário">
         <div class="tab-icon-wrap"><i class="fa-solid fa-calendar-day" data-icon="calendarDay"></i></div>
-        <span>Data</span>
+        <span>Calendário</span>
       </button>
-      <button class="app-tab-btn" data-tab="festivals" aria-label="Rito">
+      <button class="app-tab-btn" data-tab="festivals" aria-label="Festas">
         <div class="tab-icon-wrap"><i class="fa-solid fa-menorah" data-icon="menorah"></i></div>
-        <span>Rito</span>
+        <span>Festas</span>
       </button>
-      <button class="app-tab-btn" data-tab="privacy" aria-label="Controlo">
-        <div class="tab-icon-wrap"><i class="fa-solid fa-shield-halved" data-icon="privacy"></i></div>
-        <span>Controlo</span>
+      <button class="app-tab-btn" data-tab="privacy" aria-label="Termos">
+        <div class="tab-icon-wrap"><i class="fa-solid fa-scale-balanced" data-icon="privacy"></i></div>
+        <span>Termos</span>
       </button>
     </nav>
 
@@ -629,8 +521,7 @@
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
-        <h2 class="reading-title"><i class="fa-solid fa-clock" data-icon="clock"
-            style="color: var(--accent-color); margin-right: 8px;"></i> Horários Haláchicos (Zmanim)</h2>
+        <h2 class="reading-title">Horários Zmanim</h2>
         <button id="close-zmanim-modal-btn" class="modal-close-btn" aria-label="Fechar">
           <i class="fa-solid fa-xmark" data-icon="close"></i>
         </button>
@@ -684,24 +575,7 @@
     </div>
   </div>
 
-
-
-  <!-- Bloqueio de Conexão Obrigatória (100% Online para Acesso à Telemetria) -->
-  <div id="wifi-required-overlay" class="wifi-required-overlay" style="display: none;" role="alertdialog" aria-modal="true" aria-labelledby="wifi-required-title">
-    <div class="wifi-required-card glass-panel">
-      <div class="wifi-required-icon-wrap">
-        <i class="fa-solid fa-wifi"></i>
-      </div>
-      <h2 id="wifi-required-title" class="wifi-required-title">Conexão Obrigatória</h2>
-      <p class="wifi-required-desc">O aplicativo requer acesso contínuo à internet para funcionar.</p>
-      <div class="wifi-required-indicator">
-        <span class="wifi-ping-dot"></span>
-        <span class="wifi-status-text">Aguardando rede...</span>
-      </div>
-    </div>
-  </div>
-
-  <script type="module" src="js/main.js?v=2.0.2"></script>
+  <script type="module" src="js/main.js?v=2.3.1"></script>
 </body>
 
 </html>

@@ -168,23 +168,43 @@ function performHeartbeatCheck() {
 }
 
 /**
+ * Verifica se o utilizador está atualmente a ler ou a interagir com algum modal.
+ */
+export function isUserReadingOrInteracting() {
+    if (typeof document === 'undefined') return false;
+    const openModal = document.querySelector(
+        '#reading-modal[style*="display: flex"], #reading-modal[style*="display: block"], ' +
+        '#info-modal[style*="display: flex"], #info-modal[style*="display: block"], ' +
+        '#zmanim-modal[style*="display: flex"], #zmanim-modal[style*="display: block"], ' +
+        '#location-modal[style*="display: flex"], #location-modal[style*="display: block"], ' +
+        '.modal-overlay[style*="display: flex"], .modal-overlay[style*="display: block"]'
+    );
+    return !!openModal;
+}
+
+let lastFreshnessCheck = 0;
+
+/**
  * Avalia se os dados exibidos na tela estão desatualizados após inatividade.
+ * Executa de forma suave e protegida contra disparos múltiplos no foco.
  */
 function evaluateFreshness(triggerSource) {
     const now = Date.now();
-    const today = new Date(now).getDate();
+    // Debounce de 3s para evitar execuções simultâneas de visibilitychange e focus
+    if (now - lastFreshnessCheck < 3000) return;
+    lastFreshnessCheck = now;
 
-    const timeSinceLastSync = now - lastSyncTimestamp;
+    const today = new Date(now).getDate();
     const sunsetCrossed = state.currentSunsetTime > 0 && ((now >= state.currentSunsetTime) !== lastSunsetStatus);
 
-    // Se o dia mudou, ou se o pôr do sol passou, ou se passaram mais de 10 minutos sem sync
-    if (today !== lastDay || sunsetCrossed || timeSinceLastSync > 10 * 60 * 1000) {
+    // Mantém sempre o arco solar alinhado instantaneamente
+    try {
+        updateSolarPosition();
+    } catch (e) { }
+
+    // Sincroniza apenas quando um marco astronómico ou temporal real aconteceu
+    if (today !== lastDay || sunsetCrossed) {
         triggerSmartUpdate(triggerSource);
-    } else {
-        // Atualiza a posição visual dos relógios solares de imediato
-        try {
-            updateSolarPosition();
-        } catch (e) { }
     }
 }
 
@@ -217,9 +237,15 @@ export async function triggerSmartUpdate(reason = 'manual') {
     if (isSyncing) return;
     const now = Date.now();
 
-    // Throttle protetor para evitar tempestade de requisições
     const isCritical = ['sunset_transition', 'midnight_rollover', 'wake_from_sleep'].includes(reason);
-    if (!isCritical && (now - lastSyncTimestamp < 10000)) {
+
+    // Se o utilizador está imerso na leitura e o evento não é crítico, adia a sincronização
+    if (isUserReadingOrInteracting() && !isCritical) {
+        return;
+    }
+
+    // Throttle protetor para evitar tempestade de requisições
+    if (!isCritical && (now - lastSyncTimestamp < 15000)) {
         return;
     }
 
@@ -240,3 +266,4 @@ export async function triggerSmartUpdate(reason = 'manual') {
         }
     }
 }
+
