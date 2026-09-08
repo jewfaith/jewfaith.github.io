@@ -332,17 +332,26 @@ async function flushQueue() {
     isFlushingQueue = true;
     try {
         while (microActionQueue.length > 0) {
-            const item = microActionQueue.shift();
+            const item = microActionQueue[0];
             if (!item) break;
 
             if (isUmamiActive()) {
                 try {
-                    window.umami.track(item.name, item.data);
+                    await Promise.resolve(window.umami.track(item.name, item.data));
+                    microActionQueue.shift();
                 } catch (e) {
-                    await sendDirectTelemetry(item.name, item.data);
+                    if (await sendDirectTelemetry(item.name, item.data)) {
+                        microActionQueue.shift();
+                    } else {
+                        break;
+                    }
                 }
             } else {
-                await sendDirectTelemetry(item.name, item.data);
+                if (await sendDirectTelemetry(item.name, item.data)) {
+                    microActionQueue.shift();
+                } else {
+                    break;
+                }
             }
         }
     } finally {
@@ -353,11 +362,15 @@ async function flushQueue() {
 export function trackMicroAction(name, data = {}) {
     if (typeof window === 'undefined') return;
 
-    // Se estiver sem rede, a aplicação não atua
-    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
-
     const eventName = String(name || 'micro_action').slice(0, 50);
     const safeData = sanitizePayloadData(data);
+
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        if (microActionQueue.length < 100) {
+            microActionQueue.push({ name: eventName, data: safeData, timestamp: Date.now() });
+        }
+        return;
+    }
 
     if (isUmamiActive()) {
         try {
