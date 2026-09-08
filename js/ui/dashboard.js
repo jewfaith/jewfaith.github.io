@@ -407,12 +407,15 @@ export function formatTwoWordParasha(rawTitle) {
 }
 
 export function formatTwoWordLocation(locName) {
-    if (!locName) return 'Jerusalém Israel';
-    let clean = locName.split(',')[0].replace(/[\(\):;]/g, ' ').trim();
-    const parts = clean.split(/\s+/).filter(Boolean);
-    if (parts.length === 1) return `${parts[0]} Israel`;
-    if (parts.length >= 2) return `${parts[0]} ${parts[1]}`;
-    return 'Jerusalém Israel';
+    if (!locName) return 'Jerusalém';
+    const clean = String(locName).split(',')[0].replace(/[\(\):;]/g, ' ').replace(/\s+/g, ' ').trim();
+    return clean || 'Jerusalém';
+}
+
+export function formatLocationCountry(locName) {
+    if (!locName) return '';
+    const parts = String(locName).split(',').map(part => part.trim()).filter(Boolean);
+    return parts.length > 1 ? parts[parts.length - 1] : '';
 }
 
 export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael) {
@@ -661,6 +664,11 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
     allLocEls.forEach(el => {
         el.textContent = formatTwoWordLocation(locationName);
     });
+    const locationCountry = formatLocationCountry(locationName);
+    if (elLocalWrapper) {
+        const sub = elLocalWrapper.querySelector('.settings-card-desc');
+        if (sub) sub.textContent = locationCountry || 'Posição Ativa';
+    }
 
     // Atualização dinâmica dos ciclos de estudo judaico (Pirkei Avot, Talmud, Mishná)
     updateSolarPosition();

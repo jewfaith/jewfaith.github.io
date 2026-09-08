@@ -19,6 +19,7 @@ export function renderSolarArcWidget() {
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
                     <h2 class="solar-title" id="solar-hero-city-title" style="font-size: 1.12rem; font-weight: 800; letter-spacing: -0.02em; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Jerusalém Israel</h2>
+                    <span id="solar-hero-country" style="font-size: var(--font-size-xxs); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></span>
                     <span class="solar-subtitle" id="solar-hero-event-sub" style="font-size: var(--font-size-xs); color: var(--accent-color); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Horários Solares</span>
                 </div>
             </div>
@@ -33,6 +34,7 @@ export function updateSolarPosition() {
     if (typeof document !== 'undefined' && document.hidden) return;
 
     const cityTitle = document.getElementById('solar-hero-city-title');
+    const countryTitle = document.getElementById('solar-hero-country');
     const eventSub = document.getElementById('solar-hero-event-sub');
     const phaseLabel = document.getElementById('solar-phase-label');
     const countdownText = document.getElementById('solar-countdown-text');
@@ -117,17 +119,16 @@ export function updateSolarPosition() {
     if (phaseLabel) phaseLabel.textContent = phaseName;
     if (countdownText) countdownText.textContent = `${nextEventName} • ${countdownStr}`;
 
-    const cityName = state.userCityName || state.locationName || 'Jerusalém Israel';
-    let cleanCity = cityName.split(',')[0].trim();
-    const cityWords = cleanCity.split(/\s+/);
-    if (cityWords.length === 1) {
-        cleanCity = `${cleanCity} Israel`;
-    } else if (cityWords.length > 2) {
-        cleanCity = `${cityWords[0]} ${cityWords[1]}`;
-    }
+    const cityName = state.userCityName || state.locationName || 'Jerusalém';
+    const locationParts = String(cityName).split(',').map(part => part.trim()).filter(Boolean);
+    const cleanCity = locationParts[0] || 'Jerusalém';
+    const country = locationParts.length > 1 ? locationParts[locationParts.length - 1] : '';
 
     if (cityTitle) {
         cityTitle.textContent = cleanCity;
+    }
+    if (countryTitle) {
+        countryTitle.textContent = country;
     }
     if (eventSub) {
         eventSub.textContent = nextEventName || 'Horários Solares';
