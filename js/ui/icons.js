@@ -31,14 +31,29 @@ export const ICONS = {
     star: 'fa-solid fa-star',
     crown: 'fa-solid fa-crown',
     pcDrawer: 'fa-solid fa-layer-group',
+    shuffle: 'fa-solid fa-shuffle',
 
     // 3. Leituras Bíblicas & Estudo Sagrado
     calendarDay: 'fa-solid fa-calendar-day',
     scroll: 'fa-solid fa-scroll',
     torah: 'fa-solid fa-book-open',
     haftara: 'fa-solid fa-feather-pointed',
+    feather: 'fa-solid fa-feather-pointed',
     ketuvim: 'fa-solid fa-book-bookmark',
     bookOpen: 'fa-solid fa-book-open',
+    heart: 'fa-solid fa-heart',
+    flame: 'fa-solid fa-fire-flame-curved',
+
+    // Literatura Judaica (Sefaria)
+    buildingColumns: 'fa-solid fa-building-columns',
+    'building-columns': 'fa-solid fa-building-columns',
+    usersBetweenLines: 'fa-solid fa-users-between-lines',
+    'users-between-lines': 'fa-solid fa-users-between-lines',
+    gavel: 'fa-solid fa-gavel',
+    gem: 'fa-solid fa-gem',
+    handHoldingHeart: 'fa-solid fa-hand-holding-heart',
+    'hand-holding-heart': 'fa-solid fa-hand-holding-heart',
+    infinity: 'fa-solid fa-infinity',
 
     // 4. Arcos Celestiais & Zmanim
     sun: 'fa-solid fa-sun',

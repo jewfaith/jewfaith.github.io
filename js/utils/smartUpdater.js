@@ -234,6 +234,7 @@ function checkZmanimTransitions(now) {
  * Executa a sincronização inteligente de forma silenciosa e fluida (sem telas brancas ou skeletons).
  */
 export async function triggerSmartUpdate(reason = 'manual') {
+    if (state.isSimulation) return;
     if (isSyncing) return;
     const now = Date.now();
 
@@ -257,7 +258,7 @@ export async function triggerSmartUpdate(reason = 'manual') {
             await updateCallback({ silent: true, reason });
         }
     } catch (e) {
-        console.warn('[SmartUpdater] Erro ao sincronizar dados:', e);
+        console.warn('[Sync] Falha na sincronização periódica de dados.');
     } finally {
         isSyncing = false;
         lastDay = new Date().getDate();

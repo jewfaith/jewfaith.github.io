@@ -67,7 +67,7 @@ export const HEBREW_MONTHS_PT = {
 };
 
 export const FESTIVAL_CATS = [
-    'pesach', 'matzot', 'shavuot', 'roshhashana', 'yomkippur',
+    'pesach', 'matzot', 'shavuot', 'yomteruah', 'roshhashana', 'yomkippur',
     'sukkot', 'sheminiatzeret', 'simchattorah'
 ];
 
@@ -86,6 +86,10 @@ export const FESTIVAL_TORAH_READINGS = {
     'shavuot': [
         'Shemot 19:1-20:23',
         'Devarim 15:19 - 16:17'
+    ],
+    'yomteruah': [
+        'Bereshit 21:1-34',
+        'Bereshit 22:1-24'
     ],
     'roshhashana': [
         'Bereshit 21:1-34',
@@ -122,6 +126,10 @@ export const FESTIVAL_HAFTARA_READINGS = {
     'shavuot': [
         'Yechezkel 1:1-28, 3:12',
         'Chavakuk 2:20 - 3:19'
+    ],
+    'yomteruah': [
+        'I Shmuel 1:1-2:10',
+        'Yirmiyahu 31:1-19'
     ],
     'roshhashana': [
         'I Shmuel 1:1-2:10',
@@ -165,6 +173,7 @@ export const FESTIVAL_TEHILIM = {
     matzot: ['Tehilim 66', 'Tehilim 77', 'Tehilim 105', 'Tehilim 106', 'Tehilim 114', 'Tehilim 115', 'Tehilim 116', 'Tehilim 117', 'Tehilim 118'],
     shavuot: ['Tehilim 19', 'Tehilim 68', 'Tehilim 119'],
     roshchodesh: ['Tehilim 81', 'Tehilim 104', 'Tehilim 121', 'Tehilim 150'],
+    yomteruah: ['Tehilim 24', 'Tehilim 27', 'Tehilim 47', 'Tehilim 81', 'Tehilim 93', 'Tehilim 98', 'Tehilim 130'],
     roshhashana: ['Tehilim 24', 'Tehilim 27', 'Tehilim 47', 'Tehilim 81', 'Tehilim 93', 'Tehilim 98', 'Tehilim 130'],
     yomkippur: ['Tehilim 25', 'Tehilim 32', 'Tehilim 51', 'Tehilim 86', 'Tehilim 103', 'Tehilim 130'],
     sukkot: ['Tehilim 27', 'Tehilim 42', 'Tehilim 43', 'Tehilim 84', 'Tehilim 113', 'Tehilim 114', 'Tehilim 115', 'Tehilim 116', 'Tehilim 117', 'Tehilim 118'],
@@ -3926,7 +3935,21 @@ export const FESTIVAL_NAME_MAPPINGS = {
     'Shabbat Chazon': 'Shabbat Chazon',
     'Shabbat Nachamu': 'Shabbat Nachamu',
     'Shabbat Shuvah': 'Shabbat Shuvah',
-    'Shabbat Shuva': 'Shabbat Shuvah',
     'Shabbat': 'Yom Shabbat',
     'Yom Shabbat': 'Yom Shabbat'
 };
+
+export const LOCATION_EXPIRATION_DAYS = 90;
+export const LOCATION_EXPIRATION_MS = 90 * 24 * 60 * 60 * 1000;
+
+export const RECENT_LOCATIONS_MAX = 3;
+export const RECENT_LOCATIONS_EXPIRATION_DAYS = 10;
+export const RECENT_LOCATIONS_EXPIRATION_MS = 10 * 24 * 60 * 60 * 1000;
+
+export const LOCATION_SUGGESTIONS_LIMIT = 15;
+
+export const LOCATION_STORAGE_KEYS = Object.freeze({
+    ACTIVE_LOCATION: 'exactLocation',
+    ACTIVE_TIMESTAMP: 'exactLocation_timestamp',
+    RECENT_LOCATIONS: 'yisrael_recent_locations'
+});

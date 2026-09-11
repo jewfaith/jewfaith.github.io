@@ -8,6 +8,8 @@ export const state = {
         isIsrael: true,
         tz: 'Asia/Jerusalem'
     },
+    locationName: 'Jerusalém, Israel',
+    userCityName: 'Jerusalém',
     currentSunsetTime: 0,
     currentHdate: null,
     currentZmanim: null,
@@ -18,5 +20,6 @@ export const state = {
         manualOverride: false,
         solarTimeout: null,
         reloadTimeout: null
-    }
+    },
+    isSimulation: false
 };

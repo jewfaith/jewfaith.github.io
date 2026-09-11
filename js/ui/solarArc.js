@@ -1,6 +1,7 @@
 import { state } from '../state.js';
 import { openZmanimModal } from './zmanimTable.js';
 import { ICONS } from './icons.js';
+import { getSelectedLocation, JERUSALEM_COORDS } from '../services/locationService.js';
 
 export function initSolarArc() {
     renderSolarArcWidget();
@@ -12,16 +13,16 @@ export function renderSolarArcWidget() {
     if (!container) return;
 
     container.innerHTML = `
-        <div class="festival-hero-card glass-panel" id="card-solar-glance" tabindex="0" role="button" aria-label="Ver Tabela Completa de Zmanim" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-radius: 18px;">
-            <div style="display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;">
-                <div class="icon-circle" style="width: 48px; height: 48px; font-size: 20px; border-radius: 14px; background: var(--icon-unified-grad); border: 0.5px solid var(--icon-unified-border); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
-                    <i class="${ICONS.sun}" data-icon="sun" style="color: var(--icon-unified-color);" id="solar-hero-icon"></i>
+        <div class="settings-card event-card glass-panel" id="card-solar-glance" tabindex="0" role="button" aria-label="Ver Tabela Completa de Zmanim" style="cursor: pointer;">
+            <div class="settings-card-left">
+                <i class="${ICONS.sun} settings-icon" data-icon="sun" id="solar-hero-icon"></i>
+                <div class="settings-card-text">
+                    <span class="settings-card-title" id="solar-hero-city-title">Sha'ah Zmanit</span>
+                    <span class="settings-card-desc" id="solar-phase-label">Horário Litúrgico</span>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
-                    <h2 class="solar-title" id="solar-hero-city-title" style="font-size: 1.12rem; font-weight: 800; letter-spacing: -0.02em; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Jerusalém Israel</h2>
-                    <span id="solar-hero-country" style="font-size: var(--font-size-xxs); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></span>
-                    <span class="solar-subtitle" id="solar-hero-event-sub" style="font-size: var(--font-size-xs); color: var(--accent-color); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Horários Solares</span>
-                </div>
+            </div>
+            <div class="card-arrow-action" aria-hidden="true">
+                <i class="fa-solid fa-arrow-right"></i>
             </div>
         </div>
     `;
@@ -34,10 +35,7 @@ export function updateSolarPosition() {
     if (typeof document !== 'undefined' && document.hidden) return;
 
     const cityTitle = document.getElementById('solar-hero-city-title');
-    const countryTitle = document.getElementById('solar-hero-country');
-    const eventSub = document.getElementById('solar-hero-event-sub');
     const phaseLabel = document.getElementById('solar-phase-label');
-    const countdownText = document.getElementById('solar-countdown-text');
     const heroIcon = document.getElementById('solar-hero-icon');
 
     const now = new Date();
@@ -60,46 +58,48 @@ export function updateSolarPosition() {
         duskMs = sunsetMs + 45 * 60 * 1000;
     }
 
-    const fmtTime = (ms) => {
-        const d = new Date(ms);
-        return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-    };
-
     let nextEventName = 'Sol Poente';
     let targetEventMs = sunsetMs;
-    let phaseName = 'DIA HALÁCHICO';
+    let phaseName = 'Dia Haláchico';
     let iconClass = ICONS.sun;
+    let dataIcon = 'sun';
 
     if (nowMs < dawnMs) {
         nextEventName = 'Alvorada Alot';
         targetEventMs = dawnMs;
-        phaseName = 'NOITE HALÁCHICA';
+        phaseName = 'Noite Haláchica';
         iconClass = ICONS.moon;
+        dataIcon = 'moon';
     } else if (nowMs >= dawnMs && nowMs < sunriseMs) {
-        nextEventName = 'Nascer Sol';
+        nextEventName = 'Nascer do Sol';
         targetEventMs = sunriseMs;
-        phaseName = 'CREPÚSCULO MATINAL';
+        phaseName = 'Crepúsculo Matinal';
         iconClass = ICONS.sunrise;
+        dataIcon = 'sunrise';
     } else if (nowMs >= sunriseMs && nowMs < noonMs) {
         nextEventName = 'Meio-dia Chatzot';
         targetEventMs = noonMs;
-        phaseName = 'MANHÃ HALÁCHICA';
+        phaseName = 'Manhã Haláchica';
         iconClass = ICONS.sun;
+        dataIcon = 'sun';
     } else if (nowMs >= noonMs && nowMs < sunsetMs) {
         nextEventName = 'Sol Poente';
         targetEventMs = sunsetMs;
-        phaseName = 'TARDE MINCHA';
+        phaseName = 'Tarde Mincha';
         iconClass = ICONS.cloudSun;
+        dataIcon = 'cloudSun';
     } else if (nowMs >= sunsetMs && nowMs < duskMs) {
         nextEventName = 'Estrelas Tzeit';
         targetEventMs = duskMs;
-        phaseName = 'CREPÚSCULO VESPERTINO';
+        phaseName = 'Crepúsculo Vespertino';
         iconClass = ICONS.cloudMoon;
+        dataIcon = 'cloudMoon';
     } else {
         nextEventName = 'Alvorada Alot';
         targetEventMs = dawnMs + 24 * 60 * 60 * 1000;
-        phaseName = 'NOITE HALÁCHICA';
+        phaseName = 'Noite Haláchica';
         iconClass = ICONS.moon;
+        dataIcon = 'moon';
     }
 
     const diffMs = Math.max(0, targetEventMs - nowMs);
@@ -108,33 +108,44 @@ export function updateSolarPosition() {
 
     let countdownStr = '';
     if (totalMinutes < 2) {
-        countdownStr = 'Agora';
+        countdownStr = 'agora';
     } else if (exactHours >= 0.85) {
         const roundedHours = Math.round(exactHours);
-        countdownStr = `${roundedHours}h`;
+        countdownStr = `em ${roundedHours}h`;
     } else {
-        countdownStr = `${totalMinutes} min`;
+        countdownStr = `em ${totalMinutes} min`;
     }
 
-    if (phaseLabel) phaseLabel.textContent = phaseName;
-    if (countdownText) countdownText.textContent = `${nextEventName} • ${countdownStr}`;
+    // Sha'ah Zmanit (Hora Haláchica Gra: 1/12 da duração do dia ou noite)
+    const isDaytime = nowMs >= sunriseMs && nowMs < sunsetMs;
+    let shaaZmanitMs;
+    if (isDaytime) {
+        const dayDurationMs = Math.max(1, sunsetMs - sunriseMs);
+        shaaZmanitMs = dayDurationMs / 12;
+    } else {
+        let nightDurationMs;
+        if (nowMs < sunriseMs) {
+            const prevSunsetMs = sunsetMs - 24 * 60 * 60 * 1000;
+            nightDurationMs = Math.max(1, sunriseMs - prevSunsetMs);
+        } else {
+            const nextSunriseMs = sunriseMs + 24 * 60 * 60 * 1000;
+            nightDurationMs = Math.max(1, nextSunriseMs - sunsetMs);
+        }
+        shaaZmanitMs = nightDurationMs / 12;
+    }
 
-    const cityName = state.userCityName || state.locationName || 'Jerusalém';
-    const locationParts = String(cityName).split(',').map(part => part.trim()).filter(Boolean);
-    const cleanCity = locationParts[0] || 'Jerusalém';
-    const country = locationParts.length > 1 ? locationParts[locationParts.length - 1] : '';
+    if (cityTitle && cityTitle.textContent !== "Sha'ah Zmanit") {
+        cityTitle.textContent = "Sha'ah Zmanit";
+        cityTitle.title = "Sha'ah Zmanit";
+    }
 
-    if (cityTitle) {
-        cityTitle.textContent = cleanCity;
+    if (phaseLabel && phaseLabel.textContent !== "Horário Litúrgico") {
+        phaseLabel.textContent = "Horário Litúrgico";
     }
-    if (countryTitle) {
-        countryTitle.textContent = country;
-    }
-    if (eventSub) {
-        eventSub.textContent = nextEventName || 'Horários Solares';
-    }
+
     if (heroIcon) {
-        heroIcon.className = iconClass;
+        heroIcon.className = `${iconClass} settings-icon`;
+        if (dataIcon) heroIcon.setAttribute('data-icon', dataIcon);
     }
 
     const festZmanSub = document.getElementById('zmanim-festivals-sub');

@@ -1,5 +1,6 @@
 import { state } from '../state.js';
 import { getPersistentSetting } from '../utils/persistence.js';
+import { getSelectedLocation } from '../services/locationService.js';
 
 let autoReloadTimeout = null;
 
@@ -92,13 +93,7 @@ export function applySolarTheme() {
     const solar = getSolarTimes();
 
     if (!state.currentZmanim?.sunrise || !state.currentZmanim?.sunset) {
-        const exactLocRaw = localStorage.getItem('exactLocation');
-        let loc = null;
-        if (exactLocRaw) {
-            try { loc = JSON.parse(exactLocRaw); } catch (e) {}
-        }
-
-        const targetLoc = loc || state.userLocation;
+        const targetLoc = getSelectedLocation() || state.userLocation;
         if (targetLoc) {
             applyEstimatedTheme(targetLoc.lat, targetLoc.lon);
         } else {

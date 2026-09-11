@@ -162,8 +162,21 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
     if (typeof window !== 'undefined') {
         const hash = window.location.hash || '';
         const search = window.location.search || '';
-        const simYt = localStorage.getItem('yisrael_simulate_yomtov');
-        if (hash === '#teste-yomtov' || hash === '#yomtov-6h' || search.includes('yomtov=1') || simYt === 'true') {
+        let simYt = null;
+        try {
+            simYt = localStorage.getItem('yisrael_simulate_yomtov');
+        } catch (e) { }
+        if (simYt === 'force_normal') {
+            return {
+                isRest: false,
+                type: null,
+                subType: null,
+                title: null,
+                greeting: null,
+                reason: null
+            };
+        }
+        if (hash === '#teste-yomtov' || hash === '#yomtov-2h' || hash === '#yomtov-6h' || search.includes('yomtov=1') || simYt === 'true') {
             return {
                 isRest: true,
                 type: 'yomtov',
@@ -200,9 +213,9 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
     } catch (e) { }
 
     const candleOffsetMs = candleOffsetMin * 60 * 1000;
-    const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
+    const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
 
-    // 2. Determinar o estado do Shabat (com resguardo haláchico de 6h antes na sexta e 6h depois no sábado/domingo)
+    // 2. Determinar o estado do Shabat (com resguardo haláchico de 2h antes na sexta e 2h depois no sábado/domingo)
     let shabbatState = {
         isRest: false,
         isShabbatStrict: false,
@@ -213,10 +226,10 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
     };
 
     if (dayOfWeek === 5) {
-        // Sexta-feira: acendimento das velas e resguardo de 6 horas antes
+        // Sexta-feira: acendimento das velas e resguardo de 2 horas antes
         const friSunset = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM, 0).getTime();
         const candleLighting = friSunset - candleOffsetMs;
-        const erevShabbatBufferStart = candleLighting - SIX_HOURS_MS;
+        const erevShabbatBufferStart = candleLighting - TWO_HOURS_MS;
 
         if (now >= candleLighting) {
             shabbatState = {
@@ -238,10 +251,10 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
             };
         }
     } else if (dayOfWeek === 6) {
-        // Sábado: Shabat pleno e resguardo pós-Havdalá
+        // Sábado: Shabat pleno e resguardo pós-Havdalá (2 horas)
         const satSunset = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM, 0).getTime();
         const havdalahTime = satSunset + (45 * 60 * 1000);
-        const motzeiShabbatBufferEnd = havdalahTime + SIX_HOURS_MS;
+        const motzeiShabbatBufferEnd = havdalahTime + TWO_HOURS_MS;
 
         if (now < havdalahTime) {
             shabbatState = {
@@ -263,10 +276,10 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
             };
         }
     } else if (dayOfWeek === 0) {
-        // Domingo de madrugada: resguardo pós-Havdalá do sábado
+        // Domingo de madrugada: resguardo pós-Havdalá do sábado (2 horas)
         const prevSatSunset = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() - 1, sunsetH, sunsetM, 0).getTime();
         const havdalahTime = prevSatSunset + (45 * 60 * 1000);
-        const motzeiShabbatBufferEnd = havdalahTime + SIX_HOURS_MS;
+        const motzeiShabbatBufferEnd = havdalahTime + TWO_HOURS_MS;
 
         if (now <= motzeiShabbatBufferEnd) {
             shabbatState = {
@@ -282,8 +295,8 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
 
     const isShabbat = shabbatState.isShabbatStrict;
 
-    // 3. Verificação de Yom Tov (Festas bíblicas maiores com Issur Melachá)
-    // Regra: Não são permitidas doações 6 horas antes (Erev Yom Tov) e 6 horas depois (Motzei Yom Tov)
+    // 3. Verificação de Yom Tov (Festas bíblicas da Torá com Issur Melachá)
+    // Regra: Não são permitidas doações 2 horas antes (Erev Yom Tov) e 2 horas depois (Motzei Yom Tov)
     const YOM_TOV_CATS = ['pesach', 'matzot', 'shavuot', 'yomteruah', 'roshhashana', 'yomkippur', 'sukkot', 'sheminiatzeret', 'simchattorah'];
 
     if (events && events.length) {
@@ -296,11 +309,12 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
             const endTime = ev.endTime || (ev.time ? ev.time + durationMs : 0);
 
             if (startTime > 0) {
-                const bufferStartTime = startTime - SIX_HOURS_MS;
-                const bufferEndTime = endTime + SIX_HOURS_MS;
+                const bufferStartTime = startTime - TWO_HOURS_MS;
+                const bufferEndTime = endTime + TWO_HOURS_MS;
 
                 if (now >= bufferStartTime && now <= bufferEndTime) {
-                    const baseName = ev.name || 'Yom Tov';
+                    const rawName = ev.name || 'Yom Tov';
+                    const baseName = rawName.replace(/^(Erev|Motzei)\s+/i, '');
                     const fullTitle = isShabbat ? `${baseName} & Shabat` : baseName;
                     const isKippur = baseName.includes('Kippur');
 
@@ -352,8 +366,8 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
         const checkYomTovDates = (erevDay, ytDays, name) => {
             if (d === erevDay) {
                 const sunsetApproxMs = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM, 0).getTime();
-                const sixHoursBeforeSunset = sunsetApproxMs - SIX_HOURS_MS;
-                if (now >= sixHoursBeforeSunset) {
+                const twoHoursBeforeSunset = sunsetApproxMs - TWO_HOURS_MS;
+                if (now >= twoHoursBeforeSunset) {
                     isErevYomTov = true;
                     festivalName = name;
                 }
@@ -362,8 +376,8 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
                 festivalName = name;
             } else if (d === (ytDays[ytDays.length - 1] + 1)) {
                 const havdalahApproxMs = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM, 0).getTime() + (45 * 60 * 1000);
-                const sixHoursAfterHavdalah = havdalahApproxMs + SIX_HOURS_MS;
-                if (now <= sixHoursAfterHavdalah) {
+                const twoHoursAfterHavdalah = havdalahApproxMs + TWO_HOURS_MS;
+                if (now <= twoHoursAfterHavdalah) {
                     isMotzeiYomTov = true;
                     festivalName = name;
                 }
@@ -371,28 +385,28 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
         };
 
         if (m.includes('nisan')) {
-            const ytN1 = isIsrael ? [15] : [15, 16];
-            const ytN2 = isIsrael ? [21] : [21, 22];
+            const ytN1 = [15];
+            const ytN2 = [21];
             checkYomTovDates(14, ytN1, 'Pessach');
             if (!isYomTovDate && !isErevYomTov && !isMotzeiYomTov) checkYomTovDates(20, ytN2, 'Chag Matzot');
         } else if (m.includes('sivan')) {
-            const ytS = isIsrael ? [6] : [6, 7];
+            const ytS = [6];
             checkYomTovDates(5, ytS, 'Shavuot');
         } else if (m.includes('tishrei')) {
-            checkYomTovDates(29, [1, 2], 'Yom Teruah');
+            checkYomTovDates(29, [1], 'Yom Teruah');
             if (!isYomTovDate && !isErevYomTov && !isMotzeiYomTov) checkYomTovDates(9, [10], 'Yom Kippur');
             if (!isYomTovDate && !isErevYomTov && !isMotzeiYomTov) {
-                const ytSuk = isIsrael ? [15] : [15, 16];
+                const ytSuk = [15];
                 checkYomTovDates(14, ytSuk, 'Chag Sukkot');
             }
             if (!isYomTovDate && !isErevYomTov && !isMotzeiYomTov) {
-                const ytShem = isIsrael ? [22] : [22, 23];
+                const ytShem = [22];
                 checkYomTovDates(21, ytShem, 'Shemini Atzeret');
             }
         } else if (m.includes('elul')) {
             if (d === 29) {
                 const sunsetApproxMs = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM, 0).getTime();
-                if (now >= sunsetApproxMs - SIX_HOURS_MS) {
+                if (now >= sunsetApproxMs - TWO_HOURS_MS) {
                     isErevYomTov = true;
                     festivalName = 'Yom Teruah';
                 }
@@ -431,7 +445,7 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
         }
     }
 
-    // 5. Verificação de Shabat (com resguardo haláchico de 6h antes e 6h depois)
+    // 5. Verificação de Shabat (com resguardo haláchico de 2h antes e 2h depois)
     if (shabbatState.isRest) {
         return {
             isRest: true,

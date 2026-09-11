@@ -188,7 +188,7 @@ export function getFestivalBiblicalDate(festivalKeyOrName, { hebrewYear = 5786, 
         return 'Sétimo dia';
     }
 
-    // 2. Festas da Torá
+    // 2. Festas da Torá - Duração estrita ordenada pela Torá
     if (key === 'roshchodashim') {
         return '1 Aviv';
     }
@@ -199,28 +199,28 @@ export function getFestivalBiblicalDate(festivalKeyOrName, { hebrewYear = 5786, 
         return '14 Aviv';
     }
     if (key === 'chagmatzot' || key === 'matzot') {
-        return isIsrael ? '15-21 Aviv' : '15-22 Aviv';
+        return '15-21 Aviv'; // 7 dias como ordena a Torá (Êx 12:15, Lev 23:6)
     }
     if (key === 'pessach' || key === 'pesach') {
-        return isIsrael ? '14-21 Aviv' : '14-22 Aviv';
+        return '14 Aviv';
     }
     if (key === 'pessachsheni' || key === 'pesachsheni') {
         return '14 Ziv';
     }
     if (key === 'yomshavuot' || key === 'shavuot') {
-        return isIsrael ? '6 do 3º mês' : '6-7 do 3º mês';
+        return '6 do 3º mês'; // 1 dia solene como ordena a Torá (Lev 23:16-21)
     }
     if (key === 'yomteruah') {
-        return '1 do 7º mês';
+        return '1 do 7º mês'; // 1 dia solene como ordena a Torá (Lev 23:24)
     }
     if (key === 'yomkippur') {
-        return '10 do 7º mês';
+        return '10 do 7º mês'; // 1 dia solene como ordena a Torá (Lev 23:27)
     }
     if (key === 'chagsukkot' || key === 'sukkot') {
-        return isIsrael ? '15-21 do 7º mês' : '15-22 do 7º mês';
+        return '15-21 do 7º mês'; // 7 dias como ordena a Torá (Lev 23:34)
     }
     if (key === 'sheminiatzeret') {
-        return isIsrael ? '22 do 7º mês' : '22-23 do 7º mês';
+        return '22 do 7º mês'; // 1 dia solene como ordena a Torá (Lev 23:36)
     }
 
     // 3. Festas e Datas Rabínicas

@@ -1,4 +1,17 @@
-export const LCG = (seed) => (seed * 9301 + 49297) % 233280;
+export class LCG {
+    constructor(seed) {
+        this.state = (Math.abs(seed) || 1) % 233280;
+    }
+
+    next() {
+        this.state = (this.state * 9301 + 49297) % 233280;
+        return this.state / 233280;
+    }
+
+    nextInt(min, max) {
+        return Math.floor(min + this.next() * (max - min + 1));
+    }
+}
 
 export function getStringSimilarity(s1, s2) {
     const clean = s => s.toLowerCase().trim().replace(/[^a-z0-9]/g, '');

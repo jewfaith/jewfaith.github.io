@@ -22,73 +22,24 @@ export function getFestivalIcon(name, isBiblical = false) {
     return ICONS.starOfDavid;
 }
 
-export function formatTwoWordTitle(name) {
-    if (!name) return 'Festa Sagrada';
-    let clean = name.trim();
-
-    if (clean.includes('Shekalim')) return 'Shabbat Shekalim';
-    if (clean.includes('Zachor')) return 'Shabbat Zachor';
-    if (clean.includes('Parah')) return 'Shabbat Parah';
-    if (clean.includes('Chodesh') && clean.includes('Shabbat')) return 'Shabbat Chodesh';
-    if (clean.includes('Gadol') && clean.includes('Shabbat')) return 'Shabbat Gadol';
-    if (clean.includes('Shirah')) return 'Shabbat Shirah';
-    if (clean.includes('Chazon')) return 'Shabbat Chazon';
-    if (clean.includes('Nachamu')) return 'Shabbat Nachamu';
-    if (clean.includes('Shuva') || clean.includes('Shuvah')) return 'Shabbat Shuva';
-    if (clean.includes('Shabbat') || clean.includes('Shabbos')) return 'Yom Shabbat';
-    if (clean.includes('Teruah')) return 'Yom Teruah';
-    if (clean.includes('Kippur')) return 'Yom Kippur';
-    if (clean.includes('Sukkot')) return 'Chag Sukkot';
-    if (clean.includes('Atzeret')) return 'Shemini Atzeret';
-    if (clean.includes('Simchat') || clean.includes('Simchas')) return 'Simchat Torah';
-    if (clean.includes('Chanukah') || clean.includes('Hanukkah')) return 'Chag Chanukah';
-    if (clean.includes('BiShvat') || clean.includes('Shevat')) return 'Tu BiShvat';
-    if (clean.includes('Shushan Purim')) return 'Shushan Purim';
-    if (clean.includes('Purim Katan')) return 'Purim Katan';
-    if (clean.includes('Purim')) return 'Yom Purim';
-    if (clean.includes('Pessach Sheni') || clean.includes('Pesach Sheni')) return 'Pessach Sheni';
-    if (clean.includes('Pessach') || clean.includes('Pesach')) return 'Yom Pessach';
-    if (clean.includes('Matzot')) return 'Chag Matzot';
-    if (clean.includes('Shavuot')) return 'Yom Shavuot';
-    if (clean.includes('Lag B')) return 'Lag BaOmer';
-    if (clean.includes('Tammuz') || clean.includes('Tamuz')) return 'Tzom Tamuz';
-    if (clean.includes('Tisha') || clean.includes("Tish'a")) return "Tisha B'Av";
-    if (clean.includes('Tu B')) return "Tu B'Av";
-    if (clean.includes('Gedaliah')) return 'Tzom Gedaliah';
-    if (clean.includes('Tevet')) return 'Tzom Tevet';
-    if (clean.includes('Esther')) return "Ta'anit Esther";
-    if (clean.includes('Rosh Hashana') || clean.includes('Rosh Hashanah')) return 'Rosh Hashana';
-    if (clean.includes('Rosh Chodashim')) return 'Rosh Chodashim';
-    if (clean.includes('Rosh Chodesh')) return 'Rosh Chodesh';
-    if (clean.includes('Behemot')) return 'Rosh LaBehemot';
-    if (clean.includes('Elul')) return 'Chodesh Elul';
-    if (clean.includes('Selichot')) return 'Leil Selichot';
-    if (clean.includes('Hoshana')) return 'Hoshana Rabbah';
-
-    const words = clean.split(/\s+/);
-    if (words.length === 2) return clean;
-    if (words.length > 2) return `${words[0]} ${words[1]}`;
-    return `${words[0]} Sagrado`;
-}
+import { formatTwoWordTitle } from '../domain/formatters.js';
+import { getSelectedLocation } from '../services/locationService.js';
+export { formatTwoWordTitle };
 
 export function isIsraelLocation() {
     try {
-        const exactLocRaw = localStorage.getItem('exactLocation');
-        if (exactLocRaw) {
-            const loc = JSON.parse(exactLocRaw);
-            if (loc?.isIsrael !== undefined) {
+        const loc = getSelectedLocation();
+        if (loc) {
+            if (loc.isIsrael !== undefined) {
                 return !!loc.isIsrael;
             }
-            if (loc?.tz === 'Asia/Jerusalem') {
+            if (loc.tz === 'Asia/Jerusalem') {
                 return true;
             }
             const lat = Number(loc.lat);
             const lon = Number(loc.lon);
             if (!isNaN(lat) && !isNaN(lon)) {
-                if (lat >= 29.4 && lat <= 33.4 && lon >= 34.2 && lon <= 35.9) {
-                    return true;
-                }
-                return false;
+                return lat >= 29.4 && lat <= 33.4 && lon >= 34.2 && lon <= 35.9;
             }
         }
     } catch (e) { }
@@ -141,11 +92,9 @@ export const TORAH_MANDATES = {
     'Chag Matzot': {
         verse: 'Vayikra 23 6',
         text: 'E aos quinze dias deste mês é a festa dos pães ázimos do Eterno sete dias comereis pães ázimos.',
-        hebrewDate: (isIsrael) => isIsrael ? '15 a 21 de Aviv' : '15 a 22 de Aviv',
-        torahCommand: 'A Torá ordena comer pães ázimos e retirar todo o fermento durante os sete dias com santa convocação no primeiro e no sétimo dia.',
-        getHalachaLocation: (isIsrael) => isIsrael 
-            ? 'Na Terra de Israel a celebração dura exatamente 7 dias do dia 15 ao dia 21 de Aviv sendo o primeiro e o sétimo dias santos de descanso como a Torá prescreve expressamente.' 
-            : 'Fora de Israel na Diáspora são celebrados 8 dias do dia 15 ao dia 22 de Aviv sendo os dois primeiros e os dois últimos dias santos de descanso pelo segundo dia festivo.'
+        hebrewDate: '15 a 21 de Aviv',
+        torahCommand: 'A Torá ordena comer pães ázimos e retirar todo o fermento durante exatamente sete dias (15 a 21 de Aviv) com santa convocação no primeiro e no sétimo dia.',
+        getHalachaLocation: () => 'A festa bíblica dura rigorosamente os 7 dias prescritos na Torá (15 a 21 de Aviv), sendo o primeiro e o sétimo dias de descanso sagrado.'
     },
     'Pessach Sheni': {
         verse: 'Bamidbar 9 11',
@@ -157,18 +106,16 @@ export const TORAH_MANDATES = {
     'Yom Shavuot': {
         verse: 'Vayikra 23 16 e 21',
         text: 'Contareis cinquenta dias até ao dia seguinte ao sétimo sábado e proclamareis santa convocação.',
-        hebrewDate: (isIsrael) => isIsrael ? '6 de Sivan' : '6 e 7 de Sivan',
-        torahCommand: 'A Torá determina contar cinquenta dias após a Páscoa trazendo as primícias da colheita e celebrando a entrega dos mandamentos.',
-        getHalachaLocation: (isIsrael) => isIsrael 
-            ? 'Na Terra de Israel é celebrado num único dia solene em 6 de Sivan como determina a Torá.' 
-            : 'Fora de Israel na Diáspora é celebrado em 2 dias santos nos dias 6 e 7 de Sivan.'
+        hebrewDate: '6 de Sivan',
+        torahCommand: 'A Torá determina contar cinquenta dias após a Páscoa trazendo as primícias da colheita e celebrando a entrega dos mandamentos num único dia solene em 6 de Sivan.',
+        getHalachaLocation: () => 'A festa bíblica dura rigorosamente 1 dia solene em 6 de Sivan, como a Torá manda expressamente.'
     },
     'Yom Teruah': {
         verse: 'Vayikra 23 24',
         text: 'No sétimo mês no primeiro dia do mês tereis descanso solene memorial com toque de trombetas santa convocação.',
         hebrewDate: '1 de Etanim',
         torahCommand: 'A Torá prescreve descanso absoluto e o toque das trombetas e do Shofar no primeiro dia do sétimo mês bíblico.',
-        getHalachaLocation: () => 'Observado em 1 de Etanim e tradicionalmente no segundo dia de Etanim tanto em Israel como na Diáspora.'
+        getHalachaLocation: () => 'Observado em 1 de Etanim como o memorial solene prescrito pela Torá.'
     },
     'Yom Kippur': {
         verse: 'Vayikra 23 27',
@@ -180,20 +127,16 @@ export const TORAH_MANDATES = {
     'Chag Sukkot': {
         verse: 'Vayikra 23 34 e 42',
         text: 'Aos quinze dias deste mês sétimo será a festa dos tabernáculos ao Eterno por sete dias em cabanas habitareis.',
-        hebrewDate: (isIsrael) => isIsrael ? '15 a 21 de Etanim' : '15 a 22 de Etanim',
-        torahCommand: 'A Torá ordena habitar em cabanas por sete dias e reunir as quatro espécies para regozijo diante do Criador.',
-        getHalachaLocation: (isIsrael) => isIsrael 
-            ? 'Na Terra de Israel a Festa das Cabanas decorre por exatamente 7 dias de 15 a 21 de Etanim sendo o primeiro dia santa convocação.' 
-            : 'Fora de Israel na Diáspora decorre de 15 a 22 de Etanim com os dois primeiros dias observados como santa convocação festiva.'
+        hebrewDate: '15 a 21 de Etanim',
+        torahCommand: 'A Torá ordena habitar em cabanas por exatamente sete dias (15 a 21 de Etanim) e reunir as quatro espécies para regozijo diante do Criador.',
+        getHalachaLocation: () => 'A festa bíblica das cabanas decorre por exatamente 7 dias (15 a 21 de Etanim), sendo o primeiro dia santa convocação.'
     },
     'Shemini Atzeret': {
         verse: 'Vayikra 23 36',
         text: 'Ao oitavo dia tereis santa convocação é reunião solene nenhum trabalho servil fareis.',
         hebrewDate: '22 de Etanim',
-        torahCommand: 'A Torá ordena uma assembleia solene de recolhimento no oitavo dia imediatamente a seguir aos sete dias de Sucót.',
-        getHalachaLocation: (isIsrael) => isIsrael 
-            ? 'Na Terra de Israel celebra-se no dia 22 de Etanim onde Shemini Atzeret e a conclusão da Torá Simchat Torah ocorrem juntas no mesmo dia.' 
-            : 'Fora de Israel na Diáspora Shemini Atzeret celebra-se no dia 22 de Etanim e Simchat Torah celebra-se como festa separada no dia 23 de Etanim.'
+        torahCommand: 'A Torá ordena uma assembleia solene de recolhimento no oitavo dia (22 de Etanim), imediatamente a seguir aos sete dias de Sucót.',
+        getHalachaLocation: () => 'Shemini Atzeret é rigorosamente celebrado no dia 22 de Etanim, como a Torá determina expressamente.'
     }
 };
 
@@ -368,7 +311,9 @@ export function renderFestivalsView(force = false) {
     const isIsrael = state.userLocation?.isIsrael ?? true;
     const currentKey = `${isIsrael}`;
 
-    if (!force && lastRenderedFestivalsKey === currentKey && tanakhContainer?.children.length > 0) {
+    const hasSkeletons = !!(tanakhContainer?.querySelector('.skeleton-card') || rabbinicContainer?.querySelector('.skeleton-card'));
+
+    if (!force && !hasSkeletons && lastRenderedFestivalsKey === currentKey && tanakhContainer?.children.length > 0) {
         return;
     }
     lastRenderedFestivalsKey = currentKey;
@@ -394,6 +339,9 @@ export function renderFestivalsView(force = false) {
                         <span class="settings-card-desc">${cardDate}</span>
                     </div>
                 </div>
+                <div class="card-arrow-action" aria-hidden="true">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
             </div>
         `;
     };
@@ -411,11 +359,7 @@ export function renderFestivalsView(force = false) {
 export function ensureTwoWords(str, fallback = 'Sagrado') {
     if (!str) return `Evento ${fallback}`;
     let clean = String(str).trim();
-    clean = clean.replace(/\bde\b/gi, ' ').replace(/\bdo\b/gi, ' ').replace(/\bda\b/gi, ' ');
     clean = clean.replace(/(\d+)\s*(?:-|a|à|e)\s*(\d+)/g, '$1-$2');
-    clean = clean.replace(/[\(\),;•]/g, ' ').replace(/\s+/g, ' ').trim();
-    const words = clean.split(/\s+/).filter(Boolean);
-    if (words.length === 0) return `Evento ${fallback}`;
-    if (words.length === 1) return `${words[0]} ${fallback}`;
-    return `${words[0]} ${words[1]}`;
+    return clean || `Evento ${fallback}`;
 }
+

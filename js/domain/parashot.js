@@ -679,7 +679,7 @@ const PARASHAH_DESCRIPTIONS = {
         'A Torá termina afirmando que nenhum profeta surgiu em Israel como Moshe, em sinais, maravilhas, força e conhecimento da relação com D\'us. O fim do livro fecha a vida de Moshe sem encerrar a missão de Israel.'
     ],
     'Chol HaMoed': [
-        'Marcando os dias intermediários do período sagrado, a comunidade permanece dentro da santidade estabelecida pelo Moed, distinguindo estes dias dos dias de Yom Tov.',
+        'De origem bíblica fundamentada nos mandamentos da Torá, os dias intermediários do Moed integram o ciclo sagrado da festividade, distinguindo os dias intermediários de celebração dos momentos de repouso solene e convocação sagrada.',
         'Mantendo a continuidade da celebração, o povo permanece reunido em alegria e dedicação ao Criador durante os dias que se encontram entre os momentos solenes do período.',
         'Preservando a distinção entre os dias de santidade plena e os dias intermediários, determinadas atividades de trabalho são permitidas conforme as necessidades e as normas aplicáveis ao Moed.',
         'Prosseguindo com os mandamentos próprios do período sagrado, a comunidade continua observando as práticas estabelecidas pela Torá ao longo dos dias intermediários.',
@@ -690,7 +690,7 @@ const PARASHAH_DESCRIPTIONS = {
     ],
 
     'Chutz laAretz': [
-        'Estabelecendo uma distinção para aqueles que se encontram fora da Terra de Yisrael, o calendário contempla a observância de dias adicionais em determinados períodos sagrados.',
+        'De origem estritamente rabínica, sendo o único entre estes estados litúrgicos com natureza rabínica e não bíblica, a observância de dias adicionais em Chutz laAretz foi estabelecida para as comunidades fora da Terra de Israel em virtude das determinações rabínicas históricas da Diáspora.',
         'Preservando a continuidade da santidade do Moed entre comunidades distantes da Terra, a observância prolonga determinados momentos estabelecidos pela Torá e pela tradição.',
         'Mantendo a unidade do ciclo sagrado, os dias adicionais permitem que as comunidades fora da Terra de Yisrael observem o período festivo segundo a prática estabelecida para sua localização.',
         'Estendendo a observância para além do período originalmente determinado, a comunidade preserva a santidade do tempo enquanto se encontra distante da Terra de Yisrael.',
@@ -851,7 +851,7 @@ const PARASHAH_DESCRIPTIONS = {
     ],
 
     'Kriat HaMoed': [
-        'Estabelecendo a leitura pública durante o período sagrado, a comunidade reúne-se para ouvir as palavras da Torá em meio à celebração do Moed.',
+        'De origem bíblica instituída diretamente na Torá, a leitura solene durante as santas convocações do Moed reúne a congregação para proclamar as palavras e ordenanças perpétuas estabelecidas pelo Criador.',
         'Convocando a assembleia para a escuta da instrução divina, a leitura reforça a responsabilidade coletiva diante dos mandamentos transmitidos pelo Criador.',
         'Preservando a memória dos acontecimentos e dos mandamentos associados ao período, a leitura pública conduz a comunidade à reflexão sobre a palavra da Torá.',
         'Reunindo homens, mulheres e crianças diante da assembleia, a proclamação pública permite que toda a comunidade participe da escuta e do aprendizado.',
@@ -860,6 +860,17 @@ const PARASHAH_DESCRIPTIONS = {
         'Fortalecendo a unidade da comunidade por meio da escuta conjunta, a proclamação das palavras sagradas reúne diferentes gerações em torno da mesma instrução.',
         'Concluindo a leitura estabelecida para o período, a comunidade prossegue na celebração do Moed levando consigo a instrução, a memória e os mandamentos proclamados diante de todos.'
     ],
+
+    'Keriat HaMoed': [
+        'De origem bíblica instituída diretamente na Torá, a leitura solene durante as santas convocações do Moed reúne a congregação para proclamar as palavras e ordenanças perpétuas estabelecidas pelo Criador.',
+        'Convocando a assembleia para a escuta da instrução divina, a leitura reforça a responsabilidade coletiva diante dos mandamentos transmitidos pelo Criador.',
+        'Preservando a memória dos acontecimentos e dos mandamentos associados ao período, a leitura pública conduz a comunidade à reflexão sobre a palavra da Torá.',
+        'Reunindo homens, mulheres e crianças diante da assembleia, a proclamação pública permite que toda a comunidade participe da escuta e do aprendizado.',
+        'Recordando os ensinamentos estabelecidos para o tempo determinado, a leitura mantém a comunidade ligada às palavras que orientam sua relação com o Criador.',
+        'Concentrando a atenção da assembleia nas Escrituras, a leitura pública transforma o período sagrado em uma ocasião de ensino, recordação e renovação do compromisso com a Torá.',
+        'Fortalecendo a unidade da comunidade por meio da escuta conjunta, a proclamação das palavras sagradas reúne diferentes gerações em torno da mesma instrução.',
+        'Concluindo a leitura estabelecida para o período, a comunidade prossegue na celebração do Moed levando consigo a instrução, a memória e os mandamentos proclamados diante de todos.'
+    ]
 };
 
 function normalizeKey(str) {
@@ -874,6 +885,15 @@ const NORMALIZED_PARASHA_MAP = Object.entries(PARASHAH_DESCRIPTIONS).reduce((acc
     acc[normalizeKey(key)] = val;
     return acc;
 }, {});
+
+// Aliases litúrgicos canónicos para busca universal
+NORMALIZED_PARASHA_MAP['keriathamoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
+NORMALIZED_PARASHA_MAP['kriathamoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
+NORMALIZED_PARASHA_MAP['keriatmoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
+NORMALIZED_PARASHA_MAP['kriatmoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
+NORMALIZED_PARASHA_MAP['cholhamoed'] = PARASHAH_DESCRIPTIONS['Chol HaMoed'];
+NORMALIZED_PARASHA_MAP['chutzlaaretz'] = PARASHAH_DESCRIPTIONS['Chutz laAretz'];
+NORMALIZED_PARASHA_MAP['laaretz'] = PARASHAH_DESCRIPTIONS['Chutz laAretz'];
 
 /**
  * Remove caracteres indesejados e filtra elementos duplicados mantendo a ordem.

@@ -58,16 +58,7 @@ export function setSystemError(id, errorData) {
     // Regra estrita: Remover todas as tags HTML
     const stripHtml = (s) => String(s || '').replace(/<[^>]*>/g, '').trim();
 
-    // Regra estrita: Títulos só podem ter rigorosamente duas palavras
-    let title = stripHtml(errorData.title);
-    const words = title.split(/\s+/).filter(Boolean);
-    if (words.length > 2) {
-        title = words.slice(0, 2).join(' ');
-    } else if (words.length === 1) {
-        title = `${words[0]} Inativo`;
-    } else if (words.length === 0) {
-        title = 'Telemetria Desativada';
-    }
+    let title = stripHtml(errorData.title) || 'Telemetria Desativada';
 
     const desc = stripHtml(errorData.desc);
     const priority = typeof errorData.priority === 'number' ? errorData.priority : (ERROR_PRIORITIES[id] ?? 50);
@@ -461,6 +452,9 @@ function isUmamiActive() {
 }
 
 export async function runDiagnostics(forceTest = false) {
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        return false;
+    }
     let failed = false;
 
     if (forceTest || checkTestMode()) {
@@ -511,11 +505,13 @@ export async function runDiagnostics(forceTest = false) {
 function handleUmamiFailure() {
     isUmamiBlocked = true;
     updatePrivacyUmamiBadge(true);
-    setSystemError('umami', {
-        icon: 'fa-solid fa-chart-simple',
-        title: 'Telemetria Desativada',
-        desc: 'Não consegue agir.'
-    });
+    if (checkTestMode()) {
+        setSystemError('umami', {
+            icon: 'fa-solid fa-chart-simple',
+            title: 'Telemetria Desativada',
+            desc: 'Modo de teste ativo.'
+        });
+    }
 }
 
 function setupErrorBlockListeners() {

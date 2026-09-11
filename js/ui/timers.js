@@ -1,5 +1,5 @@
 import { state } from '../state.js';
-import { renderSupportCards } from './dashboard.js';
+import { renderSupportCards } from './components/supportCard.js';
 
 export function stopTimers() {
     if (state.timerInterval) {

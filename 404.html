@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yisrael Date • Redirecionando</title>
+  <script>
+    // Redireciona sempre para a raiz do app preservando rota e parâmetros
+    var origin = window.location.origin;
+    var path = window.location.pathname;
+    var base = path.startsWith('/jewfaith.github.io') ? '/jewfaith.github.io/' : '/';
+    var search = window.location.search || '';
+    var hash = window.location.hash || '';
+    window.location.replace(origin + base + search + hash);
+  </script>
+</head>
+<body>
+  <p style="font-family: sans-serif; text-align: center; margin-top: 20vh; color: #666;">
+    A redirecionar para a página principal...
+  </p>
+</body>
+</html>

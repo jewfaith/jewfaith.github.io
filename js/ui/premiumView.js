@@ -1,5 +1,6 @@
 import { ICONS } from './icons.js';
 import { getUmamiStatus } from '../utils/umamiMonitor.js';
+import { getAboutProjectHtml, ABOUT_PROJECT_TITLE } from '../domain/aboutContent.js';
 
 /**
  * PARECER JURÍDICO DE CONFORMIDADE E DECLARAÇÃO DE PROTEÇÃO DE DADOS
@@ -56,6 +57,9 @@ function renderCard({ id, icon, title, desc, paragraphs }) {
                     <span class="settings-card-desc">${desc}</span>
                 </div>
             </div>
+            <div class="card-arrow-action" aria-hidden="true">
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
         </div>
     `;
 }
@@ -74,7 +78,7 @@ export function renderPrivacyView(force = false) {
         paragraphs: [
             'A presente declaração consagra os termos gerais de utilização, as salvaguardas de confidencialidade e o parecer técnico de conformidade jurídica da plataforma Yisrael Date.',
             'O documento encontra-se plenamente harmonizado com cinquenta e cinco regimes internacionais de proteção de dados e com as exigências de privacidade desde a conceção.',
-            'A plataforma rege-se pelos princípios perpétuos de gratuidade universal, ausência de anúncios publicitários, inexistência de comércio eletrónico e salvaguarda irrestrita da intimidade do utilizador.'
+            'A plataforma rege-se pelos princípios perpétuos de gratuidade universal, inexistência de comércio eletrónico e salvaguarda irrestrita da intimidade do utilizador.'
         ]
     };
 
@@ -136,7 +140,7 @@ export function renderPrivacyView(force = false) {
     const sec1Cards = [
         {
             id: 'calculos-solares',
-            icon: 'fa-solid fa-sun',
+            icon: 'fa-solid fa-gear',
             title: 'Cálculos Solares',
             desc: 'Horários Sagrados',
             paragraphs: [
@@ -160,7 +164,7 @@ export function renderPrivacyView(force = false) {
         },
         {
             id: 'calendario-festivo',
-            icon: 'fa-solid fa-calendar-day',
+            icon: 'fa-solid fa-calendar-days',
             title: 'Calendário Festivo',
             desc: 'Ciclo Litúrgico',
             paragraphs: [
@@ -197,7 +201,7 @@ export function renderPrivacyView(force = false) {
         },
         {
             id: 'rede-local',
-            icon: 'fa-solid fa-network-wired',
+            icon: 'fa-solid fa-sitemap',
             title: 'Rede Local',
             desc: 'Operação Desfasada',
             paragraphs: [
@@ -270,7 +274,7 @@ export function renderPrivacyView(force = false) {
                 'O fornecimento de localidade decorre de escolha consciente, livre e informada do utilizador com o propósito de apuração astronómica dos horários sagrados.',
                 'O titular goza de autonomia irrestrita para alterar ou remover a localidade selecionada a qualquer instante no menu próprio da aplicação.',
                 'A aplicação dispensa consentimento para rastreamento de comportamento por inexistir qualquer mecanismo de monitorização de navegação ou leilão de mídia.',
-                'A dignidade do utilizador é preservada pela ausência de técnicas de indução psicológica, publicidade direcionada ou retenção forçada de atenção.'
+                'A dignidade do utilizador é preservada pela ausência de técnicas de indução psicológica, rastreamento comercial ou retenção forçada de atenção.'
             ]
         },
         {
@@ -451,8 +455,29 @@ export function renderPrivacyView(force = false) {
         }
     ];
 
+    const aboutModalHtml = getAboutProjectHtml().replace(/"/g, '&quot;');
+
     container.innerHTML = `
-        <div class="event-cards-row" style="margin-top: 6px;">
+        <div class="event-cards-row">
+            <div class="settings-card event-card glass-panel info-trigger" 
+                 id="card-about-manifesto" 
+                 tabindex="0" 
+                 role="button" 
+                 data-info-title="${ABOUT_PROJECT_TITLE}" 
+                 data-info-html="${aboutModalHtml}" 
+                 aria-label="Sobre o Yisrael Date • Origem e Propósito" 
+                 style="cursor: pointer;">
+                <div class="settings-card-left">
+                    <i class="fa-solid fa-compass settings-icon"></i>
+                    <div class="settings-card-text">
+                        <span class="settings-card-title">Sobre Projeto</span>
+                        <span class="settings-card-desc">Origem Propósito</span>
+                    </div>
+                </div>
+                <div class="card-arrow-action" aria-hidden="true">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
             ${renderCard(heroCard)}
         </div>
 
@@ -499,7 +524,7 @@ document.addEventListener('click', (e) => {
             });
             window.location.reload();
         } catch (err) {
-            console.error('Falha no expurgo:', err);
+            console.error('[Storage] Falha ao limpar dados locais.');
         }
     }
 });

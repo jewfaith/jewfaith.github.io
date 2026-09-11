@@ -1,8 +1,9 @@
 import { renderPrivacyView } from './premiumView.js';
+import { renderFestivalsView } from './festivalsView.js';
 import { trackMicroAction } from '../utils/umamiMonitor.js';
 
 const TAB_HASH_MAP = {
-    'reading': 'calendario',
+    'reading': 'inicio',
     'festivals': 'festas',
     'privacy': 'termos'
 };
@@ -64,14 +65,7 @@ export function getActiveTabFromUrl() {
         }
     } catch (e) { }
 
-    // 3. Fallback para LocalStorage se a URL não tiver hash
-    try {
-        const savedTab = localStorage.getItem('yisrael_active_tab');
-        if (savedTab && ['reading', 'festivals', 'privacy', 'chat', 'account'].includes(savedTab)) {
-            return savedTab;
-        }
-    } catch (e) { }
-
+    // 3. A página inicial padrão de todo o site é sempre 'reading' (Início)
     return 'reading';
 }
 
@@ -121,7 +115,17 @@ export function switchTab(targetTab, updateUrl = true, smoothScroll = true, user
     }
 
     if (targetTab === 'privacy') {
+        // Fecha modais caso o utilizador tenha clicado a partir de um modal
+        if (typeof document !== 'undefined') {
+            document.querySelectorAll('.modal-overlay').forEach(m => {
+                m.style.display = 'none';
+                m.classList.remove('is-closing');
+            });
+            document.body.classList.remove('modal-open');
+        }
         renderPrivacyView();
+    } else if (targetTab === 'festivals') {
+        renderFestivalsView();
     }
 }
 
@@ -132,16 +136,16 @@ export function initAppNavigation() {
     // Pré-renderiza a aba de termos e privacidade para transição instantânea sem layout shift
     renderPrivacyView();
 
-    const allTabButtons = document.querySelectorAll('[data-tab]');
-
-    allTabButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    // Delegação global de eventos para todos os botões com [data-tab] (estáticos e dinâmicos)
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-tab]');
+        if (btn) {
             e.preventDefault();
             const targetTab = btn.getAttribute('data-tab');
             if (targetTab) {
                 switchTab(targetTab, true, true, true);
             }
-        });
+        }
     });
 
     // Sincroniza caso o utilizador use os botões de Avançar / Recuar do navegador
