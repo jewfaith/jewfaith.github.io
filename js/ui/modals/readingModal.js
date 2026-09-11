@@ -66,21 +66,7 @@ export async function openReadingModal(ref, cardTitle) {
         const hasMultipleBooks = new Set(verses.map(v => v.bookName).filter(Boolean)).size > 1;
 
         for (const v of verses) {
-            if (hasMultipleBooks && v.bookName && currentSectionBook !== null && v.bookName !== currentSectionBook) {
-                currentSectionBook = v.bookName;
-                html += `
-                    <div class="reading-section-divider" role="separator" aria-label="${escapeHtml(toHebrewBookName(v.bookName))}">
-                        <span class="reading-section-divider-line"></span>
-                        <div class="reading-section-divider-badge">
-                            <i class="fa-solid fa-scroll" aria-hidden="true"></i>
-                            <span>${escapeHtml(toHebrewBookName(v.bookName))}</span>
-                        </div>
-                        <span class="reading-section-divider-line"></span>
-                    </div>
-                `;
-            } else if (!currentSectionBook && v.bookName) {
-                currentSectionBook = v.bookName;
-            }
+            currentSectionBook = v.bookName;
 
             const displayNum = `${v.chapter}:${v.verse}`;
             html += `
