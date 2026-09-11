@@ -88,17 +88,21 @@ export function formatTwoWordSubtitle(evt, isIsrael = true) {
     if (!evt) return 'Data Sagrada';
     const title = evt.twoWordTitle || evt.name || '';
     // As festas da Torá só duram os dias que a Torá manda:
-    if (title.includes('Matzot')) return '15-21 Aviv';
-    if (title.includes('Sukkot')) return '15-21 Etanim';
+    if (title.includes('Matzot')) return '15–21 Aviv';
+    if (title.includes('Sukkot')) return '15–21 Etanim';
     if (title.includes('Shavuot')) return '6 Sivan';
     if (title.includes('Shemini Atzeret')) return '22 Etanim';
     if (title.includes('Teruah')) return '1 Etanim';
     if (title.includes('Kippur')) return '10 Etanim';
-    if (title.includes('Chanukah') || title.includes('Hanukkah')) return '25-2 Kislev';
-    if (title.includes('Rosh Hashana')) return '1-2 Etanim';
+    if (title.includes('Pessach Sheni')) return '14 Ziv';
+    if (title.includes('Pessach') || title.includes('Pesach')) return '14 Aviv';
+    if (title.includes('Chanukah') || title.includes('Hanukkah')) return '25 Kislev – 2 Tevet';
+    if (title.includes('Rosh Hashana')) return '1–2 Etanim';
+    if (title.includes('Simchat Torah')) return isIsrael ? '22 Etanim' : '23 Etanim';
 
     if (evt.raw && evt.raw.hdate) {
-        const cleanHdate = evt.raw.hdate.replace(/(\d+)\s*(?:-|a|à|e)\s*(\d+)/g, '$1-$2');
+        let cleanHdate = String(evt.raw.hdate).replace(/(\d+)\s*(?:-|–|—|a|à|e)\s*(\d+)/g, '$1–$2');
+        cleanHdate = cleanHdate.replace(/\s+de\s+/g, ' ');
         const parts = cleanHdate.split(' ');
         if (parts.length >= 2) {
             const rawM = parts[1];

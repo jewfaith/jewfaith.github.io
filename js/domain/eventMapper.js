@@ -117,6 +117,12 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
         }
 
         const cleanTitle = item.title.replace(/[\u2018\u2019]/g, "'");
+
+        // Vésperas (Erev) não são dias festivos independentes no calendário, exceto Erev Pesach (que corresponde a Yom Pessach, 14 de Aviv)
+        if (cleanTitle.startsWith('Erev ') && !cleanTitle.includes('Pesach')) {
+            return [];
+        }
+
         let itemName = item.title;
         let isBiblical = false;
         let isTraditional = false;
@@ -124,8 +130,17 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
 
         for (const key in BIBLICAL_MAPPING) {
             if (cleanTitle.includes(key)) {
-                if (['Rosh Hashana', 'Shavuot', 'Yom Kippur', 'Sukkot'].some(k => key === k) && (cleanTitle.includes('II') || cleanTitle.includes('Erev') || cleanTitle.includes('LaBehemot') || cleanTitle.includes('LaIlanot'))) {
-                    if (!(key === 'Pesach' && cleanTitle.includes('Erev'))) continue;
+                if (key === 'Sukkot' && cleanTitle.includes('Erev')) {
+                    continue;
+                }
+                if (key === 'Yom Kippur' && cleanTitle.includes('Erev')) {
+                    continue;
+                }
+                if (key === 'Shavuot' && (cleanTitle.includes('II') || cleanTitle.includes('Erev'))) {
+                    continue;
+                }
+                if (key === 'Rosh Hashana' && (cleanTitle.includes('LaBehemot') || cleanTitle.includes('LaIlanot'))) {
+                    continue;
                 }
                 // As festas da Torá só duram os dias que a Torá manda (Chag Matzot dura estritamente 7 dias, excluindo o 8º dia da Diáspora)
                 if (key === 'Pesach' && (cleanTitle.includes('Day 8') || cleanTitle.includes('VIII') || cleanTitle.includes('Pesach 8'))) {
@@ -133,6 +148,11 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
                 }
 
                 if (key === 'Rosh Hashana') {
+                    if (cleanTitle.includes('II')) {
+                        return [
+                            { name: 'Rosh Hashana', time: dateObj.getTime(), category: 'roshhashana', rawCategory: item.category, isBiblical: false, isTraditional: true, raw: item }
+                        ];
+                    }
                     const rawHdate = item.hdate || '1 Tishrei';
                     const rawMonthPart = rawHdate.split(' ').slice(1, -1).join(' ') || 'Tishrei';
                     const canonicalMonth = HEBREW_MONTHS_PT[rawMonthPart] || rawMonthPart;

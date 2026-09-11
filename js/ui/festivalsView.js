@@ -64,14 +64,14 @@ export const TORAH_MANDATES = {
     'Rosh Chodashim': {
         verse: 'Shemot 12 2',
         text: 'Este mês vos será o princípio dos meses será o primeiro dos meses do ano.',
-        hebrewDate: '1 de Aviv',
+        hebrewDate: '1 Aviv',
         torahCommand: 'A Torá determina que o mês de Aviv na primavera seja o cabeça dos meses e o início formal da contagem de todas as festas bíblicas.',
-        getHalachaLocation: () => 'Vigente em 1 de Aviv em Israel e na Diáspora como a renovação canónica do calendário do povo libertado.'
+        getHalachaLocation: () => 'Vigente em 1 Aviv em Israel e na Diáspora como a renovação canónica do calendário do povo libertado.'
     },
     'Rosh Chodesh': {
         verse: 'Bamidbar 28 11',
         text: 'E nos princípios dos vossos meses oferecereis holocausto ao Eterno.',
-        hebrewDate: '1 de Cada Mês',
+        hebrewDate: '1 Cada Mês',
         torahCommand: 'A Torá determina que no início de cada mês haja proclamação com toques de trombeta sobre as ofertas em lembrança perpétua perante o Criador.',
         getHalachaLocation: () => 'Celebrado no primeiro dia de cada mês lunar bíblico com orações e santificação temporal.'
     },
@@ -85,58 +85,58 @@ export const TORAH_MANDATES = {
     'Yom Pessach': {
         verse: 'Vayikra 23 5',
         text: 'No mês primeiro aos catorze do mês pela tarde é a Páscoa do Eterno.',
-        hebrewDate: '14 de Aviv',
+        hebrewDate: '14 Aviv',
         torahCommand: 'A Torá determina que no dia catorze de Aviv ao pôr do sol seja celebrado o sacrifício pascal da libertação.',
-        getHalachaLocation: () => 'Observado na tarde de 14 de Aviv fazendo a transição para a Festa dos Pães Ázimos.'
+        getHalachaLocation: () => 'Observado na tarde de 14 Aviv fazendo a transição para a Festa dos Pães Ázimos.'
     },
     'Chag Matzot': {
         verse: 'Vayikra 23 6',
         text: 'E aos quinze dias deste mês é a festa dos pães ázimos do Eterno sete dias comereis pães ázimos.',
-        hebrewDate: '15 a 21 de Aviv',
-        torahCommand: 'A Torá ordena comer pães ázimos e retirar todo o fermento durante exatamente sete dias (15 a 21 de Aviv) com santa convocação no primeiro e no sétimo dia.',
-        getHalachaLocation: () => 'A festa bíblica dura rigorosamente os 7 dias prescritos na Torá (15 a 21 de Aviv), sendo o primeiro e o sétimo dias de descanso sagrado.'
+        hebrewDate: '15–21 Aviv',
+        torahCommand: 'A Torá ordena comer pães ázimos e retirar todo o fermento durante exatamente sete dias (15–21 Aviv, do primeiro ao sétimo dia) com santa convocação no primeiro e no sétimo dia.',
+        getHalachaLocation: () => 'A festa bíblica dura rigorosamente os 7 dias prescritos na Torá (15–21 Aviv), sendo o primeiro e o sétimo dias de descanso sagrado.'
     },
     'Pessach Sheni': {
         verse: 'Bamidbar 9 11',
         text: 'No segundo mês aos catorze dias à tarde a celebrarão com pães ázimos e ervas amargas.',
-        hebrewDate: '14 de Ziv',
+        hebrewDate: '14 Ziv',
         torahCommand: 'A Torá institui uma data sagrada reparadora no dia 14 de Ziv para quem esteve impuro ou em viagem distante na primeira Páscoa.',
-        getHalachaLocation: () => 'Observado no dia 14 de Ziv em Israel e na Diáspora com o consumo cerimonial de matzah.'
+        getHalachaLocation: () => 'Observado no dia 14 Ziv em Israel e na Diáspora com o consumo cerimonial de matzah.'
     },
     'Yom Shavuot': {
         verse: 'Vayikra 23 16 e 21',
         text: 'Contareis cinquenta dias até ao dia seguinte ao sétimo sábado e proclamareis santa convocação.',
-        hebrewDate: '6 de Sivan',
+        hebrewDate: '6 Sivan',
         torahCommand: 'A Torá determina contar cinquenta dias após a Páscoa trazendo as primícias da colheita e celebrando a entrega dos mandamentos num único dia solene em 6 de Sivan.',
-        getHalachaLocation: () => 'A festa bíblica dura rigorosamente 1 dia solene em 6 de Sivan, como a Torá manda expressamente.'
+        getHalachaLocation: () => 'A festa bíblica dura rigorosamente 1 dia solene em 6 Sivan, como a Torá manda expressamente.'
     },
     'Yom Teruah': {
         verse: 'Vayikra 23 24',
         text: 'No sétimo mês no primeiro dia do mês tereis descanso solene memorial com toque de trombetas santa convocação.',
-        hebrewDate: '1 de Etanim',
+        hebrewDate: '1 Etanim',
         torahCommand: 'A Torá prescreve descanso absoluto e o toque das trombetas e do Shofar no primeiro dia do sétimo mês bíblico.',
-        getHalachaLocation: () => 'Observado em 1 de Etanim como o memorial solene prescrito pela Torá.'
+        getHalachaLocation: () => 'Observado em 1 Etanim como o memorial solene prescrito pela Torá.'
     },
     'Yom Kippur': {
         verse: 'Vayikra 23 27',
         text: 'Mas aos dez dias deste sétimo mês será o dia da expiação tereis santa convocação e afligireis as vossas almas.',
-        hebrewDate: '10 de Etanim',
+        hebrewDate: '10 Etanim',
         torahCommand: 'A Torá ordena o jejum completo de vinte e cinco horas e a cessação absoluta de trabalho para expiação de todos os pecados.',
-        getHalachaLocation: () => 'Observado exatamente no dia 10 de Etanim tanto na Terra de Israel como fora de Israel sem alteração de dias.'
+        getHalachaLocation: () => 'Observado exatamente no dia 10 Etanim tanto na Terra de Israel como fora de Israel sem alteração de dias.'
     },
     'Chag Sukkot': {
         verse: 'Vayikra 23 34 e 42',
         text: 'Aos quinze dias deste mês sétimo será a festa dos tabernáculos ao Eterno por sete dias em cabanas habitareis.',
-        hebrewDate: '15 a 21 de Etanim',
-        torahCommand: 'A Torá ordena habitar em cabanas por exatamente sete dias (15 a 21 de Etanim) e reunir as quatro espécies para regozijo diante do Criador.',
-        getHalachaLocation: () => 'A festa bíblica das cabanas decorre por exatamente 7 dias (15 a 21 de Etanim), sendo o primeiro dia santa convocação.'
+        hebrewDate: '15–21 Etanim',
+        torahCommand: 'A Torá ordena habitar em cabanas por exatamente sete dias (15–21 Etanim, do primeiro ao sétimo dia) e reunir as quatro espécies para regozijo diante do Criador.',
+        getHalachaLocation: () => 'A festa bíblica das cabanas decorre por exatamente 7 dias (15–21 Etanim), sendo o primeiro dia santa convocação.'
     },
     'Shemini Atzeret': {
         verse: 'Vayikra 23 36',
         text: 'Ao oitavo dia tereis santa convocação é reunião solene nenhum trabalho servil fareis.',
-        hebrewDate: '22 de Etanim',
+        hebrewDate: '22 Etanim',
         torahCommand: 'A Torá ordena uma assembleia solene de recolhimento no oitavo dia (22 de Etanim), imediatamente a seguir aos sete dias de Sucót.',
-        getHalachaLocation: () => 'Shemini Atzeret é rigorosamente celebrado no dia 22 de Etanim, como a Torá determina expressamente.'
+        getHalachaLocation: () => 'Shemini Atzeret é rigorosamente celebrado no dia 22 Etanim, como a Torá determina expressamente.'
     }
 };
 
@@ -163,12 +163,12 @@ export function getAutomaticFestivals() {
     const BIBLICAL_DATES = {
         'Rosh Chodashim': '1 Aviv',
         'Yom Pessach': '14 Aviv',
-        'Chag Matzot': '15-21 Aviv',
+        'Chag Matzot': '15–21 Aviv',
         'Pessach Sheni': '14 Ziv',
         'Yom Shavuot': '6 Sivan',
         'Yom Teruah': '1 Etanim',
         'Yom Kippur': '10 Etanim',
-        'Chag Sukkot': '15-21 Etanim',
+        'Chag Sukkot': '15–21 Etanim',
         'Shemini Atzeret': '22 Etanim'
     };
 
@@ -193,21 +193,21 @@ export function getAutomaticFestivals() {
     ];
 
     const RABBINIC_DATES = {
-        'Rosh Hashana': '1-2 Etanim',
-        'Rosh Hashanah': '1-2 Etanim',
+        'Rosh Hashana': '1–2 Etanim',
+        'Rosh Hashanah': '1–2 Etanim',
         'Tzom Gedaliah': '3 Etanim',
         'Hoshana Rabbah': '21 Etanim',
         'Simchat Torah': isIsrael ? '22 Etanim' : '23 Etanim',
-        'Chag Chanukah': '25-2 Kislev',
-        'Chag Hanukkah': '25-2 Kislev',
-        'Chanukah': '25-2 Kislev',
-        'Hanukkah': '25-2 Kislev',
+        'Chag Chanukah': '25 Kislev – 2 Tevet',
+        'Chag Hanukkah': '25 Kislev – 2 Tevet',
+        'Chanukah': '25 Kislev – 2 Tevet',
+        'Hanukkah': '25 Kislev – 2 Tevet',
         'Tzom Tevet': '10 Tevet',
         'Tu BiShvat': '15 Shevat',
         "Ta'anit Esther": '13 Adar',
         'Yom Purim': '14 Adar',
         'Shushan Purim': '15 Adar',
-        'Purim Katan': '14 Adar',
+        'Purim Katan': '14 Adar I',
         'Lag BaOmer': '18 Ziv',
         'Tzom Tamuz': '17 Tamuz',
         "Tisha B'Av": '9 Av',
@@ -359,7 +359,7 @@ export function renderFestivalsView(force = false) {
 export function ensureTwoWords(str, fallback = 'Sagrado') {
     if (!str) return `Evento ${fallback}`;
     let clean = String(str).trim();
-    clean = clean.replace(/(\d+)\s*(?:-|a|à|e)\s*(\d+)/g, '$1-$2');
+    clean = clean.replace(/(\d+)\s*(?:-|–|—|a|à|e)\s*(\d+)/g, '$1–$2');
     return clean || `Evento ${fallback}`;
 }
 

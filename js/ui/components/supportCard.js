@@ -65,7 +65,11 @@ function bindSupportEvents() {
     document.addEventListener('click', (e) => {
         const trigger = e.target.closest('.support-modal-trigger, .app-support-card');
         if (trigger) {
-            if (trigger.classList.contains('is-sacred-rest')) return;
+            if (trigger.classList.contains('is-sacred-rest') || trigger.closest('.is-sacred-rest') || trigger.hasAttribute('disabled') || trigger.getAttribute('aria-disabled') === 'true') {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             e.preventDefault();
             e.stopPropagation();
             openSupportOptionsModal();
@@ -98,46 +102,45 @@ export function renderSupportCards(events = null, hdate = null, sunsetTime = nul
     const isIsr = isIsrael ?? state.userLocation?.isIsrael ?? true;
 
     const restStatus = checkSacredRestStatus(Date.now(), evs, hd, sunset, isIsr);
-    const currentKey = `${restStatus.isRest}_${restStatus.title || ''}_${restStatus.subType || ''}`;
+    const isRest = !!restStatus.isRest;
+    const currentKey = `${isRest}_${restStatus.title || ''}_${restStatus.subType || ''}`;
 
     const allRendered = Array.from(cards).every(c => c.children && c.children.length > 0);
-    if (currentKey === lastSupportRenderKey && (restStatus.isRest || allRendered)) {
+    if (currentKey === lastSupportRenderKey && allRendered) {
         return;
     }
     lastSupportRenderKey = currentKey;
 
-    let cardHtml = '';
-    if (!restStatus.isRest) {
-        cardHtml = `
-            <div class="support-card-content">
-                <button type="button" 
-                        class="support-btn-primary support-btn-kofi support-modal-trigger" 
-                        aria-label="Apoiar o Yisrael Date">
-                    <span class="support-btn-text">Apoiar o Yisrael Date</span>
-                </button>
-                <div class="support-card-bottom">
-                    <span class="support-security-note">Pagamento seguro via Ko-fi</span>
-                </div>
+    const cardHtml = `
+        <div class="support-card-content">
+            <button type="button" 
+                    class="support-btn-primary support-btn-kofi support-modal-trigger${isRest ? ' is-disabled' : ''}" 
+                    aria-label="Apoiar o Yisrael Date"
+                    ${isRest ? 'disabled aria-disabled="true" tabindex="-1"' : ''}>
+                <span class="support-btn-text">Apoiar o Yisrael Date</span>
+            </button>
+            <div class="support-card-bottom">
+                <i class="fa-solid fa-shield-halved support-security-icon" aria-hidden="true"></i>
+                <span class="support-security-note">Pagamento seguro via Ko-fi</span>
             </div>
-        `;
-    }
+        </div>
+    `;
 
     cards.forEach(card => {
-        if (restStatus.isRest) {
+        card.innerHTML = cardHtml;
+        card.style.display = '';
+
+        if (isRest) {
             card.classList.add('is-sacred-rest');
-            card.style.display = 'none';
-            card.setAttribute('aria-hidden', 'true');
-            card.removeAttribute('tabindex');
+            card.setAttribute('aria-disabled', 'true');
             card.removeAttribute('role');
-            card.innerHTML = '';
+            card.removeAttribute('tabindex');
         } else {
             card.classList.remove('is-sacred-rest');
-            card.style.display = '';
-            card.removeAttribute('aria-hidden');
+            card.removeAttribute('aria-disabled');
             card.setAttribute('tabindex', '0');
             card.setAttribute('role', 'button');
             card.setAttribute('aria-label', 'Apoiar o Yisrael Date');
-            card.innerHTML = cardHtml;
         }
     });
 }

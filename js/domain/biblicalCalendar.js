@@ -105,20 +105,18 @@ export function getBiblicalMonthLabel(monthIndex, { inDateContext = true, useNam
     switch (monthIndex) {
         case 1: return 'Aviv';
         case 2: return 'Ziv';
-        case 3: return inDateContext ? 'do 3º mês' : '3º mês';
-        case 4: return inDateContext ? 'do 4º mês' : '4º mês';
-        case 5: return inDateContext ? 'do 5º mês' : '5º mês';
-        case 6: return inDateContext ? 'do 6º mês' : '6º mês';
-        case 7:
-            if (useNamedEitanim) return 'Eitanim';
-            return inDateContext ? 'do 7º mês' : '7º mês';
+        case 3: return 'Sivan';
+        case 4: return 'Tamuz';
+        case 5: return 'Av';
+        case 6: return 'Elul';
+        case 7: return 'Etanim';
         case 8: return 'Bul';
-        case 9: return inDateContext ? 'do 9º mês' : '9º mês';
-        case 10: return inDateContext ? 'do 10º mês' : '10º mês';
-        case 11: return inDateContext ? 'do 11º mês' : '11º mês';
-        case 12: return inDateContext ? 'do 12º mês' : '12º mês';
-        case 13: return inDateContext ? 'do 13º mês' : '13º mês';
-        default: return inDateContext ? `do ${monthIndex}º mês` : `${monthIndex}º mês`;
+        case 9: return 'Kislev';
+        case 10: return 'Tevet';
+        case 11: return 'Shevat';
+        case 12: return 'Adar I';
+        case 13: return 'Adar II';
+        default: return `${monthIndex}º mês`;
     }
 }
 
@@ -146,13 +144,13 @@ export function hebrewMonthNameToBiblicalIndex(name, isLeap = false) {
 }
 
 /**
- * Formata um intervalo de datas bíblicas no formato compacto canónico.
+ * Formata um intervalo de datas bíblicas no formato compacto canónico X–Y de [mês].
  * Exemplos:
- * 14 Aviv
- * 15-21 Aviv
- * 6 do 3º mês
- * 15-21 do 7º mês
- * 25 do 9º mês - 2 do 10º mês
+ * 14 de Aviv
+ * 15–21 de Aviv
+ * 6 de Sivan
+ * 15–21 de Etanim
+ * 25 de Kislev – 2 de Tevet
  */
 export function formatBiblicalDateRange(startDay, startMonthIdx, endDay, endMonthIdx, { useNamedEitanim = false } = {}) {
     if (startMonthIdx === endMonthIdx) {
@@ -160,11 +158,11 @@ export function formatBiblicalDateRange(startDay, startMonthIdx, endDay, endMont
         if (startDay === endDay) {
             return `${startDay} ${mLabel}`;
         }
-        return `${startDay}-${endDay} ${mLabel}`;
+        return `${startDay}–${endDay} ${mLabel}`;
     }
     const mLabel1 = getBiblicalMonthLabel(startMonthIdx, { inDateContext: true, useNamedEitanim });
     const mLabel2 = getBiblicalMonthLabel(endMonthIdx, { inDateContext: true, useNamedEitanim });
-    return `${startDay} ${mLabel1} - ${endDay} ${mLabel2}`;
+    return `${startDay} ${mLabel1} – ${endDay} ${mLabel2}`;
 }
 
 /**
@@ -193,13 +191,13 @@ export function getFestivalBiblicalDate(festivalKeyOrName, { hebrewYear = 5786, 
         return '1 Aviv';
     }
     if (key === 'roshchodesh') {
-        return '1 de cada mês';
+        return '1 Cada Mês';
     }
     if (key === 'yompessach') {
         return '14 Aviv';
     }
     if (key === 'chagmatzot' || key === 'matzot') {
-        return '15-21 Aviv'; // 7 dias como ordena a Torá (Êx 12:15, Lev 23:6)
+        return '15–21 Aviv'; // 7 dias como ordena a Torá (Êx 12:15, Lev 23:6)
     }
     if (key === 'pessach' || key === 'pesach') {
         return '14 Aviv';
@@ -208,77 +206,77 @@ export function getFestivalBiblicalDate(festivalKeyOrName, { hebrewYear = 5786, 
         return '14 Ziv';
     }
     if (key === 'yomshavuot' || key === 'shavuot') {
-        return '6 do 3º mês'; // 1 dia solene como ordena a Torá (Lev 23:16-21)
+        return '6 Sivan'; // 1 dia solene como ordena a Torá (Lev 23:16-21)
     }
     if (key === 'yomteruah') {
-        return '1 do 7º mês'; // 1 dia solene como ordena a Torá (Lev 23:24)
+        return '1 Etanim'; // 1 dia solene como ordena a Torá (Lev 23:24)
     }
     if (key === 'yomkippur') {
-        return '10 do 7º mês'; // 1 dia solene como ordena a Torá (Lev 23:27)
+        return '10 Etanim'; // 1 dia solene como ordena a Torá (Lev 23:27)
     }
     if (key === 'chagsukkot' || key === 'sukkot') {
-        return '15-21 do 7º mês'; // 7 dias como ordena a Torá (Lev 23:34)
+        return '15–21 Etanim'; // 7 dias como ordena a Torá (Lev 23:34)
     }
     if (key === 'sheminiatzeret') {
-        return '22 do 7º mês'; // 1 dia solene como ordena a Torá (Lev 23:36)
+        return '22 Etanim'; // 1 dia solene como ordena a Torá (Lev 23:36)
     }
 
     // 3. Festas e Datas Rabínicas
     if (key === 'roshhashana' || key === 'roshhashanah') {
-        return '1-2 do 7º mês';
+        return '1–2 Etanim';
     }
     if (key === 'tzomgedaliah') {
-        return '3 do 7º mês';
+        return '3 Etanim';
     }
     if (key === 'hoshanarabbah') {
-        return '21 do 7º mês';
+        return '21 Etanim';
     }
     if (key === 'simchattorah') {
-        return isIsrael ? '22 do 7º mês' : '23 do 7º mês';
+        return isIsrael ? '22 Etanim' : '23 Etanim';
     }
     if (key === 'chagchanukah' || key === 'chanukah' || key === 'hanukkah') {
         const kislevLen = getHebrewMonthLength(9, hebrewYear);
         const endDay = kislevLen === 30 ? 2 : 3;
-        return `25 do 9º mês - ${endDay} do 10º mês`;
+        return `25 Kislev – ${endDay} Tevet`;
     }
     if (key === 'tzomtevet' || key === 'asaratbevet' || key === 'asarabtevet') {
-        return '10 do 10º mês';
+        return '10 Tevet';
     }
     if (key === 'tubishvat' || key === 'tubishevat') {
-        return '15 do 11º mês';
+        return '15 Shevat';
     }
     if (key === 'taanitesther') {
-        return isLeap ? '13 do 13º mês' : '13 do 12º mês';
+        return isLeap ? '13 Adar II' : '13 Adar';
     }
     if (key === 'purimkatan') {
-        return '14 do 12º mês';
+        return '14 Adar I';
     }
     if (key === 'shushanpurimkatan') {
-        return '15 do 12º mês';
+        return '15 Adar I';
     }
     if (key === 'yompurim' || key === 'purim') {
-        return isLeap ? '14 do 13º mês' : '14 do 12º mês';
+        return isLeap ? '14 Adar II' : '14 Adar';
     }
     if (key === 'shushanpurim') {
-        return isLeap ? '15 do 13º mês' : '15 do 12º mês';
+        return isLeap ? '15 Adar II' : '15 Adar';
     }
     if (key === 'lagbaomer') {
         return '18 Ziv';
     }
     if (key === 'tzomtamuz' || key === 'tzomtammuz') {
-        return '17 do 4º mês';
+        return '17 Tamuz';
     }
     if (key === 'tishabav') {
-        return '9 do 5º mês';
+        return '9 Av';
     }
     if (key === 'tubav') {
-        return '15 do 5º mês';
+        return '15 Av';
     }
     if (key === 'roshlabehemot') {
-        return '1 do 6º mês';
+        return '1 Elul';
     }
     if (key === 'chodeshelul') {
-        return '1-29 do 6º mês';
+        return '1–29 Elul';
     }
 
     // 4. Se houver data explícita fornecida pelo Hebcal (ex: Shabbat Shekalim, etc.)

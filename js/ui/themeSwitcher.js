@@ -1,4 +1,4 @@
-import { applySolarTheme, getActiveTheme } from './theme.js';
+import { applySolarTheme, getActiveTheme, syncMetaThemeColor } from './theme.js';
 import { savePersistentSetting, getPersistentSetting } from '../utils/persistence.js';
 
 let isThemeSwitcherInitialized = false;
@@ -32,10 +32,12 @@ export function updateDesktopThemePills(activeMode) {
 export function setThemeMode(mode) {
     if (mode === 'light') {
         document.documentElement.setAttribute('data-theme', 'day');
+        syncMetaThemeColor('day');
         savePersistentSetting('yisrael_theme', 'light');
         try { localStorage.setItem('yisrael_theme', 'light'); } catch (e) {}
     } else if (mode === 'dark') {
         document.documentElement.setAttribute('data-theme', 'night');
+        syncMetaThemeColor('night');
         savePersistentSetting('yisrael_theme', 'dark');
         try { localStorage.setItem('yisrael_theme', 'dark'); } catch (e) {}
     } else { // 'auto'

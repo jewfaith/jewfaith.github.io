@@ -46,6 +46,14 @@ export function getActiveTheme() {
     return 'night';
 }
 
+export function syncMetaThemeColor(theme) {
+    if (typeof document === 'undefined') return;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+        meta.setAttribute('content', theme === 'day' ? '#E4DDD3' : '#0D1117');
+    }
+}
+
 /**
  * Aplica o tema solar automático com base na hora local estimada, respeitando a memória do utilizador
  */
@@ -54,6 +62,7 @@ export function applyEstimatedTheme(lat, lon) {
     if (manualTheme) {
         if (typeof document !== 'undefined') {
             document.documentElement.setAttribute('data-theme', manualTheme);
+            syncMetaThemeColor(manualTheme);
         }
         return;
     }
@@ -72,6 +81,7 @@ export function applyEstimatedTheme(lat, lon) {
 
     if (typeof document !== 'undefined') {
         document.documentElement.setAttribute('data-theme', theme);
+        syncMetaThemeColor(theme);
     }
 }
 
@@ -85,6 +95,7 @@ export function applySolarTheme() {
     if (manualTheme) {
         if (typeof document !== 'undefined') {
             document.documentElement.setAttribute('data-theme', manualTheme);
+            syncMetaThemeColor(manualTheme);
         }
         return;
     }
@@ -107,6 +118,7 @@ export function applySolarTheme() {
     const theme = getThemeForTime(nowMs, solar);
     if (typeof document !== 'undefined') {
         document.documentElement.setAttribute('data-theme', theme);
+        syncMetaThemeColor(theme);
     }
     scheduleAutoTransition(solar, nowMs);
 }

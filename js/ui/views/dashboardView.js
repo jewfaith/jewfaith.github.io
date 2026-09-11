@@ -137,107 +137,138 @@ export function showDashboardSkeletons() {
     }
 }
 
+function getCanonicalMonthKey(m) {
+    if (!m) return '';
+    const s = String(m).toLowerCase().replace(/['\s-]/g, '');
+    if (s === 'nisan' || s === 'aviv') return 'aviv';
+    if (s === 'iyyar' || s === 'iyr' || s === 'ziv') return 'ziv';
+    if (s === 'sivan') return 'sivan';
+    if (s === 'tammuz' || s === 'tamuz') return 'tamuz';
+    if (s === 'av') return 'av';
+    if (s === 'elul') return 'elul';
+    if (s === 'tishrei' || s === 'tishri' || s === 'etanim') return 'etanim';
+    if (s === 'cheshvan' || s === 'marcheshvan' || s === 'bul') return 'bul';
+    if (s === 'kislev') return 'kislev';
+    if (s === 'tevet') return 'tevet';
+    if (s === 'shvat' || s === 'shevat') return 'shevat';
+    if (s === 'adar1' || s === 'adari') return 'adari';
+    if (s === 'adar2' || s === 'adarii') return 'adarii';
+    if (s === 'adar') return 'adar';
+    return s;
+}
+
 export function generateCalendarHTML(events, currentHdate, nowMs = Date.now()) {
     if (!currentHdate) return '';
 
+    const targetMonthKey = getCanonicalMonthKey(currentHdate.hm);
     let displayMonth = HEBREW_MONTHS_MAP[currentHdate.hm] || currentHdate.hm || 'Mês';
-    const currentHy = currentHdate.hy || 5786;
-    const currentHd = currentHdate.hd || 1;
+    const currentHy = currentHdate.hy;
 
     let html = `<div class="calendar-modal-content" style="display: flex; flex-direction: column; gap: 10px;">`;
 
-    let legendItems = [];
+    const multiDayCategories = ['matzot', 'sukkot', 'hanukkah', 'chanukah', 'roshhashana'];
+    const isMultiDayItem = (name, cat) => {
+        const n = (name || '').toLowerCase();
+        const c = (cat || '').toLowerCase();
+        return multiDayCategories.some(m => c.includes(m)) ||
+               n.includes('matzot') ||
+               n.includes('sukkot') ||
+               n.includes('chanukah') ||
+               n.includes('hanukkah') ||
+               n.includes('rosh hashana');
+    };
 
-    for (const ev of events) {
-        if (!ev || !ev.raw || !ev.raw.hdate) continue;
+    const monthEventsMap = new Map();
 
-        const parts = ev.raw.hdate.split(' ');
-        if (parts.length >= 3) {
-            const hDay = parseInt(parts[0], 10);
-            const hMonthRaw = parts.slice(1, -1).join(' ');
-            const hYear = parseInt(parts[parts.length - 1], 10);
+    for (const ev of (events || [])) {
+        if (!ev || !ev.name || !ev.raw) continue;
 
-            if (hMonthRaw === currentHdate.hm && hYear === currentHy) {
-                if (ev.raw && ev.raw.title && ev.raw.title.includes('Rosh Chodesh')) {
-                    const titleParts = ev.raw.title.split(' ');
-                    const targetMonth = titleParts.slice(2).join(' ');
-                    if (targetMonth && targetMonth !== currentHdate.hm) {
-                        continue;
-                    }
-                }
-                if (ev.name) {
-                    const isDup = legendItems.some(i => {
-                        if (ev.name === 'Yom Shabbat') {
-                            return i.name === ev.name && i.firstDay === hDay;
-                        }
-                        return i.name === ev.name || getStringSimilarity(i.name, ev.name) >= 0.70;
-                    });
+        let hDay = null;
+        let hMonth = null;
+        let hYear = null;
 
-                    if (isDup && ev.name !== 'Yom Shabbat') {
-                        const existingIndex = legendItems.findIndex(i => i.name === ev.name || getStringSimilarity(i.name, ev.name) >= 0.70);
-                        if (existingIndex !== -1 && hDay > legendItems[existingIndex].firstDay) {
-                            legendItems[existingIndex] = {
-                                dayText: `${hDay}`,
-                                name: ev.name,
-                                isBiblical: !!ev.isBiblical,
-                                category: ev.category,
-                                firstDay: hDay
-                            };
-                        }
-                    } else if (!isDup) {
-                        legendItems.push({
-                            dayText: `${hDay}`,
-                            name: ev.name,
-                            isBiblical: !!ev.isBiblical,
-                            category: ev.category,
-                            firstDay: hDay
-                        });
-                    }
-                }
+        if (ev.raw.hdate) {
+            const parts = ev.raw.hdate.split(' ');
+            if (parts.length >= 3) {
+                hDay = parseInt(parts[0], 10);
+                hMonth = parts.slice(1, -1).join(' ');
+                hYear = parseInt(parts[parts.length - 1], 10);
             }
+        }
+
+        if (!hDay || !hMonth) continue;
+        if (getCanonicalMonthKey(hMonth) !== targetMonthKey) continue;
+        if (currentHy && hYear && hYear !== currentHy) continue;
+
+        // Omite contagem diária individual do Omer no calendário mensal (Lag BaOmer é mantido)
+        if (ev.category === 'omer' || (ev.name && ev.name.includes('laOmer'))) {
+            continue;
+        }
+
+        // Agrupamento de celebrações de múltiplos dias vs celebrações de dia único
+        const multi = isMultiDayItem(ev.name, ev.category);
+        const groupKey = multi ? `${ev.name}_${ev.category}` : `${ev.name}_${hDay}`;
+
+        if (monthEventsMap.has(groupKey)) {
+            const existing = monthEventsMap.get(groupKey);
+            existing.days.push(hDay);
+            existing.firstDay = Math.min(existing.firstDay, hDay);
+            existing.lastDay = Math.max(existing.lastDay, hDay);
+        } else {
+            monthEventsMap.set(groupKey, {
+                name: ev.name,
+                category: ev.category,
+                isBiblical: !!ev.isBiblical,
+                days: [hDay],
+                firstDay: hDay,
+                lastDay: hDay
+            });
         }
     }
 
-    const isSpecialShabbatItem = (item) => {
-        if (!item || !item.name) return false;
-        const n = item.name.trim();
-        return n !== 'Yom Shabbat' && (n.startsWith('Shabbat ') || (item.category && item.category.startsWith('shabbat')));
-    };
+    let items = Array.from(monthEventsMap.values());
 
-    legendItems = legendItems.filter(item => {
-        if (item.name === 'Yom Shabbat') {
-            const hasSpecialOnSameDay = legendItems.some(other =>
-                other.firstDay === item.firstDay && isSpecialShabbatItem(other)
-            );
-            if (hasSpecialOnSameDay) return false;
+    // Ajuste canónico para duração completa de festividades com período fixo
+    items.forEach(item => {
+        if (item.name === 'Chag Matzot' && targetMonthKey === 'aviv') {
+            item.firstDay = 15;
+            item.lastDay = 21;
+        } else if (item.name === 'Chag Sukkot' && targetMonthKey === 'etanim') {
+            item.firstDay = 15;
+            item.lastDay = 21;
+        } else if (item.name === 'Rosh Hashana' && targetMonthKey === 'etanim') {
+            item.firstDay = 1;
+            item.lastDay = 2;
+        }
+    });
+
+    // Se houver Shabbat especial no mesmo dia (ex: Shabbat HaGadol no dia 10), remove o item genérico Yom Shabbat
+    const specialShabbatDays = new Set(
+        items.filter(i => i.name !== 'Yom Shabbat' && (i.name.startsWith('Shabbat ') || (i.category && i.category.startsWith('shabbat'))))
+             .map(i => i.firstDay)
+    );
+
+    items = items.filter(i => {
+        if (i.name === 'Yom Shabbat' && specialShabbatDays.has(i.firstDay)) {
+            return false;
         }
         return true;
     });
 
-    legendItems.sort((a, b) => {
+    // Ordenação estritamente cronológica por firstDay, com prioridade bíblica em caso de empate
+    items.sort((a, b) => {
         if (a.firstDay !== b.firstDay) return a.firstDay - b.firstDay;
-        return (b.isBiblical ? 1 : 0) - (a.isBiblical ? 1 : 0);
+        if (a.isBiblical !== b.isBiblical) return (b.isBiblical ? 1 : 0) - (a.isBiblical ? 1 : 0);
+        return a.name.localeCompare(b.name);
     });
 
-    const multiDayCategories = ['matzot', 'sukkot', 'hanukkah', 'omer', 'roshhashana'];
-    const mergedLegend = [];
-    for (const item of legendItems) {
-        const last = mergedLegend[mergedLegend.length - 1];
-        const isMultiDay = multiDayCategories.includes(item.category) || item.name.includes('Matzot') || item.name.includes('Sukkot');
-        if (last && last.name === item.name && isMultiDay && (item.firstDay === last.lastDay + 1 || item.firstDay === last.lastDay)) {
-            last.lastDay = item.firstDay;
-        } else {
-            mergedLegend.push({ ...item, lastDay: item.firstDay });
-        }
-    }
-
-    if (mergedLegend.length > 0) {
+    if (items.length > 0) {
         html += `<div class="calendar-legend">
             <ul class="legend-list" style="padding: 0; margin: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">`;
-        for (const item of mergedLegend) {
+        for (const item of items) {
             let baseName = item.name;
             if (item.name.includes('laOmer')) baseName = 'Sefirat Omer';
-            else if (item.name.includes('Hanukkah')) baseName = 'Chag Hanukkah';
+            else if (item.name.includes('Hanukkah') || item.name.includes('Chanukah')) baseName = 'Chag Chanukah';
 
             const festivalData = FESTIVAL_DESCRIPTIONS[baseName] || FESTIVAL_DESCRIPTIONS[item.name];
             const defaultDesc = 'Esta é uma data significativa no calendário israelita. O seu significado está relacionado com a história, a tradição e os ensinamentos do povo de Israel, podendo envolver acontecimentos históricos, mandamentos da Torá, práticas religiosas ou outros elementos transmitidos ao longo das gerações.';
@@ -246,8 +277,10 @@ export function generateCalendarHTML(events, currentHdate, nowMs = Date.now()) {
             const safeInfoHtml = infoHtml.replace(/"/g, '&quot;');
             const itemTitle = formatCardTwoWords(item.name, 'Sagrado');
             const safeName = itemTitle.replace(/"/g, '&quot;');
-            const iconClass = getFestivalIcon(item.name);
-            const dateSubtitle = item.firstDay === item.lastDay ? `${item.firstDay} ${displayMonth}` : `${item.firstDay}-${item.lastDay} ${displayMonth}`;
+            const iconClass = getFestivalIcon(item.name, item.isBiblical);
+            const dateSubtitle = item.firstDay === item.lastDay 
+                ? `${item.firstDay} ${displayMonth}` 
+                : `${item.firstDay}–${item.lastDay} ${displayMonth}`;
 
             html += `<li class="settings-card event-card glass-panel info-trigger" 
                          data-info-title="${safeName}" 
@@ -730,16 +763,16 @@ export function renderEvents() {
 
     const FALLBACK_FESTIVALS = [
         { name: 'Yom Shabbat', category: 'shabbat', isBiblical: true, hdate: 'Sétimo Dia' },
-        { name: 'Yom Teruah', category: 'yomteruah', isBiblical: true, hdate: '01 Eitanim', month: 'Setembro' },
-        { name: 'Tzom Gedaliah', category: 'fast', isTraditional: true, hdate: '03 Eitanim', month: 'Setembro' },
-        { name: 'Yom Kippur', category: 'yomkippur', isBiblical: true, hdate: '10 Eitanim', month: 'Outubro' },
-        { name: 'Chag Sukkot', category: 'sukkot', isBiblical: true, hdate: '15-21 Eitanim', month: 'Outubro' },
-        { name: 'Shemini Atzeret', category: 'sheminiatzeret', isBiblical: true, hdate: '22 Eitanim', month: 'Outubro' },
-        { name: 'Chag Chanukah', category: 'chanukah', isTraditional: true, hdate: '25-2 Kislev', month: 'Dezembro' },
+        { name: 'Yom Teruah', category: 'yomteruah', isBiblical: true, hdate: '1 Etanim', month: 'Setembro' },
+        { name: 'Tzom Gedaliah', category: 'fast', isTraditional: true, hdate: '3 Etanim', month: 'Setembro' },
+        { name: 'Yom Kippur', category: 'yomkippur', isBiblical: true, hdate: '10 Etanim', month: 'Outubro' },
+        { name: 'Chag Sukkot', category: 'sukkot', isBiblical: true, hdate: '15–21 Etanim', month: 'Outubro' },
+        { name: 'Shemini Atzeret', category: 'sheminiatzeret', isBiblical: true, hdate: '22 Etanim', month: 'Outubro' },
+        { name: 'Chag Chanukah', category: 'chanukah', isTraditional: true, hdate: '25 Kislev – 2 Tevet', month: 'Dezembro' },
         { name: 'Yom Purim', category: 'purim', isTraditional: true, hdate: '14 Adar', month: 'Março' },
         { name: 'Yom Pessach', category: 'pesach', isBiblical: true, hdate: '14 Aviv', month: 'Abril' },
-        { name: 'Chag Matzot', category: 'matzot', isBiblical: true, hdate: '15-21 Aviv', month: 'Abril' },
-        { name: 'Yom Shavuot', category: 'shavuot', isBiblical: true, hdate: '06 Sivan', month: 'Junho' }
+        { name: 'Chag Matzot', category: 'matzot', isBiblical: true, hdate: '15–21 Aviv', month: 'Abril' },
+        { name: 'Yom Shavuot', category: 'shavuot', isBiblical: true, hdate: '6 Sivan', month: 'Junho' }
     ];
 
     while (unique.length < 5) {
