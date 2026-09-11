@@ -27,7 +27,8 @@ export function setCookie(name, value, maxAgeSeconds = NINETY_DAYS_SECONDS) {
     if (typeof document === 'undefined') return;
     try {
         const encodedVal = encodeURIComponent(value);
-        document.cookie = `${name}=${encodedVal}; max-age=${maxAgeSeconds}; path=/; SameSite=Lax`;
+        const secureFlag = (typeof location !== 'undefined' && location.protocol === 'https:') ? '; Secure' : '';
+        document.cookie = `${name}=${encodedVal}; max-age=${maxAgeSeconds}; path=/; SameSite=Lax${secureFlag}`;
     } catch (e) {}
 }
 
@@ -48,7 +49,8 @@ export function removePersistentSetting(key) {
     } catch (e) {}
     if (typeof document !== 'undefined') {
         try {
-            document.cookie = `${key}=; max-age=0; path=/; SameSite=Lax`;
+            const secureFlag = (typeof location !== 'undefined' && location.protocol === 'https:') ? '; Secure' : '';
+            document.cookie = `${key}=; max-age=0; path=/; SameSite=Lax${secureFlag}`;
         } catch (e) {}
     }
 }

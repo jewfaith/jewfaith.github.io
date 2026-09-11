@@ -36,9 +36,7 @@ export function getSupportOptionsModalHtml() {
                         allow="payment"
                         allowtransparency="true"
                         scrolling="no"
-                        loading="eager"
-                        onload="const p = document.getElementById('kofi-loading-spinner'); if(p) { p.classList.add('fade-out'); setTimeout(() => { p.style.display='none'; }, 260); }"
-                        onerror="const p = document.getElementById('kofi-loading-spinner'); if(p) { p.classList.add('fade-out'); setTimeout(() => { p.style.display='none'; }, 260); }">
+                        loading="eager">
                 </iframe>
             </div>
         </div>
@@ -48,14 +46,22 @@ export function getSupportOptionsModalHtml() {
 export function openSupportOptionsModal() {
     openInfoModal('Apoiar o Yisrael Date', getSupportOptionsModalHtml());
 
-    // Fallback de segurança para garantir que o spinner desaparece sempre
-    setTimeout(() => {
+    const hideSpinner = () => {
         const p = document.getElementById('kofi-loading-spinner');
         if (p) {
             p.classList.add('fade-out');
             setTimeout(() => { if (p) p.style.display = 'none'; }, 260);
         }
-    }, 2200);
+    };
+
+    const iframe = document.getElementById('kofi-embed-iframe');
+    if (iframe) {
+        iframe.addEventListener('load', hideSpinner, { once: true });
+        iframe.addEventListener('error', hideSpinner, { once: true });
+    }
+
+    // Fallback de segurança para garantir que o spinner desaparece sempre
+    setTimeout(hideSpinner, 2200);
 }
 
 function bindSupportEvents() {

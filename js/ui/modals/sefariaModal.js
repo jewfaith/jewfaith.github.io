@@ -18,6 +18,7 @@ import { closeModalSafely, closeOtherModalsOnDesktop } from './modalManager.js';
 import { trackMicroAction } from '../../utils/umamiMonitor.js';
 
 let isFetchingReading = false;
+let isSefariaModalInitialized = false;
 
 /**
  * Inicializa os ouvintes e gatilhos do modal Sefaria.
@@ -25,15 +26,12 @@ let isFetchingReading = false;
 export function initSefariaModal() {
     applyDailyReadingsToCards();
 
+    if (isSefariaModalInitialized || typeof document === 'undefined') return;
+    isSefariaModalInitialized = true;
+
     const triggerCards = document.querySelectorAll('.sefaria-category-card, #card-sefaria-random-wrapper, #card-sefaria-single');
     triggerCards.forEach(card => {
         const cat = card.getAttribute('data-category') || 'Mishnah';
-
-        card.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetRef = card.getAttribute('data-ref');
-            openSefariaModal(cat, targetRef);
-        });
         card.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -46,15 +44,6 @@ export function initSefariaModal() {
     const closeBtn = document.getElementById('close-sefaria-modal-btn');
     if (closeBtn) {
         closeBtn.addEventListener('click', closeSefariaModal);
-    }
-
-    const modal = document.getElementById('sefaria-modal');
-    if (modal) {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeSefariaModal();
-            }
-        });
     }
 }
 
@@ -202,7 +191,7 @@ function renderReadingContent(reading) {
         return `
             <div class="legend-card" style="align-items: flex-start; margin: 0;">
                 <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
-                    <div class="verse-text" style="padding-right: 0; text-align: left; font-size: var(--font-size-sm); white-space: normal; overflow: visible; text-overflow: clip;"><strong style="font-size: 0.78rem; opacity: 0.75; margin-right: 6px;">${displayNum}</strong>${formatHebrewInText(p)}</div>
+                    <div class="verse-text" style="padding-right: 0; text-align: left; font-size: var(--font-size-sm); white-space: normal; overflow: visible; text-overflow: clip;"><strong style="font-size: 0.78rem; opacity: 0.75; margin-right: 6px;">${displayNum}</strong>${formatHebrewInText(escapeHtml(p))}</div>
                 </div>
             </div>
         `;

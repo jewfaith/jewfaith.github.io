@@ -27,17 +27,14 @@ export function closeZmanimModal() {
     if (modal) closeModalSafely(modal);
 }
 
+let isZmanimModalInitialized = false;
+
 export function initZmanimModal() {
+    if (isZmanimModalInitialized || typeof document === 'undefined') return;
+    isZmanimModalInitialized = true;
+
     const closeBtn = document.getElementById('close-zmanim-modal-btn');
     if (closeBtn) closeBtn.addEventListener('click', closeZmanimModal);
-
-    document.addEventListener('click', (e) => {
-        const trigger = e.target.closest('.zmanim-trigger-btn, #card-zmanim-festivals');
-        if (trigger) {
-            e.preventDefault();
-            openZmanimModal();
-        }
-    });
 }
 
 function fmt(isoStr) {

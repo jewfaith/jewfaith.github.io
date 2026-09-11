@@ -465,12 +465,12 @@ export function renderPrivacyView(force = false) {
                  role="button" 
                  data-info-title="${ABOUT_PROJECT_TITLE}" 
                  data-info-html="${aboutModalHtml}" 
-                 aria-label="Sobre o Yisrael Date • Origem e Propósito" 
+                 aria-label="Sobre Nós • Origem e Propósito" 
                  style="cursor: pointer;">
                 <div class="settings-card-left">
                     <i class="fa-solid fa-compass settings-icon"></i>
                     <div class="settings-card-text">
-                        <span class="settings-card-title">Sobre Projeto</span>
+                        <span class="settings-card-title">Sobre Nós</span>
                         <span class="settings-card-desc">Origem Propósito</span>
                     </div>
                 </div>
@@ -514,17 +514,19 @@ export function renderPrivacyView(force = false) {
 }
 
 // Ouvinte de eventos global para o botão de expurgo
-document.addEventListener('click', (e) => {
-    if (e.target.closest('#modal-btn-purge, #btn-purge-privacy-data')) {
-        try {
-            localStorage.clear();
-            sessionStorage.clear();
-            document.cookie.split(";").forEach(c => {
-                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-            });
-            window.location.reload();
-        } catch (err) {
-            console.error('[Storage] Falha ao limpar dados locais.');
+if (typeof document !== 'undefined') {
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#modal-btn-purge, #btn-purge-privacy-data')) {
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                document.cookie.split(";").forEach(c => {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                });
+                window.location.reload();
+            } catch (err) {
+                console.error('[Storage] Falha ao limpar dados locais.');
+            }
         }
-    }
-});
+    });
+}

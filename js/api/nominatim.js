@@ -62,7 +62,7 @@ export async function fetchNominatimReverse(lat, lon) {
         lat: String(lat),
         lon: String(lon),
         'accept-language': 'pt',
-        email: NOMINATIM_USER_AGENT,
+        email: NOMINATIM_EMAIL,
         zoom: '10'
     });
 

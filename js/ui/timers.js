@@ -113,10 +113,7 @@ export function startTimers() {
                 nextUpdateForThisTimer = Math.max(500, endTimestamp - now + 500);
             } else if (now > endTimestamp) {
                 const card = timer.closest('.event-card');
-                const wrapper = card?.parentElement;
-                if (wrapper && typeof wrapper.remove === 'function') {
-                    wrapper.remove();
-                } else if (card && typeof card.remove === 'function') {
+                if (card && typeof card.remove === 'function') {
                     card.remove();
                 }
 

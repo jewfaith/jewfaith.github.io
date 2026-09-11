@@ -1,5 +1,4 @@
 import { state } from '../state.js';
-import { openZmanimModal } from './zmanimTable.js';
 import { ICONS } from './icons.js';
 import { getSelectedLocation, JERUSALEM_COORDS } from '../services/locationService.js';
 
@@ -27,7 +26,6 @@ export function renderSolarArcWidget() {
         </div>
     `;
 
-    document.getElementById('card-solar-glance')?.addEventListener('click', openZmanimModal);
     updateSolarPosition();
 }
 

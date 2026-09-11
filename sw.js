@@ -5,7 +5,7 @@
  * Garante funcionamento integral mesmo sem ligação à internet.
  */
 
-const SW_VERSION = 'yisrael-date-v2.9.79';
+const SW_VERSION = 'yisrael-date-v2.9.80';
 const APP_SHELL_CACHE = `app-shell-${SW_VERSION}`;
 
 const PRECACHE_ASSETS = [
@@ -179,16 +179,27 @@ self.addEventListener('fetch', (event) => {
 
     // Recursos estáticos locais (CSS, JS, Imagens, Manifest)
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            const fetchPromise = fetch(event.request).then((networkResponse) => {
+        caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+            if (cachedResponse) {
+                // Revalidação em segundo plano sem travar o carregamento imediato
+                fetch(event.request).then((networkResponse) => {
+                    if (networkResponse && networkResponse.status === 200) {
+                        const resClone = networkResponse.clone();
+                        caches.open(APP_SHELL_CACHE).then((cache) => cache.put(event.request, resClone));
+                    }
+                }).catch(() => {});
+                return cachedResponse;
+            }
+
+            return fetch(event.request).then((networkResponse) => {
                 if (networkResponse && networkResponse.status === 200) {
                     const resClone = networkResponse.clone();
                     caches.open(APP_SHELL_CACHE).then((cache) => cache.put(event.request, resClone));
                 }
                 return networkResponse;
-            }).catch(() => null);
-
-            return cachedResponse || fetchPromise;
+            }).catch(() => {
+                return new Response('', { status: 503, statusText: 'Offline Unavailable' });
+            });
         })
     );
 });

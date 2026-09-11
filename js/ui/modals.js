@@ -102,6 +102,8 @@ export function openPremiumGatedModal(featureName, readingTitle, refToOpen) {
     }
 }
 
+let isModalsInitialized = false;
+
 /**
  * Inicialização dos modais da aplicação e delegação de eventos do DOM.
  */
@@ -109,6 +111,9 @@ export function initModals(updateDashboardCallback) {
     if (updateDashboardCallback) {
         setLocationUpdateCallback(updateDashboardCallback);
     }
+
+    if (isModalsInitialized || typeof document === 'undefined') return;
+    isModalsInitialized = true;
 
     initModalGestures();
     initModalObserver();
