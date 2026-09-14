@@ -5,7 +5,7 @@
  * Garante funcionamento integral mesmo sem ligação à internet.
  */
 
-const SW_VERSION = 'yisrael-date-v2.9.80';
+const SW_VERSION = 'yisrael-date-v3.0.27';
 const APP_SHELL_CACHE = `app-shell-${SW_VERSION}`;
 
 const PRECACHE_ASSETS = [
@@ -13,6 +13,8 @@ const PRECACHE_ASSETS = [
     './style.css',
     './manifest.json',
     './icon.png',
+    './cup-border.png',
+    './kofi6.png',
     './robots.txt',
     './sitemap.xml',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
@@ -29,11 +31,13 @@ const PRECACHE_ASSETS = [
     './js/domain/formatters.js',
     './js/domain/halacha.js',
     './js/domain/parashot.js',
+    './js/domain/premiumProducts.js',
     './js/domain/scriptureRef.js',
     './js/services/bibleService.js',
     './js/services/locationService.js',
     './js/services/sefariaService.js',
     './js/ui/appNavigation.js',
+    './js/ui/components/homeProducts.js',
     './js/ui/components/shareModal.js',
     './js/ui/components/skeleton.js',
     './js/ui/components/supportCard.js',
@@ -48,7 +52,7 @@ const PRECACHE_ASSETS = [
     './js/ui/modals/sefariaModal.js',
     './js/ui/modals/welcomeModal.js',
     './js/ui/pcDisplayManager.js',
-    './js/ui/premiumView.js',
+    './js/ui/privacyView.js',
     './js/ui/solarArc.js',
     './js/ui/theme.js',
     './js/ui/themeSwitcher.js',
@@ -130,6 +134,23 @@ self.addEventListener('fetch', (event) => {
                     return caches.match('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css')
                         || new Response('', { status: 200, headers: { 'Content-Type': 'text/css' } });
                 });
+            })
+        );
+        return;
+    }
+
+    // Intercepta ativos oficiais do Ko-fi para funcionamento offline garantido
+    if (url.origin === 'https://storage.ko-fi.com') {
+        event.respondWith(
+            caches.match(event.request).then((cachedResponse) => {
+                if (cachedResponse) return cachedResponse;
+                return fetch(event.request).then((networkResponse) => {
+                    if (networkResponse && networkResponse.status === 200) {
+                        const resClone = networkResponse.clone();
+                        caches.open(APP_SHELL_CACHE).then((cache) => cache.put(event.request, resClone));
+                    }
+                    return networkResponse;
+                }).catch(() => caches.match('./kofi6.png'));
             })
         );
         return;

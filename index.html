@@ -56,7 +56,8 @@
     window.simulationHelp = simulationHelp;
   </script>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self' https://www.hebcal.com https://nominatim.openstreetmap.org https://bolls.life https://www.sefaria.org https://cloud.umami.is https://gateway.umami.is; frame-src https://ko-fi.com; img-src 'self' data: https:; manifest-src 'self';" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is https://storage.ko-fi.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://storage.ko-fi.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:; connect-src 'self' https://www.hebcal.com https://nominatim.openstreetmap.org https://bolls.life https://www.sefaria.org https://cloud.umami.is https://gateway.umami.is https://storage.ko-fi.com https://ko-fi.com; frame-src https://ko-fi.com https://*.ko-fi.com https://*.paypal.com https://*.stripe.com; img-src 'self' data: https:; manifest-src 'self';" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description"
     content="Calendário hebraico diário com horários haláchicos, leituras da Torá e ciclo de festas de Israel em tempo real." />
@@ -145,8 +146,10 @@
   <link rel="preconnect" href="https://cloud.umami.is" crossorigin />
   <link rel="preconnect" href="https://gateway.umami.is" crossorigin />
   <link rel="dns-prefetch" href="https://cloud.umami.is" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="style.css?v=2.9.80" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="style.css?v=3.0.27" />
 
   <!-- Umami Analytics (Cookieless, Privacy-First, RGPD & LGPD Compliant) -->
   <script id="umami-script" defer src="https://cloud.umami.is/script.js"
@@ -170,8 +173,10 @@
     <aside class="desktop-sidebar glass-panel" aria-label="Navegação Principal do Computador">
       <div class="sidebar-top">
         <div class="sidebar-brand-wrapper">
+          <img class="sidebar-brand-icon" src="./icon.png" alt="Yisrael Date" />
           <div class="sidebar-brand-text">
             <h1 class="app-brand-title">Yisrael Date</h1>
+            <span class="sidebar-brand-subtitle">Torah & Halachah</span>
           </div>
         </div>
       </div>
@@ -179,15 +184,15 @@
       <nav class="sidebar-nav">
         <button class="desktop-nav-btn active" data-tab="reading" aria-label="Início">
           <div class="nav-icon-wrap"><i class="fa-solid fa-house" data-icon="house"></i></div>
-          <span>Inicio</span>
+          <span class="nav-btn-label">Início</span>
         </button>
         <button class="desktop-nav-btn" data-tab="festivals" aria-label="Festas">
           <div class="nav-icon-wrap"><i class="fa-solid fa-menorah" data-icon="menorah"></i></div>
-          <span>Festas</span>
+          <span class="nav-btn-label">Festas</span>
         </button>
-        <button class="desktop-nav-btn" data-tab="privacy" aria-label="Termos">
-          <div class="nav-icon-wrap"><i class="fa-solid fa-scale-balanced" data-icon="privacy"></i></div>
-          <span>Termos</span>
+        <button class="desktop-nav-btn" data-tab="privacy" aria-label="Mais">
+          <div class="nav-icon-wrap"><i class="fa-solid fa-bars" data-icon="menu"></i></div>
+          <span class="nav-btn-label">Mais</span>
         </button>
       </nav>
 
@@ -219,7 +224,9 @@
       <!-- MOBILE ONLY: HEADER COMPACTO COM TÍTULO (< 768px) -->
       <header class="mobile-only-header">
         <div class="mobile-header-top-row">
-          <h1 class="mobile-brand-title">Yisrael Date</h1>
+          <div>
+            <h1 class="mobile-brand-title">Yisrael Date</h1>
+          </div>
           <img class="mobile-brand-icon" src="./icon.png" alt="Yisrael Date" style="width: 32px; height: 32px;" />
         </div>
       </header>
@@ -240,7 +247,7 @@
         <!-- ==========================================
              ABA 1: LEITURA (ARCO SOLAR, DATA & ESCRITURAS)
              ========================================== -->
-        <section id="view-reading" class="app-tab-view active" style="margin-top: 25px;">
+        <section id="view-reading" class="app-tab-view active">
           <!-- Bloco Superior: Localização & Parashá -->
           <div class="dashboard-glance-grid">
             <div class="settings-card event-card glass-panel not-ready location-trigger-btn" id="card-local-vigente"
@@ -407,31 +414,63 @@
               </div>
             </div>
           </div>
-          <div class="app-support-card"></div>
+
+          <!-- Seção 4: Produtos Apoio -->
+          <div class="festival-section-header">
+            <div class="festival-section-title-wrap">
+              <h2 class="festival-section-title">Produtos Apoio</h2>
+            </div>
+          </div>
+          <div id="home-products-grid" class="event-cards-row">
+            <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
+              <div class="settings-card-left">
+                <div class="skeleton-line"
+                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
+                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
+                    style="display: block; width: 68%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
+                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                </div>
+              </div>
+            </div>
+            <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
+              <div class="settings-card-left">
+                <div class="skeleton-line"
+                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
+                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
+                    style="display: block; width: 78%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
+                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                </div>
+              </div>
+            </div>
+            <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
+              <div class="settings-card-left">
+                <div class="skeleton-line"
+                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
+                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
+                    style="display: block; width: 58%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
+                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                </div>
+              </div>
+            </div>
+            <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
+              <div class="settings-card-left">
+                <div class="skeleton-line"
+                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
+                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
+                    style="display: block; width: 72%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
+                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- ==========================================
              ABA 2: FESTAS (BÍBLICAS E RABÍNICAS UNIFICADAS)
              ========================================== -->
-        <section id="view-festivals" class="app-tab-view" style="margin-top: 25px;">
+        <section id="view-festivals" class="app-tab-view">
           <!-- Mês Vigente (Data Hebraica) & Horário Litúrgico (Zmanim) -->
           <div class="event-cards-row">
-            <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-hdate-wrapper"
-              tabindex="0" role="button" aria-label="Calendário das Festas">
-              <div class="settings-card-left">
-                <i class="fa-solid fa-calendar-day settings-icon" data-icon="calendarDay"></i>
-                <div class="settings-card-text">
-                  <span class="settings-card-title" id="card-hdate"><span class="skeleton-line"
-                      style="display: inline-block; width: 75%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc" id="card-hdate-subtitle"><span class="skeleton-line"
-                      style="display: inline-block; width: 45%; height: 11px; border-radius: 3px;"></span></span>
-                </div>
-              </div>
-              <div class="card-arrow-action" aria-hidden="true">
-                <i class="fa-solid fa-arrow-right"></i>
-              </div>
-            </div>
-
             <div id="solar-arc-container">
               <div class="settings-card event-card glass-panel" id="card-solar-glance" tabindex="0" role="button"
                 aria-label="Ver Tabela Completa de Zmanim" style="cursor: pointer;">
@@ -445,6 +484,22 @@
                 <div class="card-arrow-action" aria-hidden="true">
                   <i class="fa-solid fa-arrow-right"></i>
                 </div>
+              </div>
+            </div>
+
+            <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-hdate-wrapper"
+              tabindex="0" role="button" aria-label="Calendário das Festas">
+              <div class="settings-card-left">
+                <i class="fa-solid fa-calendar-day settings-icon" data-icon="calendarDay"></i>
+                <div class="settings-card-text">
+                  <span class="settings-card-title" id="card-hdate"><span class="skeleton-line"
+                      style="display: inline-block; width: 75%; height: 16px; border-radius: 4px;"></span></span>
+                  <span class="settings-card-desc" id="card-hdate-subtitle"><span class="skeleton-line"
+                      style="display: inline-block; width: 45%; height: 11px; border-radius: 3px;"></span></span>
+                </div>
+              </div>
+              <div class="card-arrow-action" aria-hidden="true">
+                <i class="fa-solid fa-arrow-right"></i>
               </div>
             </div>
           </div>
@@ -566,16 +621,14 @@
               </div>
             </div>
           </div>
-          <div class="app-support-card"></div>
         </section>
 
 
         <!-- ==========================================
              ABA 3: PRIVACIDADE & CONFORMIDADE GLOBAL (55+ NORMAS)
              ========================================== -->
-        <section id="view-privacy" class="app-tab-view" style="margin-top: 25px;">
+        <section id="view-privacy" class="app-tab-view">
           <div id="privacy-content-container" style="display: contents;"></div>
-          <div class="app-support-card"></div>
         </section>
 
       </main>
@@ -593,9 +646,9 @@
         <div class="tab-icon-wrap"><i class="fa-solid fa-menorah" data-icon="menorah"></i></div>
         <span>Festas</span>
       </button>
-      <button class="app-tab-btn" data-tab="privacy" aria-label="Termos & Privacidade">
-        <div class="tab-icon-wrap"><i class="fa-solid fa-scale-balanced" data-icon="privacy"></i></div>
-        <span>Termos</span>
+      <button class="app-tab-btn" data-tab="privacy" aria-label="Mais">
+        <div class="tab-icon-wrap"><i class="fa-solid fa-bars" data-icon="menu"></i></div>
+        <span>Mais</span>
       </button>
     </nav>
 
@@ -689,7 +742,7 @@
     </div>
   </div>
 
-  <script type="module" src="js/main.js?v=2.9.80"></script>
+  <script type="module" src="js/main.js?v=3.0.12"></script>
 </body>
 
 </html>
