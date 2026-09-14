@@ -162,7 +162,7 @@ export function renderHomeProducts() {
                 </div>
             </div>
             <div class="card-arrow-action" aria-hidden="true">
-                <i class="fa-solid ${isSacredRest ? 'fa-lock' : 'fa-arrow-right'}"></i>
+                <i class="fa-solid fa-arrow-right"></i>
             </div>
         `;
 

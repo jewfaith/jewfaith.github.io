@@ -5,7 +5,7 @@
  * Garante funcionamento integral mesmo sem ligação à internet.
  */
 
-const SW_VERSION = 'yisrael-date-v3.0.27';
+const SW_VERSION = 'yisrael-date-v3.0.28';
 const APP_SHELL_CACHE = `app-shell-${SW_VERSION}`;
 
 const PRECACHE_ASSETS = [
