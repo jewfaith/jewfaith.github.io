@@ -5,7 +5,7 @@
  * Garante funcionamento integral mesmo sem ligação à internet.
  */
 
-const SW_VERSION = 'yisrael-date-v3.0.28';
+const SW_VERSION = 'yisrael-date-v3.3.1';
 const APP_SHELL_CACHE = `app-shell-${SW_VERSION}`;
 
 const PRECACHE_ASSETS = [
@@ -36,8 +36,10 @@ const PRECACHE_ASSETS = [
     './js/services/bibleService.js',
     './js/services/locationService.js',
     './js/services/sefariaService.js',
+    './js/services/telemetryService.js',
     './js/ui/appNavigation.js',
     './js/ui/components/homeProducts.js',
+    './js/ui/components/interactiveCalendar.js',
     './js/ui/components/shareModal.js',
     './js/ui/components/skeleton.js',
     './js/ui/components/supportCard.js',

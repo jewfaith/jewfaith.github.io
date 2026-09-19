@@ -877,6 +877,8 @@ function normalizeKey(str) {
     if (!str) return '';
     return str
         .replace(/^Parashat\s+/i, '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .replace(/[^a-z0-9]/g, '');
 }
@@ -894,6 +896,11 @@ NORMALIZED_PARASHA_MAP['kriatmoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
 NORMALIZED_PARASHA_MAP['cholhamoed'] = PARASHAH_DESCRIPTIONS['Chol HaMoed'];
 NORMALIZED_PARASHA_MAP['chutzlaaretz'] = PARASHAH_DESCRIPTIONS['Chutz laAretz'];
 NORMALIZED_PARASHA_MAP['laaretz'] = PARASHAH_DESCRIPTIONS['Chutz laAretz'];
+NORMALIZED_PARASHA_MAP['vezothaberacha'] = PARASHAH_DESCRIPTIONS['Vezot Habracha'];
+NORMALIZED_PARASHA_MAP['vezothaberachah'] = PARASHAH_DESCRIPTIONS['Vezot Habracha'];
+NORMALIZED_PARASHA_MAP['vzothaberachah'] = PARASHAH_DESCRIPTIONS['Vezot Habracha'];
+NORMALIZED_PARASHA_MAP['vzothaberacha'] = PARASHAH_DESCRIPTIONS['Vezot Habracha'];
+NORMALIZED_PARASHA_MAP['vezothabrachah'] = PARASHAH_DESCRIPTIONS['Vezot Habracha'];
 
 /**
  * Remove caracteres indesejados e filtra elementos duplicados mantendo a ordem.

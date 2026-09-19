@@ -476,8 +476,8 @@ export const DAILY_READINGS_POOL = {
         { ref: 'Pirkei Avot 4', displayTitle: 'Pirkei Avot 4' },
         { ref: 'Pirkei Avot 5', displayTitle: 'Pirkei Avot 5' },
         { ref: 'Pirkei Avot 6', displayTitle: 'Pirkei Avot 6' },
-        { ref: 'Mishnah Berakhot 1', displayTitle: 'Mishnah Berakhot 1' },
-        { ref: 'Mishnah Berakhot 2', displayTitle: 'Mishnah Berakhot 2' }
+        { ref: 'Mishnah Berakhot 1', displayTitle: 'Berakhot 1' },
+        { ref: 'Mishnah Berakhot 2', displayTitle: 'Berakhot 2' }
     ],
     Talmud: [
         { ref: 'Berakhot 2a', displayTitle: 'Berakhot 2a' },
@@ -494,25 +494,25 @@ export const DAILY_READINGS_POOL = {
         { ref: 'Shabbat 3b', displayTitle: 'Shabbat 3b' }
     ],
     Halakhah: [
-        { ref: 'Shulchan Arukh, Orach Chayim 1', displayTitle: 'Shulchan Arukh, Orach Chayim 1' },
-        { ref: 'Shulchan Arukh, Orach Chayim 2', displayTitle: 'Shulchan Arukh, Orach Chayim 2' },
-        { ref: 'Shulchan Arukh, Orach Chayim 3', displayTitle: 'Shulchan Arukh, Orach Chayim 3' },
-        { ref: 'Shulchan Arukh, Orach Chayim 4', displayTitle: 'Shulchan Arukh, Orach Chayim 4' },
-        { ref: 'Shulchan Arukh, Orach Chayim 5', displayTitle: 'Shulchan Arukh, Orach Chayim 5' },
-        { ref: 'Shulchan Arukh, Orach Chayim 6', displayTitle: 'Shulchan Arukh, Orach Chayim 6' },
-        { ref: 'Shulchan Arukh, Orach Chayim 7', displayTitle: 'Shulchan Arukh, Orach Chayim 7' },
-        { ref: 'Ben Ish Hai, Introduction 1', displayTitle: 'Ben Ish Hai, Introduction 1' }
+        { ref: 'Shulchan Arukh, Orach Chayim 1', displayTitle: 'Orach Chayim 1' },
+        { ref: 'Shulchan Arukh, Orach Chayim 2', displayTitle: 'Orach Chayim 2' },
+        { ref: 'Shulchan Arukh, Orach Chayim 3', displayTitle: 'Orach Chayim 3' },
+        { ref: 'Shulchan Arukh, Orach Chayim 4', displayTitle: 'Orach Chayim 4' },
+        { ref: 'Shulchan Arukh, Orach Chayim 5', displayTitle: 'Orach Chayim 5' },
+        { ref: 'Shulchan Arukh, Orach Chayim 6', displayTitle: 'Orach Chayim 6' },
+        { ref: 'Shulchan Arukh, Orach Chayim 7', displayTitle: 'Orach Chayim 7' },
+        { ref: 'Ben Ish Hai, Introduction 1', displayTitle: 'Ben Ish Hai 1' }
     ],
     Midrash: [
-        { ref: 'Mekhilta DeRabbi Shimon Ben Yochai 3', displayTitle: 'Mekhilta DeRabbi Shimon Ben Yochai 3' },
-        { ref: 'Mekhilta DeRabbi Shimon Ben Yochai 4', displayTitle: 'Mekhilta DeRabbi Shimon Ben Yochai 4' },
-        { ref: 'Mekhilta DeRabbi Shimon Ben Yochai 6', displayTitle: 'Mekhilta DeRabbi Shimon Ben Yochai 6' },
-        { ref: 'Mekhilta DeRabbi Yishmael, Tractate Pischa 1', displayTitle: 'Mekhilta DeRabbi Yishmael, Tractate Pischa 1' },
-        { ref: 'Sifrei Zuta; Midrashah shel Lod, Preface', displayTitle: 'Sifrei Zuta; Midrashah shel Lod, Preface' }
+        { ref: 'Mekhilta DeRabbi Shimon Ben Yochai 3', displayTitle: 'Mekhilta Shimon 3' },
+        { ref: 'Mekhilta DeRabbi Shimon Ben Yochai 4', displayTitle: 'Mekhilta Shimon 4' },
+        { ref: 'Mekhilta DeRabbi Shimon Ben Yochai 6', displayTitle: 'Mekhilta Shimon 6' },
+        { ref: 'Mekhilta DeRabbi Yishmael, Tractate Pischa 1', displayTitle: 'Mekhilta Pischa 1' },
+        { ref: 'Sifrei Zuta; Midrashah shel Lod, Preface', displayTitle: 'Sifrei Zuta' }
     ],
     Chasidut: [
-        { ref: 'Tiferet Yosef, Rosh Hashanah 1', displayTitle: 'Tiferet Yosef, Rosh Hashanah 1' },
-        { ref: 'Tiferet Yosef, Rosh Hashanah 2', displayTitle: 'Tiferet Yosef, Rosh Hashanah 2' }
+        { ref: 'Tiferet Yosef, Rosh Hashanah 1', displayTitle: 'Tiferet Yosef 1' },
+        { ref: 'Tiferet Yosef, Rosh Hashanah 2', displayTitle: 'Tiferet Yosef 2' }
     ],
     Kabbalah: [
         { ref: 'Sefer Yetzirah 2', displayTitle: 'Sefer Yetzirah 2' },
@@ -520,7 +520,7 @@ export const DAILY_READINGS_POOL = {
         { ref: 'Sefer Yetzirah 4', displayTitle: 'Sefer Yetzirah 4' },
         { ref: 'Sefer Yetzirah 5', displayTitle: 'Sefer Yetzirah 5' },
         { ref: 'Sefer Yetzirah 6', displayTitle: 'Sefer Yetzirah 6' },
-        { ref: 'Zohar, Introduction 1', displayTitle: 'Zohar, Introduction 1' }
+        { ref: 'Zohar, Introduction 1', displayTitle: 'Zohar 1' }
     ]
 };
 
@@ -540,13 +540,14 @@ export const UNIFIED_LITERATURE_POOL = Object.freeze(
 );
 
 /**
- * Obtém a leitura unificada de literatura judaica para o ciclo atual de 8 horas.
+ * Obtém a leitura unificada de literatura judaica para o dia haláchico actual.
+ * A rotação ocorre exclusivamente ao pôr do sol (Shekiyah), acompanhando
+ * a transição do dia judaico conforme a Torá.
  */
-export function getUnifiedLiteratureReading(date = new Date()) {
+export function getUnifiedLiteratureReading(date = new Date(), sunsetTime = null) {
     if (!UNIFIED_LITERATURE_POOL || UNIFIED_LITERATURE_POOL.length === 0) return null;
-    const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
-    const cycleIndex = Math.floor(date.getTime() / EIGHT_HOURS_MS);
-    const index = Math.abs(cycleIndex) % UNIFIED_LITERATURE_POOL.length;
+    const halachicDay = getHalachicDayNumber(date, sunsetTime);
+    const index = Math.abs(halachicDay) % UNIFIED_LITERATURE_POOL.length;
     return UNIFIED_LITERATURE_POOL[index];
 }
 
@@ -601,9 +602,9 @@ export function getDailyDateKey(date = new Date()) {
 }
 
 /**
- * Obtém a passagem da categoria para o ciclo atual de 8 horas (3 vezes ao dia).
- * A rotação é determinística e muda a cada 8 horas, acompanhando os 3 momentos
- * tradicionais de estudo e reflexão no Judaísmo (Shacharit / Mincha / Arvit).
+ * Obtém a passagem da categoria para o dia haláchico actual.
+ * A rotação é determinística e muda ao pôr do sol (Shekiyah),
+ * acompanhando a transição do dia judaico conforme a Torá.
  * 
  * @param {string} category Categoria literária
  * @param {Date} [date] Data de referência (padrão: agora)
@@ -613,11 +614,9 @@ export function getDailyReadingForCategory(category, date = new Date(), sunsetTi
     const pool = DAILY_READINGS_POOL[category];
     if (!pool || pool.length === 0) return null;
 
-    // Ciclo dinâmico de 8 em 8 horas (3 intervalos diários: Manhã, Tarde e Noite)
-    const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
-    const cycleIndex = Math.floor(date.getTime() / EIGHT_HOURS_MS);
+    const halachicDay = getHalachicDayNumber(date, sunsetTime);
     const offset = DAILY_CATEGORY_OFFSETS[category] || 0;
-    const index = Math.abs(cycleIndex + offset) % pool.length;
+    const index = Math.abs(halachicDay + offset) % pool.length;
 
     return pool[index];
 }
@@ -632,8 +631,98 @@ export const SEFARIA_CARD_SUBTITLES = Object.freeze({
 });
 
 /**
- * Atualiza o cartão de literatura judaica no DOM com a passagem do ciclo atual de 8 horas.
- * O título do cartão exibe o nome da parte (ex.: Pirkei Avot 3) e o subtítulo a tradição.
+ * Formata o título da literatura judaica para exibição curta e concisa no cartão,
+ * evitando títulos longos ou sobrecarregados de caracteres.
+ * 
+ * @param {string} rawTitle 
+ * @returns {string} Título curto (ex.: "Sifrei Zuta", "Orach Chayim 1", "Pirkei Avot 1")
+ */
+export function formatShortLiteratureTitle(rawTitle) {
+    if (!rawTitle) return 'Literatura';
+    let clean = String(rawTitle).trim();
+
+    // Casos específicos conhecidos
+    if (clean.includes('Sifrei Zuta')) return 'Sifrei Zuta';
+    if (clean.includes('Mekhilta') && (clean.includes('Shimon') || clean.includes('Yochai'))) {
+        const num = clean.match(/\d+/)?.[0] || '';
+        return num ? `Mekhilta Shimon ${num}` : 'Mekhilta Shimon';
+    }
+    if (clean.includes('Mekhilta') && (clean.includes('Yishmael') || clean.includes('Pischa'))) {
+        const num = clean.match(/\d+/)?.[0] || '';
+        return num ? `Mekhilta Pischa ${num}` : 'Mekhilta Pischa';
+    }
+    if (clean.includes('Kitzur Shulchan Arukh')) {
+        const num = clean.match(/\d+/)?.[0] || '';
+        return num ? `Kitzur Shulchan ${num}` : 'Kitzur Shulchan';
+    }
+    if (clean.includes('Shulchan Arukh') || clean.includes('Orach Chayim')) {
+        const num = clean.match(/\d+/)?.[0] || '';
+        return num ? `Orach Chayim ${num}` : 'Orach Chayim';
+    }
+    if (clean.includes('Ben Ish Hai')) {
+        const num = clean.match(/\d+/)?.[0] || '';
+        return num ? `Ben Ish Hai ${num}` : 'Ben Ish Hai';
+    }
+    if (clean.includes('Tiferet Yosef')) {
+        const num = clean.match(/\d+/)?.[0] || '';
+        return num ? `Tiferet Yosef ${num}` : 'Tiferet Yosef';
+    }
+    if (clean.startsWith('Mishnah Berakhot')) {
+        clean = clean.replace('Mishnah Berakhot', 'Berakhot');
+    } else if (clean.startsWith('Mishnah ')) {
+        clean = clean.replace(/^Mishnah\s+/i, '');
+    }
+    if (clean.includes('Zohar')) {
+        const num = clean.match(/\d+/)?.[0] || '1';
+        return `Zohar ${num}`;
+    }
+    if (clean.includes('Sefer Yetzirah') || clean.includes('Yetzirah')) {
+        const num = clean.match(/\d+/)?.[0] || '';
+        return num ? `Sefer Yetzirah ${num}` : 'Sefer Yetzirah';
+    }
+    if (clean.includes('Pirkei Avot') || clean.includes('Avot')) {
+        const num = clean.match(/\d+/)?.[0] || '';
+        return num ? `Pirkei Avot ${num}` : 'Pirkei Avot';
+    }
+    if (clean.includes('Mesillat Yesharim')) {
+        return 'Mesillat Yesharim';
+    }
+    if (clean.includes('Chovot HaLevavot')) {
+        return 'Chovot HaLevavot';
+    }
+    if (clean.includes('Tanya')) {
+        return 'Tanya';
+    }
+    if (clean.includes('Mishneh Torah') || clean.includes('Rambam')) {
+        return 'Mishneh Torah';
+    }
+
+    // Se contiver delimitadores como ponto e vírgula ou vírgula
+    if (clean.includes(';')) {
+        clean = clean.split(';')[0].trim();
+    }
+    if (clean.includes(',')) {
+        clean = clean.split(',')[0].trim();
+    }
+
+    // Remove sufixo de versículo (:1 ou :1-4) para manter capítulo/seção conciso
+    clean = clean.replace(/:\d+(?:-\d+)?$/, '').trim();
+
+    // Se ainda for longo (> 20 caracteres), encurta para até 2 palavras essenciais
+    if (clean.length > 20) {
+        const parts = clean.split(/\s+/);
+        if (parts.length > 2) {
+            clean = `${parts[0]} ${parts[1]}`;
+        }
+    }
+
+    return clean;
+}
+
+/**
+ * Atualiza o cartão de literatura judaica no DOM com a passagem do dia haláchico actual.
+ * A rotação ocorre ao pôr do sol (Shekiyah), acompanhando o início do novo dia judaico.
+ * O título do cartão exibe o nome da parte em formato curto e o subtítulo a tradição.
  * 
  * @param {Date} [date] Data de referência
  * @param {number|null} [sunsetTime] Timestamp do pôr do sol
@@ -641,10 +730,11 @@ export const SEFARIA_CARD_SUBTITLES = Object.freeze({
 export function applyDailyReadingsToCards(date = new Date(), sunsetTime = null) {
     if (typeof document === 'undefined') return;
 
-    const currentItem = getUnifiedLiteratureReading(date) || getRandomLiteratureItem();
+    const currentItem = getUnifiedLiteratureReading(date, sunsetTime) || getRandomLiteratureItem();
     if (!currentItem) return;
 
-    const partTitle = currentItem.displayTitle || currentItem.ref || '';
+    const rawPartTitle = currentItem.displayTitle || currentItem.ref || '';
+    const partTitle = formatShortLiteratureTitle(rawPartTitle);
     const subTitle = (currentItem.category && SEFARIA_CARD_SUBTITLES[currentItem.category]) || 'Obras Clássicas';
     const categoryIcon = (currentItem.category && CATEGORY_ICONS[currentItem.category]) || 'fa-solid fa-building-columns';
 

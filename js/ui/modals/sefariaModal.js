@@ -11,8 +11,10 @@ import {
     getRandomCategory,
     fetchReadingByRef,
     getRandomReading,
-    applyDailyReadingsToCards
+    applyDailyReadingsToCards,
+    formatShortLiteratureTitle
 } from '../../services/sefariaService.js';
+import { state } from '../../state.js';
 import { escapeHtml, formatHebrewInText } from '../../domain/formatters.js';
 import { closeModalSafely, closeOtherModalsOnDesktop } from './modalManager.js';
 import { trackMicroAction } from '../../utils/umamiMonitor.js';
@@ -57,8 +59,9 @@ export async function openSefariaModal(category = null, targetRef = null) {
     const body = document.getElementById('sefaria-modal-body');
     if (!modal || !body) return;
 
-    const item = targetRef ? { ref: targetRef, category } : (getUnifiedLiteratureReading() || getRandomLiteratureItem());
-    const partTitle = targetRef || item?.displayTitle || item?.ref || '';
+    const item = targetRef ? { ref: targetRef, category } : (getUnifiedLiteratureReading(new Date(), state.currentSunsetTime || null) || getRandomLiteratureItem());
+    const rawTitle = item?.displayTitle || targetRef || item?.ref || '';
+    const partTitle = formatShortLiteratureTitle(rawTitle);
 
     const titleEl = document.getElementById('sefaria-modal-title');
     const subtitleEl = document.getElementById('sefaria-modal-subtitle');
@@ -126,7 +129,7 @@ async function renderSefariaModalView(targetRef = null, category = null) {
         if (targetRef) {
             reading = await fetchReadingByRef(targetRef, category);
         } else {
-            const item = getUnifiedLiteratureReading() || getRandomLiteratureItem();
+            const item = getUnifiedLiteratureReading(new Date(), state.currentSunsetTime || null) || getRandomLiteratureItem();
             if (item) {
                 reading = await fetchReadingByRef(item.ref, item.category);
             } else {
@@ -139,7 +142,7 @@ async function renderSefariaModalView(targetRef = null, category = null) {
         if (reading && reading.ok) {
             const titleEl = document.getElementById('sefaria-modal-title');
             if (titleEl) {
-                titleEl.textContent = reading.ref || reading.title || '';
+                titleEl.textContent = formatShortLiteratureTitle(reading.ref || reading.title || '');
             }
         }
 
@@ -188,10 +191,11 @@ function renderReadingContent(reading) {
     const paragraphsHtml = (reading.paragraphs || []).map((p, idx) => {
         const verseNum = idx + 1;
         const displayNum = sectionNum ? `${sectionNum}:${verseNum}` : `${verseNum}`;
+        const cleanText = String(p || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
         return `
             <div class="legend-card" style="align-items: flex-start; margin: 0;">
                 <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
-                    <div class="verse-text" style="padding-right: 0; text-align: left; font-size: var(--font-size-sm); white-space: normal; overflow: visible; text-overflow: clip;"><strong style="font-size: 0.78rem; opacity: 0.75; margin-right: 6px;">${displayNum}</strong>${formatHebrewInText(escapeHtml(p))}</div>
+                    <div class="verse-text" style="padding-right: 0; text-align: left; font-size: var(--font-size-sm); white-space: normal; overflow: visible; text-overflow: clip;"><strong style="font-size: 0.78rem; opacity: 0.75; margin-right: 6px;">${displayNum}</strong> ${formatHebrewInText(escapeHtml(cleanText))}</div>
                 </div>
             </div>
         `;

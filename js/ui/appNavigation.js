@@ -1,41 +1,62 @@
 import { renderPrivacyView } from './privacyView.js';
 import { renderFestivalsView } from './festivalsView.js';
 import { trackMicroAction } from '../utils/umamiMonitor.js';
+import { trackHeartEvent, trackFeatureAdoption } from '../services/telemetryService.js';
 
 const TAB_HASH_MAP = {
-    'reading': 'inicio',
-    'festivals': 'festas',
+    'hoje': 'hoje',
+    'reading': 'hoje',
+    'calendar': 'calendario',
+    'festivals': 'calendario',
     'privacy': 'mais'
 };
 
 const HASH_TAB_MAP = {
+    // Nova Aba Hoje
+    'hoje': 'hoje',
+    'today': 'hoje',
+    'inicio': 'hoje',
+    'início': 'hoje',
+    'reading': 'hoje',
+    'data': 'hoje',
+    'tora': 'hoje',
+    'torá': 'hoje',
+    'torah': 'hoje',
+    'premium': 'hoje',
+    'loja': 'hoje',
+    'store': 'hoje',
+    'produtos': 'hoje',
+    'conteudos': 'hoje',
+    'conteúdos': 'hoje',
+    'chat': 'hoje',
+    'batepapo': 'hoje',
+    'conta': 'hoje',
+    'account': 'hoje',
+    'login': 'hoje',
+    'registo': 'hoje',
+    'registro': 'hoje',
+    'perfil': 'hoje',
+
+    // Nova Aba Calendário
+    'calendario': 'calendar',
+    'calendário': 'calendar',
+    'calendar': 'calendar',
+    'festas': 'calendar',
+    'festivals': 'calendar',
+    'rito': 'calendar',
+    'moed': 'calendar',
+    'moadim': 'calendar',
+
+    // Aba Mais / Privacidade / Definições
     'mais': 'privacy',
     'info': 'privacy',
     'definicoes': 'privacy',
     'definições': 'privacy',
     'configuracoes': 'privacy',
     'configurações': 'privacy',
-    'calendario': 'reading',
-    'calendário': 'reading',
     'termos': 'privacy',
-    'data': 'reading',
-    'rito': 'festivals',
     'controlo': 'privacy',
     'controle': 'privacy',
-    'tora': 'reading',
-    'torá': 'reading',
-    'torah': 'reading',
-    'inicio': 'reading',
-    'início': 'reading',
-    'reading': 'reading',
-    'festas': 'festivals',
-    'festivals': 'festivals',
-    'premium': 'reading',
-    'loja': 'reading',
-    'store': 'reading',
-    'produtos': 'reading',
-    'conteudos': 'reading',
-    'conteúdos': 'reading',
     'privacidade': 'privacy',
     'privacy': 'privacy',
     'conformidade': 'privacy',
@@ -46,29 +67,21 @@ const HASH_TAB_MAP = {
     'lgpd': 'privacy',
     'legal': 'privacy',
     'extras': 'privacy',
-    'tools': 'privacy',
-    'chat': 'reading',
-    'batepapo': 'reading',
-    'conta': 'reading',
-    'account': 'reading',
-    'login': 'reading',
-    'registo': 'reading',
-    'registro': 'reading',
-    'perfil': 'reading'
+    'tools': 'privacy'
 };
 
 let isNavInitialized = false;
 
 export function getActiveTabFromUrl() {
-    if (typeof window === 'undefined') return 'reading';
+    if (typeof window === 'undefined') return 'hoje';
 
-    // 1. Verifica Hash na URL (#inicio, #festas, #privacidade, #chat, #conta)
+    // 1. Verifica Hash na URL (#hoje, #calendario, #mais, #inicio, #festas, etc.)
     const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase().trim();
     if (hash && HASH_TAB_MAP[hash]) {
         return HASH_TAB_MAP[hash];
     }
 
-    // 2. Verifica Query Params (?tab=privacidade)
+    // 2. Verifica Query Params (?tab=calendario)
     try {
         const params = new URLSearchParams(window.location.search);
         const tabParam = params.get('tab')?.toLowerCase().trim();
@@ -77,24 +90,34 @@ export function getActiveTabFromUrl() {
         }
     } catch (e) { }
 
-    // 3. A página inicial padrão de todo o site é sempre 'reading' (Início)
-    return 'reading';
+    // 3. A página inicial padrão do site é sempre 'hoje'
+    return 'hoje';
 }
 
 const DESKTOP_HEADER_METADATA = {
+    'hoje': {
+        tag: 'Tempo Presente',
+        title: 'Hoje • Tempo Presente',
+        desc: 'Acompanhamento diário essencial, Zmanim astronómicos e leituras sagradas'
+    },
     'reading': {
         tag: 'Tempo Presente',
-        title: 'Calendário da Torá',
-        desc: 'Acompanhamento astronómico do ciclo solar, Zmanim e leituras sagradas diárias'
+        title: 'Hoje • Tempo Presente',
+        desc: 'Acompanhamento diário essencial, Zmanim astronómicos e leituras sagradas'
+    },
+    'calendar': {
+        tag: 'Ciclo Litúrgico',
+        title: 'Calendário Mensal & Festas',
+        desc: 'Navegação mensal completa, santas convocações da Torá e comemorações históricas'
     },
     'festivals': {
-        tag: 'Santas Convocações',
-        title: 'Festas & Moadim',
-        desc: 'Ciclo sagrado ordenado em Levítico 23 e comemorações históricas de Israel'
+        tag: 'Ciclo Litúrgico',
+        title: 'Calendário Mensal & Festas',
+        desc: 'Navegação mensal completa, santas convocações da Torá e comemorações históricas'
     },
     'privacy': {
         tag: 'Definições & Mais',
-        title: 'Mais Opções',
+        title: 'Mais Opções & Definições',
         desc: 'Definições personalizadas, salvaguardas de privacidade e informações institucionais'
     }
 };
@@ -116,34 +139,50 @@ function updateDesktopHeader(targetTab) {
 export function switchTab(targetTab, updateUrl = true, smoothScroll = true, userGesture = false) {
     if (!targetTab) return;
 
-    trackMicroAction('tab_change', { tab: targetTab });
-    updateDesktopHeader(targetTab);
+    // Normaliza nome da aba para compatibilidade canónica
+    let canonicalTab = targetTab;
+    if (targetTab === 'reading') canonicalTab = 'hoje';
+    else if (targetTab === 'festivals') canonicalTab = 'calendar';
+
+    trackMicroAction('tab_change', { tab: canonicalTab });
+    trackHeartEvent('tab_view', { tab: canonicalTab, userGesture });
+    trackFeatureAdoption(`tab_${canonicalTab}`);
+    updateDesktopHeader(canonicalTab);
 
     const allTabButtons = document.querySelectorAll('[data-tab]');
     const tabViews = document.querySelectorAll('.app-tab-view');
 
     // Sincroniza estado ativo em todos os botões (desktop sidebar e mobile tabbar)
     allTabButtons.forEach(b => {
-        b.classList.toggle('active', b.getAttribute('data-tab') === targetTab);
+        const bTab = b.getAttribute('data-tab');
+        const isActive = (bTab === canonicalTab) ||
+                         (canonicalTab === 'hoje' && bTab === 'reading') ||
+                         (canonicalTab === 'calendar' && bTab === 'festivals');
+        b.classList.toggle('active', isActive);
+        b.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
 
-    // Alterna a exibição das abas
+    // Alterna a exibição das abas (suporta tanto IDs novos como IDs legados)
     tabViews.forEach(view => {
-        view.classList.toggle('active', view.id === `view-${targetTab}`);
+        const isTarget = (view.id === `view-${canonicalTab}`) ||
+                         (canonicalTab === 'hoje' && (view.id === 'view-reading' || view.id === 'view-hoje')) ||
+                         (canonicalTab === 'calendar' && (view.id === 'view-festivals' || view.id === 'view-calendar')) ||
+                         (canonicalTab === 'privacy' && view.id === 'view-privacy');
+        view.classList.toggle('active', isTarget);
     });
 
-    // Atualiza a URL na barra de endereço (#inicio, #festas, #extras, #chat, #conta)
-    const hashName = TAB_HASH_MAP[targetTab] || 'inicio';
+    // Atualiza a URL na barra de endereço (#hoje, #calendario, #mais)
+    const hashName = TAB_HASH_MAP[canonicalTab] || 'hoje';
     if (updateUrl && typeof window !== 'undefined') {
         try {
             history.replaceState(null, '', '#' + hashName);
-            localStorage.setItem('yisrael_active_tab', targetTab);
+            localStorage.setItem('yisrael_active_tab', canonicalTab);
         } catch (e) {
             window.location.hash = hashName;
         }
     }
 
-    // Rola para o topo suavemente ao alternar de aba (tanto window em mobile como app-main-area no desktop)
+    // Rola para o topo suavemente ao alternar de aba
     if (smoothScroll && typeof window !== 'undefined') {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         const mainArea = document.querySelector('.app-main-area');
@@ -152,15 +191,14 @@ export function switchTab(targetTab, updateUrl = true, smoothScroll = true, user
         }
     }
 
-    // Resposta tátil apenas quando o utilizador toca explicitamente num botão (evita intervenção do navegador no boot)
+    // Resposta tátil quando o utilizador toca explicitamente num botão
     if (userGesture && typeof navigator !== 'undefined' && navigator.vibrate) {
         try {
             navigator.vibrate(10);
         } catch (e) { }
     }
 
-    if (targetTab === 'privacy') {
-        // Fecha modais caso o utilizador tenha clicado a partir de um modal
+    if (canonicalTab === 'privacy') {
         if (typeof document !== 'undefined') {
             document.querySelectorAll('.modal-overlay').forEach(m => {
                 m.style.display = 'none';
@@ -169,7 +207,7 @@ export function switchTab(targetTab, updateUrl = true, smoothScroll = true, user
             document.body.classList.remove('modal-open');
         }
         renderPrivacyView();
-    } else if (targetTab === 'festivals') {
+    } else if (canonicalTab === 'calendar') {
         renderFestivalsView();
     }
 }

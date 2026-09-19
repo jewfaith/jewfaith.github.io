@@ -77,14 +77,14 @@ export function getHebrewMonthLength(monthIndex, hYear = 5786) {
     const isLeap = isHebrewLeapYear(hYear);
 
     switch (monthIndex) {
-        case 1: return 30; // Aviv (Nisan)
-        case 2: return 29; // Ziv (Iyyar)
+        case 1: return 30; // Aviv
+        case 2: return 29; // Ziv
         case 3: return 30; // 3º mês (Sivan)
         case 4: return 29; // 4º mês (Tamuz)
         case 5: return 30; // 5º mês (Av)
         case 6: return 29; // 6º mês (Elul)
-        case 7: return 30; // 7º mês / Eitanim (Tishrei)
-        case 8: return (yLen === 355 || yLen === 385) ? 30 : 29; // Bul / Cheshvan
+        case 7: return 30; // Etanim
+        case 8: return (yLen === 355 || yLen === 385) ? 30 : 29; // Bul
         case 9: return (yLen === 353 || yLen === 383) ? 29 : 30; // 9º mês / Kislev
         case 10: return 29; // 10º mês (Tevet)
         case 11: return 30; // 11º mês (Shevat)

@@ -184,15 +184,13 @@ export function formatCardTwoWords(str, fallback = 'Sagrado') {
 }
 
 /**
- * Formata nome da Parashá semanal com o título completo (sem limitador de duas palavras).
+ * Formata nome da Parashá semanal com o título limpo (sem prefixo Parashat e sem limite de palavras/caracteres).
  */
 export function formatTwoWordParasha(rawTitle) {
-    if (!rawTitle || rawTitle === '-') return 'Parashá Semanal';
+    if (!rawTitle || rawTitle === '-') return '-';
     let clean = String(rawTitle).replace(/[\u2018\u2019]/g, "'").trim();
-    if (!clean.startsWith('Parashat ') && !clean.startsWith('Parashá ')) {
-        clean = `Parashat ${clean}`;
-    }
-    return clean;
+    clean = clean.replace(/^(?:Parashat|Parashá|Parashah|Parasha)\s+/i, '').trim();
+    return clean || '-';
 }
 
 /**

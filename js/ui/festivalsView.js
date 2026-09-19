@@ -2,6 +2,7 @@ import { ICONS } from './icons.js';
 import { FESTIVAL_DESCRIPTIONS, FESTIVAL_NAME_MAPPINGS, HEBREW_MONTHS_PT } from '../domain/constants.js';
 import { state } from '../state.js';
 import { updateShaahZmanitCardPosition } from './solarArc.js';
+import { renderInteractiveCalendar } from './components/interactiveCalendar.js';
 
 export function getFestivalIcon(name, isBiblical = false) {
     const nm = (name || '').toLowerCase();
@@ -264,6 +265,69 @@ export function getAutomaticFestivals() {
     };
 }
 
+export const SPECIAL_SHABBATOT_DATA = [
+    {
+        key: 'Yom Shabbat',
+        title: 'Yom Shabbat',
+        date: 'Sétimo Dia Semanal',
+        icon: 'fa-solid fa-candle-holder'
+    },
+    {
+        key: 'Shabbat Shekalim',
+        title: 'Shabbat Shekalim',
+        date: 'Antes de Adar / Aviv',
+        icon: 'fa-solid fa-coins'
+    },
+    {
+        key: 'Shabbat Zachor',
+        title: 'Shabbat Zachor',
+        date: 'Antes de Purim',
+        icon: 'fa-solid fa-shield-halved'
+    },
+    {
+        key: 'Shabbat Parah',
+        title: 'Shabbat Parah',
+        date: 'Purificação Cerimonial',
+        icon: 'fa-solid fa-droplet'
+    },
+    {
+        key: 'Shabbat HaChodesh',
+        title: 'Shabbat HaChodesh',
+        date: 'Antes de Aviv',
+        icon: 'fa-solid fa-moon'
+    },
+    {
+        key: 'Shabbat HaGadol',
+        title: 'Shabbat HaGadol',
+        date: 'Antes de Pessach',
+        icon: 'fa-solid fa-bread-slice'
+    },
+    {
+        key: 'Shabbat Shirah',
+        title: 'Shabbat Shirah',
+        date: 'Cântico do Mar',
+        icon: 'fa-solid fa-music'
+    },
+    {
+        key: 'Shabbat Chazon',
+        title: 'Shabbat Chazon',
+        date: 'Visão Profética',
+        icon: 'fa-solid fa-eye'
+    },
+    {
+        key: 'Shabbat Nachamu',
+        title: 'Shabbat Nachamu',
+        date: 'Consolação Divina',
+        icon: 'fa-solid fa-heart'
+    },
+    {
+        key: 'Shabbat Shuvah',
+        title: 'Shabbat Shuvah',
+        date: 'Dias de Teshuvá',
+        icon: 'fa-solid fa-rotate-left'
+    }
+];
+
 function buildFestivalModalHTML(festival) {
     const rawData = FESTIVAL_DESCRIPTIONS[festival.key] ||
         FESTIVAL_DESCRIPTIONS[festival.title] ||
@@ -302,12 +366,188 @@ function buildFestivalModalHTML(festival) {
     return bodyHTML;
 }
 
+export function renderFestivalCard(f) {
+    const modalHTML = buildFestivalModalHTML(f);
+    const cardTitle = formatTwoWordTitle(f.title);
+    const cardDate = ensureTwoWords(f.date);
+    return `
+        <div class="settings-card event-card glass-panel info-trigger" 
+             tabindex="0" 
+             role="button" 
+             data-info-title="${cardTitle}" 
+             data-info-html="${modalHTML.replace(/"/g, '&quot;')}"
+             aria-label="${cardTitle}"
+             style="cursor: pointer;">
+            <div class="settings-card-left">
+                <i class="${f.icon} settings-icon"></i>
+                <div class="settings-card-text">
+                    <span class="settings-card-title">${cardTitle}</span>
+                    <span class="settings-card-desc">${cardDate}</span>
+                </div>
+            </div>
+            <div class="card-arrow-action" aria-hidden="true">
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
+        </div>
+    `;
+}
+
+function matchesHebrewMonth(ev, targetMonth) {
+    if (!targetMonth) return true;
+    const t = String(targetMonth).toLowerCase().trim();
+    const d = String(ev.date || '').toLowerCase().trim();
+    const k = String(ev.key || '').toLowerCase().trim();
+
+    // Yom Shabbat é observado em todas as semanas de todos os meses
+    if (ev.key === 'Yom Shabbat') return true;
+
+    const isAviv = t.includes('aviv') || t.includes('nisan') || t.includes('nissan');
+    const isZiv = t.includes('ziv') || t.includes('iyar') || t.includes('iyyar');
+    const isSivan = t.includes('sivan');
+    const isTamuz = t.includes('tamuz') || t.includes('tammuz');
+    const isAv = (t.includes('av') && !t.includes('aviv')) || t.includes('ab');
+    const isElul = t.includes('elul');
+    const isEtanim = t.includes('etanim') || t.includes('tishrei') || t.includes('tishri');
+    const isBul = t.includes('bul') || t.includes('cheshvan') || t.includes('marcheshvan');
+    const isKislev = t.includes('kislev');
+    const isTevet = t.includes('tevet');
+    const isShevat = t.includes('shevat') || t.includes('shvat');
+    const isAdar = t.includes('adar');
+
+    if (isAviv && (d.includes('aviv') || d.includes('nisan') || k.includes('pessach') || k.includes('matzot') || k.includes('hachodesh') || k.includes('hagadol'))) {
+        if (!k.includes('sheni') && !k.includes('sheny')) return true;
+    }
+    if (isZiv && (d.includes('ziv') || d.includes('iyar') || k.includes('sheni') || k.includes('sheny') || k.includes('lag baomer'))) {
+        return true;
+    }
+    if (isSivan && (d.includes('sivan') || k.includes('shavuot'))) {
+        return true;
+    }
+    if (isTamuz && (d.includes('tamuz') || d.includes('tammuz'))) {
+        return true;
+    }
+    if (isAv && (d.includes('av') || k.includes('tisha') || k.includes('tu b\'av') || k.includes('chazon') || k.includes('nachamu'))) {
+        if (!k.includes('aviv') && !d.includes('aviv')) return true;
+    }
+    if (isElul && (d.includes('elul') || k.includes('behemot'))) {
+        return true;
+    }
+    if (isEtanim && (d.includes('etanim') || d.includes('tishrei') || k.includes('teruah') || k.includes('kippur') || k.includes('sukkot') || k.includes('atzeret') || k.includes('hashana') || k.includes('gedaliah') || k.includes('shuvah'))) {
+        return true;
+    }
+    if (isBul && (d.includes('bul') || d.includes('cheshvan'))) {
+        return true;
+    }
+    if (isKislev && (d.includes('kislev') || k.includes('chanukah') || k.includes('hanukkah'))) {
+        return true;
+    }
+    if (isTevet && (d.includes('tevet') || k.includes('chanukah') || k.includes('hanukkah') || k.includes('tzom tevet') || k.includes('shirah'))) {
+        return true;
+    }
+    if (isShevat && (d.includes('shevat') || d.includes('shvat') || k.includes('tu bishvat') || k.includes('shirah'))) {
+        return true;
+    }
+    if (isAdar && (d.includes('adar') || k.includes('purim') || k.includes('esther') || k.includes('shekalim') || k.includes('zachor') || k.includes('parah') || k.includes('hachodesh'))) {
+        return true;
+    }
+
+    return false;
+}
+
+export function updateMonthFestivalsList(monthName) {
+    const monthContainer = document.getElementById('month-festivals-list');
+    if (!monthContainer) return;
+
+    const currentMonth = monthName || state.currentDisplayedHebrewMonth || (state.currentHdate?.hm ? (HEBREW_MONTHS_PT[state.currentHdate.hm] || state.currentHdate.hm) : 'Aviv');
+
+    const { biblicalList, rabbinicList } = getAutomaticFestivals();
+    const allEvents = [...biblicalList, ...rabbinicList];
+
+    const matchingEvents = allEvents.filter(ev => matchesHebrewMonth(ev, currentMonth));
+
+    const seen = new Set();
+    const uniqueMatches = [];
+    for (const ev of matchingEvents) {
+        if (!seen.has(ev.key)) {
+            seen.add(ev.key);
+            uniqueMatches.push(ev);
+        }
+    }
+
+    if (uniqueMatches.length === 0) {
+        monthContainer.innerHTML = `
+            <div class="no-festivals-card glass-panel" style="grid-column: 1 / -1;">
+                <i class="fa-solid fa-calendar-check"></i>
+                <div>
+                    <div style="font-weight: 700; margin-bottom: 4px; color: var(--text-primary);">Nenhuma comemoração anual fixa</div>
+                    <div>Não há festividades anuais registadas para o mês de ${currentMonth}. O Yom Shabbat é celebrado semanalmente a cada sétimo dia.</div>
+                </div>
+            </div>
+        `;
+    } else {
+        monthContainer.innerHTML = uniqueMatches.map(f => renderFestivalCard(f)).join('');
+    }
+}
+
+let activeFestivalFilter = 'biblical';
+
+export function getActiveFestivalFilter() {
+    return activeFestivalFilter;
+}
+
+export function applyFestivalFilter() {
+    const titleEl = document.getElementById('calendar-festivals-title');
+    const badgeEl = document.getElementById('festivals-count-badge');
+    const tanakhContainer = document.getElementById('tanakh-festivals-list');
+    const rabbinicContainer = document.getElementById('rabbinic-festivals-list');
+    const rabbinicHeader = document.getElementById('header-rabbinic');
+    const rabbinicBadge = document.getElementById('rabbinic-count-badge');
+
+    const { biblicalList, rabbinicList } = getAutomaticFestivals();
+
+    if (titleEl) titleEl.textContent = 'Festas Bíblicas da Torá';
+    if (badgeEl) badgeEl.textContent = `${biblicalList.length} Festas da Torá`;
+    if (tanakhContainer) tanakhContainer.style.display = '';
+
+    if (rabbinicHeader) rabbinicHeader.style.display = '';
+    if (rabbinicBadge) rabbinicBadge.textContent = `${rabbinicList.length} Tradições`;
+    if (rabbinicContainer) rabbinicContainer.style.display = '';
+
+    updateShaahZmanitCardPosition();
+}
+
+let tabsInitialized = false;
+export function initFestivalTabs() {
+    const bar = document.querySelector('.calendar-festivals-selector-bar');
+    if (!bar || tabsInitialized) return;
+    tabsInitialized = true;
+
+    bar.addEventListener('click', (e) => {
+        const btn = e.target.closest('.study-pill-btn');
+        if (!btn) return;
+        const targetTab = btn.getAttribute('data-fest-target');
+        if (!targetTab) return;
+        applyFestivalFilter(targetTab);
+    });
+
+    window.addEventListener('calendar-month-changed', (e) => {
+        const month = e.detail?.hebrewMonth;
+        if (activeFestivalFilter === 'month') {
+            applyFestivalFilter('month', month);
+        }
+    });
+}
+
 let lastRenderedFestivalsKey = null;
 
 export function renderFestivalsView(force = false) {
+    renderInteractiveCalendar();
+
     const tanakhContainer = document.getElementById('tanakh-festivals-list');
     const rabbinicContainer = document.getElementById('rabbinic-festivals-list');
     if (!tanakhContainer && !rabbinicContainer) return;
+
+    initFestivalTabs();
 
     const isIsrael = state.userLocation?.isIsrael ?? true;
     const currentKey = `${isIsrael}`;
@@ -315,47 +555,24 @@ export function renderFestivalsView(force = false) {
     const hasSkeletons = !!(tanakhContainer?.querySelector('.skeleton-card') || rabbinicContainer?.querySelector('.skeleton-card'));
 
     if (!force && !hasSkeletons && lastRenderedFestivalsKey === currentKey && tanakhContainer?.children.length > 0) {
+        applyFestivalFilter();
         return;
     }
     lastRenderedFestivalsKey = currentKey;
 
     const { biblicalList, rabbinicList } = getAutomaticFestivals();
 
-    const renderCard = (f) => {
-        const modalHTML = buildFestivalModalHTML(f);
-        const cardTitle = formatTwoWordTitle(f.title);
-        const cardDate = ensureTwoWords(f.date);
-        return `
-            <div class="settings-card event-card glass-panel info-trigger" 
-                 tabindex="0" 
-                 role="button" 
-                 data-info-title="${cardTitle}" 
-                 data-info-html="${modalHTML.replace(/"/g, '&quot;')}"
-                 aria-label="${cardTitle}"
-                 style="cursor: pointer;">
-                <div class="settings-card-left">
-                    <i class="${f.icon} settings-icon"></i>
-                    <div class="settings-card-text">
-                        <span class="settings-card-title">${cardTitle}</span>
-                        <span class="settings-card-desc">${cardDate}</span>
-                    </div>
-                </div>
-                <div class="card-arrow-action" aria-hidden="true">
-                    <i class="fa-solid fa-arrow-right"></i>
-                </div>
-            </div>
-        `;
-    };
-
     if (tanakhContainer) {
-        tanakhContainer.innerHTML = biblicalList.map(f => renderCard(f)).join('');
+        tanakhContainer.innerHTML = biblicalList.map(f => renderFestivalCard(f)).join('');
+        tanakhContainer.style.display = '';
     }
 
     if (rabbinicContainer) {
+        rabbinicContainer.innerHTML = rabbinicList.map(f => renderFestivalCard(f)).join('');
         rabbinicContainer.style.display = '';
-        rabbinicContainer.innerHTML = rabbinicList.map(f => renderCard(f)).join('');
     }
 
+    applyFestivalFilter();
     updateShaahZmanitCardPosition();
 }
 

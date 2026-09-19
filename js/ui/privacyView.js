@@ -15,11 +15,11 @@ import { getAboutProjectHtml, ABOUT_PROJECT_TITLE } from '../domain/aboutContent
  * 6. Contém 100% dos requisitos estatutários obrigatórios.
  */
 
-function renderSectionHeader(title, marginTop = '14px') {
+function renderSectionHeader(title) {
     return `
-        <div class="festival-section-header" style="margin-top: ${marginTop};">
+        <div class="festival-section-header">
             <div class="festival-section-title-wrap">
-                <h3 class="festival-section-title">${title}</h3>
+                <h2 class="festival-section-title">${title}</h2>
             </div>
         </div>
     `;
@@ -83,7 +83,7 @@ export function renderPrivacyView(force = false) {
     };
 
     // SEÇÃO 2: REGRAS DE USO
-    const secTermsHeader = renderSectionHeader('Regras Uso', '14px');
+    const secTermsHeader = renderSectionHeader('Regras de Uso', '20px');
     const secTermsCards = [
         {
             id: 'condicoes-gerais',
@@ -101,7 +101,7 @@ export function renderPrivacyView(force = false) {
             id: 'limites-legais',
             icon: 'fa-solid fa-scale-balanced',
             title: 'Limites Legais',
-            desc: 'Isenção Garantias',
+            desc: 'Isenção de Garantias',
             paragraphs: [
                 'Os horários astronómicos denominados Zmanim e as efemérides litúrgicas consubstanciam aproximações matemáticas de alta precisão baseadas em algoritmos consolidados.',
                 'O utilizador reconhece que as decisões rituais práticas de início e término de preceitos sagrados devem ser aferidas segundo o costume comunitário e autoridade rabínica local.',
@@ -112,8 +112,8 @@ export function renderPrivacyView(force = false) {
         {
             id: 'conduta-usuario',
             icon: 'fa-solid fa-shield-halved',
-            title: 'Conduta Usuário',
-            desc: 'Regras Fruição',
+            title: 'Conduta do Usuário',
+            desc: 'Regras de Fruição',
             paragraphs: [
                 'É permitido o uso livre individual e comunitário do calendário para fins de oração estudo e celebração das datas bíblicas e rabínicas em qualquer território.',
                 'Fica vedada a exploração comercial predatória a engenharia reversa desleal ou a distribuição de versões adulteradas que desvirtuem a autoria original de Mikhael.',
@@ -169,7 +169,7 @@ export function renderPrivacyView(force = false) {
             desc: 'Ciclo Litúrgico',
             paragraphs: [
                 'O sistema estrutura a totalidade das festas bíblicas ordenadas na Torá e as festividades rabínicas consagradas pela tradição talmúdica milenar.',
-                'A computação discrimina os dias sagrados segundo os meses lunissolares de Nissan, Iyar, Sivan, Tamuz, Av, Elul, Tishrei, Cheshvan, Kislev, Tevet, Shevat e Adar.',
+                'A computação discrimina os dias sagrados segundo os meses bíblicos lunissolares da Torá: Aviv, Ziv, Sivan, Tamuz, Av, Elul, Etanim, Bul, Kislev, Tevet, Shevat e Adar.',
                 'Cada celebração litúrgica apresenta contadores temporais regressivos e pareceres temáticos sobre a origem divina e histórica da data sagrada.'
             ]
         },
@@ -189,7 +189,7 @@ export function renderPrivacyView(force = false) {
             id: 'memoria-terminal',
             icon: 'fa-solid fa-hard-drive',
             title: 'Memória Terminal',
-            desc: 'Guarda Local',
+            desc: 'Armazenamento Local',
             paragraphs: [
                 'O sistema retém no armazenamento local do navegador as coordenadas geográficas de latitude e longitude da localidade eleita pelo titular.',
                 'Fica gravada a denominação textual da cidade para identificação visual contínua na interface da aplicação.',
@@ -203,7 +203,7 @@ export function renderPrivacyView(force = false) {
             id: 'rede-local',
             icon: 'fa-solid fa-sitemap',
             title: 'Rede Local',
-            desc: 'Operação Desfasada',
+            desc: 'Operação Offline',
             paragraphs: [
                 'A aplicação estrutura-se como aplicação web progressiva sob versão consolidada dois ponto três ponto um do motor de serviço.',
                 'O núcleo do sistema e os dados do ciclo litúrgico anual permanecem pré-armazenados para facultar acesso e leitura plena mesmo sem ligação à rede.',
@@ -214,7 +214,7 @@ export function renderPrivacyView(force = false) {
             id: 'telemetria-etica',
             icon: 'fa-solid fa-chart-simple',
             title: 'Telemetria Ética',
-            desc: 'Métricas Anónimas',
+            desc: 'Métricas Anônimas',
             paragraphs: [
                 'A plataforma afere o alcance comunitário com esteio na tecnologia aberta e auditável Umami Analytics sem utilização de cookies ou rastreadores invasivos.',
                 'O procedimento respeita a diretiva de não monitoramento Do Not Track e opera com total desvinculação de endereços de rede ou dados identificadores.',
@@ -224,7 +224,7 @@ export function renderPrivacyView(force = false) {
     ];
 
     // SEÇÃO 3: GOVERNANÇA ATIVA
-    const sec2Header = renderSectionHeader('Governança Ativa', '14px');
+    const sec2Header = renderSectionHeader('Governança Ativa', '20px');
     const sec2Cards = [
         {
             id: 'blindagem-juridica',
@@ -256,7 +256,7 @@ export function renderPrivacyView(force = false) {
         {
             id: 'seguranca-informatica',
             icon: 'fa-solid fa-lock',
-            title: 'Segurança Informática',
+            title: 'Segurança Digital',
             desc: 'Isolamento Estrito',
             paragraphs: [
                 'Todas as rotinas e scripts executam-se em ambiente confinado de caixa de areia no navegador sem privilégios de acesso a arquivos do sistema ou periféricos do equipamento.',
@@ -291,7 +291,7 @@ export function renderPrivacyView(force = false) {
     ];
 
     // SEÇÃO 4: NORMAS MUNDIAIS (55+ ESTATUTOS GLOBAIS)
-    const sec3Header = renderSectionHeader('Normas Mundiais', '14px');
+    const sec3Header = renderSectionHeader('Normas Mundiais', '20px');
     const sec3Cards = [
         {
             id: 'uniao-europeia',
@@ -349,7 +349,7 @@ export function renderPrivacyView(force = false) {
         {
             id: 'canada-suica',
             icon: 'fa-solid fa-flag',
-            title: 'Canadá Suíça',
+            title: 'Canadá e Suíça',
             desc: 'Três Diplomas',
             paragraphs: [
                 'A legislação federal canadense PIPEDA atende aos princípios de salvaguarda de informação pessoal perante o Office of the Privacy Commissioner OPC.',
@@ -360,7 +360,7 @@ export function renderPrivacyView(force = false) {
         {
             id: 'asia-pacifico',
             icon: 'fa-solid fa-earth-asia',
-            title: 'Ásia Pacífico',
+            title: 'Ásia e Pacífico',
             desc: 'Treze Países',
             paragraphs: [
                 'Na República Popular da China, cumprem-se as exigências da lei PIPL, da Data Security Law DSL e da Cybersecurity Law CSL.',
@@ -388,7 +388,7 @@ export function renderPrivacyView(force = false) {
     ];
 
     // SEÇÃO 5: ISENÇÕES LEGAIS
-    const sec4Header = renderSectionHeader('Isenções Legais', '14px');
+    const sec4Header = renderSectionHeader('Isenções Legais', '20px');
     const sec4Cards = [
         {
             id: 'isencao-liturgica',
@@ -417,7 +417,7 @@ export function renderPrivacyView(force = false) {
     ];
 
     // SEÇÃO 6: AUTODETERMINAÇÃO PESSOAL
-    const sec5Header = renderSectionHeader('Autodeterminação Pessoal', '14px');
+    const sec5Header = renderSectionHeader('Autodeterminação Pessoal', '20px');
     const sec5Cards = [
         {
             id: 'esquecimento-total',
@@ -456,8 +456,10 @@ export function renderPrivacyView(force = false) {
     ];
 
     const aboutModalHtml = getAboutProjectHtml().replace(/"/g, '&quot;');
+    const secAboutHeader = renderSectionHeader('Sobre o Projeto');
 
     container.innerHTML = `
+        ${secAboutHeader}
         <div class="event-cards-row">
             <div class="settings-card event-card glass-panel info-trigger" 
                  id="card-about-manifesto" 
@@ -471,7 +473,7 @@ export function renderPrivacyView(force = false) {
                     <i class="fa-solid fa-compass settings-icon"></i>
                     <div class="settings-card-text">
                         <span class="settings-card-title">Sobre Nós</span>
-                        <span class="settings-card-desc">Origem Propósito</span>
+                        <span class="settings-card-desc">Origem e Propósito</span>
                     </div>
                 </div>
                 <div class="card-arrow-action" aria-hidden="true">

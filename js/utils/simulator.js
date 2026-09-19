@@ -117,13 +117,8 @@ function buildMonthEvents(simCategory, dayIndex, now, hYear = 5787) {
  * Ativa a simulação completa de qualquer festa bíblica ou Shabat
  */
 export function simulateFestival(nameOrDisable, opt = 1) {
-    if (nameOrDisable === false || nameOrDisable === 'reset' || nameOrDisable === 'off') {
+    if (!nameOrDisable || nameOrDisable === false || nameOrDisable === 'reset' || nameOrDisable === 'off') {
         return resetSimulation();
-    }
-
-    if (!nameOrDisable) {
-        simulationHelp();
-        return;
     }
 
     backupRealState();
@@ -140,7 +135,7 @@ export function simulateFestival(nameOrDisable, opt = 1) {
     let isYomTov = true;
     let isShabbat = false;
 
-    if (normalized.includes('teruah') || normalized.includes('roshhashana') || normalized.includes('trombetas')) {
+    if (normalized.includes('terua') || normalized.includes('teruah') || normalized.includes('roshhashana') || normalized.includes('trombetas')) {
         simCategory = 'yomteruah';
         simName = dayIndex === 0 ? 'Yom Teruah' : '2º Dia de Rosh Hashana (Tradição Rabínica)';
         simHdate = { hd: dayIndex === 0 ? 1 : 2, hm: 'Tishrei', hy: 5787 };
@@ -268,20 +263,24 @@ export function simulateFestival(nameOrDisable, opt = 1) {
     const ketuvimEl = document.getElementById('card-ketuvim')?.textContent?.trim();
     const hdateEl = document.getElementById('card-hdate')?.textContent?.trim();
 
-    console.group(`%c🌟 [Simulação Completa Ativa] ${simName} (Dia ${day})`, 'color: #10b981; font-weight: bold; font-size: 14px;');
+    console.group(
+        `%c YISRAEL DATE %c Simulação Litúrgica %c ${simName} (Dia ${day}) `,
+        'background: #1e293b; color: #d4af37; font-weight: 700; font-size: 11px; padding: 2px 7px; border-radius: 3px 0 0 3px; font-family: monospace;',
+        'background: #0f172a; color: #38bdf8; font-weight: 600; font-size: 11px; padding: 2px 8px; border-left: 1px solid #334155;',
+        'background: #0f172a; color: #f1f5f9; font-weight: 600; font-size: 11px; padding: 2px 7px; border-radius: 0 3px 3px 0; border-left: 1px solid #334155;'
+    );
     console.table({
-        'Saudação Litúrgica': greetingEl,
-        'Data Gregoriana': gregorianEl,
-        'Data Hebraica': `${hdateEl} ${simHdate.hy}`,
-        'Cartão Parashá (Título)': parashaEl,
-        'Cartão Parashá (Subtítulo)': parashaSub,
-        'Torá (Lei Escrita)': torahEl,
-        'Haftará (Profetas)': haftaraEl,
-        'Ketuvim (Escrito)': ketuvimEl,
-        'Repouso Sagrado / Doações': isYomTov ? 'Pausado (Yom Tov Ativo)' : (isShabbat ? 'Pausado (Shabat Ativo)' : 'Normal')
+        'Saudação Litúrgica': { 'Valor': greetingEl || (isYomTov ? 'Chag Sameach' : (isShabbat ? 'Shabbat Shalom' : 'Shavua Tov')) },
+        'Data Gregoriana': { 'Valor': gregorianEl || simGregorian.split('T')[0] },
+        'Data Hebraica': { 'Valor': `${hdateEl || `${simHdate.hd} ${simHdate.hm}`} ${simHdate.hy}` },
+        'Cartão Parashá (Título)': { 'Valor': parashaEl || simName },
+        'Cartão Parashá (Subtítulo)': { 'Valor': parashaSub || 'Celebração Especial' },
+        'Torá (Lei Escrita)': { 'Valor': torahEl || 'Leitura da Torá' },
+        'Haftará (Profetas)': { 'Valor': haftaraEl || 'Leitura da Haftará' },
+        'Ketuvim (Escritos)': { 'Valor': ketuvimEl || 'Leitura dos Escritos' },
+        'Repouso Sagrado': { 'Valor': isYomTov ? 'Pausado (Yom Tov ativo)' : (isShabbat ? 'Pausado (Shabat ativo)' : 'Normal') }
     });
-    console.log('%c💡 Todos os cartões e modais agora refletem exatamente este dia. Clique nos cartões para abrir as leituras da festa!', 'color: #3b82f6;');
-    console.log('%cPara voltar ao dia real, execute:%c resetSimulation()', 'color: #64748b;', 'color: #2563eb; font-weight: bold;');
+    console.log('%cPara retornar à data real de hoje, execute:%c party()', 'color: #64748b; font-size: 11px;', 'color: #10b981; font-weight: bold; font-family: monospace;');
     console.groupEnd();
 }
 
@@ -350,7 +349,7 @@ export async function simulateDate(isoDateStr) {
  */
 export function resetSimulation() {
     if (!state.isSimulation && !originalBackup) {
-        console.log('%c[Simulador] Nenhuma simulação ativa.', 'color: #64748b;');
+        console.log('%c[Festas] Nenhuma simulação ativa. O site já está no tempo real.', 'color: #64748b;');
         return;
     }
 
@@ -377,37 +376,50 @@ export function resetSimulation() {
     originalBackup = null;
 
     console.log(
-        '%c✅ [Simulação Desativada]%c Todo o site foi restaurado para a data, relógio e leituras reais.',
-        'color: #10b981; font-weight: bold;',
-        'color: inherit;'
+        '%c[Festas] Simulação desativada. Aplicação restaurada para a data e leituras reais de hoje.',
+        'color: #10b981; font-weight: 600;'
     );
 }
 
 /**
- * Guia de comandos completo no console
+ * Guia de comandos do simulador no console
  */
 export function simulationHelp() {
-    console.group('%c📖 Guia do Simulador Litúrgico Integral (Console)', 'color: #3b82f6; font-weight: bold; font-size: 14px;');
-    console.log('%cComandos Rápidos:', 'color: #f59e0b; font-weight: bold;');
-    console.log('  • simulate("teruah")        → Simula Yom Teruah (Kriat HaMoed, Bereshit 21, I Shmuel 1, Tehilim 24)');
-    console.log('  • simulate("teruah", 2)     → Simula 2º Dia de Yom Teruah (Bereshit 22, Yirmiyahu 31, Tehilim 27)');
-    console.log('  • simulate("pesach")        → Simula Yom Pessach (Shemot 12, Yehoshua 5, Tehilim 114)');
-    console.log('  • simulate("shavuot")       → Simula Yom Shavuot (Shemot 19-20, Yechezkel 1, Tehilim 19)');
-    console.log('  • simulate("yomkippur")     → Simula Yom Kippur (Vayikra 16, Yeshayahu 57, Gmar Chatimah Tovah)');
-    console.log('  • simulate("sukkot")        → Simula Chag Sukkot (Vayikra 22-23, Zecharia 14, Tehilim 118)');
-    console.log('  • simulate("sheminiatzeret") → Simula Shemini Atzeret (Devarim 14-16, I Melachim 8)');
-    console.log('  • simulate("cholhamoed")    → Simula Chol HaMoed ("Leitura Especial")');
-    console.log('  • simulate("shabbat")       → Simula Shabat Comum ("Ciclo Anual", Shabbat Shalom)');
-    console.log('  • simulateDate("2026-09-12")→ Simula qualquer data AAAA-MM-DD específica');
-    console.log('\n%cRestaurar dados reais:%c resetSimulation() ou simulate(false)', 'color: #10b981; font-weight: bold;', 'color: inherit;');
+    console.group(
+        '%c YISRAEL DATE %c Festas Bíblicas para Simulação %c v3.3.0 ',
+        'background: #1e293b; color: #d4af37; font-weight: 700; font-size: 11px; padding: 2px 7px; border-radius: 3px 0 0 3px; font-family: monospace;',
+        'background: #0f172a; color: #f1f5f9; font-weight: 600; font-size: 11px; padding: 2px 8px; border-left: 1px solid #334155;',
+        'background: #0f172a; color: #10b981; font-weight: 600; font-size: 11px; padding: 2px 7px; border-radius: 0 3px 3px 0; border-left: 1px solid #334155; font-family: monospace;'
+    );
+    console.table([
+        { 'Comando': 'party("kippur")', 'Celebração': 'Yom Kippur', 'Leituras': 'Vayikra 16, Yeshayahu 57' },
+        { 'Comando': 'party("terua")', 'Celebração': 'Yom Teruah (1º Dia)', 'Leituras': 'Bereshit 21, I Shmuel 1, Tehilim 24' },
+        { 'Comando': 'party("terua", 2)', 'Celebração': '2º Dia de Rosh Hashana', 'Leituras': 'Bereshit 22, Yirmiyahu 31, Tehilim 27' },
+        { 'Comando': 'party("pesach")', 'Celebração': 'Yom Pessach', 'Leituras': 'Shemot 12, Yehoshua 5, Tehilim 114' },
+        { 'Comando': 'party("sukkot")', 'Celebração': 'Chag Sukkot', 'Leituras': 'Vayikra 22-23, Zecharia 14, Tehilim 118' },
+        { 'Comando': 'party("shavuot")', 'Celebração': 'Yom Shavuot', 'Leituras': 'Shemot 19-20, Yechezkel 1, Tehilim 19' },
+        { 'Comando': 'party("shemini")', 'Celebração': 'Shemini Atzeret', 'Leituras': 'Devarim 14-16, I Melachim 8' },
+        { 'Comando': 'party("cholhamoed")', 'Celebração': 'Chol HaMoed', 'Leituras': 'Leitura Intermediária Especial' },
+        { 'Comando': 'party("shabbat")', 'Celebração': 'Yom Shabbat', 'Leituras': 'Ciclo Anual Regular (Ha\'azinu)' },
+        { 'Comando': 'party()', 'Celebração': 'Restaurar Hoje', 'Leituras': 'Restaura a data e relógio de hoje' }
+    ]);
+    console.log('%cPara voltar aos dados reais:%c party()', 'color: #64748b; font-size: 11px;', 'color: #10b981; font-weight: bold; font-family: monospace;');
     console.groupEnd();
+    return 'Guia do Simulador apresentado.';
 }
+
+export const simular = simulateFestival;
+export const restaurar = resetSimulation;
+export const simularData = simulateDate;
+
+let isSimulatorInitialized = false;
 
 /**
  * Inicialização e ligação global ao window
  */
 export function initSimulator() {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || isSimulatorInitialized) return;
+    isSimulatorInitialized = true;
 
     window.simulate = (target, opt) => {
         if (typeof target === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(target.trim())) {
@@ -415,20 +427,18 @@ export function initSimulator() {
         }
         return simulateFestival(target, opt);
     };
+    window.simular = window.simulate;
     window.simulateFestival = simulateFestival;
     window.simulateDate = simulateDate;
+    window.simularData = simulateDate;
     window.resetSimulation = resetSimulation;
+    window.restaurar = resetSimulation;
     window.simulationHelp = simulationHelp;
 
-    console.log(
-        '%c[Yisrael Date] Simulador Litúrgico Integral Pronto 🚀%c Digite %csimulate("teruah")%c no console para transformar todo o site!',
-        'color: #2563eb; font-weight: bold;',
-        'color: inherit;',
-        'background: #2563eb; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-family: monospace;',
-        'color: inherit;'
-    );
-}
-
-if (typeof window !== 'undefined') {
-    initSimulator();
+    window.party = function(target, opt) {
+        if (!target || target === 'reset' || target === 'off' || target === false) {
+            return resetSimulation();
+        }
+        return simulateFestival(target, opt);
+    };
 }

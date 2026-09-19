@@ -4,6 +4,7 @@ import { ICONS } from './icons.js';
 import { getSelectedLocation, JERUSALEM_COORDS } from '../services/locationService.js';
 import { getPersistentSetting } from '../utils/persistence.js';
 import { openInfoModal } from './modals/infoModal.js';
+import { HEBREW_MONTHS_PT } from '../domain/constants.js';
 
 export function openZmanimModal() {
     const cardTitle = document.getElementById('solar-hero-city-title')?.textContent?.trim() || "Sha'ah Zmanit";
@@ -16,11 +17,12 @@ export function closeZmanimModal() {
     if (modal) closeModalSafely(modal);
 }
 
-let isZmanimModalInitialized = false;
+export function bindZmanimFilterEvents() {
+    // Sem seletores manuais: orações de dias especiais integram-se de forma 100% lógica e automática
+}
 
 export function initZmanimModal() {
-    if (isZmanimModalInitialized || typeof document === 'undefined') return;
-    isZmanimModalInitialized = true;
+    // Inicialização direta do modal
 }
 
 function fmt(isoStr) {
@@ -31,7 +33,6 @@ function fmt(isoStr) {
 }
 
 export function renderZmanimTable() {
-    const html = generateZmanimTableHTML();
     const infoModal = document.getElementById('info-modal');
     if (infoModal && infoModal.style.display === 'flex') {
         const backBtn = document.getElementById('back-info-btn');
@@ -39,8 +40,11 @@ export function renderZmanimTable() {
         const titleEl = document.getElementById('info-modal-title');
         const cardTitle = document.getElementById('solar-hero-city-title')?.textContent?.trim() || "Sha'ah Zmanit";
         if (isAtRoot && titleEl && titleEl.textContent === cardTitle) {
+            const html = generateZmanimTableHTML();
             const bodyEl = document.getElementById('info-modal-body');
-            if (bodyEl) bodyEl.innerHTML = html;
+            if (bodyEl) {
+                bodyEl.innerHTML = html;
+            }
         }
     }
 }
@@ -70,30 +74,84 @@ export function generateZmanimTableHTML() {
     }
 
     const now = new Date();
+    const nowMs = Date.now();
     const dayOfWeek = now.getDay();
     const isFriday = dayOfWeek === 5;
     const isSaturday = dayOfWeek === 6;
+    const isMonday = dayOfWeek === 1;
+    const isThursday = dayOfWeek === 4;
+
+    const hdate = state.currentHdate || {};
+    const hDay = hdate.hd ? Number(hdate.hd) : null;
+    const rawHMonth = hdate.hm || '';
+    const canonicalMonth = HEBREW_MONTHS_PT[rawHMonth] || rawHMonth;
+
+    const isAvivNisan = canonicalMonth === 'Aviv' || rawHMonth === 'Nisan' || rawHMonth === 'Aviv';
+    const isZivIyyar = canonicalMonth === 'Ziv' || rawHMonth === 'Iyyar' || rawHMonth === 'Ziv';
+    const isSivan = canonicalMonth === 'Sivan' || rawHMonth === 'Sivan';
+    const isTamuz = canonicalMonth === 'Tamuz' || canonicalMonth === 'Tammuz' || rawHMonth === 'Tamuz' || rawHMonth === 'Tammuz';
+    const isAv = canonicalMonth === 'Av' || rawHMonth === 'Av';
+    const isElul = canonicalMonth === 'Elul' || rawHMonth === 'Elul';
+    const isEtanimTishrei = canonicalMonth === 'Etanim' || rawHMonth === 'Tishrei' || rawHMonth === 'Etanim';
+    const isBulCheshvan = canonicalMonth === 'Bul' || rawHMonth === 'Cheshvan' || rawHMonth === 'Bul';
+    const isKislev = canonicalMonth === 'Kislev' || rawHMonth === 'Kislev';
+    const isTevet = canonicalMonth === 'Tevet' || rawHMonth === 'Tevet';
+    const isShevat = canonicalMonth === 'Shevat' || rawHMonth === "Sh'vat" || rawHMonth === 'Shvat';
+    const isAdar = canonicalMonth === 'Adar' || canonicalMonth === 'Adar I' || canonicalMonth === 'Adar II' || rawHMonth.includes('Adar');
+
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const activeEvents = (state.unifiedEvents || []).filter(e => {
+        if (!e) return false;
+        const evDate = e.raw?.date ? e.raw.date.split('T')[0] : (e.time ? new Date(e.time).toISOString().split('T')[0] : '');
+        const evEnd = e.endTime || (e.time ? e.time + 24 * 60 * 60 * 1000 : 0);
+        return evDate === todayStr || (e.time && nowMs >= e.time && nowMs <= evEnd);
+    });
+
+    const isRoshChodesh = (hDay === 1 || hDay === 30) || activeEvents.some(e => e.category === 'roshchodesh' || e.name?.toLowerCase().includes('rosh chodesh'));
+    const isYomKippur = (isEtanimTishrei && hDay === 10) || activeEvents.some(e => e.category === 'yomkippur' || e.name?.toLowerCase().includes('kippur'));
+    const isYomTeruah = (isEtanimTishrei && hDay === 1) || activeEvents.some(e => e.category === 'yomteruah' || e.name?.toLowerCase().includes('teruah') || e.name?.toLowerCase().includes('rosh hashana'));
+    const isPesach = (isAvivNisan && hDay !== null && hDay >= 15 && hDay <= 21) || activeEvents.some(e => e.category === 'pesach' || e.category === 'matzot');
+    const isShavuot = (isSivan && hDay === 6) || activeEvents.some(e => e.category === 'shavuot');
+    const isSukkot = (isEtanimTishrei && hDay !== null && hDay >= 15 && hDay <= 21) || activeEvents.some(e => e.category === 'sukkot');
+    const isSheminiAtzeret = (isEtanimTishrei && hDay === 22) || activeEvents.some(e => e.category === 'sheminiatzeret');
+    const isChanukah = (isKislev && hDay !== null && hDay >= 25) || (isTevet && hDay !== null && hDay <= 2) || activeEvents.some(e => e.category === 'chanukah');
+    const isCholHaMoed = (isAvivNisan && hDay !== null && hDay >= 16 && hDay <= 20) ||
+                         (isEtanimTishrei && hDay !== null && hDay >= 16 && hDay <= 21) ||
+                         activeEvents.some(e => e.name?.toLowerCase().includes('chol hamoed'));
+    const isYomTov = (isAvivNisan && (hDay === 15 || hDay === 21)) ||
+                     (isSivan && hDay === 6) ||
+                     (isEtanimTishrei && (hDay === 1 || hDay === 10 || hDay === 15 || hDay === 22)) ||
+                     activeEvents.some(e => e.raw?.yomtov === true || (e.isBiblical && ['yomteruah', 'yomkippur', 'sheminiatzeret', 'shavuot', 'matzot', 'sukkot'].includes(e.category)));
+    const isFastDay = (isEtanimTishrei && (hDay === 3 || hDay === 10)) ||
+                      (isTevet && hDay === 10) ||
+                      (isAdar && hDay === 13) ||
+                      (isTamuz && hDay === 17) ||
+                      (isAv && hDay === 9) ||
+                      activeEvents.some(e => e.category === 'fast' || e.rawCategory === 'fast' || e.name?.toLowerCase().includes('fast') || e.name?.toLowerCase().includes('tzom') || e.name?.toLowerCase().includes("ta'anit"));
 
     let isErevYomTov = false;
     if (state.unifiedEvents && state.unifiedEvents.length) {
-        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         isErevYomTov = state.unifiedEvents.some(e => {
             if (!e || !e.raw) return false;
             const isYt = e.raw.yomtov === true || (e.isBiblical && ['pesach', 'matzot', 'shavuot', 'yomteruah', 'roshhashana', 'yomkippur', 'sukkot', 'sheminiatzeret'].includes(e.category));
             if (!isYt) return false;
             const evDate = e.raw.date ? e.raw.date.split('T')[0] : '';
-            return evDate === todayStr || Math.abs(e.time - now.getTime()) < 24 * 60 * 60 * 1000;
+            return evDate === todayStr || Math.abs(e.time - nowMs) < 24 * 60 * 60 * 1000;
         });
     }
+    if (!isErevYomTov) {
+        if ((isAvivNisan && hDay === 14) || (isSivan && hDay === 5) || (isElul && hDay === 29) || (isEtanimTishrei && (hDay === 9 || hDay === 14 || hDay === 21))) {
+            isErevYomTov = true;
+        }
+    }
+
     const showCandles = isFriday || isErevYomTov;
     const candleDesc = isFriday ? 'Velas Shabat' : 'Velas Festivas';
 
-    // Função de garantia estrita: subtítulos sempre com exatamente duas palavras
+    // Descrições e subtítulos preservados sem limites de palavras ou caracteres
     const formatTwoWords = (str) => {
         if (!str) return '';
-        const parts = str.trim().split(/\s+/);
-        if (parts.length <= 2) return str.trim();
-        return `${parts[0]} ${parts[1]}`;
+        return String(str).trim();
     };
 
     function toMs(val) {
@@ -107,50 +165,230 @@ export function generateZmanimTableHTML() {
     // TABELA COMPLETA DE ZMANIM HALÁCHICOS (CICLO DINÂMICO 24H)
     // ═══════════════════════════════════════════════════════
 
-    const rawItems = [
-        { label: 'Chatzot Layla', desc: 'Meia Noite', key: 'chatzotNight', val: z.chatzotNight, icon: ICONS.moon },
-        { label: 'Alot Shachar', desc: 'Primeira Luz', key: 'alotHaShachar', val: z.alotHaShachar, icon: ICONS.cloudSun },
-        { label: 'Alot HaTanya', desc: 'Alot Tanya', key: 'alosBaalHatanya', val: z.alosBaalHatanya, icon: ICONS.cloudSun },
-        { label: 'Tempo Misheyakir', desc: 'Talit Tefilin', key: 'misheyakir', val: z.misheyakir, icon: ICONS.handsPraying },
-        { label: 'Misheyakir Machmir', desc: 'Misheyakir Estrito', key: 'misheyakirMachmir', val: z.misheyakirMachmir, icon: ICONS.handsPraying },
-        { label: 'Hanetz Civil', desc: 'Alvorecer Civil', key: 'dawn', val: z.dawn, icon: ICONS.sunrise },
-        { label: 'Netz Chamah', desc: 'Nascer Solar', key: 'sunrise', val: z.sunrise, icon: ICONS.sun, highlight: true },
-        { label: 'Shemá MGA', desc: 'Shemá MGA', key: 'sofZmanShmaMGA', val: z.sofZmanShmaMGA, icon: ICONS.clock },
-        { label: 'Shemá HaTanya', desc: 'Shemá Tanya', key: 'sofZmanShmaBaalHatanya', val: z.sofZmanShmaBaalHatanya, icon: ICONS.clock },
-        { label: 'Shemá GRA', desc: 'Shemá GRA', key: 'sofZmanShma', val: z.sofZmanShma, icon: ICONS.clock, highlight: true },
-        { label: 'Tefilah MGA', desc: 'Tefilah MGA', key: 'sofZmanTfillaMGA', val: z.sofZmanTfillaMGA, icon: ICONS.hourglass },
-        { label: 'Tefilah HaTanya', desc: 'Tefilah Tanya', key: 'sofZmanTfilaBaalHatanya', val: z.sofZmanTfilaBaalHatanya, icon: ICONS.hourglass },
-        { label: 'Sof Tefilah', desc: 'Tefilah GRA', key: 'sofZmanTfilla', val: z.sofZmanTfilla, icon: ICONS.hourglass, highlight: true },
-        { label: 'Chatzot Yom', desc: 'Meio Dia', key: 'chatzot', val: z.chatzot, icon: ICONS.compass, highlight: true },
-        { label: 'Mincha Gedolah', desc: 'Primeira Minchá', key: 'minchaGedola', val: z.minchaGedola, icon: ICONS.bell },
-        { label: 'Gedolah HaTanya', desc: 'Gedolah Tanya', key: 'minchaGedolaBaalHatanya', val: z.minchaGedolaBaalHatanya, icon: ICONS.bell },
-        { label: 'Mincha Ketanah', desc: 'Segunda Minchá', key: 'minchaKetana', val: z.minchaKetana, icon: ICONS.cloudSun },
-        { label: 'Ketanah HaTanya', desc: 'Ketanah Tanya', key: 'minchaKetanaBaalHatanya', val: z.minchaKetanaBaalHatanya, icon: ICONS.cloudSun },
-        { label: 'Plag Mincha', desc: 'Plag Minchá', key: 'plagHaMincha', val: z.plagHaMincha, icon: ICONS.cloudMoon },
-        { label: 'Plag HaTanya', desc: 'Plag Tanya', key: 'plagHaminchaBaalHatanya', val: z.plagHaminchaBaalHatanya, icon: ICONS.cloudMoon },
-        { label: 'Shkiah Solar', desc: 'Sol Poente', key: 'sunset', val: z.sunset, icon: ICONS.cloudMoon, highlight: true },
-        { label: 'Bein Hashmashot', desc: 'Entre Sóis', key: 'beinHaShmashos', val: z.beinHaShmashos, icon: ICONS.cloudMoon },
-        { label: 'Tzeit HaTanya', desc: 'Estrelas Tanya', key: 'tzaisBaalHatanya', val: z.tzaisBaalHatanya, icon: ICONS.star },
-        { label: 'Tzeit Kochavim', desc: 'Três Estrelas', key: 'tzeit7083deg', val: z.tzeit7083deg, icon: ICONS.star },
-        { label: 'Tzeit 8.5°', desc: 'Estrelas Rigorosas', key: 'tzeit85deg', val: z.tzeit85deg, icon: ICONS.star, highlight: !isSaturday },
-        { label: 'Tzeit 42', desc: 'Tzeit 42min', key: 'tzeit42min', val: z.tzeit42min, icon: ICONS.moon },
-        { label: 'Tzeit 50', desc: 'Tzeit 50min', key: 'tzeit50min', val: z.tzeit50min, icon: ICONS.moon },
-        { label: 'Rabbeinu Tam', desc: 'Tzeit 72min', key: 'tzeit72min', val: z.tzeit72min, icon: ICONS.moon }
+    const sunriseMs = z.sunrise ? toMs(z.sunrise) : new Date().setHours(6, 0, 0, 0);
+    const sunsetMs = z.sunset ? toMs(z.sunset) : new Date().setHours(18, 30, 0, 0);
+    const dayDurationMs = Math.max(1, sunsetMs - sunriseMs);
+    const shaahZmanitMs = dayDurationMs / 12;
+    const dawnMs = z.alotHaShachar ? toMs(z.alotHaShachar) : sunriseMs - 72 * 60 * 1000;
+    const duskMs = z.tzeit7083deg ? toMs(z.tzeit7083deg) : sunsetMs + 45 * 60 * 1000;
+
+    const rawDailyItems = [
+        { label: 'Chatzot Layla', desc: 'Meia Noite', key: 'chatzotNight', val: z.chatzotNight, icon: ICONS.moon, category: 'diario' },
+        { label: 'Alot Shachar', desc: 'Primeira Luz', key: 'alotHaShachar', val: z.alotHaShachar, icon: ICONS.cloudSun, category: 'diario' },
+        { label: 'Alot HaTanya', desc: 'Alot Tanya', key: 'alosBaalHatanya', val: z.alosBaalHatanya, icon: ICONS.cloudSun, category: 'diario' },
+        { label: 'Tempo Misheyakir', desc: 'Talit Tefilin', key: 'misheyakir', val: z.misheyakir, icon: ICONS.handsPraying, category: 'diario' },
+        { label: 'Misheyakir Machmir', desc: 'Misheyakir Estrito', key: 'misheyakirMachmir', val: z.misheyakirMachmir, icon: ICONS.handsPraying, category: 'diario' },
+        { label: 'Hanetz Civil', desc: 'Alvorecer Civil', key: 'dawn', val: z.dawn, icon: ICONS.sunrise, category: 'diario' },
+        { label: 'Netz Chamah', desc: 'Nascer Solar', key: 'sunrise', val: z.sunrise, icon: ICONS.sun, highlight: true, category: 'diario' },
+        { label: 'Shemá MGA', desc: 'Shemá MGA', key: 'sofZmanShmaMGA', val: z.sofZmanShmaMGA, icon: ICONS.clock, category: 'diario' },
+        { label: 'Shemá HaTanya', desc: 'Shemá Tanya', key: 'sofZmanShmaBaalHatanya', val: z.sofZmanShmaBaalHatanya, icon: ICONS.clock, category: 'diario' },
+        { label: 'Shemá GRA', desc: 'Shemá GRA', key: 'sofZmanShma', val: z.sofZmanShma, icon: ICONS.clock, highlight: true, category: 'diario' },
+        { label: 'Tefilah MGA', desc: 'Tefilah MGA', key: 'sofZmanTfillaMGA', val: z.sofZmanTfillaMGA, icon: ICONS.hourglass, category: 'diario' },
+        { label: 'Tefilah HaTanya', desc: 'Tefilah Tanya', key: 'sofZmanTfilaBaalHatanya', val: z.sofZmanTfilaBaalHatanya, icon: ICONS.hourglass, category: 'diario' },
+        { label: 'Sof Tefilah', desc: 'Tefilah GRA', key: 'sofZmanTfilla', val: z.sofZmanTfilla, icon: ICONS.hourglass, highlight: true, category: 'diario' },
+        { label: 'Chatzot Yom', desc: 'Meio Dia', key: 'chatzot', val: z.chatzot, icon: ICONS.compass, highlight: true, category: 'diario' },
+        { label: 'Mincha Gedolah', desc: 'Primeira Minchá', key: 'minchaGedola', val: z.minchaGedola, icon: ICONS.bell, category: 'diario' },
+        { label: 'Gedolah HaTanya', desc: 'Gedolah Tanya', key: 'minchaGedolaBaalHatanya', val: z.minchaGedolaBaalHatanya, icon: ICONS.bell, category: 'diario' },
+        { label: 'Mincha Ketanah', desc: 'Segunda Minchá', key: 'minchaKetana', val: z.minchaKetana, icon: ICONS.cloudSun, category: 'diario' },
+        { label: 'Ketanah HaTanya', desc: 'Ketanah Tanya', key: 'minchaKetanaBaalHatanya', val: z.minchaKetanaBaalHatanya, icon: ICONS.cloudSun, category: 'diario' },
+        { label: 'Plag Mincha', desc: 'Plag Minchá', key: 'plagHaMincha', val: z.plagHaMincha, icon: ICONS.cloudMoon, category: 'diario' },
+        { label: 'Plag HaTanya', desc: 'Plag Tanya', key: 'plagHaminchaBaalHatanya', val: z.plagHaminchaBaalHatanya, icon: ICONS.cloudMoon, category: 'diario' },
+        { label: 'Shkiah Solar', desc: 'Sol Poente', key: 'sunset', val: z.sunset, icon: ICONS.cloudMoon, highlight: true, category: 'diario' },
+        { label: 'Bein Hashmashot', desc: 'Entre Sóis', key: 'beinHaShmashos', val: z.beinHaShmashos, icon: ICONS.cloudMoon, category: 'diario' },
+        { label: 'Tzeit HaTanya', desc: 'Estrelas Tanya', key: 'tzaisBaalHatanya', val: z.tzaisBaalHatanya, icon: ICONS.star, category: 'diario' },
+        { label: 'Tzeit Kochavim', desc: 'Três Estrelas', key: 'tzeit7083deg', val: z.tzeit7083deg, icon: ICONS.star, category: 'diario' },
+        { label: 'Tzeit 8.5°', desc: 'Estrelas Rigorosas', key: 'tzeit85deg', val: z.tzeit85deg, icon: ICONS.star, highlight: !isSaturday, category: 'diario' },
+        { label: 'Tzeit 42', desc: 'Tzeit 42min', key: 'tzeit42min', val: z.tzeit42min, icon: ICONS.moon, category: 'diario' },
+        { label: 'Tzeit 50', desc: 'Tzeit 50min', key: 'tzeit50min', val: z.tzeit50min, icon: ICONS.moon, category: 'diario' },
+        { label: 'Rabbeinu Tam', desc: 'Tzeit 72min', key: 'tzeit72min', val: z.tzeit72min, icon: ICONS.moon, category: 'diario' }
     ];
 
-    if (showCandles) {
-        rawItems.push({ label: 'Hadlakat Nerot', desc: candleDesc, key: 'candleLighting', val: candleTimeVal, icon: ICONS.candles, highlight: true, isSpecialDay: true });
-    }
-    if (isSaturday) {
-        rawItems.push({ label: 'Havdalá Shabat', desc: 'Saída Shabat', key: 'havdalah', val: havdalahTimeVal, icon: ICONS.star, highlight: true, isSpecialDay: true });
+    // ═══════════════════════════════════════════════════════
+    // ORAÇÕES DOS DIAS ESPECIAIS (EXIBIDAS EXCLUSIVAMENTE NOS MOMENTOS ESPECIAIS)
+    // ═══════════════════════════════════════════════════════
+
+    const specialPrayersItems = [];
+
+    // 1. Seder Selichot (Madrugada no mês de Elul, nos 10 Dias de Retorno ou em Dias de Jejum)
+    if (isElul || (isEtanimTishrei && hDay !== null && hDay >= 1 && hDay <= 10) || isFastDay) {
+        specialPrayersItems.push({
+            label: 'Seder Selichot',
+            desc: 'Súplicas Madrugada',
+            key: 'selichot',
+            val: dawnMs - 60 * 60 * 1000,
+            icon: ICONS.moon,
+            isSpecialDay: true
+        });
     }
 
-    const nowMs = Date.now();
+    // 2. Kriat HaTorah (Shabat, Segunda, Quinta, Rosh Chodesh, Yom Tov, Chol HaMoed ou Jejum)
+    if (isSaturday || isMonday || isThursday || isRoshChodesh || isYomTov || isCholHaMoed || isFastDay) {
+        specialPrayersItems.push({
+            label: 'Kriat HaTorah',
+            desc: 'Leitura Sagrada',
+            key: 'torahReading',
+            val: sunriseMs + Math.round(3.5 * shaahZmanitMs),
+            icon: ICONS.book,
+            isSpecialDay: true
+        });
+    }
+
+    // 3. Tefilat Hallel (Rosh Chodesh, Pessach, Shavuot, Sukkot, Shemini Atzeret ou Chanukah)
+    if (isRoshChodesh || isPesach || isShavuot || isSukkot || isSheminiAtzeret || isChanukah) {
+        specialPrayersItems.push({
+            label: 'Tefilat Hallel',
+            desc: 'Louvor Sagrado',
+            key: 'hallel',
+            val: sunriseMs + Math.round(3.25 * shaahZmanitMs),
+            icon: ICONS.sun,
+            isSpecialDay: true
+        });
+    }
+
+    // 4. Avinu Malkeinu (Dez Dias de Teshuvá exceto Shabat, ou Dias de Jejum)
+    if (((isEtanimTishrei && hDay !== null && hDay >= 1 && hDay <= 10 && !isSaturday) || isFastDay)) {
+        specialPrayersItems.push({
+            label: 'Avinu Malkeinu',
+            desc: 'Nosso Pai',
+            key: 'avinuMalkeinu',
+            val: sunriseMs + Math.round(3.6 * shaahZmanitMs),
+            icon: ICONS.star,
+            isSpecialDay: true
+        });
+    }
+
+    // 5. Birkat Kohanim (Shabat, Rosh Chodesh, Yom Tov, Chol HaMoed ou Jejum)
+    if (isSaturday || isRoshChodesh || isYomTov || isCholHaMoed || isFastDay) {
+        specialPrayersItems.push({
+            label: 'Birkat Kohanim',
+            desc: 'Bênção Sacerdotal',
+            key: 'birkatKohanim',
+            val: sunriseMs + Math.round(3.75 * shaahZmanitMs),
+            icon: ICONS.handsPraying,
+            isSpecialDay: true
+        });
+    }
+
+    // 6. Tefilat Musaf (Shabat, Rosh Chodesh, Yom Tov, Chol HaMoed ou Yom Kippur)
+    if (isSaturday || isRoshChodesh || isYomTov || isCholHaMoed || isYomKippur) {
+        specialPrayersItems.push({
+            label: 'Tefilat Musaf',
+            desc: 'Prece Adicional',
+            key: 'musaf',
+            val: sunriseMs + Math.round(4.0 * shaahZmanitMs),
+            icon: ICONS.hourglass,
+            isSpecialDay: true,
+            highlight: true
+        });
+    }
+
+    // 7. Tefilat Geshem (Exclusivamente em Shemini Atzeret)
+    if (isSheminiAtzeret || (isEtanimTishrei && hDay === 22)) {
+        specialPrayersItems.push({
+            label: 'Tefilat Geshem',
+            desc: 'Chuva Abençoada',
+            key: 'geshem',
+            val: sunriseMs + Math.round(4.5 * shaahZmanitMs),
+            icon: ICONS.cloudSun,
+            isSpecialDay: true
+        });
+    }
+
+    // 8. Tefilat Tal (Exclusivamente no 1º dia de Pessach / 15 de Aviv)
+    if (isAvivNisan && hDay === 15) {
+        specialPrayersItems.push({
+            label: 'Tefilat Tal',
+            desc: 'Orvalho Divino',
+            key: 'tal',
+            val: sunriseMs + Math.round(4.6 * shaahZmanitMs),
+            icon: ICONS.cloudSun,
+            isSpecialDay: true
+        });
+    }
+
+    // 9. Minchá Ta'anit (Exclusivamente em Dias de Jejum)
+    if (isFastDay) {
+        specialPrayersItems.push({
+            label: 'Minchá Ta\'anit',
+            desc: 'Prece Jejum',
+            key: 'minchaTaanit',
+            val: sunsetMs - Math.round(2.5 * shaahZmanitMs),
+            icon: ICONS.bell,
+            isSpecialDay: true
+        });
+    }
+
+    // 10. Hadlakat Nerot (Sexta-feira à tarde / Erev Shabbat ou Erev Yom Tov)
+    if (showCandles) {
+        specialPrayersItems.push({
+            label: 'Hadlakat Nerot',
+            desc: candleDesc,
+            key: 'candleLighting',
+            val: candleTimeVal,
+            icon: ICONS.candles,
+            isSpecialDay: true,
+            highlight: true
+        });
+    }
+
+    // 11. Kabbalat Shabbat (Exclusivamente na Sexta-feira ao entardecer / entrada do Shabat)
+    if (isFriday) {
+        specialPrayersItems.push({
+            label: 'Kabbalat Shabbat',
+            desc: 'Acolhimento Shabat',
+            key: 'kabbalatShabbat',
+            val: candleTimeVal || (sunsetMs - 18 * 60 * 1000),
+            icon: ICONS.candles,
+            isSpecialDay: true,
+            highlight: true
+        });
+    }
+
+    // 12. Tefilat Neilá (Exclusivamente no Yom Kippur ao pôr do sol)
+    if (isYomKippur || (isEtanimTishrei && hDay === 10)) {
+        specialPrayersItems.push({
+            label: 'Tefilat Neilá',
+            desc: 'Portões Celestes',
+            key: 'neilah',
+            val: sunsetMs - 40 * 60 * 1000,
+            icon: ICONS.star,
+            isSpecialDay: true,
+            highlight: true
+        });
+    }
+
+    // 13. Havdalá Shabat (No Sábado à noite ou encerramento de Yom Tov)
+    if (isSaturday || (isYomTov && !isFriday)) {
+        specialPrayersItems.push({
+            label: 'Havdalá Shabat',
+            desc: isSaturday ? 'Saída Shabat' : 'Saída Festa',
+            key: 'havdalah',
+            val: havdalahTimeVal,
+            icon: ICONS.star,
+            isSpecialDay: true,
+            highlight: true
+        });
+    }
+
+    // 14. Kiddush Levana (Noite da renovação lunar, do 3º ao 15º dia do mês hebraico)
+    if (hDay !== null && hDay >= 3 && hDay <= 15) {
+        specialPrayersItems.push({
+            label: 'Kiddush Levana',
+            desc: 'Bênção Lua',
+            key: 'kiddushLevana',
+            val: duskMs + 30 * 60 * 1000,
+            icon: ICONS.moon,
+            isSpecialDay: true
+        });
+    }
+
+    const rawItems = [...rawDailyItems, ...specialPrayersItems];
+
     const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
 
     // Regra temporal haláchica:
-    // Se a hora atual tiver 2h a mais do que o zman, empurra fisicamente para a frente (amanhã / fim da lista)
-    // e muda a hora exibida para a da próxima ocorrência.
+    // Se a hora atual tiver 2h a mais do que o zman diário, empurra fisicamente para a frente (amanhã)
+    // Para orações de dias especiais: caso já tenham passado há mais de 2h, não as exibimos ("caso contrário não exibes")
     const processedItems = [];
     rawItems.forEach(item => {
         let baseMs = toMs(item.val);
@@ -160,18 +398,17 @@ export function generateZmanimTableHTML() {
         let isPushedForward = false;
 
         if ((nowMs - baseMs) >= TWO_HOURS_MS) {
+            if (item.isSpecialDay) {
+                // Momento especial já findou há mais de 2 horas: não projetar para o dia profano seguinte
+                return;
+            }
             isPushedForward = true;
             let nextMs = null;
-
-            if (item.isSpecialDay) {
-                nextMs = baseMs + 7 * 24 * 60 * 60 * 1000;
-            } else {
-                if (zTom && item.key && zTom[item.key]) {
-                    nextMs = toMs(zTom[item.key]);
-                }
-                if (!nextMs) {
-                    nextMs = baseMs + 24 * 60 * 60 * 1000;
-                }
+            if (zTom && item.key && zTom[item.key]) {
+                nextMs = toMs(zTom[item.key]);
+            }
+            if (!nextMs) {
+                nextMs = baseMs + 24 * 60 * 60 * 1000;
             }
             rawMs = nextMs;
         }
@@ -578,6 +815,150 @@ export function generateZmanimTableHTML() {
                 translit: 'Baruch Atah Adonai Eloheinu Melech HaOlam, hamavdil bein kodesh lechol, bein or lechoshech, bein Yisrael la\'amim, bein yom hashevii lesheshet yemei hama\'aseh. Baruch Atah Adonai, hamavdil bein kodesh lechol.',
                 translation: 'Bendito és Tu, Eterno nosso Deus, Rei do Universo, que fazes separação entre o sagrado e o comum, entre a luz e as trevas, entre Israel e os povos, entre o sétimo dia e os seis dias de trabalho. Bendito és Tu, Eterno, que fazes distinção entre o sagrado e o comum.'
             }
+        },
+        'Seder Selichot': {
+            paragraphs: [
+                'Ordem litúrgica penitencial solene recitada na última vigília da noite (Ashmoret HaBoker), antes da alvorada de Alot Shachar, durante o mês de Elul, os Dez Dias de Retorno (Aseret Yemei Teshuvá) e dias de jejum comunitário.',
+                'Tem como ponto culminante a revelação dos Treze Atributos da Divina Misericórdia (Shelosh-Esreh Middot) entregues a Moshé no Monte Sinai, constituindo o ápice do arrependimento e da súplica pelo perdão celestial.',
+                'Momento propício em que as portas do Céu se abrem à compaixão e à elevação espiritual de todo o povo de Israel.'
+            ],
+            prayer: {
+                hebrew: 'יְהוָה, יְהוָה, אֵל רַחוּם וְחַנּוּן, אֶרֶךְ אַפַּיִם וְרַב־חֶסֶד וֶאֱמֶת, נֹצֵר חֶסֶד לָאֲלָפִים, נֹשֵׂא עָוֺן וָפֶשַׁע וְחַטָּאָה, וְנַקֵּה׃ סְלַח לָנוּ אָבִינוּ כִּי חָטָאנוּ, מְחַל לָנוּ מַלְכֵּנוּ כִּי פָשָׁעְנוּ׃',
+                translit: 'Adonai, Adonai, El rachum vechanun, erech apayim verav chessed ve\'emet, notzer chessed la\'alafim, noseh avon vafesha vechata\'ah venakeh. Selach lanu Avinu ki chatanu, mechal lanu Malkeinu ki fasha\'nu.',
+                translation: 'Eterno, Eterno, Deus misericordioso e clemente, tardio em irar-Se e abundante em bondade e verdade; que guarda benevolência para milhares, que perdoa a iniquidade, a transgressão e o pecado, e absolve. Perdoa-nos, nosso Pai, porque pecamos; indulta-nos, nosso Rei, porque transgredimos.'
+            }
+        },
+        'Kriat HaTorah': {
+            paragraphs: [
+                'Leitura pública do rolo sagrado da Torá no Shabat, nas festividades bíblicas (Yom Tov), Rosh Chodesh, dias de jejum e também às segundas e quintas-feiras, conforme o mandamento transmitido por Moshé e consolidado por Esdras.',
+                'A congregação põe-se reverente de pé perante o Santo Sepulcro (Aron HaKodesh) aberto, acompanhando a proclamação das porções sagradas de Israel.',
+                'Nos dias solenes a leitura é enriquecida com bênçãos comunitárias, aliyót de honra e pela Haftará dos livros proféticos (Neviim).'
+            ],
+            prayer: {
+                hebrew: 'בָּרוּךְ שֶׁנָּתַן תּוֹרָה לְעַמּוֹ יִשְׂרָאֵל בִּקְדֻשָּׁתוֹ׃ גַּדְּלוּ לַיהוָה אִתִּי, וּנְרוֹמְמָה שְׁמוֹ יַחְדָּו׃ תּוֹרַת יְהוָה תְּמִימָה, מְשִׁיבַת נָפֶשׁ; עֵדוּת יְהוָה נֶאֱמָנָה, מַחְכִּימַת פֶּתִי׃',
+                translit: 'Baruch shenatan Torah le\'amo Yisrael bikdushato. Gadlu l\'Adonai iti, uneromemah shemo yachdav. Torat Adonai temimah, meshivat nafesh; edut Adonai ne\'emanah, machkimat peti.',
+                translation: 'Bendito Aquele que entregou a Torá ao Seu povo Israel com a Sua santidade. Engrandecei o Eterno comigo, e exaltemos juntos o Seu Nome. A Torá do Eterno é perfeita e reconforta a alma; o testemunho do Eterno é fiel e dá sabedoria aos simples.'
+            }
+        },
+        'Tefilat Hallel': {
+            paragraphs: [
+                'Recitação festiva dos Salmos de Louvor (Tehilim 113 a 118) logo após a Amidá de Shacharit em Rosh Chodesh, Chanukah e nas Festas de Peregrinação (Pessach, Shavuot e Sukkot).',
+                'Constitui a proclamação suprema de júbilo e gratidão nacional pela salvação divina, milagres históricos e providência contínua sobre a assembleia de Israel.',
+                'Entoado com júbilo congregacional, intercalando aclamações de vitória e fé inabalável nas promessas do Todo-Poderoso.'
+            ],
+            prayer: {
+                hebrew: 'הַלְלוּיָהּ, הַלְלוּ עַבְדֵי יְהוָה, הַלְלוּ אֶת־שֵׁם יְהוָה׃ יְהִי שֵׁם יְהוָה מְבֹרָךְ, מֵעַתָּה וְעַד־עוֹלָם׃ מִמִּזְרַח־שֶׁמֶשׁ עַד־מְבוֹאוֹ, מְהֻלָּל שֵׁם יְהוָה׃ מִן־הַמֵּצַר קָרָאתִי יָּהּ, עָנָנִי בַמֶּרְחָב יָהּ׃',
+                translit: 'Halleluyah, hallelu avdei Adonai, hallelu et shem Adonai. Yehi shem Adonai mevorach, me\'atah ve\'ad olam. Mimizrach shemesh ad mevo\'o, mehulal shem Adonai. Min hametzar karati Yah, anani vamerchav Yah.',
+                translation: 'Aleluia! Louvai, servos do Eterno, louvai o Nome do Eterno. Bendito seja o Nome do Eterno, desde agora e para todo o sempre. Do nascer do sol até o seu poente, louvado seja o Nome do Eterno. Da angústia clamei ao Senhor; o Senhor respondeu-me e pôs-me em lugar espaçoso.'
+            }
+        },
+        'Avinu Malkeinu': {
+            paragraphs: [
+                'Venerável prece suplicatória ensinada por Rabi Akiva, recitada nos Dez Dias de Retorno (Aseret Yemei Teshuvá), no encerramento de Shacharit e Minchá, e nos dias solenes de jejum coletivo.',
+                'Invoca o Eterno na dupla dimensão de Pai compassivo e Rei Soberano do Universo, suplicando redenção, vida boa, saúde e perdão incondicional.',
+                'A congregação clama em uníssono, reconhecendo a fragilidade humana e buscando refúgio exclusivo na graça e generosidade do Criador.'
+            ],
+            prayer: {
+                hebrew: 'אָבִינוּ מַלְכֵּנוּ, חָנֵּנוּ וַעֲנֵנוּ, כִּי אֵין בָּנוּ מַעֲשִׂים; עֲשֵׂה עִמָּנוּ צְדָקָה וָחֶסֶד וְהוֹשִׁיעֵנוּ׃ אָבִינוּ מַלְכֵּנוּ, כָּתְבֵנוּ בְּסֵפֶר חַיִּים טוֹבִים׃',
+                translit: 'Avinu Malkeinu, chaneinu va\'aneinu, ki ein banu ma\'asim; aseh imanu tzedakah vachessed vehoshieinu. Avinu Malkeinu, kotveinu besefer chayim tovim.',
+                translation: 'Nosso Pai, nosso Rei, sê benevolente connosco e responde-nos, pois não temos méritos suficientes; age connosco com justiça e benevolência e salva-nos. Nosso Pai, nosso Rei, inscreve-nos no Livro da Vida boa.'
+            }
+        },
+        'Birkat Kohanim': {
+            paragraphs: [
+                'A sagrada bênção sacerdotal tripla prescrita na Torá (Bamidbar 6:24-26), transmitida através dos sacerdotes descendentes de Aarão, proferida com as mãos erguidas sob o Talit.',
+                'Recitada na repetição da Amidá nos Shabatot e festividades solenes, selando sobre a comunidade a proteção protetora de Deus e a bênção da harmonia e da paz (Shalom).',
+                'Pela promessa bíblica perpétua, o próprio Criador afirma: «Eles porão o Meu Nome sobre os filhos de Israel, e Eu os abençoarei».'
+            ],
+            prayer: {
+                hebrew: 'יְבָרֶכְךָ יְהוָה וְיִשְׁמְרֶךָ׃ יָאֵר יְהוָה פָּנָיו אֵלֶיךָ וִיחֻנֶּךָּ׃ יִשָּׂא יְהוָה פָּנָיו אֵלֶיךָ וְיָשֵׂם לְךָ שָׁלוֹם׃ וְשָׂמוּ אֶת־שְׁמִי עַל־בְּנֵי יִשְׂרָאֵל, וַאֲנִי אֲבָרְכֵם׃',
+                translit: 'Yevarechecha Adonai veyishmerecha. Ya\'er Adonai panav eilecha vichuneka. Yisa Adonai panav eilecha veyasem lecha shalom. Vesamu et shemi al benei Yisrael, va\'Ani avarcheim.',
+                translation: 'O Eterno te abençoe e te guarde. O Eterno faça resplandecer o Seu rosto sobre ti e tenha compaixão de ti. O Eterno erga a Sua face sobre ti e te conceda a paz. E porão o Meu Nome sobre os filhos de Israel, e Eu os abençoarei.'
+            }
+        },
+        'Tefilat Musaf': {
+            paragraphs: [
+                'Oração solene adicional que comemora as oferendas prescritas para os dias santificados: Shabat, Rosh Chodesh, Festividades Bíblicas (Pessach, Shavuot, Sukkot, Shemini Atzeret), Chol HaMoed e Yom Kippur.',
+                'Seu tempo canónico inicia-se logo após a oração matinal de Shacharit, devendo estender-se no máximo até a sétima hora proporcional haláchica do dia.',
+                'Na sua repetição comunitária, proclama-se a Kedushá de Kéter, onde o povo terrestre harmoniza sua voz com os coros celestiais na proclamação da soberania divina.'
+            ],
+            prayer: {
+                hebrew: 'כְּתַר יִתְּנוּ לְךָ יְהוָה אֱלֹהֵינוּ מַלְאָכִים הֲמוֹנֵי מַעְלָה עִם עַמְּךָ יִשְׂרָאֵל קְבוּצֵי מַטָּה, כֻּלָּם כְּאֶחָד קְדֻשָּׁה לְךָ יְשַׁלֵּשׁוּ, כַּדָּבָר הָאָמוּר עַל יַד נְבִיאֶךָ: וְקָרָא זֶה אֶל זֶה וְאָמַר, קָדוֹשׁ קָדוֹשׁ קָדוֹשׁ יְהוָה צְבָאוֹת מְלֹא כָל הָאָרֶץ כְּבוֹדוֹ׃',
+                translit: 'Keter yitnu lecha Adonai Eloheinu mal\'achim hamonei ma\'alah im amecha Yisrael kevutzei mata, kulam ke\'echad kedushah lecha yeshaleshu, kadavar ha\'amur al yad nevi\'echa: vekara zeh el zeh ve\'amar, Kadosh Kadosh Kadosh Adonai Tzeva\'ot melo chol ha\'aretz kevodo.',
+                translation: 'Uma coroa Te outorgarão, ó Eterno nosso Deus, as legiões angelicais no alto junto ao Teu povo Israel reunido aqui embaixo; todos em uníssono proclamam três vezes a Tua santidade, conforme a palavra transmitida pelo Teu profeta: E clamavam uns aos outros dizendo: Santo, Santo, Santo é o Eterno dos Exércitos, a Sua glória preenche toda a terra.'
+            }
+        },
+        'Tefilat Geshem': {
+            paragraphs: [
+                'Prece sublime e comovente recitada em Musaf de Shemini Atzeret, assinalando a abertura da estação pluvial na Terra de Israel e invocando a bênção da água sobre toda a criação.',
+                'O officiante veste vestes brancas memoriais, invocando o mérito e a devoção dos três patriarcas para rogar águas doces de sustento e fertilidade agrícola.',
+                'Inaugura no texto da Amidá a bênção diária: Mashiv HaRuach UMorid HaGeshem.'
+            ],
+            prayer: {
+                hebrew: 'מַשִּׁיב הָרוּחַ וּמוֹרִיד הַגֶּשֶׁם, לִבְרָכָה וְלֹא לִקְלָלָה, לְחַיִּים וְלֹא לַמָּוֶת, לְשׂבַע וְלֹא לְרָזוֹן׃ אָמֵן.',
+                translit: 'Mashiv haruach umorid hageshem, livrachah velo liklalah, lechayim velo lamavet, lesova velo lerazon. Amen.',
+                translation: 'Que faz soprar o vento e cair a chuva, para bênção e não para maldição, para vida e não para morte, para fartura e não para carência. Amém.'
+            }
+        },
+        'Tefilat Tal': {
+            paragraphs: [
+                'Prece primaveril solene recitada em Musaf do primeiro dia de Pessach (mês bíblico de Aviv), acolhendo a estação estival e a bênção silenciosa do orvalho.',
+                'O orvalho celeste simboliza uma graça constante e incansável que nunca cessa nem destrói, expressando a infinita misericórdia e restauração de Israel.',
+                'Assinala o início do ciclo estival no qual se menciona Morid HaTal em todas as orações cotidianas.'
+            ],
+            prayer: {
+                hebrew: 'בְּטַל יְבוֹרַךְ יוֹם, וְתַשְׁקֶה צִיּוֹן מֵרְוָיָה; פְּתַח לָנוּ אֶת־אוֹצָרְךָ הַטּוֹב, לְחַיִּים וּלְשָׂבָע, מוֹרִיד הַטָּל לִבְרָכָה׃',
+                translit: 'Betal yevorach yom, vetashkeh Tzion merevayah; petach lanu et otzarcha hatov, lechayim ulesava, morid hatal livrachah.',
+                translation: 'Com o orvalho abençoa este dia e sacia Sião com abundância; abre-nos o Teu generoso tesouro, para a vida e a fartura, Aquele que faz descer o orvalho para a bênção.'
+            }
+        },
+        'Minchá Ta\'anit': {
+            paragraphs: [
+                'Culto vespertino de oração prescrito para os dias de jejum coletivo no calendário bíblico e histórico (Tzom Gedaliah, 10 de Tevet, Ta\'anit Esther, 17 de Tamuz, 9 de Av e Yom Kippur).',
+                'Inclui a abertura solene do Sefer Torá para a leitura do trecho de intercessão de Moshé (Vayechal), além da Haftará profética de consolo.',
+                'A congregação insere na Amidá a súplica de Aneinu, implorando resposta e alívio divino perante as aflições do tempo presente.'
+            ],
+            prayer: {
+                hebrew: 'עֲנֵנוּ יְהוָה עֲנֵנוּ בְּיוֹם צוֹם תַּעֲנִיתֵנוּ, כִּי בְצָרָה גְדוֹלָה אֲנָחְנוּ. אַל תֵּפֶן אֶל רִשְׁעֵנוּ וְאַל תַּסְתֵּר פָּנֶיךָ מִמֶּנּוּ, כִּי אַתָּה יְהוָה שׁוֹמֵעַ תְּפִלַּת כָּל־פֶּה׃',
+                translit: 'Aneinu Adonai aneinu beyom tzom ta\'aniteinu, ki vetzarah gedolah anachnu. Al tefen el rish\'enu ve\'al taster paneicha mimenu, ki Atah Adonai shome\'a tefilat kol peh.',
+                translation: 'Responde-nos, ó Eterno, responde-nos no dia do nosso jejum, pois estamos em grande aflição. Não olhes para a nossa iniquidade e não escondas a Tua face de nós, pois Tu, ó Eterno, és Aquele que ouve a oração de todas as bocas.'
+            }
+        },
+        'Kabbalat Shabbat': {
+            paragraphs: [
+                'Cerimónia sagrada e comovente de acolhimento à Rainha do Shabat (Shabbat Malketa), desenvolvida pelos santos cabalistas de Safed e celebrada em todo o mundo judaico.',
+                'Inicia-se com a entoação dos Salmos que espelham a Criação, atingindo o clímax no poema celestial de Lecha Dodi de Rabi Shlomo Alkabetz.',
+                'Na estrofe final (Bo\'i Chalah), todos voltam o olhar para a entrada da congregação e saúdam reverentes a Presença Divina (Shechiná).'
+            ],
+            prayer: {
+                hebrew: 'לְכָה דוֹדִי לִקְרַאת כַּלָּה, פְּנֵי שַׁבָּת נְקַבְּלָה׃ שָׁמוֹר וְזָכוֹר בְּדִבּוּר אֶחָד, הִשְׁמִיעָנוּ אֵל הַמְּיֻחָד, יְהוָה אֶחָד וּשְׁמוֹ אֶחָד, לְשֵׁם וּלְתִפְאֶרֶת וְלִתְהִלָּה׃',
+                translit: 'Lecha dodi likrat kalah, penei Shabbat nekabelah. Shamor vezachor bedibur echad, hishmianu El hameyuchad, Adonai Echad ushemo Echad, leshem ultif\'eret velithilah.',
+                translation: 'Vem, meu amado, ao encontro da noiva; acolhamos a presença do Shabat! Guarda e Lembra num único verbo no-lo fez ouvir o Deus Único; o Eterno é Um e o Seu Nome é Um, para renome, glória e louvor.'
+            }
+        },
+        'Tefilat Neilá': {
+            paragraphs: [
+                'A quinta e mais sublime oração de Yom Kippur, o Dia do Perdão, única em todo o calendário anual, celebrada exatamente quando o sol declina e os portões do Céu se fecham.',
+                'Representa o selamento final dos decretos no Livro da Vida, onde toda a congregação permanece de pé em jejum e fervor absoluto perante a arca sagrada aberta.',
+                'Encerra-se com a proclamação estrondosa de Shemá Yisrael, sete vezes Hashem Hu HaElohim, e o toque triunfante do Shofar anunciando o perdão selado.'
+            ],
+            prayer: {
+                hebrew: 'פְּתַח לָנוּ שַׁעַר, בְּעֵת נְעִילַת שַׁעַר, כִּי פָנָה יוֹם׃ הַיּוֹם יִפְנֶה, הַשֶּׁמֶשׁ יָבֹא וְיִפְנֶה, נָבוֹאָה שְׁעָרֶיךָ׃ יְהוָה הוּא הָאֱלֹהִים! יְהוָה הוּא הָאֱלֹהִים!',
+                translit: 'Petach lanu sha\'ar, be\'et ne\'ilat sha\'ar, ki fana yom. Hayom yifneh, hashemesh yavo veyifneh, navo\'ah she\'areicha! Adonai Hu HaElohim! Adonai Hu HaElohim!',
+                translation: 'Abre-nos a porta no momento do fechamento da porta, pois o dia já declina. O dia declina, o sol se põe e se retira; entremos pelas Tuas portas! O Eterno é Deus! O Eterno é Deus!'
+            }
+        },
+        'Kiddush Levana': {
+            paragraphs: [
+                'A santificação e bênção mensal da lua renovada (Birkat HaLevana), proferida a céu aberto nas noites claras a partir do início do mês bíblico até o plenilúnio.',
+                'O ciclo lunar recorda a resiliência e o renascimento contínuo do povo de Israel, que assim como a lua míngua e ressurge, renova sua esperança perante Deus.',
+                'Conclui-se habitualmente com abraços fraternos de votos mútuos de paz e bênção: Shalom Aleichem! Aleichem Shalom!'
+            ],
+            prayer: {
+                hebrew: 'בָּרוּךְ אַתָּה יְהֹוָה אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר בְּמַאֲמָרוֹ בָּרָא שְׁחָקִים, וּבְרוּחַ פִּיו כָּל צְבָאָם. דָּוִד מֶלֶךְ יִשְׂרָאֵל חַי וְקַיָּם! שָׁלוֹם עֲלֵיכֶם! עֲלֵיכֶם שָׁלוֹם!',
+                translit: 'Baruch Atah Adonai Eloheinu Melech HaOlam, asher bema\'amaro bara shechakim, uvru\'ach piv kol tzeva\'am. David Melech Yisrael chai vekayam! Shalom aleichem! Aleichem shalom!',
+                translation: 'Bendito és Tu, Eterno nosso Deus, Rei do Universo, que pela Tua palavra criaste os céus, e pelo sopro da Tua boca todo o seu exército. David, rei de Israel, vive e permanece! Paz sobre vós! Sobre vós a paz!'
+            }
         }
     };
 
@@ -593,7 +974,11 @@ export function generateZmanimTableHTML() {
         const prayer = itemData.prayer;
 
         return `
-            <div class="levels-container" style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+            <div class="levels-container" style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 10px;">
+                <div class="info-modal-card" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 700; color: var(--text-primary); font-size: var(--font-size-sm);">${desc}</span>
+                    <span style="font-weight: 700; color: var(--accent-color, #d4af37); font-size: var(--font-size-sm);">${time}</span>
+                </div>
                 ${paragraphs.map(description => `
                     <div class="info-modal-card">
                         <div class="info-modal-value" style="font-weight: 400; font-size: var(--font-size-sm); line-height: 1.6; text-align: left; white-space: normal;">
@@ -620,7 +1005,7 @@ export function generateZmanimTableHTML() {
 
     return `
         <div class="calendar-modal-content" style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
-            <ul class="legend-list" style="padding: 0; margin: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">
+            <ul class="legend-list" id="zmanim-list-items" style="padding: 0; margin: 0; list-style: none; display: flex; flex-direction: column; gap: 8px;">
                 ${processedItems.map(item => {
                     const desc = formatTwoWords(item.desc);
                     const infoHtml = createZmanDescriptionHTML(item.label, desc, item.time, item.isTomorrow);

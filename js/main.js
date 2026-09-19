@@ -25,6 +25,9 @@ import { initUmamiMonitor, trackMicroAction } from './utils/umamiMonitor.js';
 import { getSelectedLocation, clearExpiredLocations, JERUSALEM_COORDS } from './services/locationService.js';
 import { updateSolarPosition } from './ui/solarArc.js';
 import { initSimulator } from './utils/simulator.js';
+import { initTelemetryService } from './services/telemetryService.js';
+import { renderInteractiveCalendar } from './ui/components/interactiveCalendar.js';
+import { initConsoleControl } from './services/consoleControl.js';
 
 // Bloqueio global de drag/arraste em todo o site
 document.addEventListener('dragstart', (e) => e.preventDefault(), false);
@@ -219,6 +222,7 @@ async function updateDashboard(options = {}) {
     await minDelayPromise;
     renderEvents();
     renderFestivalsView();
+    renderInteractiveCalendar();
 
     setTimeout(() => document.body.classList.add('loaded'), 50);
 
@@ -244,9 +248,11 @@ initPcDisplayManager();
 initAppNavigation();
 initModals(updateDashboard);
 initUmamiMonitor();
+initTelemetryService();
 updateDashboard();
 initSmartUpdater(updateDashboard);
 initSimulator();
+initConsoleControl(updateDashboard);
 
 // Garantia de remoção do ecrã de carregamento global mesmo em redes lentas
 setTimeout(() => {

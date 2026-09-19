@@ -223,7 +223,7 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
 
         if (!isBiblical && !isTraditional) return [];
 
-        return [{
+        const results = [{
             name: itemName,
             time: dateObj.getTime(),
             category: customCategory,
@@ -232,5 +232,33 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
             isTraditional,
             raw: item
         }];
-    });
+
+        // Vezot HaBerachah é a porção conclusiva da Torá (Devarim 33:1 - 34:12), lida em Simchat Torá
+        // (que em Israel coincide com Shemini Atzeret). Emitimos o evento com category: 'parashat' para garantir
+        // a continuidade correta do ciclo da Torá entre Ha'azinu e Bereshit.
+        const hasVezotReading = (item.leyning && item.leyning.torah && item.leyning.torah.includes('Deuteronomy 33:1')) ||
+            (cleanTitle.includes('Simchat') && !cleanTitle.includes('Erev'));
+
+        if (hasVezotReading) {
+            results.push({
+                name: 'Yom Shabbat',
+                time: dateObj.getTime(),
+                category: 'parashat',
+                rawCategory: 'parashat',
+                isBiblical: true,
+                isTraditional: false,
+                raw: {
+                    title: 'Vezot HaBerachah',
+                    date: item.date,
+                    category: 'parashat',
+                    leyning: {
+                        torah: 'Deuteronomy 33:1-34:12',
+                        haftarah: (item.leyning && item.leyning.haftarah) ? item.leyning.haftarah : 'Joshua 1:1-18'
+                    }
+                }
+            });
+        }
+
+        return results;
+    }).sort((a, b) => a.time - b.time);
 }

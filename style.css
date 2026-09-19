@@ -31,6 +31,7 @@
     --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
     --font-serif: "New York", -apple-system-ui-serif, "Cardo", Georgia, serif;
     --text-primary: #E6EDF3;
+    --text-secondary: #8B949E;
     --text-muted: #8B949E;
     --text-tertiary: #9DA7B3;
 
@@ -113,6 +114,7 @@
     --card-specular: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
 
     --text-primary: #231B15;
+    --text-secondary: #6B5E50;
     --text-muted: #6B5E50;
     --text-tertiary: #52473D;
 
@@ -544,7 +546,7 @@ body.modal-open {
 /* Line 1: Strict Single Line with Ellipsis */
 .card-title,
 .settings-card-title {
-    font-size: 0.88rem !important;
+    font-size: 0.90rem !important;
     font-weight: 700 !important;
     letter-spacing: -0.015em !important;
     color: var(--text-primary) !important;
@@ -1123,7 +1125,7 @@ body.modal-open {
     .central-hero-card .card-title,
     .hero-card-large .card-title {
         font-size: var(--font-size-sm);
-        font-weight: 800;
+        font-weight: 700;
         letter-spacing: -0.015em;
     }
 
@@ -1748,28 +1750,36 @@ body.modal-open {
     .event-cards-row,
     #tanakh-festivals-list,
     #rabbinic-festivals-list,
+    #month-festivals-list,
     .festivals-grid {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 8px !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    [style*="display: none"],
+    [hidden] {
+        display: none !important;
     }
 
     .festival-section-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0 4px 6px;
-        margin-top: 18px;
-        margin-bottom: 8px;
+        padding: 0 2px;
+        margin-top: 24px;
+        margin-bottom: 10px;
     }
 
     .festival-section-title {
-        font-size: 15px;
+        font-size: 0.98rem;
         font-weight: 700;
         color: var(--text-primary);
         letter-spacing: -0.015em;
+        line-height: 1.3;
+        margin: 0;
     }
 
     /* Base Transition for Main Area */
@@ -1885,7 +1895,7 @@ body.modal-open {
     justify-content: space-between;
     align-items: center;
     padding: 0 10px 0 14px;
-    margin-bottom: 12px;
+    margin-top: 10px;
     background: var(--modal-input-bg);
     border: none !important;
     border-radius: 12px;
@@ -1975,14 +1985,16 @@ body.modal-open {
 .reading-body {
     flex: 1 1 auto;
     min-height: 0;
+    margin-top: 12px !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
     scroll-behavior: smooth;
     scrollbar-width: none !important;
+    padding-top: 2px;
     padding-right: 2px;
-    padding-bottom: 12px;
+    padding-bottom: 14px;
     box-sizing: border-box;
     width: 100%;
 }
@@ -1993,7 +2005,7 @@ body.modal-open {
 
 .suggestions-list {
     list-style: none !important;
-    margin: 0 !important;
+    margin: 10px 0 0 0 !important;
     padding: 0 !important;
     display: flex;
     flex-direction: column;
@@ -2684,11 +2696,14 @@ body.modal-open {
     justify-content: space-between;
     align-items: center;
     padding: 12px 14px;
-    border-radius: 14px;
+    min-height: 56px;
+    border-radius: 16px;
     background: var(--card-bg-start);
     border: 0.5px solid var(--card-border-color);
+    box-shadow: var(--card-specular), 0 2px 10px rgba(0, 0, 0, 0.10);
     gap: 12px;
     transition: border-color 0.18s ease, transform 0.14s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease;
+    box-sizing: border-box;
 }
 
 .settings-card:hover {
@@ -2715,9 +2730,13 @@ body.modal-open {
 }
 
 .settings-icon {
-    font-size: 14px;
+    font-size: 14.5px;
     color: var(--accent-color);
-    width: 20px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     flex-shrink: 0;
 }
@@ -3046,6 +3065,7 @@ body.modal-open {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    margin-top: 10px;
 }
 
 .legend-card {
@@ -3435,6 +3455,12 @@ body.loaded .event-card.not-ready {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    margin-top: 10px;
+}
+
+.calendar-modal-content,
+.day-details-container {
+    margin-top: 10px;
 }
 
 .info-modal-card {
@@ -3590,7 +3616,7 @@ body.loaded .event-card.not-ready {
 
 @media (min-width: 768px) {
     .festival-section-header {
-        margin-top: 26px;
+        margin-top: 24px;
         margin-bottom: 10px;
         padding: 0 2px;
     }
@@ -3603,16 +3629,17 @@ body.loaded .event-card.not-ready {
 }
 
 .festival-section-title {
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     font-weight: 700;
     color: var(--text-primary);
-    letter-spacing: -0.012em;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
     margin: 0;
 }
 
 @media (min-width: 768px) {
     .festival-section-title {
-        font-size: 0.94rem;
+        font-size: 0.98rem;
         letter-spacing: -0.015em;
     }
 }
@@ -5350,6 +5377,383 @@ body.loaded .app-page-loader {
 .settings-card.is-blocked-torah .settings-card-desc {
     color: var(--accent-color) !important;
 }
+
+/* ==========================================================================
+   ABA HOJE: HEADER DE SAUDAÇÃO & DATA GREGORIANA
+   ========================================================================== */
+.today-hero-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 4px 12px 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.today-greeting-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+}
+
+.today-greeting-text {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+}
+
+.today-gregorian-date {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--accent-color);
+    letter-spacing: -0.01em;
+}
+
+.study-cards-container {
+    width: 100%;
+    margin-top: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Garante que o botão ativo do study-pill-btn tenha alto contraste em ambos os temas */
+.study-pill-btn.active {
+    background: var(--accent-color) !important;
+    color: #FFFFFF !important;
+    border-color: var(--accent-color) !important;
+    font-weight: 700 !important;
+}
+
+:root[data-theme="day"] .study-pill-btn.active {
+    color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   CALENDÁRIO MENSAL INTERATIVO (DESIGN SYSTEM APPLE SPATIAL GLASS)
+   ========================================================================== */
+.interactive-calendar-card {
+    border-radius: var(--card-radius);
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    border: 0.5px solid var(--card-border-color);
+    box-shadow: var(--card-specular), var(--shadow-subtle);
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(145deg, var(--card-bg-start) 0%, var(--card-bg-end) 100%);
+    backdrop-filter: blur(var(--blur)) saturate(190%) brightness(105%);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(190%) brightness(105%);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.calendar-header-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 0.5px solid var(--card-border-color);
+}
+
+.calendar-title-wrap {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.calendar-month-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.015em;
+}
+
+.calendar-hebrew-subtitle {
+    font-size: var(--font-size-xs);
+    color: var(--accent-color);
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.calendar-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.calendar-nav-btn {
+    background: var(--modal-input-bg);
+    border: 0.5px solid var(--card-border-color);
+    color: var(--text-primary);
+    border-radius: 10px;
+    padding: 7px 11px;
+    cursor: pointer;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.18s ease;
+}
+
+.calendar-nav-btn:hover,
+.calendar-nav-btn:focus-visible {
+    background: var(--hover-gradient);
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+}
+
+.calendar-today-btn {
+    background: var(--accent-bg) !important;
+    border-color: var(--accent-color) !important;
+    color: var(--accent-color) !important;
+}
+
+.calendar-legend-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 6px 10px;
+    background: var(--modal-input-bg);
+    border: 0.5px solid var(--card-border-color);
+    border-radius: 10px;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+}
+
+.dot-today { background: var(--accent-color); }
+.dot-shabbat { background: #E5A93C; }
+.dot-biblical { background: #00D2FF; }
+.dot-traditional { background: #BD10E0; }
+.dot-rosh-chodesh { background: #50E3C2; }
+
+.calendar-grid-container {
+    width: 100%;
+    overflow: hidden;
+}
+
+.calendar-weekdays-row {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.calendar-weekday-cell {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding: 4px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar-weekday-cell.is-shabbat-col {
+    color: #E5A93C;
+}
+
+.calendar-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 5px;
+}
+
+.calendar-day-cell {
+    min-height: 50px;
+    min-width: 0;
+    background: var(--modal-input-bg);
+    border: 0.5px solid var(--card-border-color);
+    border-radius: 10px;
+    padding: 5px 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    user-select: none;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.calendar-day-cell:hover,
+.calendar-day-cell:focus-visible {
+    background: var(--hover-gradient);
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.calendar-day-cell.is-other-month {
+    opacity: 0.30;
+}
+
+.calendar-day-cell.is-today {
+    border: 1.5px solid var(--accent-color);
+    background: var(--accent-bg);
+    box-shadow: 0 0 10px rgba(56, 139, 253, 0.20);
+}
+
+.calendar-day-cell.is-shabbat {
+    border-bottom: 2.5px solid #E5A93C;
+}
+
+.calendar-day-cell.is-selected {
+    border-color: var(--accent-color);
+    background: var(--accent-bg);
+}
+
+.day-cell-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    min-width: 0;
+    gap: 2px;
+}
+
+.day-gregorian-num {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    flex-shrink: 0;
+}
+
+.day-hebrew-num {
+    font-size: 9px;
+    color: var(--text-muted);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60%;
+}
+
+.day-indicators-container {
+    display: flex;
+    gap: 2.5px;
+    align-items: center;
+    margin-top: 2px;
+    min-height: 12px;
+    overflow: hidden;
+}
+
+.cal-badge {
+    font-size: 7px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.badge-today { color: var(--accent-color); }
+.badge-shabbat { color: #E5A93C; }
+.badge-biblical { color: #00D2FF; }
+.badge-traditional { color: #BD10E0; }
+.badge-rosh-chodesh { color: #50E3C2; }
+
+/* Mobile Fluid Optimization (< 768px) */
+@media (max-width: 767px) {
+    .interactive-calendar-card {
+        padding: 12px 8px;
+        margin-bottom: 16px;
+    }
+
+    .calendar-header-toolbar {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+    }
+
+    .calendar-month-title {
+        font-size: 0.95rem;
+    }
+
+    .calendar-nav-btn {
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+
+    .calendar-legend-bar {
+        gap: 4px 8px;
+        padding: 4px 6px;
+        font-size: 9px;
+        margin-bottom: 8px;
+    }
+
+    .calendar-weekdays-row {
+        gap: 2px;
+        margin-bottom: 4px;
+    }
+
+    .calendar-weekday-cell {
+        font-size: 9.5px;
+        padding: 2px 0;
+    }
+
+    .calendar-days-grid {
+        gap: 2.5px;
+    }
+
+    .calendar-day-cell {
+        min-height: 44px;
+        padding: 3.5px 2.5px;
+        border-radius: 7px;
+    }
+
+    .day-gregorian-num {
+        font-size: 11.5px;
+    }
+
+    .day-hebrew-num {
+        font-size: 7.5px;
+        max-width: 50%;
+    }
+
+    .day-indicators-container {
+        gap: 1.5px;
+        min-height: 9px;
+        margin-top: 1px;
+    }
+
+    .cal-badge {
+        font-size: 6px;
+    }
+
+    /* Study Selector Bar full width equal distribution on mobile */
+    .study-selector-bar {
+        gap: 4px;
+        padding: 4px 0 10px;
+        justify-content: stretch;
+    }
+
+    .study-pill-btn {
+        flex: 1;
+        padding: 8px 3px;
+        font-size: 11px;
+        text-align: center;
+        border-radius: 10px;
+    }
+}
+
 
 
 

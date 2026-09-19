@@ -171,7 +171,10 @@ export function renderSuggestions(results = [], options = {}) {
 
     finalItems.forEach(resItem => {
         const li = document.createElement('li');
-        li.className = 'legend-card';
+        li.className = 'settings-card event-card glass-panel';
+        li.setAttribute('tabindex', '0');
+        li.setAttribute('role', 'button');
+        li.style.cursor = 'pointer';
 
         let primaryText = resItem.primaryText;
         let secondaryText = resItem.secondaryText;
@@ -192,18 +195,27 @@ export function renderSuggestions(results = [], options = {}) {
             secondaryText = parts.length > 1 ? parts[parts.length - 1] : '';
         }
 
-        li.style.cssText = "display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 15px; border-radius: 14px; background: var(--hover-gradient); border: 0.5px solid var(--card-border-color); margin-bottom: 6px; box-sizing: border-box; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease;";
+        li.setAttribute('aria-label', primaryText || 'Localidade');
+
         li.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
-                <div class="icon-circle" style="width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <i class="${iconClass}"></i>
-                </div>
-                <div style="display: flex; flex-direction: column; text-align: left; min-width: 0; flex: 1; gap: 2px;">
-                    <span style="font-size: var(--font-size-base); font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(primaryText)}</span>
-                    <span style="font-size: var(--font-size-xs); color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(secondaryText) || 'Localidade'}</span>
+            <div class="settings-card-left">
+                <i class="${iconClass} settings-icon"></i>
+                <div class="settings-card-text">
+                    <span class="settings-card-title">${escapeHtml(primaryText)}</span>
+                    <span class="settings-card-desc">${escapeHtml(secondaryText) || 'Localidade'}</span>
                 </div>
             </div>
+            <div class="card-arrow-action" aria-hidden="true">
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
         `;
+
+        li.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                li.click();
+            }
+        });
 
         li.addEventListener('click', () => {
             let locObj = null;
@@ -274,7 +286,7 @@ export function renderSuggestions(results = [], options = {}) {
                     if (parent) {
                         const countryEl = parent.querySelector('.country-subtitle, .settings-card-desc');
                         if (countryEl) {
-                            countryEl.textContent = 'Local selecionado';
+                            countryEl.textContent = 'Local Selecionado';
                         }
                     }
                 }
@@ -374,9 +386,10 @@ export function initLocationSearchListener() {
                 const suggestionsList = document.getElementById('location-suggestions');
                 if (suggestionsList) {
                     suggestionsList.innerHTML = `
-                        <li class="reading-error" style="margin: 8px 0; list-style: none;">
-                            <span class="reading-error-title">Serviço Indisponível</span>
-                            <span class="reading-error-message">Não foi possível consultar os servidores de localização.</span>
+                        <li class="settings-card glass-panel" style="padding: 16px 18px; border-radius: 16px; text-align: left; list-style: none;">
+                            <span style="font-size: var(--font-size-sm); line-height: 1.6; color: var(--text-primary);">
+                                Não foi possível consultar os servidores de localização.
+                            </span>
                         </li>
                     `;
                 }
@@ -389,9 +402,10 @@ export function initLocationSearchListener() {
                 const suggestionsList = document.getElementById('location-suggestions');
                 if (suggestionsList) {
                     suggestionsList.innerHTML = `
-                        <li class="reading-error" style="margin: 8px 0; list-style: none; background: var(--hover-gradient); border-color: var(--card-border-color); box-shadow: none;">
-                            <span class="reading-error-title" style="color: var(--text-primary);">Nenhum Resultado</span>
-                            <span class="reading-error-message" style="color: var(--text-muted);">Não foi encontrada nenhuma localidade com este nome.</span>
+                        <li class="settings-card glass-panel" style="padding: 16px 18px; border-radius: 16px; text-align: left; list-style: none;">
+                            <span style="font-size: var(--font-size-sm); line-height: 1.6; color: var(--text-primary);">
+                                Não foi encontrada nenhuma localidade com este nome.
+                            </span>
                         </li>
                     `;
                 }

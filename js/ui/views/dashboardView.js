@@ -45,6 +45,7 @@ import { showShareToast, shareAppUrl, initShareListeners } from '../components/s
 import { renderSupportCards } from '../components/supportCard.js';
 import { renderHomeProducts } from '../components/homeProducts.js';
 import { applyDailyReadingsToCards } from '../../services/sefariaService.js';
+import { trackHeartEvent } from '../../services/telemetryService.js';
 
 const HEBREW_MONTHS_MAP = HEBREW_MONTHS_PT;
 
@@ -535,7 +536,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         if (festivalReadingState) {
             elParasha.textContent = festivalReadingState;
         } else {
-            const rawTitle = upcomingParasha ? upcomingParasha.raw.title.replace('Parashat ', '').replace(/[\u2018\u2019]/g, "'") : '-';
+            const rawTitle = upcomingParasha ? upcomingParasha.raw.title.replace(/^(?:Parashat|Parashá|Parashah|Parasha)\s+/i, '').replace(/[\u2018\u2019]/g, "'") : '-';
             elParasha.textContent = formatTwoWordParasha(rawTitle);
         }
     }
@@ -627,7 +628,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         elHaftara.textContent = formatHaftaraTwoWords(hRef, 'Profetas');
 
         const elHaftaraSub = document.getElementById('card-haftara-subtitle') || haftaraWrapper?.querySelector('.settings-card-desc');
-        if (elHaftaraSub) elHaftaraSub.textContent = 'Olhar Futuro';
+        if (elHaftaraSub) elHaftaraSub.textContent = 'Livros Proféticos';
     }
 
     if (elKetuvim) {
@@ -685,7 +686,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         elKetuvim.textContent = formatCardTwoWords(transliterateTorah(kRef), 'Salmos');
 
         const elKetuvimSub = document.getElementById('card-ketuvim-subtitle') || ketuvimWrapper?.querySelector('.settings-card-desc');
-        if (elKetuvimSub) elKetuvimSub.textContent = 'Escrito Sagrado';
+        if (elKetuvimSub) elKetuvimSub.textContent = 'Escritos Sagrados';
     }
 
     if (elDate && hdate) {
@@ -726,7 +727,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             if (parent) {
                 const countryEl = parent.querySelector('.country-subtitle, .settings-card-desc');
                 if (countryEl) {
-                    countryEl.textContent = 'Local selecionado';
+                    countryEl.textContent = 'Local Selecionado';
                 }
             }
         }
@@ -816,12 +817,60 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
     updateShaahZmanitCardPosition();
 }
 
+export function initStudyTabs() {
+    if (typeof document === 'undefined') return;
+    const targetMap = {
+        torah: 'card-torah-wrapper',
+        haftara: 'card-haftara-wrapper',
+        ketuvim: 'card-ketuvim-wrapper',
+        sefaria: 'card-sefaria-single'
+    };
+
+    const selectorBar = document.querySelector('.study-selector-bar, .study-segmented-tabs');
+    if (!selectorBar) {
+        Object.values(targetMap).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'flex';
+        });
+        return;
+    }
+
+    if (selectorBar.dataset.initialized) return;
+    selectorBar.dataset.initialized = 'true';
+
+    selectorBar.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-study-target]');
+        if (!btn) return;
+        const target = btn.getAttribute('data-study-target');
+        if (!target) return;
+
+        selectorBar.querySelectorAll('[data-study-target]').forEach(b => {
+            const isActive = (b === btn);
+            b.classList.toggle('active', isActive);
+            b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+
+        const activeCardId = targetMap[target];
+        const allCardIds = Object.values(targetMap);
+
+        allCardIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.display = (id === activeCardId) ? 'flex' : 'none';
+            }
+        });
+
+        trackHeartEvent('study_tab_change', { target });
+    });
+}
+
 export function initUtilities() {
     initThemeSwitcher();
     initSolarArc();
     initZmanimModal();
     initAppNavigation();
     initShareListeners();
+    initStudyTabs();
 }
 
 export function renderEvents() {
