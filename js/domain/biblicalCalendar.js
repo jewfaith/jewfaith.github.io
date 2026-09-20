@@ -25,47 +25,121 @@ export function isHebrewLeapYear(hYear) {
 }
 
 /**
+ * Calcula o dia absoluto do calendário haláchico para o 1 de Tishrei (Rosh Hashaná)
+ * segundo as regras astronómicas consolidadas pelo Rambam (Kiddush HaChodesh).
+ */
+export function roshHashanahDay(yr) {
+    const y = Number(yr) || 5786;
+    const m = Math.floor((235 * y - 234) / 19);
+    const parts = 31524 + m * 765433;
+    let day = Math.floor(parts / 25920);
+    const time = parts % 25920;
+    let dow = (day % 7) + 1; // 1: Dom, 2: Seg, ..., 7: Sáb
+
+    if (time >= 19440) {
+        day++;
+        dow = (dow % 7) + 1;
+    }
+
+    const isLeap = isHebrewLeapYear(y);
+    if (dow === 1 || dow === 4 || dow === 6) {
+        day++;
+        dow = (dow % 7) + 1;
+    } else if (!isLeap && dow === 3 && time >= (9 * 1080 + 204) && time < 19440) {
+        day += 2;
+        dow = ((dow + 1) % 7) + 1;
+    } else if (isHebrewLeapYear(y - 1) && dow === 2 && time >= (15 * 1080 + 589) && time < 19440) {
+        day++;
+        dow = (dow % 7) + 1;
+    }
+
+    if (dow === 1 || dow === 4 || dow === 6) {
+        day++;
+        dow = (dow % 7) + 1;
+    }
+
+    return day;
+}
+
+/**
  * Calcula a duração total em dias de um ano hebraico específico
  * segundo as regras haláchicas consolidadas pelo Rambam (Kiddush HaChodesh).
  */
 export function getHebrewYearLength(hYear) {
     const y = Number(hYear) || 5786;
-
-    function roshHashanahDay(yr) {
-        const m = Math.floor((235 * yr - 234) / 19);
-        const parts = 31524 + m * 765433;
-        let day = Math.floor(parts / 25920);
-        const time = parts % 25920;
-        let dow = (day % 7) + 1; // 1: Dom, 2: Seg, ..., 7: Sáb
-
-        if (time >= 19440) {
-            day++;
-            dow = (dow % 7) + 1;
-        }
-
-        const isLeap = isHebrewLeapYear(yr);
-        if (dow === 1 || dow === 4 || dow === 6) {
-            day++;
-            dow = (dow % 7) + 1;
-        } else if (!isLeap && dow === 3 && time >= (9 * 1080 + 204) && time < 19440) {
-            day += 2;
-            dow = ((dow + 1) % 7) + 1;
-        } else if (isHebrewLeapYear(yr - 1) && dow === 2 && time >= (15 * 1080 + 589) && time < 19440) {
-            day++;
-            dow = (dow % 7) + 1;
-        }
-
-        if (dow === 1 || dow === 4 || dow === 6) {
-            day++;
-            dow = (dow % 7) + 1;
-        }
-
-        return day;
-    }
-
     const d1 = roshHashanahDay(y);
     const d2 = roshHashanahDay(y + 1);
     return d2 - d1;
+}
+
+/**
+ * Converte qualquer data gregoriana para a data hebraica correspondente de forma 100% matemática e offline.
+ * @param {number|Date} yearOrDate - Ano gregoriano ou objeto Date
+ * @param {number} [month] - Mês gregoriano (1-12)
+ * @param {number} [day] - Dia gregoriano (1-31)
+ * @returns {{ hd: number, hm: string, hy: number, biblicalMonthIdx: number }}
+ */
+export function getHebrewDateFromGregorian(yearOrDate, month, day) {
+    let y, m, d;
+    if (yearOrDate instanceof Date) {
+        y = yearOrDate.getFullYear();
+        m = yearOrDate.getMonth() + 1;
+        d = yearOrDate.getDate();
+    } else if (typeof yearOrDate === 'object' && yearOrDate !== null && yearOrDate.year) {
+        y = yearOrDate.year;
+        m = yearOrDate.month;
+        d = yearOrDate.day;
+    } else {
+        y = Number(yearOrDate);
+        m = Number(month);
+        d = Number(day);
+    }
+
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    const daysSince1970 = Math.floor(dt.getTime() / 86400000);
+    const absDay = daysSince1970 + 2092591;
+
+    let hYear = Math.floor((absDay - 2092591) / 365.2468) + 5786;
+    while (roshHashanahDay(hYear + 1) <= absDay) hYear++;
+    while (roshHashanahDay(hYear) > absDay) hYear--;
+
+    let dayInYear = absDay - roshHashanahDay(hYear) + 1;
+    const yLen = getHebrewYearLength(hYear);
+    const isLeap = isHebrewLeapYear(hYear);
+
+    const months = [
+        { name: 'Tishrei', bIdx: 7, len: 30 },
+        { name: 'Cheshvan', bIdx: 8, len: (yLen === 355 || yLen === 385) ? 30 : 29 },
+        { name: 'Kislev', bIdx: 9, len: (yLen === 353 || yLen === 383) ? 29 : 30 },
+        { name: 'Tevet', bIdx: 10, len: 29 },
+        { name: 'Shevat', bIdx: 11, len: 30 },
+        ...(isLeap ? [
+            { name: 'Adar I', bIdx: 12, len: 30 },
+            { name: 'Adar II', bIdx: 13, len: 29 }
+        ] : [
+            { name: 'Adar', bIdx: 12, len: 29 }
+        ]),
+        { name: 'Nisan', bIdx: 1, len: 30 },
+        { name: 'Iyyar', bIdx: 2, len: 29 },
+        { name: 'Sivan', bIdx: 3, len: 30 },
+        { name: 'Tammuz', bIdx: 4, len: 29 },
+        { name: 'Av', bIdx: 5, len: 30 },
+        { name: 'Elul', bIdx: 6, len: 29 }
+    ];
+
+    for (const mon of months) {
+        if (dayInYear <= mon.len) {
+            return {
+                hd: dayInYear,
+                hm: mon.name,
+                hy: hYear,
+                biblicalMonthIdx: mon.bIdx
+            };
+        }
+        dayInYear -= mon.len;
+    }
+
+    return { hd: 1, hm: 'Nisan', hy: hYear, biblicalMonthIdx: 1 };
 }
 
 /**

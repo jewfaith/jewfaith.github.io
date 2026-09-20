@@ -10,11 +10,13 @@
  */
 
 import { state } from '../../state.js';
-import { HEBREW_MONTHS_PT, FESTIVAL_DESCRIPTIONS } from '../../domain/constants.js';
+import { HEBREW_MONTHS_PT, FESTIVAL_DESCRIPTIONS, getFestivalDescription } from '../../domain/constants.js';
+import { getParashaSummary } from '../../domain/parashot.js';
 import { trackHeartEvent, trackTaskSuccess } from '../../services/telemetryService.js';
 import { ICONS, getEventIcon } from '../icons.js';
 import { formatHebrewInText } from '../../domain/formatters.js';
 import { getFestivalIcon } from '../festivalsView.js';
+import { openModalElement, closeModalSafely } from '../modals/modalManager.js';
 
 let displayedYear = null;
 let displayedMonth = null; // 0-indexed (0 = Jan, 11 = Dez)
@@ -445,7 +447,7 @@ function handleDayClick(cell) {
 /**
  * Abre e preenche o modal de detalhes do dia selecionado
  */
-export function openDayDetailsModal(dateKey, hdateStr) {
+export function openDayDetailsModal(dateKey, hdateStr, options = {}) {
     const modal = document.getElementById('day-details-modal');
     if (!modal) return;
 
@@ -485,14 +487,38 @@ export function openDayDetailsModal(dateKey, hdateStr) {
     if (dateObj.getDay() === 6) {
         const parashaEv = dayEvents.find(e => e.category === 'parashat' || (e.name && /^(?:Parashat|Parashá|Parashah|Parasha)\b/i.test(e.name)));
         const parashaName = parashaEv ? parashaEv.name.replace(/^(?:Parashat|Parashá|Parashah|Parasha)\s+/i, '').trim() : 'Yom Shabbat';
+        const cardTitle = parashaName === 'Yom Shabbat' ? 'Yom Shabbat' : `Shabbat ${parashaName}`;
+        const summary = getParashaSummary(parashaName) || getFestivalDescription('Yom Shabbat');
+        let parashaHtml = '';
+        if (summary) {
+            const paragraphs = Array.isArray(summary) ? summary : [summary];
+            parashaHtml = `
+                <div class="levels-container" style="display:flex; flex-direction:column; gap:8px;">
+                    ${paragraphs.map((p, idx) => `
+                        <div class="info-modal-card" style="display:flex; flex-direction:column; align-items:flex-start; gap:6px; ${idx === paragraphs.length - 1 ? 'border-bottom:none;' : ''}">
+                            <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.65; text-align:left; color: var(--text-primary);">${formatHebrewInText(p)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        const safeTitle = cardTitle.replace(/"/g, '&quot;');
+        const safeHtml = parashaHtml.replace(/"/g, '&quot;');
         bodyHtml += `
-            <div class="settings-card event-card glass-panel" style="border-left: 3px solid #E5A93C;">
+            <div class="settings-card event-card glass-panel info-trigger" 
+                 tabindex="0" role="button" aria-label="${safeTitle}"
+                 data-info-title="${safeTitle}"
+                 data-info-html="${safeHtml}"
+                 style="border-left: 3px solid #E5A93C; cursor: pointer;">
                 <div class="settings-card-left">
                     <i class="fa-solid fa-candle-holder settings-icon" style="color: #E5A93C;"></i>
                     <div class="settings-card-text">
-                        <span class="settings-card-title">${parashaName === 'Yom Shabbat' ? 'Yom Shabbat' : `Shabbat ${parashaName}`}</span>
+                        <span class="settings-card-title">${cardTitle}</span>
                         <span class="settings-card-desc">Sétimo Dia Sagrado • Santa Convocação</span>
                     </div>
+                </div>
+                <div class="card-arrow-action" aria-hidden="true">
+                    <i class="fa-solid fa-arrow-right"></i>
                 </div>
             </div>
         `;
@@ -512,16 +538,47 @@ export function openDayDetailsModal(dateKey, hdateStr) {
             const iconClass = getFestivalIcon(evt.name, isBiblical);
             const tagLabel = isBiblical ? 'Mandamento da Torá' : (evt.category === 'fast' ? 'Jejum Comemorativo' : 'Tradição de Israel');
 
-            const descData = FESTIVAL_DESCRIPTIONS[evt.name] || 'Data comemorativa e solene no calendário de Israel.';
+            const descData = getFestivalDescription(evt.name) || FESTIVAL_DESCRIPTIONS[evt.name] || 'Data comemorativa e solene no calendário de Israel.';
             const descText = typeof descData === 'string' ? descData : (Array.isArray(descData) ? descData[0] : (descData.info || 'Mandamento perpétuo da Torá.'));
 
+            let fullHtml = '';
+            if (Array.isArray(descData)) {
+                fullHtml = `
+                    <div class="levels-container" style="display:flex; flex-direction:column; gap:8px;">
+                        ${descData.map((p, idx) => `
+                            <div class="info-modal-card" style="display:flex; flex-direction:column; align-items:flex-start; gap:6px; ${idx === descData.length - 1 ? 'border-bottom:none;' : ''}">
+                                <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.65; text-align:left; color: var(--text-primary);">${formatHebrewInText(p)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                fullHtml = `
+                    <div class="info-modal-card">
+                        <div class="info-modal-value" style="font-size: var(--font-size-sm); line-height:1.65; text-align:left;">${formatHebrewInText(descText)}</div>
+                    </div>
+                `;
+            }
+
+            const safeEvtName = evt.name.replace(/"/g, '&quot;');
+            const safeFullHtml = fullHtml.replace(/"/g, '&quot;');
+
             bodyHtml += `
-                <div class="settings-card event-card glass-panel" style="flex-direction: column; align-items: flex-start; gap: 8px;">
-                    <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-                        <i class="${iconClass} settings-icon" style="color: var(--accent-color);"></i>
-                        <div class="settings-card-text" style="flex: 1;">
-                            <span class="settings-card-title">${evt.name}</span>
-                            <span class="settings-card-desc" style="color: var(--accent-color);">${tagLabel}</span>
+                <div class="settings-card event-card glass-panel info-trigger" 
+                     tabindex="0" role="button" aria-label="${safeEvtName}"
+                     data-info-title="${safeEvtName}"
+                     data-info-html="${safeFullHtml}"
+                     style="flex-direction: column; align-items: flex-start; gap: 8px; cursor: pointer;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <i class="${iconClass} settings-icon" style="color: var(--accent-color);"></i>
+                            <div class="settings-card-text" style="flex: 1;">
+                                <span class="settings-card-title">${evt.name}</span>
+                                <span class="settings-card-desc" style="color: var(--accent-color);">${tagLabel}</span>
+                            </div>
+                        </div>
+                        <div class="card-arrow-action" aria-hidden="true">
+                            <i class="fa-solid fa-arrow-right"></i>
                         </div>
                     </div>
                     <p style="font-size: var(--font-size-sm); line-height: 1.5; color: var(--text-secondary); margin: 4px 0 0 0;">
@@ -544,16 +601,13 @@ export function openDayDetailsModal(dateKey, hdateStr) {
 
     if (bodyEl) bodyEl.innerHTML = bodyHtml;
 
-    modal.style.display = 'flex';
-    modal.classList.remove('is-closing');
-    document.body.classList.add('modal-open');
+    openModalElement(modal, 'detalhes-dia', options);
 
     // Botão de fechar modal
     const closeBtn = document.getElementById('close-day-details-btn');
     if (closeBtn) {
         closeBtn.onclick = () => {
-            modal.style.display = 'none';
-            document.body.classList.remove('modal-open');
+            closeModalSafely(modal);
         };
     }
 }

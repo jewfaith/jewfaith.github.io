@@ -1,6 +1,6 @@
 import { ICONS } from './icons.js';
 import { getUmamiStatus } from '../utils/umamiMonitor.js';
-import { getAboutProjectHtml, ABOUT_PROJECT_TITLE } from '../domain/aboutContent.js';
+import { getAboutProjectHtml, ABOUT_PROJECT_TITLE, getAboutMethodologyHtml, ABOUT_METHODOLOGY_TITLE } from '../domain/aboutContent.js';
 
 /**
  * PARECER JURÍDICO DE CONFORMIDADE E DECLARAÇÃO DE PROTEÇÃO DE DADOS
@@ -69,12 +69,12 @@ export function renderPrivacyView(force = false) {
     if (!container) return;
     if (!force && container.children.length > 0) return;
 
-    // CARD DE ABERTURA: NORMAS VIGENTES (EDIÇÃO 2026)
+    // CARD DE ABERTURA: DECLARAÇÃO INSTITUCIONAL (EDIÇÃO 2026)
     const heroCard = {
         id: 'normas-vigentes',
         icon: 'fa-solid fa-scale-balanced',
-        title: 'Normas Vigentes',
-        desc: 'Edição 2026',
+        title: 'Declaração Institucional',
+        desc: 'Princípios e Privacidade',
         paragraphs: [
             'A presente declaração consagra as diretrizes gerais de utilização, as salvaguardas de confidencialidade e o parecer técnico de conformidade jurídica da plataforma Yisrael Date.',
             'O documento encontra-se plenamente harmonizado com cinquenta e cinco regimes internacionais de proteção de dados e com as exigências de privacidade desde a conceção.',
@@ -82,8 +82,8 @@ export function renderPrivacyView(force = false) {
         ]
     };
 
-    // SEÇÃO 2: REGRAS DE USO
-    const secTermsHeader = renderSectionHeader('Regras de Uso', '20px');
+    // SEÇÃO 2: DIRETRIZES E TERMOS DE USO
+    const secTermsHeader = renderSectionHeader('Diretrizes e Termos de Uso', '20px');
     const secTermsCards = [
         {
             id: 'condicoes-gerais',
@@ -135,8 +135,8 @@ export function renderPrivacyView(force = false) {
         }
     ];
 
-    // SEÇÃO 2: OPERAÇÃO REAL
-    const sec1Header = renderSectionHeader('Operação Real', '14px');
+    // SEÇÃO 2: ARQUITETURA E FUNCIONAMENTO
+    const sec1Header = renderSectionHeader('Arquitetura e Funcionamento', '14px');
     const sec1Cards = [
         {
             id: 'calculos-solares',
@@ -179,10 +179,13 @@ export function renderPrivacyView(force = false) {
             title: 'Fontes Públicas',
             desc: 'Conexões Abertas',
             paragraphs: [
-                'A plataforma estabelece consultas legítimas e pontuais ao serviço público aberto OpenStreetMap Nominatim para obtenção estrita das coordenadas geográficas da localidade indicada.',
-                'A sincronização das efemérides astronómicas do calendário apoia-se nos dados públicos abertos fornecidos pela entidade Hebcal sob padrão aberto da internet.',
-                'As transmissões decorrem sob protocolo criptografado TLS sem autenticação de usuário, sem trânsito de nomes, sem endereços de correspondência e sem rastreadores persistentes.',
-                'As medidas técnicas de segurança asseguram o total isolamento das requisições na caixa de areia do próprio navegador de internet do usuário.'
+                'A plataforma opera um sistema de localização estritamente hierárquico estruturado em cinco níveis graduais de privacidade.',
+                'O primeiro nível prioriza as coordenadas prévias armazenadas em memória local ou livremente selecionadas pelo utilizador.',
+                'O segundo nível consulta a localização aproximada do dispositivo mediante autorização voluntária concedida ao navegador.',
+                'O terceiro nível emprega a geolocalização aproximada por rede com recurso a servidores abertos sem registo persistente de endereços de rede.',
+                'O quarto nível deduz o fuso horário ativo através da configuração horária nativa do próprio equipamento.',
+                'O quinto nível recorre ao padrão perpétuo de Jerusalém em caso de ausência total de rede ou de parâmetros prévios.',
+                'A sincronização das efemérides astronómicas do calendário apoia-se em dados abertos sem autenticação e sem identificadores pessoais.'
             ]
         },
         {
@@ -191,12 +194,12 @@ export function renderPrivacyView(force = false) {
             title: 'Memória Terminal',
             desc: 'Armazenamento Local',
             paragraphs: [
-                'O sistema retém no armazenamento local do navegador as coordenadas geográficas de latitude e longitude da localidade eleita pelo titular.',
-                'Fica gravada a denominação textual da cidade para identificação visual contínua na interface da aplicação.',
-                'Permanece consignada a tolerância em minutos livremente escolhida pelo usuário para o acendimento prévio das velas antes da Shkiá.',
-                'Encontram-se preservadas as preferências estéticas de tema visual entre o modo automático solar, o modo claro de pergaminho e o modo escuro de obsidiana.',
-                'No ambiente de computador, o sistema opera de forma fixa no formato de painel lateral com gaveta deslizante acelerada por hardware.',
-                'O prazo de conservação vincula-se com exclusividade à custódia do titular no navegador, persistindo unicamente até a limpeza voluntária ou a ordem formal de expurgo.'
+                'O sistema retém dados unicamente na memória do próprio equipamento mediante tecnologias nativas do navegador.',
+                'O armazenamento persistente local guarda as coordenadas geográficas aproximadas e a denominação da cidade escolhida.',
+                'O armazenamento transitório de sessão preserva os parâmetros temporários de rota e o histórico de navegação ativa.',
+                'A cache estruturada do motor de serviço assegura a integridade do ciclo anual e o funcionamento sem internet.',
+                'Nenhum dado pessoal identificável ou identificador biométrico é armazenado ou transmitido pela plataforma.',
+                'O utilizador mantém controlo absoluto e pode ordenar o expurgo integral dos registos a qualquer momento.'
             ]
         },
         {
@@ -205,9 +208,10 @@ export function renderPrivacyView(force = false) {
             title: 'Rede Local',
             desc: 'Operação Offline',
             paragraphs: [
-                'A aplicação estrutura-se como aplicação web progressiva sob versão consolidada dois ponto três ponto um do motor de serviço.',
-                'O núcleo do sistema e os dados do ciclo litúrgico anual permanecem pré-armazenados para facultar acesso e leitura plena mesmo sem ligação à rede.',
-                'O mecanismo de atualização assíncrona inteligente preserva a integridade da leitura e previne recarregamentos involuntários de página.'
+                'A aplicação estrutura-se como aplicação web progressiva com capacidade plena de funcionamento desconectado.',
+                'Todos os ficheiros essenciais do núcleo e os cálculos do calendário da Torá permanecem pré-armazenados na cache local.',
+                'O conversor do calendário e os cálculos solares operam sem necessidade de ligação externa aos servidores.',
+                'A indisponibilidade temporária de internet não impede o cálculo dos horários sagrados nem o acesso às leituras.'
             ]
         },
         {
@@ -450,13 +454,14 @@ export function renderPrivacyView(force = false) {
             desc: 'Expurgo Imediato',
             paragraphs: [
                 'O acionamento formal do instrumento resolutivo abaixo concretiza o expurgo definitivo e irrevogável de todos os registos locais, repondo a aplicação ao estado de pureza original.',
-                '<button id="modal-btn-purge" class="compliance-purge-btn">Confirmar Expurgo</button>'
+                '<button id="modal-btn-purge" class="compliance-purge-btn">Limpar Todos os Dados Salvos e Reiniciar</button>'
             ]
         }
     ];
 
     const aboutModalHtml = getAboutProjectHtml().replace(/"/g, '&quot;');
-    const secAboutHeader = renderSectionHeader('Sobre o Projeto');
+    const methodologyModalHtml = getAboutMethodologyHtml().replace(/"/g, '&quot;');
+    const secAboutHeader = renderSectionHeader('Informações e Transparência do Projeto');
 
     container.innerHTML = `
         ${secAboutHeader}
@@ -474,6 +479,25 @@ export function renderPrivacyView(force = false) {
                     <div class="settings-card-text">
                         <span class="settings-card-title">Sobre Nós</span>
                         <span class="settings-card-desc">Origem e Propósito</span>
+                    </div>
+                </div>
+                <div class="card-arrow-action" aria-hidden="true">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </div>
+            <div class="settings-card event-card glass-panel info-trigger" 
+                 id="card-about-methodology" 
+                 tabindex="0" 
+                 role="button" 
+                 data-info-title="${ABOUT_METHODOLOGY_TITLE}" 
+                 data-info-html="${methodologyModalHtml}" 
+                 aria-label="Metodologia Canónica • Cálculos Explicados" 
+                 style="cursor: pointer;">
+                <div class="settings-card-left">
+                    <i class="fa-solid fa-calculator settings-icon"></i>
+                    <div class="settings-card-text">
+                        <span class="settings-card-title">Metodologia Canónica</span>
+                        <span class="settings-card-desc">Cálculos Explicados</span>
                     </div>
                 </div>
                 <div class="card-arrow-action" aria-hidden="true">

@@ -22,7 +22,11 @@ import { initPcDisplayManager } from './ui/pcDisplayManager.js';
 import { HEBREW_MONTHS_PT } from './domain/constants.js';
 import { normalizeHebcalEvents } from './domain/eventMapper.js';
 import { initUmamiMonitor, trackMicroAction } from './utils/umamiMonitor.js';
-import { getSelectedLocation, clearExpiredLocations, JERUSALEM_COORDS } from './services/locationService.js';
+import { getSelectedLocation, clearExpiredLocations, JERUSALEM_COORDS, isSameLocation } from './services/locationService.js';
+import { resolveLocationHierarchy, getTimezoneApproximateLocation, JERUSALEM_DEFAULT } from './api/geolocation.js';
+import { getHebrewDateFromGregorian } from './domain/biblicalCalendar.js';
+import { calculateOfflineZmanim } from './domain/halacha.js';
+import { getLocationDateParts } from './domain/formatters.js';
 import { updateSolarPosition } from './ui/solarArc.js';
 import { initSimulator } from './utils/simulator.js';
 import { initTelemetryService } from './services/telemetryService.js';
@@ -53,7 +57,7 @@ if ('serviceWorker' in navigator) {
 
 // Função auxiliar para carregar o cache sem repetir código
 function loadOfflineCache(defaultLocName = null, defaultIsIsrael = null) {
-    const activeLoc = getSelectedLocation() || JERUSALEM_COORDS;
+    const activeLoc = getSelectedLocation() || getTimezoneApproximateLocation() || JERUSALEM_COORDS;
     const fallbackLocName = defaultLocName || activeLoc.name;
     const fallbackIsIsrael = defaultIsIsrael !== null ? defaultIsIsrael : activeLoc.isIsrael;
 
@@ -86,12 +90,23 @@ function loadOfflineCache(defaultLocName = null, defaultIsIsrael = null) {
     } catch (e) {
         console.warn('[OfflineCache] Erro ao ler cache local:', e);
     }
-    // Fallback resiliente: atualiza blocos e cartões de literatura imediatamente para nunca exibir cartões vazios
-    const fallbackHdate = state.currentHdate || { hd: 15, hm: 'Nisan', hy: 5784 };
-    updateUIBlocks(state.unifiedEvents || [], fallbackHdate, fallbackLocName, state.currentSunsetTime || 0, fallbackIsIsrael);
+    // Fallback resiliente e autônomo 100% offline (matemática exata Rambam e Gra para Jerusalém ou localização ativa)
+    const locParts = getLocationDateParts(Date.now(), activeLoc.tz);
+    const offlineHdate = getHebrewDateFromGregorian(locParts.year, locParts.month, locParts.day);
+    const offlineZmanim = calculateOfflineZmanim(new Date(), activeLoc.lat, activeLoc.lon, activeLoc.tz, fallbackIsIsrael);
+    const offlineTomorrowZmanim = calculateOfflineZmanim(new Date(Date.now() + 86400000), activeLoc.lat, activeLoc.lon, activeLoc.tz, fallbackIsIsrael);
+    const offlineSunset = offlineZmanim?.sunset ? new Date(offlineZmanim.sunset).getTime() : 0;
+
+    state.currentHdate = offlineHdate;
+    state.currentZmanim = offlineZmanim;
+    state.tomorrowZmanim = offlineTomorrowZmanim;
+    state.currentSunsetTime = offlineSunset;
+    state.unifiedEvents = state.unifiedEvents || [];
+
+    updateUIBlocks(state.unifiedEvents, offlineHdate, fallbackLocName, offlineSunset, fallbackIsIsrael);
     renderFestivalsView();
     updateSolarPosition();
-    return false;
+    return true;
 }
 
 async function updateDashboard(options = {}) {
@@ -109,8 +124,11 @@ async function updateDashboard(options = {}) {
 
     // 1. Aplicação rápida do tema
     const selectedLoc = getSelectedLocation();
+    const approxTzLoc = getTimezoneApproximateLocation();
     if (selectedLoc) {
         applyEstimatedTheme(selectedLoc.lat, selectedLoc.lon);
+    } else if (approxTzLoc) {
+        applyEstimatedTheme(approxTzLoc.lat, approxTzLoc.lon);
     } else {
         applyEstimatedTheme();
     }
@@ -135,7 +153,7 @@ async function updateDashboard(options = {}) {
         : new Promise(resolve => setTimeout(resolve, 200));
 
     try {
-        const activeLoc = selectedLoc || JERUSALEM_COORDS;
+        const activeLoc = selectedLoc || approxTzLoc || JERUSALEM_COORDS;
         state.userLocation = activeLoc;
         state.locationName = activeLoc.name;
         state.userCityName = (activeLoc.primaryText || activeLoc.name.split(',')[0] || 'Jerusalém').trim();
@@ -143,23 +161,23 @@ async function updateDashboard(options = {}) {
         // Sincroniza imediatamente o card solar com a localidade ativa
         updateSolarPosition();
 
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = today.getMonth() + 1;
-        const day = today.getDate();
-        const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
         let lat = activeLoc.lat;
         let lon = activeLoc.lon;
         let tzid = activeLoc.tz;
         let locationName = activeLoc.name;
         let isIsrael = activeLoc.isIsrael;
 
+        const locParts = getLocationDateParts(Date.now(), tzid);
+        const year = locParts.year;
+        const month = locParts.month;
+        const day = locParts.day;
+        const dateStr = locParts.dateStr;
+
         const hebcalStartStr = `${year}-01-01`;
         const endDateStr = `${year + 1}-12-31`;
 
-        const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-        const tomorrowDateStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
+        const tomorrowParts = getLocationDateParts(Date.now() + 24 * 60 * 60 * 1000, tzid);
+        const tomorrowDateStr = tomorrowParts.dateStr;
 
         // Requisições paralelas litúrgicas (hoje e amanhã para rolamento haláchico contínuo)
         const zmanimPromise = hebcalFetch(`https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&date=${dateStr}&tzid=${tzid}`).catch(() => null);
@@ -175,9 +193,19 @@ async function updateDashboard(options = {}) {
             sunsetTime = zmanimData.times.sunset ? new Date(zmanimData.times.sunset).getTime() : 0;
             state.currentSunsetTime = sunsetTime;
             updateSolarPosition();
+        } else {
+            const fallbackZmanim = calculateOfflineZmanim(new Date(), lat, lon, tzid, isIsrael);
+            if (fallbackZmanim) {
+                state.currentZmanim = fallbackZmanim;
+                sunsetTime = fallbackZmanim.sunset ? new Date(fallbackZmanim.sunset).getTime() : 0;
+                state.currentSunsetTime = sunsetTime;
+                updateSolarPosition();
+            }
         }
         if (tomorrowZmanimData?.times) {
             state.tomorrowZmanim = tomorrowZmanimData.times;
+        } else {
+            state.tomorrowZmanim = calculateOfflineZmanim(new Date(Date.now() + 86400000), lat, lon, tzid, isIsrael);
         }
 
         const isAfterSunset = sunsetTime > 0 && Date.now() > sunsetTime;
@@ -188,6 +216,9 @@ async function updateDashboard(options = {}) {
             hebcalPromise
         ]);
 
+        const fallbackHdate = getHebrewDateFromGregorian(year, month, day);
+        const resolvedHdate = hdateData || fallbackHdate;
+
         if (hebcalData?.items) {
             state.unifiedEvents = normalizeHebcalEvents(hebcalData.items, sunsetTime);
 
@@ -195,7 +226,7 @@ async function updateDashboard(options = {}) {
             try {
                 localStorage.setItem('hebcal_offline_cache', JSON.stringify({
                     events: state.unifiedEvents,
-                    hdate: hdateData,
+                    hdate: resolvedHdate,
                     locName: locationName,
                     sunset: sunsetTime,
                     isIsrael,
@@ -207,9 +238,9 @@ async function updateDashboard(options = {}) {
                 console.warn('[OfflineCache] Erro ao salvar cache local:', e);
             }
 
-            state.currentHdate = hdateData;
+            state.currentHdate = resolvedHdate;
             state.currentSunsetTime = sunsetTime;
-            updateUIBlocks(state.unifiedEvents, hdateData || { hd: 15, hm: 'Av'}, locationName, sunsetTime, isIsrael);
+            updateUIBlocks(state.unifiedEvents, resolvedHdate, locationName, sunsetTime, isIsrael);
             updateSolarPosition();
         } else {
             loadOfflineCache(locationName, isIsrael);
@@ -238,8 +269,8 @@ applyIconsToDOM();
 initStoragePersistence();
 clearExpiredLocations();
 
-// Sincronização inicial instantânea com a localização selecionada
-const bootLoc = getSelectedLocation() || JERUSALEM_COORDS;
+// Sincronização inicial instantânea: Salva -> Fuso Horário aproximado (0ms, offline, sem permissões) -> Jerusalém
+const bootLoc = getSelectedLocation() || getTimezoneApproximateLocation() || JERUSALEM_COORDS;
 state.userLocation = bootLoc;
 state.locationName = bootLoc.name;
 state.userCityName = (bootLoc.primaryText || bootLoc.name.split(',')[0] || 'Jerusalém').trim();
@@ -253,6 +284,24 @@ updateDashboard();
 initSmartUpdater(updateDashboard);
 initSimulator();
 initConsoleControl(updateDashboard);
+
+// Resolução não-bloqueante em segundo plano da localização aproximada por IP quando não há seleção manual prévia
+// Totalmente silencioso, SEM pedir autorização ao utilizador.
+if (!getSelectedLocation()) {
+    setTimeout(async () => {
+        try {
+            const resolved = await resolveLocationHierarchy(getSelectedLocation);
+            if (!getSelectedLocation() && resolved && !isSameLocation(resolved, state.userLocation)) {
+                state.userLocation = resolved;
+                state.locationName = resolved.name;
+                state.userCityName = (resolved.primaryText || resolved.name.split(',')[0] || 'Jerusalém').trim();
+                updateDashboard({ silent: true });
+            }
+        } catch (e) {
+            console.warn('[Location] Resolução aproximada em segundo plano tolerou erro e manteve fallback:', e);
+        }
+    }, 100);
+}
 
 // Garantia de remoção do ecrã de carregamento global mesmo em redes lentas
 setTimeout(() => {

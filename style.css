@@ -27,9 +27,9 @@
     --card-border-hover: rgba(255, 255, 255, 0.20);
     --card-specular: inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
 
-    /* Typography & Hierarchy (Apple SF Pro Font Stack) */
-    --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --font-serif: "New York", -apple-system-ui-serif, "Cardo", Georgia, serif;
+    /* Typography & Hierarchy (Inter, Cinzel & Apple SF Pro Font Stack) */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-serif: 'Cinzel', "New York", -apple-system-ui-serif, "Cardo", Georgia, serif;
     --text-primary: #E6EDF3;
     --text-secondary: #8B949E;
     --text-muted: #8B949E;
@@ -96,6 +96,11 @@
     --card-radius: 16px;
     --icon-size: 40px;
     --icon-radius: 11px;
+
+    /* Spacing Hierarchy Tokens: card-card < title-content < section-section */
+    --space-card-gap: 8px;
+    --space-title-content: 10px;
+    --space-section: 24px;
 }
 
 :root[data-theme="day"] {
@@ -107,11 +112,11 @@
     --orb-2-color: rgba(190, 140, 75, 0.07);
     --orb-3-color: rgba(120, 130, 95, 0.05);
 
-    --card-bg-start: rgba(255, 255, 255, 0.94);
-    --card-bg-end: rgba(250, 246, 240, 0.88);
-    --card-border-color: rgba(140, 110, 80, 0.16);
-    --card-border-hover: rgba(160, 105, 35, 0.38);
-    --card-specular: inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+    --card-bg-start: rgba(255, 255, 255, 0.96);
+    --card-bg-end: rgba(252, 249, 245, 0.92);
+    --card-border-color: rgba(212, 175, 55, 0.22);
+    --card-border-hover: rgba(212, 175, 55, 0.45);
+    --card-specular: inset 0 1px 0 0 rgba(255, 255, 255, 1);
 
     --text-primary: #231B15;
     --text-secondary: #6B5E50;
@@ -203,7 +208,6 @@ button,
     touch-action: manipulation;
 }
 
-.desktop-nav-btn,
 /* ==========================================================================
    GLOBAL APP-SHELL INTERACTION: ZERO DRAG & USER-SELECT NONE (100% DO SITE)
    ========================================================================== */
@@ -262,6 +266,7 @@ body {
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y !important;
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -505,11 +510,24 @@ body.modal-open {
     width: 100%;
 }
 
+#solar-arc-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .event-cards-row {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-card-gap, 8px);
     width: 100%;
+}
+
+.event-cards-row + .event-cards-row {
+    margin-top: var(--space-card-gap, 8px);
 }
 
 .event-card {
@@ -671,6 +689,13 @@ body.modal-open {
         overflow-y: visible !important;
     }
 
+    /* Otimização P3: Elimina sobrecarga de blur de backdrop em cartões móveis */
+    .event-card.glass-panel,
+    .settings-card.glass-panel {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
     /* Mobile Premium App Title Header - Compact with Location Card Below Title - SEMPRE VISÍVEL (FIXO) */
     .mobile-only-header {
         position: fixed;
@@ -716,10 +741,10 @@ body.modal-open {
     }
 
     .mobile-brand-title {
-        font-family: var(--font-family);
+        font-family: var(--font-serif);
         font-size: 1.34rem;
-        font-weight: 800;
-        letter-spacing: -0.025em;
+        font-weight: 700;
+        letter-spacing: 0.02em;
         line-height: 1.15;
         margin: 0;
         text-align: left;
@@ -2732,13 +2757,23 @@ body.modal-open {
 .settings-icon {
     font-size: 14.5px;
     color: var(--accent-color);
-    width: 22px;
-    height: 22px;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: var(--icon-unified-grad);
+    border: 0.5px solid var(--icon-unified-border);
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     flex-shrink: 0;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.settings-card:hover .settings-icon,
+.event-card:hover .settings-icon {
+    transform: scale(1.06);
+    border-color: var(--accent-color);
 }
 
 .settings-card-text {
@@ -5754,6 +5789,24 @@ body.loaded .app-page-loader {
     }
 }
 
+/* ==========================================================================
+   WCAG 2.1 AA: PREFERS-REDUCED-MOTION SUPPORT
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 
-
-
+    .modal-content,
+    .reading-modal-content,
+    .modal-overlay,
+    .is-closing {
+        animation: none !important;
+        transition: none !important;
+    }
+}

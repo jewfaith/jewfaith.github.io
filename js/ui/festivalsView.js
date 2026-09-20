@@ -1,5 +1,5 @@
 import { ICONS } from './icons.js';
-import { FESTIVAL_DESCRIPTIONS, FESTIVAL_NAME_MAPPINGS, HEBREW_MONTHS_PT } from '../domain/constants.js';
+import { FESTIVAL_DESCRIPTIONS, FESTIVAL_NAME_MAPPINGS, HEBREW_MONTHS_PT, loadFestivalDescriptions, getFestivalDescription } from '../domain/constants.js';
 import { state } from '../state.js';
 import { updateShaahZmanitCardPosition } from './solarArc.js';
 import { renderInteractiveCalendar } from './components/interactiveCalendar.js';
@@ -329,13 +329,12 @@ export const SPECIAL_SHABBATOT_DATA = [
 ];
 
 function buildFestivalModalHTML(festival) {
-    const rawData = FESTIVAL_DESCRIPTIONS[festival.key] ||
-        FESTIVAL_DESCRIPTIONS[festival.title] ||
-        FESTIVAL_DESCRIPTIONS[FESTIVAL_NAME_MAPPINGS?.[festival.key]] ||
-        FESTIVAL_DESCRIPTIONS[FESTIVAL_NAME_MAPPINGS?.[festival.title]] ||
-        FESTIVAL_DESCRIPTIONS[festival.key.replace("'", "")] ||
-        FESTIVAL_DESCRIPTIONS[festival.key.replace("Hanukkah", "Chanukah")] ||
-        FESTIVAL_DESCRIPTIONS[festival.key.replace("Tammuz", "Tamuz")];
+    const rawData = getFestivalDescription(festival.key) ||
+        getFestivalDescription(festival.title) ||
+        getFestivalDescription(FESTIVAL_NAME_MAPPINGS?.[festival.key]) ||
+        getFestivalDescription(FESTIVAL_NAME_MAPPINGS?.[festival.title]) ||
+        FESTIVAL_DESCRIPTIONS[festival.key] ||
+        FESTIVAL_DESCRIPTIONS[festival.title];
     let bodyHTML = '';
 
     if (Array.isArray(rawData)) {
@@ -541,6 +540,12 @@ export function initFestivalTabs() {
 let lastRenderedFestivalsKey = null;
 
 export function renderFestivalsView(force = false) {
+    if (Object.keys(FESTIVAL_DESCRIPTIONS).length === 0) {
+        loadFestivalDescriptions().then(() => {
+            renderFestivalsView(true);
+        }).catch(() => {});
+    }
+
     renderInteractiveCalendar();
 
     const tanakhContainer = document.getElementById('tanakh-festivals-list');

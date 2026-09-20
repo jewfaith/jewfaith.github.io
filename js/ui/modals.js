@@ -11,7 +11,10 @@ import {
     closeModalDirectly,
     closeOtherModalsOnDesktop,
     initModalGestures,
-    initModalObserver
+    initModalObserver,
+    openModalElement,
+    openModalByKey,
+    initModalUrlSync
 } from './modals/modalManager.js';
 
 import {
@@ -46,7 +49,10 @@ export {
     closeZmanimModal,
     openWelcomeModal,
     closeWelcomeModal,
-    checkAndShowWelcomeModal
+    checkAndShowWelcomeModal,
+    openModalElement,
+    openModalByKey,
+    initModalUrlSync
 };
 
 /**
@@ -93,12 +99,7 @@ export function openPremiumGatedModal(featureName, readingTitle, refToOpen) {
         }
     });
 
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    document.body.classList.add('modal-open');
-    if (typeof history !== 'undefined' && (!history.state || !history.state.modalOpen)) {
-        history.pushState({ modalOpen: true }, '');
-    }
+    openModalElement(modal, 'informacoes');
 }
 
 let isModalsInitialized = false;
@@ -204,11 +205,11 @@ export function initModals(updateDashboardCallback) {
         }
     });
 
-    // Suporte a acessibilidade via teclado (Enter / Espaço) em cards interativos
+    // Suporte universal a acessibilidade via teclado (Enter / Espaço) em todos os cards interativos (WCAG 2.1 AA)
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
-            const trigger = event.target.closest('.info-trigger, #card-solar-glance, #card-hdate-wrapper');
-            if (trigger && trigger.tagName !== 'BUTTON' && trigger.tagName !== 'INPUT' && trigger.tagName !== 'TEXTAREA') {
+            const trigger = event.target.closest('[role="button"], .info-trigger, .location-trigger-btn, .sefaria-category-card, .event-card, .settings-card');
+            if (trigger && trigger.tagName !== 'BUTTON' && trigger.tagName !== 'INPUT' && trigger.tagName !== 'TEXTAREA' && trigger.tagName !== 'A') {
                 event.preventDefault();
                 trigger.click();
             }
@@ -247,6 +248,13 @@ export function initModals(updateDashboardCallback) {
     document.getElementById('close-zmanim-modal-btn')?.addEventListener('click', () => {
         closeZmanimModal();
     });
+
+    document.getElementById('close-day-details-btn')?.addEventListener('click', () => {
+        const m = document.getElementById('day-details-modal');
+        if (m) closeModalSafely(m);
+    });
+
+    initModalUrlSync();
 }
 
 /**

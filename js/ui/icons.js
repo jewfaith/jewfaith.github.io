@@ -11,6 +11,13 @@ export const ICONS = {
     menu: 'fa-solid fa-bars',
     more: 'fa-solid fa-bars',
     info: 'fa-solid fa-circle-info',
+    circleInfo: 'fa-solid fa-circle-info',
+    'circle-info': 'fa-solid fa-circle-info',
+    calendar: 'fa-solid fa-calendar-days',
+    calendarDays: 'fa-solid fa-calendar-days',
+    'calendar-days': 'fa-solid fa-calendar-days',
+    calendarDay: 'fa-solid fa-calendar-day',
+    'calendar-day': 'fa-solid fa-calendar-day',
     chat: 'fa-solid fa-comments',
     account: 'fa-solid fa-circle-user',
 

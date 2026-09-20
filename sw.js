@@ -5,19 +5,18 @@
  * Garante funcionamento integral mesmo sem ligação à internet.
  */
 
-const SW_VERSION = 'yisrael-date-v3.3.1';
+const SW_VERSION = 'yisrael-date-v3.4.7';
 const APP_SHELL_CACHE = `app-shell-${SW_VERSION}`;
 
 const PRECACHE_ASSETS = [
     './',
+    './index.html',
+    './404.html',
     './style.css',
     './manifest.json',
     './icon.png',
-    './cup-border.png',
-    './kofi6.png',
     './robots.txt',
     './sitemap.xml',
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
     './js/main.js',
     './js/state.js',
     './js/api/bibleApi.js',
@@ -27,6 +26,7 @@ const PRECACHE_ASSETS = [
     './js/domain/aboutContent.js',
     './js/domain/biblicalCalendar.js',
     './js/domain/constants.js',
+    './js/domain/festivalDescriptions.js',
     './js/domain/eventMapper.js',
     './js/domain/formatters.js',
     './js/domain/halacha.js',
@@ -34,6 +34,7 @@ const PRECACHE_ASSETS = [
     './js/domain/premiumProducts.js',
     './js/domain/scriptureRef.js',
     './js/services/bibleService.js',
+    './js/services/consoleControl.js',
     './js/services/locationService.js',
     './js/services/sefariaService.js',
     './js/services/telemetryService.js',
@@ -54,6 +55,7 @@ const PRECACHE_ASSETS = [
     './js/ui/modals/sefariaModal.js',
     './js/ui/modals/welcomeModal.js',
     './js/ui/pcDisplayManager.js',
+    './js/ui/premiumView.js',
     './js/ui/privacyView.js',
     './js/ui/solarArc.js',
     './js/ui/theme.js',
@@ -74,24 +76,29 @@ self.addEventListener('install', (event) => {
             try {
                 await cache.addAll(PRECACHE_ASSETS);
             } catch (err) {
-                // Em caso de instalação offline ou indisponibilidade de rede temporária,
-                // migra os recursos da cache anterior para manter funcionamento contínuo
-                try {
-                    const keys = await caches.keys();
-                    for (const key of keys) {
-                        if (key !== APP_SHELL_CACHE) {
-                            const oldCache = await caches.open(key);
-                            const oldKeys = await oldCache.keys();
-                            for (const req of oldKeys) {
-                                const matched = await oldCache.match(req);
-                                if (matched) {
-                                    await cache.put(req, matched);
-                                }
+                console.warn('[SW] Falha em cache.addAll, a recorrer a armazenamento resiliente individual:', err);
+                await Promise.allSettled(
+                    PRECACHE_ASSETS.map(asset =>
+                        cache.add(asset).catch(e => console.warn('[SW] Recurso ignorado no precache:', asset, e.message))
+                    )
+                );
+            }
+            // Em caso de nova versão, migra recursos da cache anterior que não tenham mudado
+            try {
+                const keys = await caches.keys();
+                for (const key of keys) {
+                    if (key !== APP_SHELL_CACHE) {
+                        const oldCache = await caches.open(key);
+                        const oldKeys = await oldCache.keys();
+                        for (const req of oldKeys) {
+                            const matched = await oldCache.match(req);
+                            if (matched && !(await cache.match(req))) {
+                                await cache.put(req, matched);
                             }
                         }
                     }
-                } catch (e) { }
-            }
+                }
+            } catch (e) { }
         }).then(() => self.skipWaiting())
     );
 });
@@ -152,7 +159,7 @@ self.addEventListener('fetch', (event) => {
                         caches.open(APP_SHELL_CACHE).then((cache) => cache.put(event.request, resClone));
                     }
                     return networkResponse;
-                }).catch(() => caches.match('./kofi6.png'));
+                }).catch(() => new Response('', { status: 204, statusText: 'Offline No Content' }));
             })
         );
         return;
@@ -182,7 +189,7 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Navegações e documento principal (HTML)
+    // Navegações e documento principal (HTML) - Garante funcionamento e refresh offline com URLs limpos
     if (event.request.mode === 'navigate' || url.pathname.endsWith('/index.html') || url.pathname === '/') {
         event.respondWith(
             fetch(event.request).then((networkResponse) => {
@@ -192,8 +199,8 @@ self.addEventListener('fetch', (event) => {
                 }
                 return networkResponse;
             }).catch(() => {
-                return caches.match('./').then((matched) => {
-                    return matched || caches.match('./index.html') || caches.match(event.request);
+                return caches.match('./', { ignoreSearch: true }).then((matched) => {
+                    return matched || caches.match('./index.html', { ignoreSearch: true }) || caches.match(event.request, { ignoreSearch: true });
                 });
             })
         );

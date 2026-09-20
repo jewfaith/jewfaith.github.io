@@ -1,9 +1,10 @@
 /**
- * ABOUTCONTENT.JS - MANIFESTO, ORIGEM E PROPÓSITO DO YISRAEL DATE
+ * ABOUTCONTENT.JS - MANIFESTO, ORIGEM, METODOLOGIA E PROPÓSITO DO YISRAEL DATE
  * 
- * Contém o texto canónico de apresentação do projeto, detalhando a motivação,
- * a distinção bíblica vs. rabínica, o cálculo astronómico local e os princípios
- * de transparência e gratuidade universal.
+ * Documenta com rigor a metodologia astronómica, matemática e haláchica:
+ * - Algoritmos solares de Zmanim (Shkiá, Alot HaShachar, Tzeit HaKochavim).
+ * - Origem do calendário hebraico (Ciclo Metónico de 19 anos, 4 Dechiyot do Rambam).
+ * - Critérios haláchicos adotados (Método do Gra / Rambam vs. Magen Avraham, Shabat e velas).
  */
 
 export const ABOUT_PROJECT_TITLE = 'Sobre Nós';
@@ -20,10 +21,42 @@ export const ABOUT_PROJECT_PARAGRAPHS = [
     'A conceção, arquitetura de software e desenvolvimento da aplicação constituem obra autoral independente de Mikhael, dedicada à preservação dos ciclos sagrados e ao estudo universal dos ensinamentos de Israel.'
 ];
 
+export const ABOUT_METHODOLOGY_TITLE = 'Metodologia Canónica';
+export const ABOUT_METHODOLOGY_SUBTITLE = 'Cálculos Explicados';
+
+export const ABOUT_METHODOLOGY_PARAGRAPHS = [
+    'A metodologia dos horários litúrgicos baseia-se em modelos astronómicos de precisão solar calculados a partir da latitude, longitude e altitude da localidade ativa.',
+    'O cálculo solar afere a declinação solar e a equação do tempo em cada fração horária para determinar com rigor o alvorecer astronómico a dezasseis graus e meio abaixo do horizonte.',
+    'O nascimento do sol e o ocaso vespertino correspondem ao instante geométrico em que a borda solar superior tangencia o horizonte visual corrigido para a refração atmosférica padrão.',
+    'A hora proporcional haláchica Shaah Zmanit é calculada segundo o método canónico do Gra e do Rambam, que divide a extensão exata entre o nascer e o pôr do sol em doze partes iguais.',
+    'Para períodos de transição crepuscular, o sistema providencia igualmente a mensuração alternativa segundo o método de Magen Avraham com base no alvorecer matutino e na saída de três estrelas.',
+    'O encerramento do Shabat e a saída das festividades são fixados pelo momento exato em que três estrelas de magnitude média tornam-se visíveis no firmamento celeste.',
+    'A intercalação do calendário hebraico fundamenta-se no ciclo metónico de dezanove anos solares que acomoda harmoniosamente duzentos e trinta e cinco meses lunares.',
+    'Os anos embolismicos de treze meses ocorrem nos anos três, seis, oito, onze, catorze, dezassete e dezanove do ciclo metónico com a inclusão de Adar Rishon e Adar Sheni.',
+    'A determinação do primeiro dia do ano obedece às quatro regras fundamentais de adiamento consignadas pelo Rambam no tratado Hilchot Kiddush HaChodesh da Mishnê Torá.',
+    'A primeira regra impede que Rosh Hashaná ocorra em domingo, quarta ou sexta-feira para evitar a sobreposição proibitiva entre Yom Kippur e o Shabat sagrado.',
+    'A segunda regra adia a celebração caso a conjunção do Molad ocorra ao meio-dia solar ou após esse limiar astronómico.',
+    'A terceira e quarta regras aplicam compensações lunares estritas para preservar a extensão anual e a sincronização perfeita com a estação da primavera bíblica.'
+];
+
 export function getAboutProjectHtml() {
     return `
         <div class="levels-container compliance-modal-stack">
             ${ABOUT_PROJECT_PARAGRAPHS.map(p => `
+                <div class="info-modal-card">
+                    <div class="info-modal-value">
+                        ${p}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+export function getAboutMethodologyHtml() {
+    return `
+        <div class="levels-container compliance-modal-stack">
+            ${ABOUT_METHODOLOGY_PARAGRAPHS.map(p => `
                 <div class="info-modal-card">
                     <div class="info-modal-value">
                         ${p}

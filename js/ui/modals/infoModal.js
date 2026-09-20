@@ -5,9 +5,13 @@
  * (push/pop view), botão voltar e sincronização com o histórico do navegador.
  */
 
-import { closeModalSafely, checkModalsActive } from './modalManager.js';
+import { closeModalSafely, checkModalsActive, openModalElement } from './modalManager.js';
 
 let infoModalStack = [];
+
+export function getInfoModalStackLength() {
+    return infoModalStack.length;
+}
 
 let activeKofiTimers = [];
 
@@ -76,7 +80,7 @@ function setupKofiFrameLoaders(container) {
 /**
  * Abre o modal de informações com o título e conteúdo especificados.
  */
-export function openInfoModal(titleText, htmlContent) {
+export function openInfoModal(titleText, htmlContent, options = {}) {
     if (typeof document === 'undefined') return;
     const modal = document.getElementById('info-modal');
     const titleEl = document.getElementById('info-modal-title');
@@ -98,12 +102,8 @@ export function openInfoModal(titleText, htmlContent) {
     const hasKofi = bodyEl.querySelector('.kofi-embed-iframe-wrapper') !== null;
     modal.classList.toggle('has-kofi-embed', hasKofi);
 
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    document.body.classList.add('modal-open');
-    if (typeof history !== 'undefined' && (!history.state || !history.state.modalOpen)) {
-        history.pushState({ modalOpen: true }, '');
-    }
+    openModalElement(modal, 'informacoes', options);
+
     if (typeof sessionStorage !== 'undefined') {
         try {
             sessionStorage.setItem('openInfoModalTitle', titleText);
@@ -178,59 +178,4 @@ export function popInfoModalView() {
     const isSub = infoModalStack.length > 1;
     if (backBtn) backBtn.style.display = isSub ? 'flex' : 'none';
     if (closeBtn) closeBtn.style.display = isSub ? 'none' : 'flex';
-}
-
-// Sincronização com o evento popstate do navegador (botão voltar do hardware ou browser)
-if (typeof window !== 'undefined') {
-    window.addEventListener('popstate', () => {
-        if (infoModalStack.length > 1) {
-            popInfoModalView();
-            return;
-        }
-
-        const infoModal = document.getElementById('info-modal');
-        const isInfoOpen = infoModal && infoModal.style.display !== 'none' && infoModal.style.display !== '';
-        const zmanimModal = document.getElementById('zmanim-modal');
-        const isZmanimOpen = zmanimModal && zmanimModal.style.display !== 'none' && zmanimModal.style.display !== '';
-
-        if ((isInfoOpen && isZmanimOpen) || (isZmanimOpen && history.state && history.state.zmanimOpen)) {
-            if (infoModal) {
-                infoModal.style.display = 'none';
-                infoModal.classList.remove('is-closing');
-            }
-            infoModalStack = [];
-            const backBtn = document.getElementById('back-info-btn');
-            if (backBtn) backBtn.style.display = 'none';
-            const closeBtn = document.getElementById('close-info-btn');
-            if (closeBtn) closeBtn.style.display = 'flex';
-            try {
-                sessionStorage.removeItem('openInfoModalTitle');
-            } catch (e) { }
-            checkModalsActive();
-            return;
-        }
-
-        const modals = document.querySelectorAll('.modal-overlay');
-        let anyClosed = false;
-        modals.forEach(m => {
-            if (m && m.style.display !== 'none' && m.style.display !== '') {
-                m.style.display = 'none';
-                m.classList.remove('is-closing');
-                anyClosed = true;
-            }
-        });
-        if (anyClosed) {
-            document.body.style.overflow = '';
-            document.body.classList.remove('modal-open', 'story-open');
-            try {
-                sessionStorage.removeItem('openReadingModalRef');
-                sessionStorage.removeItem('openReadingModalTitle');
-                sessionStorage.removeItem('openLocationModal');
-                sessionStorage.removeItem('openInfoModalTitle');
-            } catch (e) { }
-            infoModalStack = [];
-            const backBtn = document.getElementById('back-info-btn');
-            if (backBtn) backBtn.style.display = 'none';
-        }
-    });
 }

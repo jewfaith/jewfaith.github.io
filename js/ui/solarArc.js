@@ -15,12 +15,12 @@ export function renderSolarArcWidget() {
     if (!container) return;
 
     container.innerHTML = `
-        <div class="settings-card event-card glass-panel" id="card-solar-glance" tabindex="0" role="button" aria-label="Ver Tabela Completa de Zmanim" style="cursor: pointer;">
+        <div class="settings-card event-card glass-panel" id="card-solar-glance" tabindex="0" role="button" aria-label="Ver Tabela Completa de Horários Litúrgicos (Zmanim)" style="cursor: pointer;">
             <div class="settings-card-left">
                 <i class="${ICONS.sun} settings-icon" data-icon="sun" id="solar-hero-icon"></i>
                 <div class="settings-card-text">
-                    <span class="settings-card-title" id="solar-hero-city-title">Sha'ah Zmanit</span>
-                    <span class="settings-card-desc" id="solar-phase-label">Horário Litúrgico</span>
+                    <span class="settings-card-title" id="solar-hero-city-title">Horários Litúrgicos (Zmanim)</span>
+                    <span class="settings-card-desc" id="solar-phase-label">Horas solares e orações do dia</span>
                 </div>
             </div>
             <div class="card-arrow-action" aria-hidden="true">
@@ -136,13 +136,16 @@ export function updateSolarPosition() {
         shaaZmanitMs = nightDurationMs / 12;
     }
 
-    if (cityTitle && cityTitle.textContent !== "Sha'ah Zmanit") {
-        cityTitle.textContent = "Sha'ah Zmanit";
-        cityTitle.title = "Sha'ah Zmanit";
+    const HERO_TITLE = "Horários Litúrgicos (Zmanim)";
+    const HERO_DESC = "Horas solares e orações do dia";
+
+    if (cityTitle && cityTitle.textContent !== HERO_TITLE) {
+        cityTitle.textContent = HERO_TITLE;
+        cityTitle.title = HERO_TITLE;
     }
 
-    if (phaseLabel && phaseLabel.textContent !== "Horário Litúrgico") {
-        phaseLabel.textContent = "Horário Litúrgico";
+    if (phaseLabel && phaseLabel.textContent !== HERO_DESC) {
+        phaseLabel.textContent = HERO_DESC;
     }
 
     if (heroIcon) {
@@ -198,12 +201,12 @@ export function updateShaahZmanitCardPosition() {
 
     // "se a ultima festa se tiver mais de 2h empurras para a frente unica e exclusivamente o card do Sha'ah Zmanit"
     if (!isFestivalActiveOrRecent) {
-        // Empurra física e visualmente única e exclusivamente o card do Sha'ah Zmanit para a frente (1º lugar)
+        // Empurra física e visualmente o card do Sha'ah Zmanit para a frente (1º lugar)
         if (parent && parent.firstElementChild !== solarContainer) {
             parent.insertBefore(solarContainer, parent.firstElementChild);
         }
-        solarContainer.style.order = '-1';
-        hdateWrapper.style.order = '1';
+        solarContainer.style.order = '';
+        hdateWrapper.style.order = '';
         solarContainer.classList.add('pushed-forward');
         hdateWrapper.classList.remove('pushed-forward');
     } else {
@@ -211,8 +214,8 @@ export function updateShaahZmanitCardPosition() {
         if (parent && parent.firstElementChild !== hdateWrapper) {
             parent.insertBefore(hdateWrapper, parent.firstElementChild);
         }
-        solarContainer.style.order = '1';
-        hdateWrapper.style.order = '-1';
+        solarContainer.style.order = '';
+        hdateWrapper.style.order = '';
         hdateWrapper.classList.add('pushed-forward');
         solarContainer.classList.remove('pushed-forward');
     }

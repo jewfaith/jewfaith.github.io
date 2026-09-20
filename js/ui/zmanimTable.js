@@ -1,19 +1,27 @@
 import { state } from '../state.js';
-import { closeModalSafely } from './modals.js';
+import { closeModalSafely, openModalElement } from './modals/modalManager.js';
 import { ICONS } from './icons.js';
 import { getSelectedLocation, JERUSALEM_COORDS } from '../services/locationService.js';
 import { getPersistentSetting } from '../utils/persistence.js';
-import { openInfoModal } from './modals/infoModal.js';
 import { HEBREW_MONTHS_PT } from '../domain/constants.js';
+import { getLocationDateParts } from '../domain/formatters.js';
 
-export function openZmanimModal() {
-    const cardTitle = document.getElementById('solar-hero-city-title')?.textContent?.trim() || "Sha'ah Zmanit";
-    const html = generateZmanimTableHTML();
-    openInfoModal(cardTitle, html);
+export function openZmanimModal(options = {}) {
+    const modal = document.getElementById('zmanim-modal');
+    const titleEl = document.getElementById('zmanim-modal-title');
+    const bodyEl = document.getElementById('zmanim-modal-body');
+    if (!modal || !titleEl || !bodyEl) return;
+
+    const cardTitle = document.getElementById('solar-hero-city-title')?.textContent?.trim() || "Horários Litúrgicos (Zmanim)";
+    titleEl.textContent = cardTitle;
+    bodyEl.innerHTML = generateZmanimTableHTML();
+    bodyEl.scrollTop = 0;
+
+    openModalElement(modal, 'zmanim', options);
 }
 
 export function closeZmanimModal() {
-    const modal = document.getElementById('info-modal');
+    const modal = document.getElementById('zmanim-modal');
     if (modal) closeModalSafely(modal);
 }
 
@@ -25,26 +33,35 @@ export function initZmanimModal() {
     // Inicialização direta do modal
 }
 
-function fmt(isoStr) {
+function fmt(isoStr, tz = null) {
     if (!isoStr) return '--h --m';
     const d = new Date(isoStr);
     if (isNaN(d.getTime())) return '--h --m';
-    return `${String(d.getHours()).padStart(2, '0')}h ${String(d.getMinutes()).padStart(2, '0')}m`;
+    const activeTz = tz || state.userLocation?.tz || 'Asia/Jerusalem';
+    try {
+        const parts = new Intl.DateTimeFormat('en-US', {
+            timeZone: activeTz,
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).formatToParts(d);
+        const h = parts.find(p => p.type === 'hour')?.value || '00';
+        const m = parts.find(p => p.type === 'minute')?.value || '00';
+        return `${h}h ${m}m`;
+    } catch (e) {
+        return `${String(d.getHours()).padStart(2, '0')}h ${String(d.getMinutes()).padStart(2, '0')}m`;
+    }
 }
 
 export function renderZmanimTable() {
-    const infoModal = document.getElementById('info-modal');
-    if (infoModal && infoModal.style.display === 'flex') {
-        const backBtn = document.getElementById('back-info-btn');
-        const isAtRoot = !backBtn || backBtn.style.display === 'none';
-        const titleEl = document.getElementById('info-modal-title');
-        const cardTitle = document.getElementById('solar-hero-city-title')?.textContent?.trim() || "Sha'ah Zmanit";
-        if (isAtRoot && titleEl && titleEl.textContent === cardTitle) {
-            const html = generateZmanimTableHTML();
-            const bodyEl = document.getElementById('info-modal-body');
-            if (bodyEl) {
-                bodyEl.innerHTML = html;
-            }
+    const zmanimModal = document.getElementById('zmanim-modal');
+    if (zmanimModal && (zmanimModal.style.display === 'flex' || zmanimModal.style.display === 'block')) {
+        const titleEl = document.getElementById('zmanim-modal-title');
+        const cardTitle = document.getElementById('solar-hero-city-title')?.textContent?.trim() || "Horários Litúrgicos (Zmanim)";
+        if (titleEl) titleEl.textContent = cardTitle;
+        const bodyEl = document.getElementById('zmanim-modal-body');
+        if (bodyEl) {
+            bodyEl.innerHTML = generateZmanimTableHTML();
         }
     }
 }
@@ -73,9 +90,10 @@ export function generateZmanimTableHTML() {
         else if (havdalahMin === '72') havdalahTimeVal = z.tzeit72min || (sunsetMs + 72 * 60 * 1000);
     }
 
-    const now = new Date();
+    const activeTz = activeLoc.tz || 'Asia/Jerusalem';
     const nowMs = Date.now();
-    const dayOfWeek = now.getDay();
+    const locParts = getLocationDateParts(nowMs, activeTz);
+    const dayOfWeek = locParts.dayOfWeek;
     const isFriday = dayOfWeek === 5;
     const isSaturday = dayOfWeek === 6;
     const isMonday = dayOfWeek === 1;
@@ -99,7 +117,7 @@ export function generateZmanimTableHTML() {
     const isShevat = canonicalMonth === 'Shevat' || rawHMonth === "Sh'vat" || rawHMonth === 'Shvat';
     const isAdar = canonicalMonth === 'Adar' || canonicalMonth === 'Adar I' || canonicalMonth === 'Adar II' || rawHMonth.includes('Adar');
 
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const todayStr = locParts.dateStr;
     const activeEvents = (state.unifiedEvents || []).filter(e => {
         if (!e) return false;
         const evDate = e.raw?.date ? e.raw.date.split('T')[0] : (e.time ? new Date(e.time).toISOString().split('T')[0] : '');
@@ -146,7 +164,7 @@ export function generateZmanimTableHTML() {
     }
 
     const showCandles = isFriday || isErevYomTov;
-    const candleDesc = isFriday ? 'Velas Shabat' : 'Velas Festivas';
+    const candleDesc = isFriday ? 'Velas de Shabat' : 'Velas Festivas';
 
     // Descrições e subtítulos preservados sem limites de palavras ou caracteres
     const formatTwoWords = (str) => {
@@ -173,34 +191,34 @@ export function generateZmanimTableHTML() {
     const duskMs = z.tzeit7083deg ? toMs(z.tzeit7083deg) : sunsetMs + 45 * 60 * 1000;
 
     const rawDailyItems = [
-        { label: 'Chatzot Layla', desc: 'Meia Noite', key: 'chatzotNight', val: z.chatzotNight, icon: ICONS.moon, category: 'diario' },
-        { label: 'Alot Shachar', desc: 'Primeira Luz', key: 'alotHaShachar', val: z.alotHaShachar, icon: ICONS.cloudSun, category: 'diario' },
-        { label: 'Alot HaTanya', desc: 'Alot Tanya', key: 'alosBaalHatanya', val: z.alosBaalHatanya, icon: ICONS.cloudSun, category: 'diario' },
-        { label: 'Tempo Misheyakir', desc: 'Talit Tefilin', key: 'misheyakir', val: z.misheyakir, icon: ICONS.handsPraying, category: 'diario' },
-        { label: 'Misheyakir Machmir', desc: 'Misheyakir Estrito', key: 'misheyakirMachmir', val: z.misheyakirMachmir, icon: ICONS.handsPraying, category: 'diario' },
-        { label: 'Hanetz Civil', desc: 'Alvorecer Civil', key: 'dawn', val: z.dawn, icon: ICONS.sunrise, category: 'diario' },
-        { label: 'Netz Chamah', desc: 'Nascer Solar', key: 'sunrise', val: z.sunrise, icon: ICONS.sun, highlight: true, category: 'diario' },
-        { label: 'Shemá MGA', desc: 'Shemá MGA', key: 'sofZmanShmaMGA', val: z.sofZmanShmaMGA, icon: ICONS.clock, category: 'diario' },
-        { label: 'Shemá HaTanya', desc: 'Shemá Tanya', key: 'sofZmanShmaBaalHatanya', val: z.sofZmanShmaBaalHatanya, icon: ICONS.clock, category: 'diario' },
-        { label: 'Shemá GRA', desc: 'Shemá GRA', key: 'sofZmanShma', val: z.sofZmanShma, icon: ICONS.clock, highlight: true, category: 'diario' },
-        { label: 'Tefilah MGA', desc: 'Tefilah MGA', key: 'sofZmanTfillaMGA', val: z.sofZmanTfillaMGA, icon: ICONS.hourglass, category: 'diario' },
-        { label: 'Tefilah HaTanya', desc: 'Tefilah Tanya', key: 'sofZmanTfilaBaalHatanya', val: z.sofZmanTfilaBaalHatanya, icon: ICONS.hourglass, category: 'diario' },
-        { label: 'Sof Tefilah', desc: 'Tefilah GRA', key: 'sofZmanTfilla', val: z.sofZmanTfilla, icon: ICONS.hourglass, highlight: true, category: 'diario' },
-        { label: 'Chatzot Yom', desc: 'Meio Dia', key: 'chatzot', val: z.chatzot, icon: ICONS.compass, highlight: true, category: 'diario' },
-        { label: 'Mincha Gedolah', desc: 'Primeira Minchá', key: 'minchaGedola', val: z.minchaGedola, icon: ICONS.bell, category: 'diario' },
-        { label: 'Gedolah HaTanya', desc: 'Gedolah Tanya', key: 'minchaGedolaBaalHatanya', val: z.minchaGedolaBaalHatanya, icon: ICONS.bell, category: 'diario' },
-        { label: 'Mincha Ketanah', desc: 'Segunda Minchá', key: 'minchaKetana', val: z.minchaKetana, icon: ICONS.cloudSun, category: 'diario' },
-        { label: 'Ketanah HaTanya', desc: 'Ketanah Tanya', key: 'minchaKetanaBaalHatanya', val: z.minchaKetanaBaalHatanya, icon: ICONS.cloudSun, category: 'diario' },
-        { label: 'Plag Mincha', desc: 'Plag Minchá', key: 'plagHaMincha', val: z.plagHaMincha, icon: ICONS.cloudMoon, category: 'diario' },
-        { label: 'Plag HaTanya', desc: 'Plag Tanya', key: 'plagHaminchaBaalHatanya', val: z.plagHaminchaBaalHatanya, icon: ICONS.cloudMoon, category: 'diario' },
-        { label: 'Shkiah Solar', desc: 'Sol Poente', key: 'sunset', val: z.sunset, icon: ICONS.cloudMoon, highlight: true, category: 'diario' },
-        { label: 'Bein Hashmashot', desc: 'Entre Sóis', key: 'beinHaShmashos', val: z.beinHaShmashos, icon: ICONS.cloudMoon, category: 'diario' },
-        { label: 'Tzeit HaTanya', desc: 'Estrelas Tanya', key: 'tzaisBaalHatanya', val: z.tzaisBaalHatanya, icon: ICONS.star, category: 'diario' },
-        { label: 'Tzeit Kochavim', desc: 'Três Estrelas', key: 'tzeit7083deg', val: z.tzeit7083deg, icon: ICONS.star, category: 'diario' },
-        { label: 'Tzeit 8.5°', desc: 'Estrelas Rigorosas', key: 'tzeit85deg', val: z.tzeit85deg, icon: ICONS.star, highlight: !isSaturday, category: 'diario' },
-        { label: 'Tzeit 42', desc: 'Tzeit 42min', key: 'tzeit42min', val: z.tzeit42min, icon: ICONS.moon, category: 'diario' },
-        { label: 'Tzeit 50', desc: 'Tzeit 50min', key: 'tzeit50min', val: z.tzeit50min, icon: ICONS.moon, category: 'diario' },
-        { label: 'Rabbeinu Tam', desc: 'Tzeit 72min', key: 'tzeit72min', val: z.tzeit72min, icon: ICONS.moon, category: 'diario' }
+        { label: 'Chatzot Layla', desc: 'Meia-noite haláchica (metade exata da noite)', key: 'chatzotNight', val: z.chatzotNight, icon: ICONS.moon, category: 'diario' },
+        { label: 'Alot Shachar', desc: 'Alvorecer (primeira luz matinal no céu)', key: 'alotHaShachar', val: z.alotHaShachar, icon: ICONS.cloudSun, category: 'diario' },
+        { label: 'Alot HaTanya', desc: 'Alvorecer segundo o Baal HaTanya', key: 'alosBaalHatanya', val: z.alosBaalHatanya, icon: ICONS.cloudSun, category: 'diario' },
+        { label: 'Tempo Misheyakir', desc: 'Momento para vestir Talit e Tefilin com bênção', key: 'misheyakir', val: z.misheyakir, icon: ICONS.handsPraying, category: 'diario' },
+        { label: 'Misheyakir Machmir', desc: 'Misheyakir segundo a opinião mais estrita', key: 'misheyakirMachmir', val: z.misheyakirMachmir, icon: ICONS.handsPraying, category: 'diario' },
+        { label: 'Hanetz Civil', desc: 'Alvorecer astronómico civil', key: 'dawn', val: z.dawn, icon: ICONS.sunrise, category: 'diario' },
+        { label: 'Netz Chamah', desc: 'Nascer do sol no horizonte', key: 'sunrise', val: z.sunrise, icon: ICONS.sun, highlight: true, category: 'diario' },
+        { label: 'Shemá MGA', desc: 'Último horário para o Shmá matinal (Magen Avraham)', key: 'sofZmanShmaMGA', val: z.sofZmanShmaMGA, icon: ICONS.clock, category: 'diario' },
+        { label: 'Shemá HaTanya', desc: 'Último horário para o Shmá matinal (Baal HaTanya)', key: 'sofZmanShmaBaalHatanya', val: z.sofZmanShmaBaalHatanya, icon: ICONS.clock, category: 'diario' },
+        { label: 'Shemá GRA', desc: 'Horário padrão para o Shmá matinal (Vilna Gaon / Gra)', key: 'sofZmanShma', val: z.sofZmanShma, icon: ICONS.clock, highlight: true, category: 'diario' },
+        { label: 'Tefilah MGA', desc: 'Último horário para a oração matinal (Magen Avraham)', key: 'sofZmanTfillaMGA', val: z.sofZmanTfillaMGA, icon: ICONS.hourglass, category: 'diario' },
+        { label: 'Tefilah HaTanya', desc: 'Último horário para a oração matinal (Baal HaTanya)', key: 'sofZmanTfilaBaalHatanya', val: z.sofZmanTfilaBaalHatanya, icon: ICONS.hourglass, category: 'diario' },
+        { label: 'Sof Tefilah', desc: 'Horário padrão para a oração matinal (Vilna Gaon / Gra)', key: 'sofZmanTfilla', val: z.sofZmanTfilla, icon: ICONS.hourglass, highlight: true, category: 'diario' },
+        { label: 'Chatzot Yom', desc: 'Meio-dia solar haláchico (zênite do sol)', key: 'chatzot', val: z.chatzot, icon: ICONS.compass, highlight: true, category: 'diario' },
+        { label: 'Mincha Gedolah', desc: 'Início do horário permitido para Minchá', key: 'minchaGedola', val: z.minchaGedola, icon: ICONS.bell, category: 'diario' },
+        { label: 'Gedolah HaTanya', desc: 'Início de Minchá segundo o Baal HaTanya', key: 'minchaGedolaBaalHatanya', val: z.minchaGedolaBaalHatanya, icon: ICONS.bell, category: 'diario' },
+        { label: 'Mincha Ketanah', desc: 'Horário preferencial para Minchá', key: 'minchaKetana', val: z.minchaKetana, icon: ICONS.cloudSun, category: 'diario' },
+        { label: 'Ketanah HaTanya', desc: 'Horário preferencial de Minchá (Baal HaTanya)', key: 'minchaKetanaBaalHatanya', val: z.minchaKetanaBaalHatanya, icon: ICONS.cloudSun, category: 'diario' },
+        { label: 'Plag Mincha', desc: 'Plag HaMinchá (última hora e quarto do dia solar)', key: 'plagHaMincha', val: z.plagHaMincha, icon: ICONS.cloudMoon, category: 'diario' },
+        { label: 'Plag HaTanya', desc: 'Plag HaMinchá segundo o Baal HaTanya', key: 'plagHaminchaBaalHatanya', val: z.plagHaminchaBaalHatanya, icon: ICONS.cloudMoon, category: 'diario' },
+        { label: 'Shkiah Solar', desc: 'Pôr do sol no horizonte (início do crepúsculo)', key: 'sunset', val: z.sunset, icon: ICONS.cloudMoon, highlight: true, category: 'diario' },
+        { label: 'Bein Hashmashot', desc: 'Intervalo crepuscular entre o pôr do sol e a noite', key: 'beinHaShmashos', val: z.beinHaShmashos, icon: ICONS.cloudMoon, category: 'diario' },
+        { label: 'Tzeit HaTanya', desc: 'Saída das estrelas segundo o Baal HaTanya', key: 'tzaisBaalHatanya', val: z.tzaisBaalHatanya, icon: ICONS.star, category: 'diario' },
+        { label: 'Tzeit Kochavim', desc: 'Surgimento de 3 estrelas médias (noite haláchica)', key: 'tzeit7083deg', val: z.tzeit7083deg, icon: ICONS.star, category: 'diario' },
+        { label: 'Tzeit 8.5°', desc: 'Critério estrito para fim de Shabat e Moadim', key: 'tzeit85deg', val: z.tzeit85deg, icon: ICONS.star, highlight: !isSaturday, category: 'diario' },
+        { label: 'Tzeit 42', desc: 'Saída das estrelas aos 42 minutos pós-pôr do sol', key: 'tzeit42min', val: z.tzeit42min, icon: ICONS.moon, category: 'diario' },
+        { label: 'Tzeit 50', desc: 'Saída das estrelas aos 50 minutos pós-pôr do sol', key: 'tzeit50min', val: z.tzeit50min, icon: ICONS.moon, category: 'diario' },
+        { label: 'Rabbeinu Tam', desc: 'Noite confirmada segundo Rabbeinu Tam (72 minutos)', key: 'tzeit72min', val: z.tzeit72min, icon: ICONS.moon, category: 'diario' }
     ];
 
     // ═══════════════════════════════════════════════════════
@@ -213,7 +231,7 @@ export function generateZmanimTableHTML() {
     if (isElul || (isEtanimTishrei && hDay !== null && hDay >= 1 && hDay <= 10) || isFastDay) {
         specialPrayersItems.push({
             label: 'Seder Selichot',
-            desc: 'Súplicas Madrugada',
+            desc: 'Súplicas penitenciais da madrugada',
             key: 'selichot',
             val: dawnMs - 60 * 60 * 1000,
             icon: ICONS.moon,
@@ -225,7 +243,7 @@ export function generateZmanimTableHTML() {
     if (isSaturday || isMonday || isThursday || isRoshChodesh || isYomTov || isCholHaMoed || isFastDay) {
         specialPrayersItems.push({
             label: 'Kriat HaTorah',
-            desc: 'Leitura Sagrada',
+            desc: 'Leitura solene da porção da Torá',
             key: 'torahReading',
             val: sunriseMs + Math.round(3.5 * shaahZmanitMs),
             icon: ICONS.book,
@@ -237,7 +255,7 @@ export function generateZmanimTableHTML() {
     if (isRoshChodesh || isPesach || isShavuot || isSukkot || isSheminiAtzeret || isChanukah) {
         specialPrayersItems.push({
             label: 'Tefilat Hallel',
-            desc: 'Louvor Sagrado',
+            desc: 'Salmos de louvor e júbilo sagrado',
             key: 'hallel',
             val: sunriseMs + Math.round(3.25 * shaahZmanitMs),
             icon: ICONS.sun,
@@ -249,7 +267,7 @@ export function generateZmanimTableHTML() {
     if (((isEtanimTishrei && hDay !== null && hDay >= 1 && hDay <= 10 && !isSaturday) || isFastDay)) {
         specialPrayersItems.push({
             label: 'Avinu Malkeinu',
-            desc: 'Nosso Pai',
+            desc: 'Súplica: Nosso Pai, Nosso Rei',
             key: 'avinuMalkeinu',
             val: sunriseMs + Math.round(3.6 * shaahZmanitMs),
             icon: ICONS.star,
@@ -261,7 +279,7 @@ export function generateZmanimTableHTML() {
     if (isSaturday || isRoshChodesh || isYomTov || isCholHaMoed || isFastDay) {
         specialPrayersItems.push({
             label: 'Birkat Kohanim',
-            desc: 'Bênção Sacerdotal',
+            desc: 'Bênção sacerdotal solene na sinagoga',
             key: 'birkatKohanim',
             val: sunriseMs + Math.round(3.75 * shaahZmanitMs),
             icon: ICONS.handsPraying,
@@ -273,7 +291,7 @@ export function generateZmanimTableHTML() {
     if (isSaturday || isRoshChodesh || isYomTov || isCholHaMoed || isYomKippur) {
         specialPrayersItems.push({
             label: 'Tefilat Musaf',
-            desc: 'Prece Adicional',
+            desc: 'Prece adicional de Shabat e Moadim',
             key: 'musaf',
             val: sunriseMs + Math.round(4.0 * shaahZmanitMs),
             icon: ICONS.hourglass,
@@ -286,7 +304,7 @@ export function generateZmanimTableHTML() {
     if (isSheminiAtzeret || (isEtanimTishrei && hDay === 22)) {
         specialPrayersItems.push({
             label: 'Tefilat Geshem',
-            desc: 'Chuva Abençoada',
+            desc: 'Prece solene pelas chuvas e sustento',
             key: 'geshem',
             val: sunriseMs + Math.round(4.5 * shaahZmanitMs),
             icon: ICONS.cloudSun,
@@ -298,7 +316,7 @@ export function generateZmanimTableHTML() {
     if (isAvivNisan && hDay === 15) {
         specialPrayersItems.push({
             label: 'Tefilat Tal',
-            desc: 'Orvalho Divino',
+            desc: 'Prece solene pelo orvalho matinal',
             key: 'tal',
             val: sunriseMs + Math.round(4.6 * shaahZmanitMs),
             icon: ICONS.cloudSun,
@@ -310,7 +328,7 @@ export function generateZmanimTableHTML() {
     if (isFastDay) {
         specialPrayersItems.push({
             label: 'Minchá Ta\'anit',
-            desc: 'Prece Jejum',
+            desc: 'Oração vespertina em dia de jejum',
             key: 'minchaTaanit',
             val: sunsetMs - Math.round(2.5 * shaahZmanitMs),
             icon: ICONS.bell,
@@ -335,7 +353,7 @@ export function generateZmanimTableHTML() {
     if (isFriday) {
         specialPrayersItems.push({
             label: 'Kabbalat Shabbat',
-            desc: 'Acolhimento Shabat',
+            desc: 'Acolhimento solene do Shabat com Salmos',
             key: 'kabbalatShabbat',
             val: candleTimeVal || (sunsetMs - 18 * 60 * 1000),
             icon: ICONS.candles,
@@ -348,7 +366,7 @@ export function generateZmanimTableHTML() {
     if (isYomKippur || (isEtanimTishrei && hDay === 10)) {
         specialPrayersItems.push({
             label: 'Tefilat Neilá',
-            desc: 'Portões Celestes',
+            desc: 'Oração de encerramento dos portões celestes',
             key: 'neilah',
             val: sunsetMs - 40 * 60 * 1000,
             icon: ICONS.star,
@@ -361,7 +379,7 @@ export function generateZmanimTableHTML() {
     if (isSaturday || (isYomTov && !isFriday)) {
         specialPrayersItems.push({
             label: 'Havdalá Shabat',
-            desc: isSaturday ? 'Saída Shabat' : 'Saída Festa',
+            desc: isSaturday ? 'Havdalá • Conclusão do Shabat e nova semana' : 'Havdalá • Conclusão solene da festividade',
             key: 'havdalah',
             val: havdalahTimeVal,
             icon: ICONS.star,
@@ -374,7 +392,7 @@ export function generateZmanimTableHTML() {
     if (hDay !== null && hDay >= 3 && hDay <= 15) {
         specialPrayersItems.push({
             label: 'Kiddush Levana',
-            desc: 'Bênção Lua',
+            desc: 'Santificação e bênção da lua nova crescente',
             key: 'kiddushLevana',
             val: duskMs + 30 * 60 * 1000,
             icon: ICONS.moon,
@@ -1019,13 +1037,13 @@ export function generateZmanimTableHTML() {
                             data-info-html="${safeInfoHtml}"
                             tabindex="0"
                             role="button"
-                            aria-label="${safeLabel}"
+                            aria-label="${safeLabel}: ${desc} às ${descText}"
                             style="cursor: pointer;">
                             <div class="settings-card-left">
                                 <i class="${item.icon} settings-icon"></i>
                                 <div class="settings-card-text">
                                     <span class="settings-card-title">${item.label}</span>
-                                    <span class="settings-card-desc">${descText}</span>
+                                    <span class="settings-card-desc">${desc} • ${descText}</span>
                                 </div>
                             </div>
                             <div class="card-arrow-action" aria-hidden="true">

@@ -17,6 +17,7 @@ import {
     FESTIVAL_TEHILIM,
     AVAILABLE_TEHILIM,
     FESTIVAL_DESCRIPTIONS,
+    getFestivalDescription,
     HEBREW_MONTHS_PT
 } from '../../domain/constants.js';
 import { getParashaSummary } from '../../domain/parashot.js';
@@ -38,6 +39,7 @@ import {
     formatTwoWordLocation,
     formatLocationCountry,
     formatLocationCityCountry,
+    getLocationDateParts,
     toEnglishRef
 } from '../../domain/formatters.js';
 import { createSkeletonCardsHTML } from '../components/skeleton.js';
@@ -404,7 +406,7 @@ export function generateCalendarHTML(events, currentHdate, nowMs = Date.now()) {
             else if (item.name === 'Shabbat Gadol') baseName = 'Shabbat HaGadol';
             else if (item.name === 'Shabbat Chodesh') baseName = 'Shabbat HaChodesh';
 
-            const festivalData = FESTIVAL_DESCRIPTIONS[baseName] || FESTIVAL_DESCRIPTIONS[item.name];
+            const festivalData = getFestivalDescription(baseName) || getFestivalDescription(item.name) || FESTIVAL_DESCRIPTIONS[baseName] || FESTIVAL_DESCRIPTIONS[item.name];
             const defaultDesc = 'Esta é uma data significativa no calendário israelita. O seu significado está relacionado com a história, a tradição e os ensinamentos do povo de Israel, podendo envolver acontecimentos históricos, mandamentos da Torá, práticas religiosas ou outros elementos transmitidos ao longo das gerações.';
             const infoHtml = createDescriptionCardHTML(festivalData, defaultDesc);
 
@@ -532,12 +534,19 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         }
     }
 
+    let actualParashaName = '';
+    if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.title) {
+        actualParashaName = upcomingParasha.raw.title
+            .replace(/^(?:Parashat|Parashá|Parashah|Parasha)\s+/i, '')
+            .replace(/[\u2018\u2019]/g, "'")
+            .trim();
+    }
+
     if (elParasha) {
         if (festivalReadingState) {
             elParasha.textContent = festivalReadingState;
         } else {
-            const rawTitle = upcomingParasha ? upcomingParasha.raw.title.replace(/^(?:Parashat|Parashá|Parashah|Parasha)\s+/i, '').replace(/[\u2018\u2019]/g, "'") : '-';
-            elParasha.textContent = formatTwoWordParasha(rawTitle);
+            elParasha.textContent = formatTwoWordParasha(actualParashaName || '-');
         }
     }
     if (elParashaSubtitle) {
@@ -562,30 +571,55 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             haftaraRef = (hOptions[0] || '').split(' | ')[0].trim();
         }
 
-        elParashaWrapper.classList.add('info-trigger');
-        elParashaWrapper.setAttribute('data-info-title', pName);
+        const modalTitle = festivalReadingState
+            ? (actualParashaName ? `${festivalReadingState} • Parashat ${formatTwoWordParasha(actualParashaName)}` : festivalReadingState)
+            : `Parashat ${formatTwoWordParasha(pName)}`;
 
-        let parashaSummary = getParashaSummary(pName);
+        elParashaWrapper.classList.add('info-trigger');
+        elParashaWrapper.setAttribute('data-info-title', modalTitle);
+
+        let parashaSummary = (actualParashaName ? getParashaSummary(actualParashaName) : null) || 
+                             getParashaSummary(pName) || 
+                             (festivalReadingState ? getParashaSummary(festivalReadingState) : null);
+
         let contentHtml = '';
+        let readingsCards = '';
+        if (torahRef || haftaraRef) {
+            readingsCards = `
+                <div class="info-modal-card" style="display:flex; flex-direction:column; align-items:flex-start; gap:4px; margin-bottom: 6px;">
+                    <div class="info-modal-value" style="font-weight: 500; font-size: var(--font-size-sm); line-height: 1.6; text-align: left; color: var(--text-primary);">
+                        <strong>Porção da Torá:</strong> ${transliterateTorah(torahRef) || '-'}
+                    </div>
+                </div>
+                <div class="info-modal-card" style="display:flex; flex-direction:column; align-items:flex-start; gap:4px; margin-bottom: 10px;">
+                    <div class="info-modal-value" style="font-weight: 500; font-size: var(--font-size-sm); line-height: 1.6; text-align: left; color: var(--text-primary);">
+                        <strong>Haftará:</strong> ${transliterateTorah(haftaraRef) || '-'}
+                    </div>
+                </div>
+            `;
+        }
 
         if (parashaSummary) {
             const paragraphs = Array.isArray(parashaSummary) ? parashaSummary : [parashaSummary];
             contentHtml = `
-        <div class="levels-container" style="display:flex; flex-direction:column;">
-            ${paragraphs.map((p, idx) => `
-                <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:6px; white-space:normal; overflow:visible; ${idx === paragraphs.length - 1 ? 'border-bottom:none;' : ''}">
-                    <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.65; text-align:left; white-space:normal; overflow:visible; text-overflow:clip; color: var(--text-primary);">${formatHebrewInText(p)}</div>
+                <div class="levels-container" style="display:flex; flex-direction:column;">
+                    ${readingsCards}
+                    ${paragraphs.map((p, idx) => `
+                        <div class="info-modal-card" style="flex-direction:column; align-items:flex-start; gap:6px; white-space:normal; overflow:visible; ${idx === paragraphs.length - 1 ? 'border-bottom:none;' : ''}">
+                            <div class="info-modal-value" style="font-weight:400; font-size: var(--font-size-sm); line-height:1.65; text-align:left; white-space:normal; overflow:visible; text-overflow:clip; color: var(--text-primary);">${formatHebrewInText(p)}</div>
+                        </div>
+                    `).join('')}
                 </div>
-            `).join('')}
-        </div>
-    `;
+            `;
         } else {
             contentHtml = `
-                <div class="info-modal-card">
-                    <div class="info-modal-value" style="font-weight: 400; font-size: var(--font-size-sm); line-height: 1.6; text-align: left;">Porção da Torá: ${transliterateTorah(torahRef) || '-'}</div>
-                </div>
-                <div class="info-modal-card">
-                    <div class="info-modal-value" style="font-weight: 400; font-size: var(--font-size-sm); line-height: 1.6; text-align: left;">Haftará: ${transliterateTorah(haftaraRef) || '-'}</div>
+                <div class="levels-container" style="display:flex; flex-direction:column;">
+                    ${readingsCards}
+                    <div class="info-modal-card">
+                        <div class="info-modal-value" style="font-weight: 400; font-size: var(--font-size-sm); line-height: 1.65; text-align: left; color: var(--text-primary);">
+                            A leitura pública da Torá e dos Profetas (Haftará) constitui o coração litúrgico da vida de Israel, conectando a congregação aos preceitos divinos, aos ensinamentos eternos e à memória da Aliança.
+                        </div>
+                    </div>
                 </div>
             `;
         }
@@ -727,34 +761,26 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             if (parent) {
                 const countryEl = parent.querySelector('.country-subtitle, .settings-card-desc');
                 if (countryEl) {
-                    countryEl.textContent = 'Local Selecionado';
+                    countryEl.textContent = 'Cidade de Referência';
                 }
             }
         }
     });
 
+    const activeTz = state.userLocation?.tz || 'Asia/Jerusalem';
+    const locDateParts = getLocationDateParts(now, activeTz);
+
     const elGreeting = document.getElementById('dashboard-greeting');
     if (elGreeting) {
-        const nowDate = new Date(now);
-        const dayOfWeek = nowDate.getDay();
-
-        let sunsetH = 18;
-        let sunsetM = 0;
-        if (sunsetTime) {
-            const sDate = new Date(sunsetTime);
-            if (!isNaN(sDate.getTime())) {
-                sunsetH = sDate.getHours();
-                sunsetM = sDate.getMinutes();
-            }
-        }
+        const dayOfWeek = locDateParts.dayOfWeek;
 
         let isShabbat = false;
         if (dayOfWeek === 5) {
-            const candleLighting = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM - 18, 0).getTime();
-            if (now >= candleLighting) isShabbat = true;
+            const candleLighting = sunsetTime ? (sunsetTime - (isIsrael ? 40 : 18) * 60 * 1000) : 0;
+            if (candleLighting > 0 && now >= candleLighting) isShabbat = true;
         } else if (dayOfWeek === 6) {
-            const havdalahTime = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM + 45, 0).getTime();
-            if (now <= havdalahTime) isShabbat = true;
+            const havdalahTime = sunsetTime ? (sunsetTime + 45 * 60 * 1000) : 0;
+            if (havdalahTime > 0 && now <= havdalahTime) isShabbat = true;
         }
 
         const isErevShabbat = (dayOfWeek === 5 && !isShabbat);
@@ -773,7 +799,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             const isKippur = activeFestival.category === 'yomkippur' || (activeFestival.name && activeFestival.name.toLowerCase().includes('kippur'));
             elGreeting.textContent = isKippur ? 'Gmar Chatimah Tovah' : 'Chag Sameach';
         } else {
-            const h = nowDate.getHours();
+            const h = locDateParts.hour;
             if (h >= 5 && h < 12) {
                 elGreeting.textContent = 'Boker Tov';
             } else if (h >= 12 && h < 18) {
@@ -786,14 +812,15 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
 
     const elGregorian = document.getElementById('dashboard-gregorian-date');
     if (elGregorian) {
-        const dateToUse = (state.isSimulation && state.simulatedGregorianDate)
-            ? new Date(state.simulatedGregorianDate)
-            : new Date(now);
+        const timeToUse = (state.isSimulation && state.simulatedTime)
+            ? state.simulatedTime
+            : now;
+        const gregParts = getLocationDateParts(timeToUse, activeTz);
         const dNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
         const mNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        const dayStr = dNames[dateToUse.getDay()];
-        const numDay = String(dateToUse.getDate()).padStart(2, '0');
-        const monthStr = mNames[dateToUse.getMonth()];
+        const dayStr = dNames[gregParts.dayOfWeek];
+        const numDay = String(gregParts.day).padStart(2, '0');
+        const monthStr = mNames[gregParts.month - 1];
         elGregorian.textContent = `${dayStr}, ${numDay} ${monthStr}`;
     }
 
@@ -1030,7 +1057,7 @@ export function renderEvents() {
         else if (evt.name === 'Shabbat Gadol' || evt.name === 'Shabbat HaGadol') baseName = 'Shabbat HaGadol';
         else if (evt.name === 'Shabbat Chodesh' || evt.name === 'Shabbat HaChodesh') baseName = 'Shabbat HaChodesh';
 
-        const festivalData = FESTIVAL_DESCRIPTIONS[baseName] || FESTIVAL_DESCRIPTIONS[evt.twoWordTitle] || FESTIVAL_DESCRIPTIONS[evt.name];
+        const festivalData = getFestivalDescription(baseName) || getFestivalDescription(evt.twoWordTitle) || getFestivalDescription(evt.name) || FESTIVAL_DESCRIPTIONS[baseName] || FESTIVAL_DESCRIPTIONS[evt.twoWordTitle] || FESTIVAL_DESCRIPTIONS[evt.name];
         const defaultDesc = 'Esta é uma data sagrada no calendário da Torá. O seu significado está relacionado com as ordenanças divinas e ensinamentos perpétuos de Israel.';
 
         const infoHtml = createDescriptionCardHTML(festivalData, defaultDesc);

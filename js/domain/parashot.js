@@ -888,19 +888,67 @@ const NORMALIZED_PARASHA_MAP = Object.entries(PARASHAH_DESCRIPTIONS).reduce((acc
     return acc;
 }, {});
 
-// Aliases litúrgicos canónicos para busca universal
-NORMALIZED_PARASHA_MAP['keriathamoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
-NORMALIZED_PARASHA_MAP['kriathamoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
-NORMALIZED_PARASHA_MAP['keriatmoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
-NORMALIZED_PARASHA_MAP['kriatmoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
-NORMALIZED_PARASHA_MAP['cholhamoed'] = PARASHAH_DESCRIPTIONS['Chol HaMoed'];
-NORMALIZED_PARASHA_MAP['chutzlaaretz'] = PARASHAH_DESCRIPTIONS['Chutz laAretz'];
-NORMALIZED_PARASHA_MAP['laaretz'] = PARASHAH_DESCRIPTIONS['Chutz laAretz'];
+// Aliases litúrgicos e grafias alternativas canónicas para busca universal (Hebcal, grafias asquenazes, sefarditas)
+NORMALIZED_PARASHA_MAP['chayeisara'] = PARASHAH_DESCRIPTIONS['Chayei Sarah'];
+NORMALIZED_PARASHA_MAP['chayesara'] = PARASHAH_DESCRIPTIONS['Chayei Sarah'];
+NORMALIZED_PARASHA_MAP['chayeysara'] = PARASHAH_DESCRIPTIONS['Chayei Sarah'];
+NORMALIZED_PARASHA_MAP['chayeysarah'] = PARASHAH_DESCRIPTIONS['Chayei Sarah'];
+NORMALIZED_PARASHA_MAP['chayesarah'] = PARASHAH_DESCRIPTIONS['Chayei Sarah'];
+
+NORMALIZED_PARASHA_MAP['achreimot'] = PARASHAH_DESCRIPTIONS['Acharei Mot'];
+NORMALIZED_PARASHA_MAP['achreymot'] = PARASHAH_DESCRIPTIONS['Acharei Mot'];
+NORMALIZED_PARASHA_MAP['achareymot'] = PARASHAH_DESCRIPTIONS['Acharei Mot'];
+NORMALIZED_PARASHA_MAP['aharimot'] = PARASHAH_DESCRIPTIONS['Acharei Mot'];
+
+NORMALIZED_PARASHA_MAP['naso'] = PARASHAH_DESCRIPTIONS['Nasso'];
+NORMALIZED_PARASHA_MAP['nasso'] = PARASHAH_DESCRIPTIONS['Nasso'];
+
+NORMALIZED_PARASHA_MAP['shelach'] = PARASHAH_DESCRIPTIONS['Shlach'];
+NORMALIZED_PARASHA_MAP['shlach'] = PARASHAH_DESCRIPTIONS['Shlach'];
+NORMALIZED_PARASHA_MAP['shelachlecha'] = PARASHAH_DESCRIPTIONS['Shlach'];
+NORMALIZED_PARASHA_MAP['shlachlecha'] = PARASHAH_DESCRIPTIONS['Shlach'];
+NORMALIZED_PARASHA_MAP['shlah'] = PARASHAH_DESCRIPTIONS['Shlach'];
+
+NORMALIZED_PARASHA_MAP['haazinu'] = PARASHAH_DESCRIPTIONS['Haazinu'];
 NORMALIZED_PARASHA_MAP['vezothaberacha'] = PARASHAH_DESCRIPTIONS['Vezot Habracha'];
 NORMALIZED_PARASHA_MAP['vezothaberachah'] = PARASHAH_DESCRIPTIONS['Vezot Habracha'];
 NORMALIZED_PARASHA_MAP['vzothaberachah'] = PARASHAH_DESCRIPTIONS['Vezot Habracha'];
 NORMALIZED_PARASHA_MAP['vzothaberacha'] = PARASHAH_DESCRIPTIONS['Vezot Habracha'];
 NORMALIZED_PARASHA_MAP['vezothabrachah'] = PARASHAH_DESCRIPTIONS['Vezot Habracha'];
+NORMALIZED_PARASHA_MAP['vezothabracha'] = PARASHAH_DESCRIPTIONS['Vezot Habracha'];
+
+NORMALIZED_PARASHA_MAP['behaalotcha'] = PARASHAH_DESCRIPTIONS["Beha'alotcha"];
+NORMALIZED_PARASHA_MAP['behaalotecha'] = PARASHAH_DESCRIPTIONS["Beha'alotcha"];
+
+NORMALIZED_PARASHA_MAP['kiteitzei'] = PARASHAH_DESCRIPTIONS['Ki Teitzei'];
+NORMALIZED_PARASHA_MAP['kitetzei'] = PARASHAH_DESCRIPTIONS['Ki Teitzei'];
+NORMALIZED_PARASHA_MAP['kiseitzei'] = PARASHAH_DESCRIPTIONS['Ki Teitzei'];
+
+NORMALIZED_PARASHA_MAP['kitavo'] = PARASHAH_DESCRIPTIONS['Ki Tavo'];
+NORMALIZED_PARASHA_MAP['kitisa'] = PARASHAH_DESCRIPTIONS['Ki Tisa'];
+
+NORMALIZED_PARASHA_MAP['chukat'] = PARASHAH_DESCRIPTIONS['Chukat'];
+NORMALIZED_PARASHA_MAP['chukkat'] = PARASHAH_DESCRIPTIONS['Chukat'];
+NORMALIZED_PARASHA_MAP['hukat'] = PARASHAH_DESCRIPTIONS['Chukat'];
+
+NORMALIZED_PARASHA_MAP['masei'] = PARASHAH_DESCRIPTIONS['Masei'];
+NORMALIZED_PARASHA_MAP['massei'] = PARASHAH_DESCRIPTIONS['Masei'];
+
+NORMALIZED_PARASHA_MAP['vayeilech'] = PARASHAH_DESCRIPTIONS['Vayeilech'];
+NORMALIZED_PARASHA_MAP['vayelech'] = PARASHAH_DESCRIPTIONS['Vayeilech'];
+
+NORMALIZED_PARASHA_MAP['vayeshev'] = PARASHAH_DESCRIPTIONS['Vayeshev'];
+NORMALIZED_PARASHA_MAP['vayeishev'] = PARASHAH_DESCRIPTIONS['Vayeshev'];
+
+NORMALIZED_PARASHA_MAP['keriathamoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
+NORMALIZED_PARASHA_MAP['kriathamoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
+NORMALIZED_PARASHA_MAP['keriatmoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
+NORMALIZED_PARASHA_MAP['kriatmoed'] = PARASHAH_DESCRIPTIONS['Keriat HaMoed'];
+NORMALIZED_PARASHA_MAP['cholhamoed'] = PARASHAH_DESCRIPTIONS['Chol HaMoed'];
+NORMALIZED_PARASHA_MAP['cholmoed'] = PARASHAH_DESCRIPTIONS['Chol HaMoed'];
+NORMALIZED_PARASHA_MAP['chutzlaaretz'] = PARASHAH_DESCRIPTIONS['Chutz laAretz'];
+NORMALIZED_PARASHA_MAP['laaretz'] = PARASHAH_DESCRIPTIONS['Chutz laAretz'];
+NORMALIZED_PARASHA_MAP['chutzlaaretzmoed'] = PARASHAH_DESCRIPTIONS['Chutz laAretz'];
 
 /**
  * Remove caracteres indesejados e filtra elementos duplicados mantendo a ordem.
@@ -917,33 +965,44 @@ function cleanAndDeduplicate(arr) {
 export function getParashaSummary(parashaName) {
     if (!parashaName) return null;
 
-    const cleanRaw = parashaName.replace(/^Parashat\s+/i, '').replace(/[()\/]/g, '').trim();
-    const searchKey = normalizeKey(cleanRaw);
+    let cleanRaw = String(parashaName)
+        .replace(/^(?:Parashat|Parashá|Parashah|Parasha|Shabbat)\s+/i, '')
+        .replace(/[()\/]/g, '')
+        .trim();
+    let searchKey = normalizeKey(cleanRaw);
 
     // 1. Busca direta no mapa normalizado (porções simples e porções duplas já definidas)
     if (NORMALIZED_PARASHA_MAP[searchKey]) {
         return cleanAndDeduplicate(NORMALIZED_PARASHA_MAP[searchKey]);
     }
 
-    // 2. Fallback de compatibilidade caso haja variação de grafia em porção dupla
-    if (cleanRaw.includes('-')) {
-        const [p1, p2] = cleanRaw.split('-').map(p => p.trim());
-        const k1 = normalizeKey(p1);
-        const k2 = normalizeKey(p2);
+    // 2. Busca removendo prefixos litúrgicos comuns
+    const strippedKey = searchKey.replace(/^(parashat|parasha|shabbat)/, '');
+    if (strippedKey && NORMALIZED_PARASHA_MAP[strippedKey]) {
+        return cleanAndDeduplicate(NORMALIZED_PARASHA_MAP[strippedKey]);
+    }
 
-        if (NORMALIZED_PARASHA_MAP[k1 + k2]) {
-            return cleanAndDeduplicate(NORMALIZED_PARASHA_MAP[k1 + k2]);
-        }
+    // 3. Fallback de compatibilidade caso haja variação de grafia em porção dupla
+    if (cleanRaw.includes('-') || cleanRaw.includes(' ')) {
+        const parts = cleanRaw.split(/[-\s]+/).filter(Boolean);
+        if (parts.length >= 2) {
+            const k1 = normalizeKey(parts[0]);
+            const k2 = normalizeKey(parts[1]);
 
-        const list1 = NORMALIZED_PARASHA_MAP[k1];
-        const list2 = NORMALIZED_PARASHA_MAP[k2];
+            if (NORMALIZED_PARASHA_MAP[k1 + k2]) {
+                return cleanAndDeduplicate(NORMALIZED_PARASHA_MAP[k1 + k2]);
+            }
 
-        if (list1 && list2) {
-            return cleanAndDeduplicate([...list1, ...list2]);
-        } else if (list1) {
-            return cleanAndDeduplicate(list1);
-        } else if (list2) {
-            return cleanAndDeduplicate(list2);
+            const list1 = NORMALIZED_PARASHA_MAP[k1];
+            const list2 = NORMALIZED_PARASHA_MAP[k2];
+
+            if (list1 && list2) {
+                return cleanAndDeduplicate([...list1, ...list2]);
+            } else if (list1) {
+                return cleanAndDeduplicate(list1);
+            } else if (list2) {
+                return cleanAndDeduplicate(list2);
+            }
         }
     }
 

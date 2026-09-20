@@ -23,7 +23,8 @@ import {
     isSameLocation
 } from '../../services/locationService.js';
 import { searchNominatim } from '../../api/nominatim.js';
-import { closeModalSafely, closeOtherModalsOnDesktop } from './modalManager.js';
+import { getDevicePreciseLocation } from '../../api/geolocation.js';
+import { closeModalSafely, closeOtherModalsOnDesktop, openModalElement } from './modalManager.js';
 import { getReadingSkeletonHTML } from '../components/skeleton.js';
 import { trackMicroAction } from '../../utils/umamiMonitor.js';
 
@@ -60,7 +61,17 @@ export function renderSuggestions(results = [], options = {}) {
             }
         }
 
-        // 0. Histórico de Seleção Rápida (máx 3 válidas por 10 dias)
+        // 0. Ação explícita de GPS Preciso (Apenas acionada se o utilizador clicar/pedir)
+        if (typeof navigator !== 'undefined' && navigator.geolocation) {
+            finalItems.push({
+                primaryText: 'Usar localização atual',
+                secondaryText: 'GPS de alta precisão do dispositivo',
+                iconClass: 'fa-solid fa-location-crosshairs',
+                isDeviceGpsAction: true
+            });
+        }
+
+        // 1. Histórico de Seleção Rápida (máx 3 válidas por 10 dias)
         // REGRA: Apenas a localização atual ativa é excluída das recentes.
         // Jerusalém NÃO é proibida de aparecer nas recentes.
         const filteredRecent = (recentLocations || []).filter(rec => {
@@ -217,10 +228,22 @@ export function renderSuggestions(results = [], options = {}) {
             }
         });
 
-        li.addEventListener('click', () => {
+        li.addEventListener('click', async () => {
             let locObj = null;
 
-            if (resItem.isJerusalemAction) {
+            if (resItem.isDeviceGpsAction) {
+                console.log('[Location] Utilizador solicitou localização precisa por GPS');
+                const descEl = li.querySelector('.settings-card-desc');
+                if (descEl) descEl.textContent = 'A obter sinal GPS...';
+
+                const gpsLoc = await getDevicePreciseLocation(6000);
+                if (gpsLoc) {
+                    locObj = gpsLoc;
+                } else {
+                    if (descEl) descEl.textContent = 'Não foi possível obter o sinal GPS';
+                    return;
+                }
+            } else if (resItem.isJerusalemAction) {
                 console.log('[Location] Localidade selecionada: Jerusalém');
                 locObj = {
                     lat: 31.7683,
@@ -286,7 +309,7 @@ export function renderSuggestions(results = [], options = {}) {
                     if (parent) {
                         const countryEl = parent.querySelector('.country-subtitle, .settings-card-desc');
                         if (countryEl) {
-                            countryEl.textContent = 'Local Selecionado';
+                            countryEl.textContent = 'Cidade de Referência';
                         }
                     }
                 }
@@ -309,18 +332,14 @@ export function renderSuggestions(results = [], options = {}) {
 /**
  * Abre o modal de seleção de localidade com foco no campo de busca.
  */
-export function openLocationModal() {
+export function openLocationModal(options = {}) {
     if (typeof document === 'undefined') return;
     const modal = document.getElementById('location-modal');
     if (!modal) return;
 
     trackMicroAction('modal_open', { modal: 'location' });
-    closeOtherModalsOnDesktop('location-modal');
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    if (typeof history !== 'undefined' && (!history.state || !history.state.modalOpen)) {
-        history.pushState({ modalOpen: true }, '');
-    }
+    openModalElement(modal, 'localizacao', options);
+
     if (typeof sessionStorage !== 'undefined') {
         try {
             sessionStorage.setItem('openLocationModal', 'true');

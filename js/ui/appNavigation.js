@@ -47,7 +47,11 @@ const HASH_TAB_MAP = {
     'moed': 'calendar',
     'moadim': 'calendar',
 
-    // Aba Mais / Privacidade / Definições
+    // Aba Informações / Privacidade / Definições
+    'informacoes': 'privacy',
+    'informações': 'privacy',
+    'guia': 'privacy',
+    'sobre': 'privacy',
     'mais': 'privacy',
     'info': 'privacy',
     'definicoes': 'privacy',
@@ -81,16 +85,7 @@ export function getActiveTabFromUrl() {
         return HASH_TAB_MAP[hash];
     }
 
-    // 2. Verifica Query Params (?tab=calendario)
-    try {
-        const params = new URLSearchParams(window.location.search);
-        const tabParam = params.get('tab')?.toLowerCase().trim();
-        if (tabParam && HASH_TAB_MAP[tabParam]) {
-            return HASH_TAB_MAP[tabParam];
-        }
-    } catch (e) { }
-
-    // 3. A página inicial padrão do site é sempre 'hoje'
+    // 2. A página inicial padrão do site é sempre 'hoje'
     return 'hoje';
 }
 

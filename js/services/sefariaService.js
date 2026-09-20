@@ -24,6 +24,19 @@ export const SEFARIA_ALLOWED_CATEGORIES = Object.freeze([
     'Responsa'
 ]);
 
+async function fetchWithTimeout(url, options = {}, timeoutMs = 7000) {
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+        const res = await fetch(url, { ...options, signal: ctrl.signal });
+        clearTimeout(tid);
+        return res;
+    } catch (e) {
+        clearTimeout(tid);
+        throw e;
+    }
+}
+
 export const CATEGORY_DISPLAY_NAMES = Object.freeze({
     'Mishnah': 'Mishná',
     'Talmud': 'Talmud',
@@ -127,9 +140,9 @@ export async function fetchPtCatalog(forceRefresh = false) {
         } catch (e) { }
     }
 
-    const response = await fetch('https://www.sefaria.org/api/texts/translations/pt', {
+    const response = await fetchWithTimeout('https://www.sefaria.org/api/texts/translations/pt', {
         headers: { 'Accept': 'application/json' }
-    });
+    }, 8000);
 
     if (!response.ok) {
         throw new Error(`Sefaria API HTTP ${response.status}: Falha ao obter catálogo em português.`);
@@ -224,9 +237,9 @@ async function generateCandidateUnits(work) {
     // Consulta metadados de estrutura da Sefaria via /api/ref/{REF}
     let refMeta = null;
     try {
-        const metaRes = await fetch(`https://www.sefaria.org/api/ref/${encodeURIComponent(work.title)}`, {
+        const metaRes = await fetchWithTimeout(`https://www.sefaria.org/api/ref/${encodeURIComponent(work.title)}`, {
             headers: { 'Accept': 'application/json' }
-        });
+        }, 5000);
         if (metaRes.ok) {
             refMeta = await metaRes.json();
         }
@@ -359,9 +372,9 @@ export async function getRandomReading(category, maxAttempts = 10) {
 
             try {
                 const endpoint = `https://www.sefaria.org/api/v3/texts/${encodeURIComponent(unitRef)}?version=portuguese`;
-                const res = await fetch(endpoint, {
+                const res = await fetchWithTimeout(endpoint, {
                     headers: { 'Accept': 'application/json' }
-                });
+                }, 6000);
 
                 if (!res.ok) continue;
 
@@ -430,9 +443,9 @@ export async function fetchReadingByRef(unitRef, category = null) {
 
     try {
         const endpoint = `https://www.sefaria.org/api/v3/texts/${encodeURIComponent(unitRef)}?version=portuguese`;
-        const res = await fetch(endpoint, {
+        const res = await fetchWithTimeout(endpoint, {
             headers: { 'Accept': 'application/json' }
-        });
+        }, 6000);
 
         if (!res.ok) {
             return await getRandomReading(targetCategory);

@@ -10,13 +10,13 @@ import { toHebrewBookName, parseRef } from '../../domain/scriptureRef.js';
 import { escapeHtml } from '../../domain/formatters.js';
 import { fetchBibleVerses } from '../../services/bibleService.js';
 import { getReadingSkeletonHTML } from '../components/skeleton.js';
-import { closeOtherModalsOnDesktop } from './modalManager.js';
+import { closeOtherModalsOnDesktop, openModalElement } from './modalManager.js';
 import { trackMicroAction } from '../../utils/umamiMonitor.js';
 
 /**
  * Abre o modal de leitura com a referência e título fornecidos.
  */
-export async function openReadingModal(ref, cardTitle) {
+export async function openReadingModal(ref, cardTitle, options = {}) {
     if (typeof document === 'undefined') return;
     const modal = document.getElementById('reading-modal');
     const titleEl = document.getElementById('reading-modal-title');
@@ -25,12 +25,8 @@ export async function openReadingModal(ref, cardTitle) {
 
     trackMicroAction('modal_open', { modal: 'reading', ref, title: cardTitle });
 
-    closeOtherModalsOnDesktop('reading-modal');
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    if (typeof history !== 'undefined' && (!history.state || !history.state.modalOpen)) {
-        history.pushState({ modalOpen: true }, '');
-    }
+    openModalElement(modal, 'leitura', options);
+
     if (typeof sessionStorage !== 'undefined') {
         try {
             sessionStorage.setItem('openReadingModalRef', ref);

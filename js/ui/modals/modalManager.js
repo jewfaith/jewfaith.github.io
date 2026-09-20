@@ -1,13 +1,42 @@
 /**
- * MODALMANAGER.JS - GESTÃO CENTRALIZADA DO CICLO DE VIDA DE MODAIS
+ * MODALMANAGER.JS - GESTÃO CENTRALIZADA DO CICLO DE VIDA DE MODAIS E HISTÓRICO
  * 
- * Controla abertura, fecho seguro com animações iOS 18, acessibilidade (ARIA),
- * gestos touch swipe-down e observação de estado de overlays.
+ * Fonte única de verdade para estado, abertura, fecho acessível, navegação
+ * por histórico (Back/Forward), sincronização com ?modal= e gestos touch iOS.
  */
 
 import { trackMicroAction } from '../../utils/umamiMonitor.js';
 
+export const MODAL_KEY_MAP = {
+    'zmanim': 'zmanim-modal',
+    'localizacao': 'location-modal',
+    'leitura': 'reading-modal',
+    'informacoes': 'info-modal',
+    'sefaria': 'sefaria-modal',
+    'detalhes-dia': 'day-details-modal'
+};
+
+export const MODAL_ID_MAP = {
+    'zmanim-modal': 'zmanim',
+    'location-modal': 'localizacao',
+    'reading-modal': 'leitura',
+    'info-modal': 'informacoes',
+    'sefaria-modal': 'sefaria',
+    'day-details-modal': 'detalhes-dia'
+};
+
+let currentActiveModal = null;
+let lastFocusedElement = null;
+let isHandlingPopState = false;
+let inAppNavigationDepth = 0;
 let observer = null;
+
+/**
+ * Retorna o modal atualmente aberto, se existir.
+ */
+export function getCurrentActiveModal() {
+    return currentActiveModal;
+}
 
 /**
  * Verifica se algum modal está visível e atualiza classes de scroll e foco no body.
@@ -20,9 +49,11 @@ export function checkModalsActive() {
 
     if (anyModalOpen) {
         document.body.classList.add('modal-open');
+        document.body.style.overflow = 'hidden';
     } else {
         document.body.classList.remove('modal-open');
         document.body.style.overflow = '';
+        currentActiveModal = null;
     }
 }
 
@@ -43,6 +74,115 @@ export function initModalObserver() {
     const overlays = document.querySelectorAll('.modal-overlay');
     overlays.forEach(overlay => observer.observe(overlay, { attributes: true, attributeFilter: ['style'] }));
     checkModalsActive();
+}
+
+/**
+ * Mantida para retrocompatibilidade sem injetar ?= ou parâmetros no URL.
+ */
+export function syncUrlWithModal(modalKey, action = 'push') {
+    // A lógica de query parameters (?=) foi removida para manter o URL limpo e elegante
+}
+
+/**
+ * Abre um elemento modal diretamente registando-o no gestor centralizado.
+ */
+export function openModalElement(modal, modalKey = null, options = {}) {
+    if (!modal) return;
+    const key = modalKey || MODAL_ID_MAP[modal.id] || null;
+
+    // Se outro modal estiver aberto, fecha-o diretamente sem histórico
+    if (currentActiveModal && currentActiveModal !== modal) {
+        closeModalDirectly(currentActiveModal);
+    }
+
+    // Salva elemento que possuía foco
+    if (document.activeElement && document.activeElement !== document.body) {
+        lastFocusedElement = document.activeElement;
+    }
+
+    currentActiveModal = modal;
+    modal.classList.remove('is-closing');
+    modal.style.display = 'flex';
+
+    document.body.classList.add('modal-open');
+    document.body.style.overflow = 'hidden';
+
+    // Registo de histórico para fecho via botão Voltar sem alterar o URL (?=)
+    if (!isHandlingPopState && !options.skipHistory) {
+        try {
+            history.pushState({ modalOpen: true, modalId: modal.id }, '', window.location.pathname + window.location.hash);
+            inAppNavigationDepth++;
+        } catch (e) { }
+    }
+
+    // Gestão acessível do foco
+    const scheduleFrame = typeof requestAnimationFrame === 'function' ? requestAnimationFrame : (cb) => setTimeout(cb, 0);
+    scheduleFrame(() => {
+        const focusTarget = modal.querySelector('input:not([disabled]), button.modal-close-btn, button:not([disabled]), [tabindex="0"]');
+        if (focusTarget) {
+            try { focusTarget.focus(); } catch (e) { }
+        } else {
+            modal.setAttribute('tabindex', '-1');
+            modal.focus?.();
+        }
+    });
+
+    checkModalsActive();
+}
+
+/**
+ * Abre um modal através da sua chave semântica de rota ('zmanim', 'informacoes', etc.).
+ */
+export function openModalByKey(modalKey, options = {}) {
+    if (!modalKey) return;
+    switch (modalKey) {
+        case 'zmanim':
+            import('../zmanimTable.js').then(m => m.openZmanimModal(options)).catch(console.error);
+            break;
+        case 'localizacao':
+            import('./locationModal.js').then(m => m.openLocationModal(options)).catch(console.error);
+            break;
+        case 'leitura':
+            import('./readingModal.js').then(m => {
+                const ref = options.ref || sessionStorage.getItem('openReadingModalRef') || 'Deuteronomy 32:1-52';
+                const title = options.title || sessionStorage.getItem('openReadingModalTitle') || 'Leitura da Torá';
+                m.openReadingModal(ref, title, options);
+            }).catch(console.error);
+            break;
+        case 'sefaria':
+            import('./sefariaModal.js').then(m => {
+                m.openSefariaModal(options.category || null, options.ref || null, options);
+            }).catch(console.error);
+            break;
+        case 'detalhes-dia':
+            import('../components/interactiveCalendar.js').then(m => {
+                const today = new Date();
+                const defaultDateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                const dateKey = options.dateKey || defaultDateKey;
+                m.openDayDetailsModal(dateKey, options.hdateStr || '', options);
+            }).catch(console.error);
+            break;
+        case 'informacoes':
+            import('./infoModal.js').then(m => {
+                const storedTitle = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('openInfoModalTitle') : null;
+                if (storedTitle && typeof document !== 'undefined' && document.querySelector) {
+                    const card = document.querySelector(`.event-card[data-info-title="${storedTitle}"]`);
+                    if (card) {
+                        card.click();
+                        return;
+                    }
+                }
+                const firstTrigger = typeof document !== 'undefined' && document.querySelector ? document.querySelector('.info-trigger') : null;
+                if (firstTrigger) {
+                    firstTrigger.click();
+                } else {
+                    m.openInfoModal('Informações da Tradição', '<div class="info-modal-card"><div class="info-modal-value">Visão geral das celebrações, festas bíblicas e calendário hebraico.</div></div>', options);
+                }
+            }).catch(console.error);
+            break;
+        default:
+            console.warn(`[ModalManager] Chave de rota de modal desconhecida: ${modalKey}`);
+    }
 }
 
 /**
@@ -87,33 +227,37 @@ export function closeModalSafely(modal, skipHistory = false) {
             modal.classList.remove('has-kofi-embed');
             const frames = modal.querySelectorAll('.kofi-modal-frame');
             frames.forEach(f => {
-                try { f.src = 'about:blank'; } catch (e) {}
+                try { f.src = 'about:blank'; } catch (e) { }
             });
-            import('./infoModal.js').then(m => m.clearKofiTimers?.()).catch(() => {});
+            import('./infoModal.js').then(m => m.clearKofiTimers?.()).catch(() => { });
+        }
+        if (currentActiveModal === modal) {
+            currentActiveModal = null;
         }
         checkModalsActive();
-        if (!skipHistory && history.state && (
-            history.state.modalOpen ||
-            history.state.zmanimOpen ||
-            history.state.berachotOpen ||
-            history.state.tehilimOpen ||
-            history.state.calendarOpen ||
-            history.state.converterOpen ||
-            history.state.pirkeiOpen ||
-            history.state.talmudOpen ||
-            history.state.mishnaOpen ||
-            history.state.settingsOpen ||
-            history.state.shabbatOpen
-        )) {
+
+        // Devolve o foco ao elemento original
+        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
             try {
-                history.back();
+                lastFocusedElement.focus();
             } catch (e) { }
+            lastFocusedElement = null;
+        }
+
+        // Gestão de histórico: desempilha se houver histórico interno registado
+        if (!skipHistory && !isHandlingPopState) {
+            if (inAppNavigationDepth > 0 && history.state && history.state.modalOpen) {
+                inAppNavigationDepth = Math.max(0, inAppNavigationDepth - 1);
+                try {
+                    history.back();
+                } catch (e) { }
+            }
         }
     }, 200);
 }
 
 /**
- * Fecha um modal imediatamente sem animação de transição (útil em trocas rápidas no desktop).
+ * Fecha um modal imediatamente sem animação de transição (útil em trocas rápidas).
  */
 export function closeModalDirectly(modal) {
     if (!modal) return;
@@ -133,8 +277,10 @@ export function closeModalDirectly(modal) {
         sessionStorage.removeItem('openLocationModal');
         sessionStorage.removeItem('openInfoModalTitle');
     } catch (e) { }
-    document.body.style.overflow = '';
-    document.body.classList.remove('modal-open');
+    if (currentActiveModal === modal) {
+        currentActiveModal = null;
+    }
+    checkModalsActive();
 }
 
 /**
@@ -148,6 +294,46 @@ export function closeOtherModalsOnDesktop(exceptModalId = null) {
             }
         });
     }
+}
+
+/**
+ * Gestor do evento popstate do navegador (Back / Forward / hardware back).
+ */
+export function handlePopState(event) {
+    isHandlingPopState = true;
+    try {
+        // Ao clicar no botão Voltar do navegador ou gesto mobile, fecha qualquer modal aberto
+        const overlays = document.querySelectorAll('.modal-overlay');
+        let closedAny = false;
+        overlays.forEach(m => {
+            if (m.style.display && m.style.display !== 'none') {
+                closeModalSafely(m, true);
+                closedAny = true;
+            }
+        });
+        if (closedAny && inAppNavigationDepth > 0) {
+            inAppNavigationDepth = Math.max(0, inAppNavigationDepth - 1);
+        }
+        currentActiveModal = null;
+        checkModalsActive();
+    } finally {
+        setTimeout(() => {
+            isHandlingPopState = false;
+        }, 60);
+    }
+}
+
+/**
+ * Garante que o URL permanece limpo, removendo qualquer parâmetro ?= ou ?modal= residual.
+ */
+export function initModalUrlSync() {
+    if (typeof window === 'undefined') return;
+    try {
+        if (window.location.search && (window.location.search.includes('modal=') || window.location.search === '?' || window.location.search === '?=')) {
+            const cleanUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState(null, '', cleanUrl);
+        }
+    } catch (e) { }
 }
 
 /**
@@ -269,4 +455,28 @@ if (typeof window !== 'undefined') {
             closeModalSafely(e.target);
         }
     });
+
+    // Tecla Escape fecha o modal ativo ou visão interna
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const activeModal = currentActiveModal || Array.from(document.querySelectorAll('.modal-overlay')).find(m => m.style.display && m.style.display !== 'none');
+            if (activeModal) {
+                e.preventDefault();
+                if (activeModal.id === 'info-modal') {
+                    import('./infoModal.js').then(im => {
+                        if (im.getInfoModalStackLength?.() > 1) {
+                            im.popInfoModalView();
+                        } else {
+                            closeModalSafely(activeModal);
+                        }
+                    }).catch(() => closeModalSafely(activeModal));
+                } else {
+                    closeModalSafely(activeModal);
+                }
+            }
+        }
+    });
+
+    // Ouvinte popstate único e centralizado
+    window.addEventListener('popstate', handlePopState);
 }

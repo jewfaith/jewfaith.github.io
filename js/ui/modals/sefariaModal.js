@@ -16,7 +16,7 @@ import {
 } from '../../services/sefariaService.js';
 import { state } from '../../state.js';
 import { escapeHtml, formatHebrewInText } from '../../domain/formatters.js';
-import { closeModalSafely, closeOtherModalsOnDesktop } from './modalManager.js';
+import { closeModalSafely, closeOtherModalsOnDesktop, openModalElement } from './modalManager.js';
 import { trackMicroAction } from '../../utils/umamiMonitor.js';
 
 let isFetchingReading = false;
@@ -53,7 +53,7 @@ export function initSefariaModal() {
  * Abre o modal Sefaria exibindo a leitura literária.
  * O título do modal informa com precisão qual é a parte sendo lida (ex.: Pirkei Avot 3).
  */
-export async function openSefariaModal(category = null, targetRef = null) {
+export async function openSefariaModal(category = null, targetRef = null, options = {}) {
     if (typeof document === 'undefined') return;
     const modal = document.getElementById('sefaria-modal');
     const body = document.getElementById('sefaria-modal-body');
@@ -75,14 +75,7 @@ export async function openSefariaModal(category = null, targetRef = null) {
 
     trackMicroAction('modal_open', { modal: 'sefaria_reading', ref: partTitle });
 
-    closeOtherModalsOnDesktop('sefaria-modal');
-    modal.style.display = 'flex';
-    document.body.classList.add('modal-open');
-    document.body.style.overflow = 'hidden';
-
-    if (typeof history !== 'undefined' && (!history.state || !history.state.sefariaModalOpen)) {
-        history.pushState({ sefariaModalOpen: true }, '');
-    }
+    openModalElement(modal, 'sefaria', options);
 
     // Durante o carregamento inicial, exibe estritamente o loader temático centralizado
     body.innerHTML = renderLoadingState();

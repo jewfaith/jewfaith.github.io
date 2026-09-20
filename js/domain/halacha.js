@@ -1,4 +1,5 @@
 import { BOOK_MAP } from './constants.js';
+import { getLocationDateParts, localTimeToUtc } from './formatters.js';
 
 export function transliterateTorah(text) {
     if (!text) return text;
@@ -77,31 +78,20 @@ export function findActiveFestival(events, now, twentyFourHoursMs, cats) {
     return null;
 }
 
-export function getNextShabbatEvent(now = Date.now(), sunsetTime = null) {
-    const nowDate = new Date(now);
-    const day = nowDate.getDay(); // 0: Dom, 1: Seg, ..., 5: Sex, 6: Sáb
+export function getNextShabbatEvent(now = Date.now(), sunsetTime = null, tz = 'Asia/Jerusalem') {
+    const parts = getLocationDateParts(now, tz);
+    const day = parts.dayOfWeek; // 0: Dom, 1: Seg, ..., 5: Sex, 6: Sáb
 
     let sunsetH = 18;
     let sunsetM = 0;
     if (sunsetTime) {
-        const sDate = new Date(sunsetTime);
-        if (!isNaN(sDate.getTime())) {
-            sunsetH = sDate.getHours();
-            sunsetM = sDate.getMinutes();
-        }
+        const sParts = getLocationDateParts(sunsetTime, tz);
+        sunsetH = sParts.hour;
+        sunsetM = sParts.minute;
     }
 
     let daysUntilFriday = (5 - day + 7) % 7;
-    const thisFridaySunset = new Date(
-        nowDate.getFullYear(),
-        nowDate.getMonth(),
-        nowDate.getDate() + daysUntilFriday,
-        sunsetH,
-        sunsetM,
-        0,
-        0
-    ).getTime();
-
+    const thisFridaySunset = localTimeToUtc(parts.year, parts.month, parts.day + daysUntilFriday, sunsetH, sunsetM, 0, tz);
     const thisSaturdayEnd = thisFridaySunset + (25 * 60 * 60 * 1000);
 
     let shabbatStart = thisFridaySunset;
@@ -111,30 +101,14 @@ export function getNextShabbatEvent(now = Date.now(), sunsetTime = null) {
         shabbatStart = thisFridaySunset;
         shabbatEnd = thisSaturdayEnd;
     } else if (day === 6) {
-        const prevFridaySunset = new Date(
-            nowDate.getFullYear(),
-            nowDate.getMonth(),
-            nowDate.getDate() - 1,
-            sunsetH,
-            sunsetM,
-            0,
-            0
-        ).getTime();
+        const prevFridaySunset = localTimeToUtc(parts.year, parts.month, parts.day - 1, sunsetH, sunsetM, 0, tz);
         const saturdayEnd = prevFridaySunset + (25 * 60 * 60 * 1000);
 
         if (now <= saturdayEnd) {
             shabbatStart = prevFridaySunset;
             shabbatEnd = saturdayEnd;
         } else {
-            const nextFridaySunset = new Date(
-                nowDate.getFullYear(),
-                nowDate.getMonth(),
-                nowDate.getDate() + 6,
-                sunsetH,
-                sunsetM,
-                0,
-                0
-            ).getTime();
+            const nextFridaySunset = localTimeToUtc(parts.year, parts.month, parts.day + 6, sunsetH, sunsetM, 0, tz);
             shabbatStart = nextFridaySunset;
             shabbatEnd = nextFridaySunset + (25 * 60 * 60 * 1000);
         }
@@ -220,7 +194,7 @@ export function isTorahSolemnRestEvent(ev) {
  * Determina se o momento atual corresponde ao Shabat ou a um Yom Tov
  * (onde transações comerciais e monetárias são proibidas pela Halachá).
  */
-export function checkSacredRestStatus(now = Date.now(), events = [], hdate = null, sunsetTime = null, isIsrael = false) {
+export function checkSacredRestStatus(now = Date.now(), events = [], hdate = null, sunsetTime = null, isIsrael = false, tz = 'Asia/Jerusalem') {
     if (typeof window !== 'undefined') {
         const hash = window.location.hash || '';
         const search = window.location.search || '';
@@ -236,6 +210,26 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
                 title: null,
                 greeting: null,
                 reason: null
+            };
+        }
+        if (hash === '#teste-shabbat' || hash === '#shabbat-2h' || hash === '#shabbat-6h' || search.includes('shabbat=1') || simYt === 'shabbat') {
+            return {
+                isRest: true,
+                type: 'shabbat',
+                subType: 'shabbat',
+                title: 'Yom Shabbat',
+                greeting: 'Shabbat Shalom',
+                reason: 'Em observância às leis sagradas do Shabat, transações financeiras e pagamentos digitais encontram-se pausados até à Havdalá.'
+            };
+        }
+        if (hash === '#shabbat-depois' || hash === '#shabbat-motzei' || simYt === 'motzei_shabbat') {
+            return {
+                isRest: true,
+                type: 'shabbat',
+                subType: 'motzei_shabbat',
+                title: 'Motzei Shabat',
+                greeting: 'Shavua Tov',
+                reason: 'Em virtude da conclusão do Shabat (Motzei Shabat), as doações encontram-se temporariamente pausadas durante o resguardo.'
             };
         }
         if (hash === '#teste-yomtov' || hash === '#yomtov-2h' || hash === '#yomtov-6h' || search.includes('yomtov=1') || simYt === 'true') {
@@ -260,22 +254,20 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
         }
     }
 
-    const nowDate = new Date(now);
-    const dayOfWeek = nowDate.getDay(); // 0: Dom, 1: Seg, ..., 5: Sex, 6: Sáb
+    const parts = getLocationDateParts(now, tz);
+    const dayOfWeek = parts.dayOfWeek; // 0: Dom, 1: Seg, ..., 5: Sex, 6: Sáb
 
     // 1. Obter hora e minuto do pôr do sol
     let sunsetH = 18;
     let sunsetM = 0;
     if (sunsetTime) {
-        const sDate = new Date(sunsetTime);
-        if (!isNaN(sDate.getTime())) {
-            sunsetH = sDate.getHours();
-            sunsetM = sDate.getMinutes();
-        }
+        const sParts = getLocationDateParts(sunsetTime, tz);
+        sunsetH = sParts.hour;
+        sunsetM = sParts.minute;
     }
 
-    // Minutos de antecedência para acendimento das velas (padrão haláchico: 18 minutos)
-    let candleOffsetMin = 18;
+    // Minutos de antecedência para acendimento das velas (padrão haláchico: 18 minutos, Jerusalém: 40 minutos)
+    let candleOffsetMin = isIsrael ? 40 : 18;
     try {
         const savedOffset = localStorage.getItem('yisrael_shabbat_offset');
         if (savedOffset) {
@@ -299,7 +291,7 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
 
     if (dayOfWeek === 5) {
         // Sexta-feira: acendimento das velas e resguardo de 2 horas antes
-        const friSunset = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM, 0).getTime();
+        const friSunset = localTimeToUtc(parts.year, parts.month, parts.day, sunsetH, sunsetM, 0, tz);
         const candleLighting = friSunset - candleOffsetMs;
         const erevShabbatBufferStart = candleLighting - TWO_HOURS_MS;
 
@@ -324,7 +316,7 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
         }
     } else if (dayOfWeek === 6) {
         // Sábado: Shabat pleno e resguardo pós-Havdalá (2 horas)
-        const satSunset = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM, 0).getTime();
+        const satSunset = localTimeToUtc(parts.year, parts.month, parts.day, sunsetH, sunsetM, 0, tz);
         const havdalahTime = satSunset + (45 * 60 * 1000);
         const motzeiShabbatBufferEnd = havdalahTime + TWO_HOURS_MS;
 
@@ -349,7 +341,7 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
         }
     } else if (dayOfWeek === 0) {
         // Domingo de madrugada: resguardo pós-Havdalá do sábado (2 horas)
-        const prevSatSunset = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate() - 1, sunsetH, sunsetM, 0).getTime();
+        const prevSatSunset = localTimeToUtc(parts.year, parts.month, parts.day - 1, sunsetH, sunsetM, 0, tz);
         const havdalahTime = prevSatSunset + (45 * 60 * 1000);
         const motzeiShabbatBufferEnd = havdalahTime + TWO_HOURS_MS;
 
@@ -434,7 +426,7 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
 
         const checkYomTovDates = (erevDay, ytDays, name) => {
             if (d === erevDay) {
-                const sunsetApproxMs = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM, 0).getTime();
+                const sunsetApproxMs = localTimeToUtc(parts.year, parts.month, parts.day, sunsetH, sunsetM, 0, tz);
                 const twoHoursBeforeSunset = sunsetApproxMs - TWO_HOURS_MS;
                 if (now >= twoHoursBeforeSunset) {
                     if (now < sunsetApproxMs) {
@@ -448,7 +440,7 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
                 isYomTovDate = true;
                 festivalName = name;
             } else if (d === (ytDays[ytDays.length - 1] + 1)) {
-                const todaySunset = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM, 0).getTime();
+                const todaySunset = localTimeToUtc(parts.year, parts.month, parts.day, sunsetH, sunsetM, 0, tz);
                 const lastSunset = now >= todaySunset ? todaySunset : (todaySunset - 24 * 60 * 60 * 1000);
                 const havdalahApproxMs = lastSunset + (45 * 60 * 1000);
                 const twoHoursAfterHavdalah = havdalahApproxMs + TWO_HOURS_MS;
@@ -480,7 +472,7 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
             }
         } else if (m.includes('elul')) {
             if (d === 29) {
-                const sunsetApproxMs = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate(), sunsetH, sunsetM, 0).getTime();
+                const sunsetApproxMs = localTimeToUtc(parts.year, parts.month, parts.day, sunsetH, sunsetM, 0, tz);
                 if (now >= sunsetApproxMs - TWO_HOURS_MS && now < sunsetApproxMs) {
                     isErevYomTov = true;
                     festivalName = 'Yom Teruah';
@@ -546,4 +538,63 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
  */
 export function isSacredRestPeriod(now = Date.now(), sunsetTime = null, events = [], hdate = null, isIsrael = false) {
     return checkSacredRestStatus(now, events, hdate, sunsetTime, isIsrael);
+}
+
+/**
+ * Calcula horários haláchicos (Zmanim) de forma 100% matemática e offline
+ * segundo os critérios astronómicos da Halachá (Gra e Rambam).
+ * 
+ * @param {Date|number} date - Data para cálculo
+ * @param {number} lat - Latitude
+ * @param {number} lon - Longitude
+ * @param {string} tz - Fuso horário IANA
+ * @param {boolean} isIsrael - Se a localidade é a Terra de Israel
+ */
+export function calculateOfflineZmanim(date = new Date(), lat = 31.7683, lon = 35.2137, tz = 'Asia/Jerusalem', isIsrael = true) {
+    const d = date instanceof Date ? date : new Date(date);
+    const rad = Math.PI / 180;
+    const startOfYear = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const dayOfYear = Math.floor((d.getTime() - startOfYear.getTime()) / 86400000) + 1;
+
+    // Declinação solar aparente
+    const declination = 23.45 * Math.sin(rad * (360 / 365) * (dayOfYear - 81));
+    const decRad = declination * rad;
+    const latRad = lat * rad;
+
+    // Ângulo horário para o nascer/pôr do sol (-0.833° por refração padrão)
+    const cosH0 = (Math.sin(-0.833 * rad) - Math.sin(latRad) * Math.sin(decRad)) / (Math.cos(latRad) * Math.cos(decRad));
+    if (cosH0 < -1 || cosH0 > 1) return null; // Regiões polares extremas
+    const H0 = Math.acos(cosH0) / rad;
+
+    // Equação do tempo
+    const B = (360 / 365) * (dayOfYear - 81) * rad;
+    const eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+
+    // Meio-dia solar em UTC
+    const solarNoonUtc = 12 - (lon / 15) - (eot / 60);
+    const sunriseUtcHours = solarNoonUtc - (H0 / 15);
+    const sunsetUtcHours = solarNoonUtc + (H0 / 15);
+
+    const baseMidnightUtc = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+    const sunriseMs = baseMidnightUtc + sunriseUtcHours * 3600000;
+    const sunsetMs = baseMidnightUtc + sunsetUtcHours * 3600000;
+    const chatzotMs = (sunriseMs + sunsetMs) / 2;
+    const shaahZmanitMs = Math.max(1, (sunsetMs - sunriseMs) / 12);
+
+    const candleOffsetMin = isIsrael ? 40 : 18;
+
+    return {
+        alotHaShachar: new Date(sunriseMs - 72 * 60 * 1000).toISOString(),
+        misheyakir: new Date(sunriseMs - 45 * 60 * 1000).toISOString(),
+        sunrise: new Date(sunriseMs).toISOString(),
+        sofZmanShma: new Date(sunriseMs + 3 * shaahZmanitMs).toISOString(),
+        sofZmanTfilla: new Date(sunriseMs + 4 * shaahZmanitMs).toISOString(),
+        chatzot: new Date(chatzotMs).toISOString(),
+        minchaGedola: new Date(chatzotMs + 0.5 * shaahZmanitMs).toISOString(),
+        sunset: new Date(sunsetMs).toISOString(),
+        tzeit7083deg: new Date(sunsetMs + 42 * 60 * 1000).toISOString(),
+        tzeit85deg: new Date(sunsetMs + 50 * 60 * 1000).toISOString(),
+        candleLighting: new Date(sunsetMs - candleOffsetMin * 60 * 1000).toISOString(),
+        candles: new Date(sunsetMs - candleOffsetMin * 60 * 1000).toISOString()
+    };
 }

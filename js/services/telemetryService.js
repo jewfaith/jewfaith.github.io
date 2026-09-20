@@ -74,18 +74,7 @@ export function trackHeartEvent(eventName, eventParams = {}) {
         timestamp: Date.now()
     };
 
-    // 1. Google Analytics (gtag / dataLayer)
-    try {
-        if (typeof window.gtag === 'function') {
-            window.gtag('event', eventName, payload);
-        } else if (Array.isArray(window.dataLayer)) {
-            window.dataLayer.push({ event: eventName, ...payload });
-        }
-    } catch (err) {
-        // Silencioso
-    }
-
-    // 2. Umami Analytics / Telemetria Interna
+    // 1. Umami Analytics / Telemetria Interna Estritamente Agregada (Zero PII)
     try {
         trackMicroAction(`heart:${eventName}`, payload);
     } catch (err) {

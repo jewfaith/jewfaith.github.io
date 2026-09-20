@@ -228,3 +228,86 @@ export function formatLocationCityCountry(locName) {
     }
     return single;
 }
+
+/**
+ * Obtém os componentes de data e hora locais no fuso horário da localidade ativa.
+ * Garante que cálculos de Shabat, zmanim e saudações utilizam o fuso correto e não o do computador.
+ */
+export function getLocationDateParts(dateOrMs = Date.now(), tz = 'Asia/Jerusalem') {
+    const d = typeof dateOrMs === 'number' ? new Date(dateOrMs) : (dateOrMs instanceof Date ? dateOrMs : new Date(dateOrMs));
+    try {
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: tz || 'Asia/Jerusalem',
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: false
+        });
+        const parts = formatter.formatToParts(d);
+        const map = {};
+        for (const p of parts) map[p.type] = p.value;
+        const year = parseInt(map.year, 10);
+        const month = parseInt(map.month, 10);
+        const day = parseInt(map.day, 10);
+        let hour = parseInt(map.hour, 10);
+        if (hour === 24) hour = 0;
+        const minute = parseInt(map.minute, 10);
+        const second = parseInt(map.second, 10);
+        const dayOfWeek = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+
+        return {
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second,
+            dayOfWeek,
+            dateStr: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+        };
+    } catch (e) {
+        const year = d.getFullYear();
+        const month = d.getMonth() + 1;
+        const day = d.getDate();
+        return {
+            year,
+            month,
+            day,
+            hour: d.getHours(),
+            minute: d.getMinutes(),
+            second: d.getSeconds(),
+            dayOfWeek: d.getDay(),
+            dateStr: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+        };
+    }
+}
+
+/**
+ * Converte componentes locais (ano, mês, dia, hora, minuto, segundo) num fuso horário específico
+ * para o carimbo de data/hora UTC equivalente em milissegundos.
+ */
+export function localTimeToUtc(year, month, day, hour = 0, minute = 0, second = 0, tz = 'Asia/Jerusalem') {
+    let utcMs = Date.UTC(year, month - 1, day, hour, minute, second);
+    try {
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: tz || 'Asia/Jerusalem',
+            year: 'numeric', month: 'numeric', day: 'numeric',
+            hour: 'numeric', minute: 'numeric', second: 'numeric',
+            hour12: false
+        });
+        const parts = formatter.formatToParts(new Date(utcMs));
+        const map = {};
+        for (const p of parts) map[p.type] = p.value;
+        let tzHour = parseInt(map.hour, 10);
+        if (tzHour === 24) tzHour = 0;
+        const tzUtcMs = Date.UTC(parseInt(map.year, 10), parseInt(map.month, 10) - 1, parseInt(map.day, 10), tzHour, parseInt(map.minute, 10), parseInt(map.second, 10));
+        const offsetMs = tzUtcMs - utcMs;
+        return utcMs - offsetMs;
+    } catch (e) {
+        return utcMs;
+    }
+}
+

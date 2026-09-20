@@ -87,11 +87,19 @@ export async function fetchNominatimReverse(lat, lon) {
     }
 }
 
+const NOMINATIM_SEARCH_CACHE = new Map();
+
 /**
- * Pesquisa de texto livre para localidades / cidades.
+ * Pesquisa de texto livre para localidades / cidades com cache resiliente.
  */
 export async function searchNominatim(query, limit = 15) {
     if (!query || query.trim().length < 2) return [];
+
+    const cleanQ = query.trim().toLowerCase();
+    const cacheKey = `${cleanQ}_${limit}`;
+    if (NOMINATIM_SEARCH_CACHE.has(cacheKey)) {
+        return NOMINATIM_SEARCH_CACHE.get(cacheKey);
+    }
 
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 6000);
@@ -111,7 +119,15 @@ export async function searchNominatim(query, limit = 15) {
         });
         clearTimeout(tid);
         if (!res.ok) return null;
-        return await res.json();
+        const data = await res.json();
+        if (Array.isArray(data)) {
+            if (NOMINATIM_SEARCH_CACHE.size > 50) {
+                const firstKey = NOMINATIM_SEARCH_CACHE.keys().next().value;
+                NOMINATIM_SEARCH_CACHE.delete(firstKey);
+            }
+            NOMINATIM_SEARCH_CACHE.set(cacheKey, data);
+        }
+        return data;
     } catch (e) {
         clearTimeout(tid);
         return null;

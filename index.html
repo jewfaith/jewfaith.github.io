@@ -4,16 +4,22 @@
 <head>
   <script>
     (function () {
-      if (window.location.pathname.endsWith('/index.html')) {
-        var cleanPath = window.location.pathname.replace(/\/index\.html$/, '/') + window.location.search + window.location.hash;
-        window.history.replaceState(null, '', cleanPath);
-      }
+      try {
+        var search = window.location.search;
+        if (search && (search.includes('modal=') || search === '?' || search === '?=' || search.includes('tab='))) {
+          var cleanUrl = window.location.pathname.replace(/\/index\.html$/, '/') + window.location.hash;
+          window.history.replaceState(null, '', cleanUrl);
+        } else if (window.location.pathname.endsWith('/index.html')) {
+          var cleanPath = window.location.pathname.replace(/\/index\.html$/, '/') + search + window.location.hash;
+          window.history.replaceState(null, '', cleanPath);
+        }
+      } catch (e) {}
     })();
 
     // Funções globais do simulador litúrgico disponíveis instantaneamente
     function simulate(f, opt) {
       if (window._simFn) return window._simFn(f, opt);
-      return import('./js/utils/simulator.js?v=2.9.80').then(function (m) {
+      return import('./js/utils/simulator.js?v=3.4.4').then(function (m) {
         window._simFn = function (fest, options) {
           if (typeof fest === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(fest.trim())) {
             return m.simulateDate(fest.trim());
@@ -27,26 +33,24 @@
     }
     function resetSimulation() {
       if (window._simReset) return window._simReset();
-      return import('./js/utils/simulator.js?v=2.9.80').then(function (m) {
+      return import('./js/utils/simulator.js?v=3.4.4').then(function (m) {
         window._simReset = m.resetSimulation;
-        return m.resetSimulation();
+        return window._simReset();
       }).catch(function (err) {
-        console.error('[Simulador] Erro ao restaurar simulação:', err);
+        console.error('[Simulador] Erro ao restaurar:', err);
       });
     }
     function simulationHelp() {
       if (window._simHelp) return window._simHelp();
-      return import('./js/utils/simulator.js?v=2.9.80').then(function (m) {
+      return import('./js/utils/simulator.js?v=3.4.4').then(function (m) {
         window._simHelp = m.simulationHelp;
-        return m.simulationHelp();
-      }).catch(function (err) {
-        console.error('[Simulador] Erro ao abrir ajuda:', err);
+        return window._simHelp();
       });
     }
     window.simulate = simulate;
     window.simulateFestival = simulate;
     window.simulateDate = function (d) {
-      return import('./js/utils/simulator.js?v=2.9.80').then(function (m) {
+      return import('./js/utils/simulator.js?v=3.4.4').then(function (m) {
         return m.simulateDate(d);
       }).catch(function (err) {
         console.error('[Simulador] Erro ao simular data:', err);
@@ -63,11 +67,12 @@
   </script>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is https://storage.ko-fi.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://storage.ko-fi.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:; connect-src 'self' https://www.hebcal.com https://nominatim.openstreetmap.org https://bolls.life https://www.sefaria.org https://cloud.umami.is https://gateway.umami.is https://storage.ko-fi.com https://ko-fi.com; frame-src https://ko-fi.com https://*.ko-fi.com https://*.paypal.com https://*.stripe.com; img-src 'self' data: https:; manifest-src 'self';" />
+    content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is https://storage.ko-fi.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://storage.ko-fi.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:; connect-src 'self' https://www.hebcal.com https://nominatim.openstreetmap.org https://bolls.life https://www.sefaria.org https://cloud.umami.is https://gateway.umami.is https://storage.ko-fi.com https://ko-fi.com https://freeipapi.com; frame-src https://ko-fi.com https://*.ko-fi.com https://*.paypal.com https://*.stripe.com; img-src 'self' data: https://storage.ko-fi.com; manifest-src 'self';" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description"
     content="Calendário hebraico diário com horários haláchicos, leituras da Torá e ciclo de festas de Israel em tempo real." />
   <link rel="canonical" href="https://jewfaith.github.io/" />
+  <meta name="robots" content="index, follow" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -144,7 +149,10 @@
     })();
   </script>
 
-  <!-- Resource Hints & Typography: Apple SF Pro & Font Awesome 6 -->
+  <!-- Resource Hints & Typography: Inter, Cinzel & Font Awesome 6 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
   <link rel="dns-prefetch" href="https://www.hebcal.com" />
@@ -155,7 +163,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="style.css?v=3.1.3" />
+  <link rel="stylesheet" href="style.css?v=3.4.4" />
 
   <!-- Umami Analytics (Cookieless, Privacy-First, RGPD & LGPD Compliant) -->
   <script id="umami-script" defer src="https://cloud.umami.is/script.js"
@@ -188,23 +196,23 @@
       </div>
 
       <nav class="sidebar-nav" role="navigation" aria-label="Navegação Principal do Computador">
-        <button class="desktop-nav-btn active" data-tab="hoje" id="desktop-tab-hoje" aria-label="Hoje">
-          <div class="nav-icon-wrap"><i class="fa-solid fa-calendar-day" data-icon="calendarDay"></i></div>
+        <button class="desktop-nav-btn active" data-tab="hoje" id="desktop-tab-hoje" aria-label="Hoje • Visão Geral e Horários do Dia">
+          <div class="nav-icon-wrap"><i class="fa-solid fa-sun" data-icon="sun"></i></div>
           <span class="nav-btn-label">Hoje</span>
         </button>
-        <button class="desktop-nav-btn" data-tab="calendar" id="desktop-tab-calendar" aria-label="Calendário">
-          <div class="nav-icon-wrap"><i class="fa-solid fa-calendar-days" data-icon="calendarDays"></i></div>
-          <span class="nav-btn-label">Calendário</span>
+        <button class="desktop-nav-btn" data-tab="calendar" id="desktop-tab-calendar" aria-label="Festas • Calendário Bíblico e Comemorações">
+          <div class="nav-icon-wrap"><i class="fa-solid fa-menorah" data-icon="menorah"></i></div>
+          <span class="nav-btn-label">Festas</span>
         </button>
-        <button class="desktop-nav-btn" data-tab="privacy" id="desktop-tab-privacy" aria-label="Mais">
-          <div class="nav-icon-wrap"><i class="fa-solid fa-bars" data-icon="menu"></i></div>
-          <span class="nav-btn-label">Mais</span>
+        <button class="desktop-nav-btn" data-tab="privacy" id="desktop-tab-privacy" aria-label="Guia • Metodologia, Fontes e Sobre o Projeto">
+          <div class="nav-icon-wrap"><i class="fa-solid fa-book-open" data-icon="bookOpen"></i></div>
+          <span class="nav-btn-label">Guia</span>
         </button>
       </nav>
 
       <div class="sidebar-footer">
         <div id="pc-theme-mode-selector" class="desktop-mode-pill-group desktop-theme-pill-group" role="group"
-          aria-label="Modo de Tema no PC">
+          aria-label="Aparência Visual e Tema">
           <button class="desktop-mode-pill desktop-theme-pill active" data-theme-mode="auto"
             title="Automático (Ciclo Solar)">
             <i class="fa-solid fa-circle-half-stroke" data-icon="themeDark"></i>
@@ -230,10 +238,13 @@
       <!-- MOBILE ONLY: HEADER COMPACTO COM TÍTULO (< 768px) -->
       <header class="mobile-only-header">
         <div class="mobile-header-top-row">
-          <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <img class="mobile-brand-icon" src="./icon.png" alt="Yisrael Date" loading="lazy" style="width: 28px; height: 28px; border-radius: 8px;" />
             <h1 class="mobile-brand-title">Yisrael Date</h1>
           </div>
-          <img class="mobile-brand-icon" src="./icon.png" alt="Yisrael Date" loading="lazy" style="width: 32px; height: 32px;" />
+          <button id="mobile-theme-toggle-btn" class="mobile-theme-btn" aria-label="Alternar Tema Visual" title="Alternar Tema (Dia/Noite)">
+            <i class="fa-solid fa-circle-half-stroke" aria-hidden="true"></i>
+          </button>
         </div>
       </header>
 
@@ -255,25 +266,17 @@
              ========================================== -->
         <section id="view-reading" class="app-tab-view active" role="region" aria-label="Hoje">
 
-          <!-- Header de Boas-Vindas: Saudação & Data Gregoriana -->
-          <div class="today-hero-header">
-            <div class="today-greeting-wrap">
-              <span id="dashboard-greeting" class="today-greeting-text">Boker Tov</span>
-              <span id="dashboard-gregorian-date" class="today-gregorian-date">Carregando data...</span>
-            </div>
-          </div>
-
-          <!-- Bloco 1: Data Hebraica & Sha'ah Zmanit (reordenados dinamicamente sem afetar outros elementos) -->
+          <!-- Cartões Principais do Dia (Zmanim, Data Hebraica, Cidade de Referência, Parashá) -->
           <div class="event-cards-row" id="today-primary-cards-row">
             <!-- Card Sha'ah Zmanit -->
             <div id="solar-arc-container">
               <div class="settings-card event-card glass-panel" id="card-solar-glance" tabindex="0" role="button"
-                aria-label="Ver Tabela Completa de Zmanim" style="cursor: pointer;">
+                aria-label="Ver Tabela Completa de Horários Litúrgicos (Zmanim)" style="cursor: pointer;">
                 <div class="settings-card-left">
                   <i class="fa-solid fa-sun settings-icon" data-icon="sun" id="solar-hero-icon"></i>
                   <div class="settings-card-text">
-                    <span class="settings-card-title" id="solar-hero-city-title">Sha'ah Zmanit</span>
-                    <span class="settings-card-desc" id="solar-phase-label">Horário Litúrgico</span>
+                    <span class="settings-card-title" id="solar-hero-city-title">Horários Litúrgicos (Zmanim)</span>
+                    <span class="settings-card-desc" id="solar-phase-label">Horas solares e orações do dia</span>
                   </div>
                 </div>
                 <div class="card-arrow-action" aria-hidden="true">
@@ -284,7 +287,7 @@
 
             <!-- Card Data Hebraica -->
             <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-hdate-wrapper"
-              tabindex="0" role="button" aria-label="Detalhes da Data Hebraica">
+              tabindex="0" role="button" aria-label="Detalhes e Significado da Data Hebraica">
               <div class="settings-card-left">
                 <i class="fa-solid fa-calendar-day settings-icon" data-icon="calendarDay"></i>
                 <div class="settings-card-text">
@@ -298,19 +301,16 @@
                 <i class="fa-solid fa-arrow-right"></i>
               </div>
             </div>
-          </div>
 
-          <!-- Bloco 2: Localização & Parashá Semanal -->
-          <div class="event-cards-row" style="margin-top: 8px;">
             <!-- Card Localização -->
             <div class="settings-card event-card glass-panel not-ready location-trigger-btn" id="card-local-vigente"
-              tabindex="0" role="button" aria-label="Alterar Localização">
+              tabindex="0" role="button" aria-label="Alterar Cidade de Referência">
               <div class="settings-card-left">
                 <i class="fa-solid fa-location-dot settings-icon" data-icon="locationDot"></i>
                 <div class="settings-card-text">
                   <span class="settings-card-title" id="card-local"><span class="skeleton-line"
                       style="display: inline-block; width: 65%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc">Local Selecionado</span>
+                  <span class="settings-card-desc">Cidade de Referência</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -320,7 +320,7 @@
 
             <!-- Card Parashá -->
             <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-parasha-wrapper"
-              tabindex="0" role="button" aria-label="Detalhes da Parashá">
+              tabindex="0" role="button" aria-label="Leitura e Detalhes da Parashá Semanal">
               <div class="settings-card-left">
                 <i class="fa-solid fa-scroll settings-icon" data-icon="scroll"></i>
                 <div class="settings-card-text">
@@ -336,24 +336,24 @@
             </div>
           </div>
 
-          <!-- Seção: Estudo Sagrado -->
+          <!-- Seção: Leituras e Textos Sagrados -->
           <div class="festival-section-header">
             <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title">Estudo Sagrado</h2>
+              <h2 class="festival-section-title">Leituras e Textos Sagrados</h2>
             </div>
           </div>
 
           <!-- Cartões de Estudo Sagrado (Todos os 4 cartões visíveis diretamente) -->
-          <div class="study-cards-container">
+          <div class="study-cards-container event-cards-row">
             <!-- 1. Torá -->
             <div class="settings-card event-card glass-panel not-ready" id="card-torah-wrapper" tabindex="0"
-              role="button" aria-label="Ler Lei Escrita">
+              role="button" aria-label="Ler a Porção da Torá">
               <div class="settings-card-left">
                 <i class="fa-solid fa-book-open settings-icon" data-icon="torah"></i>
                 <div class="settings-card-text">
                   <span class="settings-card-title" id="card-torah"><span class="skeleton-line"
                       style="display: inline-block; width: 60%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc" id="card-torah-subtitle">Lei Escrita</span>
+                  <span class="settings-card-desc" id="card-torah-subtitle">Torá • Os Cinco Livros de Moisés</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -363,13 +363,13 @@
 
             <!-- 2. Haftará -->
             <div class="settings-card event-card glass-panel not-ready" id="card-haftara-wrapper" tabindex="0"
-              role="button" aria-label="Ler Livros Proféticos">
+              role="button" aria-label="Ler a Porção da Haftará">
               <div class="settings-card-left">
                 <i class="fa-solid fa-feather-pointed settings-icon" data-icon="haftara"></i>
                 <div class="settings-card-text">
                   <span class="settings-card-title" id="card-haftara"><span class="skeleton-line"
                       style="display: inline-block; width: 70%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc" id="card-haftara-subtitle">Livros Proféticos</span>
+                  <span class="settings-card-desc" id="card-haftara-subtitle">Haftará • Livros Proféticos (Neviim)</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -379,13 +379,13 @@
 
             <!-- 3. Ketuvim -->
             <div class="settings-card event-card glass-panel not-ready" id="card-ketuvim-wrapper" tabindex="0"
-              role="button" aria-label="Ler Escritos Sagrados">
+              role="button" aria-label="Ler a Porção de Ketuvim">
               <div class="settings-card-left">
                 <i class="fa-solid fa-book-bookmark settings-icon" data-icon="ketuvim"></i>
                 <div class="settings-card-text">
                   <span class="settings-card-title" id="card-ketuvim"><span class="skeleton-line"
                       style="display: inline-block; width: 65%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc" id="card-ketuvim-subtitle">Escritos Sagrados</span>
+                  <span class="settings-card-desc" id="card-ketuvim-subtitle">Ketuvim • Salmos, Provérbios e Escritos</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -395,14 +395,13 @@
 
             <!-- 4. Literatura Sefaria -->
             <div class="settings-card event-card glass-panel sefaria-category-card" id="card-sefaria-single"
-              tabindex="0" role="button" aria-label="Literatura Judaica" style="cursor: pointer;">
+              tabindex="0" role="button" aria-label="Aceder à Biblioteca Digital Sefaria" style="cursor: pointer;">
               <div class="settings-card-left">
                 <i class="fa-solid fa-building-columns settings-icon" data-icon="buildingColumns"
                   style="color: var(--accent-color);"></i>
                 <div class="settings-card-text">
-                  <span class="settings-card-title"><span class="skeleton-line"
-                      style="display: inline-block; width: 65%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc">Tradição Clássica</span>
+                  <span class="settings-card-title">Biblioteca Digital Sefaria</span>
+                  <span class="settings-card-desc">Talmud, Midrash e Obras Clássicas</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -411,10 +410,10 @@
             </div>
           </div>
 
-          <!-- Seção 3: Próximas Festas -->
+          <!-- Seção 3: Próximas Celebrações e Festividades -->
           <div class="festival-section-header">
             <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title">Próximas Festas</h2>
+              <h2 class="festival-section-title">Próximas Celebrações e Festividades</h2>
             </div>
           </div>
           <div id="upcoming-events-grid" class="event-cards-row">
@@ -470,10 +469,10 @@
             </div>
           </div>
 
-          <!-- Seção 4: Apoio Comunitário -->
+          <!-- Seção 4: Apoio e Sustento do Projeto -->
           <div class="festival-section-header">
             <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title">Apoio Comunitário</h2>
+              <h2 class="festival-section-title">Apoio e Sustento do Projeto</h2>
             </div>
           </div>
           <div id="home-products-grid" class="event-cards-row">
@@ -528,7 +527,7 @@
           <!-- Cabeçalho Unificado e Dinâmico de Festividades -->
           <div class="festival-section-header" id="header-biblical" style="margin-top: 18px">
             <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title" id="calendar-festivals-title">Festas Bíblicas da Torá</h2>
+              <h2 class="festival-section-title" id="calendar-festivals-title">Sagradas Convocinas da Torá (Moadim)</h2>
             </div>
           </div>
 
@@ -589,8 +588,8 @@
           <!-- 2. Lista de Festas Rabínicas -->
           <div class="festival-section-header" id="header-rabbinic" style="margin-top: 18px;">
             <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title">Festas e Jejuns Rabínicos</h2>
-              <span class="festival-section-badge" id="rabbinic-count-badge">16 Tradições</span>
+              <h2 class="festival-section-title">Festividades Históricas e Dias de Jejum</h2>
+              <span class="festival-section-badge" id="rabbinic-count-badge">Tradição e Memória</span>
             </div>
           </div>
           <div id="rabbinic-festivals-list" class="event-cards-row"></div>
@@ -598,9 +597,9 @@
 
 
         <!-- ==========================================
-             ABA 3: PRIVACIDADE & CONFORMIDADE GLOBAL (55+ NORMAS)
+             ABA 3: INFORMAÇÕES, METODOLOGIA & CONFORMIDADE
              ========================================== -->
-        <section id="view-privacy" class="app-tab-view">
+        <section id="view-privacy" class="app-tab-view" role="region" aria-label="Informações e Guia do Projeto">
           <div id="privacy-content-container" style="display: contents;"></div>
         </section>
 
@@ -611,17 +610,17 @@
          MOBILE ONLY: NATIVE IOS EDGE-TO-EDGE TAB BAR (3 TABS)
          ========================================== -->
     <nav class="app-floating-tabbar glass-panel mobile-only-tabbar" role="navigation" aria-label="Navegação Principal do Telemóvel">
-      <button class="app-tab-btn active" data-tab="hoje" id="tab-hoje" aria-label="Hoje">
-        <div class="tab-icon-wrap"><i class="fa-solid fa-calendar-day" data-icon="calendarDay"></i></div>
+      <button class="app-tab-btn active" data-tab="hoje" id="tab-hoje" aria-label="Hoje • Visão Geral e Horários do Dia">
+        <div class="tab-icon-wrap"><i class="fa-solid fa-sun" data-icon="sun"></i></div>
         <span>Hoje</span>
       </button>
-      <button class="app-tab-btn" data-tab="calendar" id="tab-calendar" aria-label="Calendário">
-        <div class="tab-icon-wrap"><i class="fa-solid fa-calendar-days" data-icon="calendarDays"></i></div>
-        <span>Calendário</span>
+      <button class="app-tab-btn" data-tab="calendar" id="tab-calendar" aria-label="Festas • Calendário Bíblico e Comemorações">
+        <div class="tab-icon-wrap"><i class="fa-solid fa-menorah" data-icon="menorah"></i></div>
+        <span>Festas</span>
       </button>
-      <button class="app-tab-btn" data-tab="privacy" id="tab-privacy" aria-label="Mais">
-        <div class="tab-icon-wrap"><i class="fa-solid fa-bars" data-icon="menu"></i></div>
-        <span>Mais</span>
+      <button class="app-tab-btn" data-tab="privacy" id="tab-privacy" aria-label="Guia • Metodologia, Fontes e Sobre o Projeto">
+        <div class="tab-icon-wrap"><i class="fa-solid fa-book-open" data-icon="bookOpen"></i></div>
+        <span>Guia</span>
       </button>
     </nav>
 
@@ -638,7 +637,7 @@
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
         <h2 id="zmanim-modal-title" class="reading-title"></h2>
-        <button id="close-zmanim-modal-btn" class="modal-close-btn" aria-label="Fechar">
+        <button id="close-zmanim-modal-btn" class="modal-close-btn" aria-label="Fechar janela">
           <i class="fa-solid fa-xmark" data-icon="close"></i>
         </button>
       </div>
@@ -647,14 +646,14 @@
   </div>
 
   <!-- 2. Location Search Modal (Ultra-Accessible) -->
-  <div id="location-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Pesquisar Cidade"
+  <div id="location-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Escolher Cidade de Referência"
     style="display: none;">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="search-container">
         <input type="text" id="location-search-input" class="modal-input" placeholder="Pesquisar cidade..."
-          autocomplete="off" aria-label="Pesquisar cidade" />
-        <button id="close-location-btn" class="modal-close-btn" aria-label="Fechar">
+          autocomplete="off" aria-label="Pesquisar cidade de referência" />
+        <button id="close-location-btn" class="modal-close-btn" aria-label="Fechar janela">
           <i class="fa-solid fa-xmark" data-icon="close"></i>
         </button>
       </div>
@@ -671,7 +670,7 @@
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
         <h2 id="reading-modal-title" class="reading-title">-</h2>
-        <button id="close-reading-btn" class="modal-close-btn" aria-label="Fechar">
+        <button id="close-reading-btn" class="modal-close-btn" aria-label="Fechar janela">
           <i class="fa-solid fa-xmark" data-icon="close"></i>
         </button>
       </div>
@@ -689,7 +688,7 @@
         <button id="back-info-btn" class="modal-back-btn" aria-label="Voltar" style="display: none;">
           <i class="fa-solid fa-chevron-left" data-icon="chevronLeft"></i>
         </button>
-        <button id="close-info-btn" class="modal-close-btn" aria-label="Fechar">
+        <button id="close-info-btn" class="modal-close-btn" aria-label="Fechar janela">
           <i class="fa-solid fa-xmark" data-icon="close"></i>
         </button>
       </div>
@@ -707,7 +706,7 @@
           <h2 id="sefaria-modal-title" class="reading-title">-</h2>
           <span id="sefaria-modal-subtitle" class="reading-meta" style="display: none;"></span>
         </div>
-        <button id="close-sefaria-modal-btn" class="modal-close-btn" aria-label="Fechar">
+        <button id="close-sefaria-modal-btn" class="modal-close-btn" aria-label="Fechar janela">
           <i class="fa-solid fa-xmark" data-icon="close"></i>
         </button>
       </div>
@@ -725,7 +724,7 @@
           <h2 id="day-details-title" class="reading-title">-</h2>
           <span id="day-details-subtitle" class="reading-meta" style="color: var(--accent-color); font-weight: 600;"></span>
         </div>
-        <button id="close-day-details-btn" class="modal-close-btn" aria-label="Fechar">
+        <button id="close-day-details-btn" class="modal-close-btn" aria-label="Fechar janela">
           <i class="fa-solid fa-xmark" data-icon="close"></i>
         </button>
       </div>
@@ -733,7 +732,7 @@
     </div>
   </div>
 
-  <script type="module" src="js/main.js?v=3.1.3"></script>
+  <script type="module" src="js/main.js?v=3.4.4"></script>
 </body>
 
 </html>
