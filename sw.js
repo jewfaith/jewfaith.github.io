@@ -5,7 +5,7 @@
  * Garante funcionamento integral mesmo sem ligação à internet.
  */
 
-const SW_VERSION = 'yisrael-date-v3.4.7';
+const SW_VERSION = 'yisrael-date-v3.9.7';
 const APP_SHELL_CACHE = `app-shell-${SW_VERSION}`;
 
 const PRECACHE_ASSETS = [
@@ -14,7 +14,10 @@ const PRECACHE_ASSETS = [
     './404.html',
     './style.css',
     './manifest.json',
+    './icon.webp',
+    './icon-192.png',
     './icon.png',
+    './og-image.png',
     './robots.txt',
     './sitemap.xml',
     './js/main.js',

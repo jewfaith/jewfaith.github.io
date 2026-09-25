@@ -1,4 +1,7 @@
-﻿User-agent: *
+User-agent: *
 Allow: /
+Disallow: /*?*modal=
+Disallow: /*?*tab=
 
 Sitemap: https://jewfaith.github.io/sitemap.xml
+

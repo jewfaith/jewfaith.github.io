@@ -4,100 +4,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Yisrael Date • Redirecionamento</title>
+  <title>Página Não Encontrada (404) • Yisrael Date</title>
+  <meta name="description"
+    content="A página solicitada não foi encontrada. Aceda ao calendário hebraico e bíblico Yisrael Date para consultar horários Zmanim, leituras da Torá e Moadim." />
+  <meta name="robots" content="noindex, follow" />
+  <meta name="googlebot" content="noindex, follow" />
+  <link rel="canonical" href="https://jewfaith.github.io/" />
+  <meta name="theme-color" content="#0D1117" />
   <link rel="icon" type="image/png" href="icon.png" />
-  <meta name="robots" content="noindex" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Yisrael Date" />
+  <meta property="og:url" content="https://jewfaith.github.io/" />
+  <meta property="og:title" content="Página Não Encontrada (404) • Yisrael Date" />
+  <meta property="og:description"
+    content="A página solicitada não foi encontrada. Aceda ao calendário hebraico e bíblico Yisrael Date para consultar horários Zmanim, leituras da Torá e Moadim." />
+  <meta property="og:image" content="https://jewfaith.github.io/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <script>
     (function () {
       try {
-        var pathname = window.location.pathname;
+        var pathname = window.location.pathname || '';
         var hash = window.location.hash || '';
-        // Em repositórios de utilizador (jewfaith.github.io), o caminho inicial pode ser um hash ou subrota
         var segments = pathname.replace(/^\/+/, '').split('/').filter(Boolean);
         var targetHash = hash;
         if (!targetHash && segments.length > 0) {
           var lastSegment = segments[segments.length - 1];
           if (lastSegment && !lastSegment.includes('.')) {
-            targetHash = '#' + lastSegment;
+            targetHash = '#' + lastSegment.toLowerCase();
           }
         }
-        window.location.replace('./' + targetHash);
+        window.location.replace('/' + targetHash);
       } catch (e) {
-        window.location.replace('./');
+        window.location.replace('/');
       }
     })();
   </script>
-  <meta http-equiv="refresh" content="1;url=./" />
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      background-color: #0D1117;
-      color: #E6EDF3;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 24px;
-    }
-    .card {
-      background: rgba(22, 27, 34, 0.85);
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      border-radius: 16px;
-      padding: 32px 24px;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-    }
-    .icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 14px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-    }
-    h1 {
-      color: #D4AF37;
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    p {
-      color: #8B949E;
-      font-size: 14px;
-      line-height: 1.5;
-      margin-bottom: 24px;
-    }
-    .btn {
-      display: inline-block;
-      background: linear-gradient(135deg, #d4af37, #aa820a);
-      color: #000;
-      font-weight: 600;
-      font-size: 14px;
-      text-decoration: none;
-      padding: 10px 24px;
-      border-radius: 10px;
-      transition: opacity 0.15s ease;
-    }
-    .btn:hover {
-      opacity: 0.9;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css?v=3.7.9" />
 </head>
 
-<body>
-  <div class="card">
-    <img src="icon.png" alt="Yisrael Date" class="icon" />
-    <h1>Yisrael Date</h1>
-    <p>A carregar o calendário e a redirecionar para a página principal...</p>
-    <a href="./" class="btn">Entrar na Aplicação</a>
-  </div>
+<body class="redirect-body">
+  <main class="redirect-card">
+    <picture>
+      <source srcset="icon.webp" type="image/webp" />
+      <img src="icon.png" alt="Logótipo do Yisrael Date — Calendário Bíblico" class="redirect-icon" width="64" height="64" decoding="async" />
+    </picture>
+    <h1 class="redirect-title">Yisrael Date</h1>
+    <p class="redirect-desc">A página solicitada não foi encontrada. A redirecionar para o calendário principal...</p>
+    <a href="https://jewfaith.github.io/" class="redirect-btn">Entrar na Aplicação</a>
+  </main>
 </body>
 
 </html>

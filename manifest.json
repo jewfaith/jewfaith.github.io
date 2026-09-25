@@ -6,7 +6,7 @@
   "author": "Mikhael",
   "developer": {
     "name": "Mikhael",
-    "url": "https://jewfaith.github.io"
+    "url": "https://jewfaith.github.io/"
   },
   "lang": "pt",
   "dir": "ltr",
@@ -27,7 +27,13 @@
   ],
   "icons": [
     {
-      "src": "./icon.png",
+      "src": "./icon.webp",
+      "sizes": "160x160",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"

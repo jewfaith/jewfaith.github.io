@@ -67,20 +67,25 @@
   </script>
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is https://storage.ko-fi.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://storage.ko-fi.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:; connect-src 'self' https://www.hebcal.com https://nominatim.openstreetmap.org https://bolls.life https://www.sefaria.org https://cloud.umami.is https://gateway.umami.is https://storage.ko-fi.com https://ko-fi.com https://freeipapi.com; frame-src https://ko-fi.com https://*.ko-fi.com https://*.paypal.com https://*.stripe.com; img-src 'self' data: https://storage.ko-fi.com; manifest-src 'self';" />
+    content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is https://storage.ko-fi.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://storage.ko-fi.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:; connect-src 'self' https://www.hebcal.com https://nominatim.openstreetmap.org https://bolls.life https://www.sefaria.org https://cloud.umami.is https://gateway.umami.is https://storage.ko-fi.com https://ko-fi.com https://freeipapi.com https://free.freeipapi.com https://ipwho.is https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; frame-src https://ko-fi.com https://*.ko-fi.com https://*.paypal.com https://*.stripe.com; img-src 'self' data: https://storage.ko-fi.com; manifest-src 'self';" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Yisrael Date • Calendário Hebraico, Torá e Horários Zmanim</title>
   <meta name="description"
-    content="Calendário hebraico diário com horários haláchicos, leituras da Torá e ciclo de festas de Israel em tempo real." />
+    content="Consulte o calendário hebraico e bíblico diário com horários haláchicos (Zmanim) precisos, Parashá semanal, leituras da Torá e festas de Israel (Moadim)." />
   <link rel="canonical" href="https://jewfaith.github.io/" />
-  <meta name="robots" content="index, follow" />
+  <link rel="alternate" hreflang="pt" href="https://jewfaith.github.io/" />
+  <link rel="alternate" hreflang="x-default" href="https://jewfaith.github.io/" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#0D1117" />
-  <link rel="icon" type="image/png" href="icon.png" />
-  <link rel="apple-touch-icon" href="icon.png" />
+  <link rel="icon" type="image/webp" href="icon.webp" sizes="160x160" />
+  <link rel="icon" type="image/png" href="icon-192.png" sizes="192x192" />
+  <link rel="icon" type="image/png" href="icon.png" sizes="512x512" />
+  <link rel="apple-touch-icon" href="icon.png" sizes="512x512" />
   <link rel="manifest" href="manifest.json" />
-  <title>Yisrael Date</title>
 
   <!-- Metadados Formais de Autoria, Criação e Propriedade Intelectual -->
   <meta name="author" content="Mikhael" />
@@ -91,47 +96,113 @@
 
   <!-- Open Graph & Twitter Cards / Atribuição em Partilhas -->
   <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="og:locale:alternate" content="pt_BR" />
   <meta property="og:site_name" content="Yisrael Date" />
   <meta property="og:url" content="https://jewfaith.github.io/" />
-  <meta property="og:title" content="Yisrael Date" />
+  <meta property="og:title" content="Yisrael Date • Calendário Hebraico, Torá e Horários Zmanim" />
   <meta property="og:description"
-    content="Calendário hebraico diário com horários haláchicos, leituras da Torá e ciclo de festas de Israel em tempo real." />
-  <meta property="og:image" content="https://jewfaith.github.io/icon.png" />
-  <meta property="og:image:width" content="512" />
-  <meta property="og:image:height" content="512" />
+    content="Consulte o calendário hebraico e bíblico diário com horários haláchicos (Zmanim) precisos, Parashá semanal, leituras da Torá e festas de Israel (Moadim)." />
+  <meta property="og:image" content="https://jewfaith.github.io/og-image.png" />
+  <meta property="og:image:secure_url" content="https://jewfaith.github.io/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:image:type" content="image/png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Yisrael Date" />
+  <meta property="og:image:alt" content="Yisrael Date — Calendário Hebraico, Horários Haláchicos (Zmanim), Leituras da Torá e Moadim" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://jewfaith.github.io/" />
+  <meta name="twitter:title" content="Yisrael Date • Calendário Hebraico, Torá e Horários Zmanim" />
   <meta name="twitter:description"
-    content="Calendário hebraico diário com horários haláchicos, leituras da Torá e ciclo de festas de Israel em tempo real." />
-  <meta name="twitter:image" content="https://jewfaith.github.io/icon.png" />
+    content="Consulte o calendário hebraico e bíblico diário com horários haláchicos (Zmanim) precisos, Parashá semanal, leituras da Torá e festas de Israel (Moadim)." />
+  <meta name="twitter:image" content="https://jewfaith.github.io/og-image.png" />
+  <meta name="twitter:image:alt" content="Yisrael Date — Calendário Hebraico, Horários Haláchicos (Zmanim), Leituras da Torá e Moadim" />
   <meta property="article:author" content="Mikhael" />
 
-  <!-- Schema.org JSON-LD (Atribuição Canónica e Direitos Autorais) -->
+  <!-- Schema.org JSON-LD (Dados Estruturados Canónicos: WebSite, WebApplication, BreadcrumbList e Person) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Yisrael Date",
-    "url": "https://jewfaith.github.io",
-    "description": "Calendário baseado na Torá com cálculos litúrgicos e astronómicos independentes.",
-    "applicationCategory": "EducationalApplication",
-    "operatingSystem": "All",
-    "inLanguage": "pt",
-    "author": {
-      "@type": "Person",
-      "name": "Mikhael",
-      "url": "https://github.com/jewfaith"
-    },
-    "creator": {
-      "@type": "Person",
-      "name": "Mikhael"
-    },
-    "copyrightHolder": {
-      "@type": "Person",
-      "name": "Mikhael"
-    },
-    "copyrightYear": "2026"
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://jewfaith.github.io/#author",
+        "name": "Mikhael",
+        "url": "https://github.com/jewfaith"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://jewfaith.github.io/#website",
+        "url": "https://jewfaith.github.io/",
+        "name": "Yisrael Date",
+        "alternateName": "Yisrael Date • Calendário da Torá e Halachá",
+        "description": "Calendário hebraico e bíblico diário com horários haláchicos (Zmanim), Parashá semanal, leituras da Torá e festas de Israel (Moadim).",
+        "inLanguage": "pt",
+        "publisher": {
+          "@id": "https://jewfaith.github.io/#author"
+        }
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://jewfaith.github.io/#webapp",
+        "name": "Yisrael Date",
+        "url": "https://jewfaith.github.io/",
+        "image": "https://jewfaith.github.io/og-image.png",
+        "description": "Calendário baseado na Torá com cálculos litúrgicos e astronómicos independentes de Zmanim, Parashá semanal e ciclo anual de Moadim.",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript. Supports HTML5 and offline PWA execution.",
+        "inLanguage": "pt",
+        "isPartOf": {
+          "@id": "https://jewfaith.github.io/#website"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock"
+        },
+        "featureList": [
+          "Cálculo astronómico de horários haláchicos (Zmanim)",
+          "Conversão de data hebraica e bíblica em tempo real",
+          "Leitura semanal da Parashá, Torá, Haftará e Ketuvim",
+          "Calendário de Moadim e festas de Israel"
+        ],
+        "author": {
+          "@id": "https://jewfaith.github.io/#author"
+        },
+        "creator": {
+          "@id": "https://jewfaith.github.io/#author"
+        },
+        "copyrightHolder": {
+          "@id": "https://jewfaith.github.io/#author"
+        },
+        "copyrightYear": 2026
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://jewfaith.github.io/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Hoje • Visão Geral e Horários Zmanim",
+            "item": "https://jewfaith.github.io/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Moadim • Sagradas Convocações e Calendário",
+            "item": "https://jewfaith.github.io/#moadim"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Guia • Metodologia e Conformidade",
+            "item": "https://jewfaith.github.io/#guia"
+          }
+        ]
+      }
+    ]
   }
   </script>
 
@@ -149,10 +220,12 @@
     })();
   </script>
 
-  <!-- Resource Hints & Typography: Inter, Cinzel & Font Awesome 6 -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Resource Hints & Typography: Poppins, Cinzel & Font Awesome 6 -->
+  <link rel="preload" href="style.css?v=3.8.5" as="style" />
+  <link rel="preload" href="icon.webp" as="image" type="image/webp" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
   <link rel="dns-prefetch" href="https://www.hebcal.com" />
@@ -163,7 +236,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="style.css?v=3.4.4" />
+  <link rel="stylesheet" href="style.css?v=3.8.5" />
 
   <!-- Umami Analytics (Cookieless, Privacy-First, RGPD & LGPD Compliant) -->
   <script id="umami-script" defer src="https://cloud.umami.is/script.js"
@@ -186,28 +259,31 @@
          ========================================== -->
     <aside class="desktop-sidebar glass-panel" aria-label="Navegação Principal do Computador">
       <div class="sidebar-top">
-        <div class="sidebar-brand-wrapper">
-          <img class="sidebar-brand-icon" src="./icon.png" alt="Yisrael Date" loading="lazy" />
+        <a href="./" class="sidebar-brand-wrapper" aria-label="Yisrael Date • Página Inicial">
+          <picture>
+            <source srcset="./icon.webp" type="image/webp" />
+            <img class="sidebar-brand-icon" src="./icon.png" alt="Logótipo do Yisrael Date — Monograma YD" width="40" height="40" decoding="async" fetchpriority="high" />
+          </picture>
           <div class="sidebar-brand-text">
             <h1 class="app-brand-title">Yisrael Date</h1>
-            <span class="sidebar-brand-subtitle">Torah & Halachah</span>
+            <span class="sidebar-brand-subtitle">Torá</span>
           </div>
-        </div>
+        </a>
       </div>
 
       <nav class="sidebar-nav" role="navigation" aria-label="Navegação Principal do Computador">
-        <button class="desktop-nav-btn active" data-tab="hoje" id="desktop-tab-hoje" aria-label="Hoje • Visão Geral e Horários do Dia">
-          <div class="nav-icon-wrap"><i class="fa-solid fa-sun" data-icon="sun"></i></div>
+        <a href="#hoje" class="desktop-nav-btn active" data-tab="hoje" id="desktop-tab-hoje" aria-label="Hoje • Visão Geral e Horários do Dia">
+          <div class="nav-icon-wrap"><i class="fa-solid fa-sun" data-icon="sun" aria-hidden="true"></i></div>
           <span class="nav-btn-label">Hoje</span>
-        </button>
-        <button class="desktop-nav-btn" data-tab="calendar" id="desktop-tab-calendar" aria-label="Festas • Calendário Bíblico e Comemorações">
-          <div class="nav-icon-wrap"><i class="fa-solid fa-menorah" data-icon="menorah"></i></div>
-          <span class="nav-btn-label">Festas</span>
-        </button>
-        <button class="desktop-nav-btn" data-tab="privacy" id="desktop-tab-privacy" aria-label="Guia • Metodologia, Fontes e Sobre o Projeto">
-          <div class="nav-icon-wrap"><i class="fa-solid fa-book-open" data-icon="bookOpen"></i></div>
+        </a>
+        <a href="#moadim" class="desktop-nav-btn" data-tab="calendar" id="desktop-tab-calendar" aria-label="Moadim • Sagradas Convocações e Calendário">
+          <div class="nav-icon-wrap"><i class="fa-solid fa-menorah" data-icon="menorah" aria-hidden="true"></i></div>
+          <span class="nav-btn-label">Moadim</span>
+        </a>
+        <a href="#guia" class="desktop-nav-btn" data-tab="privacy" id="desktop-tab-privacy" aria-label="Guia • Metodologia, Fontes e Conformidade">
+          <div class="nav-icon-wrap"><i class="fa-solid fa-compass" data-icon="compass" aria-hidden="true"></i></div>
           <span class="nav-btn-label">Guia</span>
-        </button>
+        </a>
       </nav>
 
       <div class="sidebar-footer">
@@ -215,15 +291,15 @@
           aria-label="Aparência Visual e Tema">
           <button class="desktop-mode-pill desktop-theme-pill active" data-theme-mode="auto"
             title="Automático (Ciclo Solar)">
-            <i class="fa-solid fa-circle-half-stroke" data-icon="themeDark"></i>
+            <i class="fa-solid fa-circle-half-stroke" data-icon="themeDark" aria-hidden="true"></i>
             <span>Auto</span>
           </button>
           <button class="desktop-mode-pill desktop-theme-pill" data-theme-mode="light" title="Modo Claro">
-            <i class="fa-solid fa-sun" data-icon="sun"></i>
+            <i class="fa-solid fa-sun" data-icon="sun" aria-hidden="true"></i>
             <span>Claro</span>
           </button>
           <button class="desktop-mode-pill desktop-theme-pill" data-theme-mode="dark" title="Modo Escuro">
-            <i class="fa-solid fa-moon" data-icon="moon"></i>
+            <i class="fa-solid fa-moon" data-icon="moon" aria-hidden="true"></i>
             <span>Escuro</span>
           </button>
         </div>
@@ -238,10 +314,15 @@
       <!-- MOBILE ONLY: HEADER COMPACTO COM TÍTULO (< 768px) -->
       <header class="mobile-only-header">
         <div class="mobile-header-top-row">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <img class="mobile-brand-icon" src="./icon.png" alt="Yisrael Date" loading="lazy" style="width: 28px; height: 28px; border-radius: 8px;" />
-            <h1 class="mobile-brand-title">Yisrael Date</h1>
-          </div>
+          <a href="./" class="mobile-brand-group" aria-label="Yisrael Date • Página Inicial">
+            <picture>
+              <source srcset="./icon.webp" type="image/webp" />
+              <img class="mobile-brand-icon" src="./icon.png" alt="Logótipo do Yisrael Date" width="32" height="32" decoding="async" fetchpriority="high" />
+            </picture>
+            <div class="mobile-brand-text">
+              <span class="mobile-brand-title">Yisrael Date</span>
+            </div>
+          </a>
           <button id="mobile-theme-toggle-btn" class="mobile-theme-btn" aria-label="Alternar Tema Visual" title="Alternar Tema (Dia/Noite)">
             <i class="fa-solid fa-circle-half-stroke" aria-hidden="true"></i>
           </button>
@@ -252,7 +333,7 @@
       <main class="app-content-views">
 
         <!-- Alerta do Sistema (Exibe o erro mais crítico por vez, minimalista e sem tags) -->
-        <div id="system-error-block" class="system-error-block glass-panel" style="display: none;" role="status"
+        <div id="system-error-block" class="system-error-block glass-panel is-hidden" role="status"
           aria-live="polite">
           <div class="system-error-item-icon" id="system-error-icon"></div>
           <div class="system-error-item-body">
@@ -262,21 +343,21 @@
         </div>
 
         <!-- ==========================================
-             ABA 1: HOJE (DESTAQUE ESSENCIAL DO DIA & ZMANIM)
+             ABA 1: HOJE (DASHBOARD EDITORIAL & ZMANIM)
              ========================================== -->
         <section id="view-reading" class="app-tab-view active" role="region" aria-label="Hoje">
 
-          <!-- Cartões Principais do Dia (Zmanim, Data Hebraica, Cidade de Referência, Parashá) -->
-          <div class="event-cards-row" id="today-primary-cards-row">
-            <!-- Card Sha'ah Zmanit -->
+          <!-- Os 4 Cartões Mestres Diários -->
+          <div class="primary-cards-stack event-cards-row">
+            <!-- 1. Horários Litúrgicos (Zmanim) / Sha'ah Zmanit -->
             <div id="solar-arc-container">
               <div class="settings-card event-card glass-panel" id="card-solar-glance" tabindex="0" role="button"
-                aria-label="Ver Tabela Completa de Horários Litúrgicos (Zmanim)" style="cursor: pointer;">
+                aria-label="Ver Tabela de Horários Litúrgicos">
                 <div class="settings-card-left">
-                  <i class="fa-solid fa-sun settings-icon" data-icon="sun" id="solar-hero-icon"></i>
+                  <i class="fa-solid fa-sun settings-icon" data-icon="sun" id="solar-hero-icon" aria-hidden="true"></i>
                   <div class="settings-card-text">
-                    <span class="settings-card-title" id="solar-hero-city-title">Horários Litúrgicos (Zmanim)</span>
-                    <span class="settings-card-desc" id="solar-phase-label">Horas solares e orações do dia</span>
+                    <span class="settings-card-title" id="solar-hero-city-title">Sha'ah Zmanit</span>
+                    <span class="settings-card-desc" id="solar-phase-label">Horários Litúrgicos</span>
                   </div>
                 </div>
                 <div class="card-arrow-action" aria-hidden="true">
@@ -285,16 +366,15 @@
               </div>
             </div>
 
-            <!-- Card Data Hebraica -->
+            <!-- 2. Data Hebraica -->
             <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-hdate-wrapper"
               tabindex="0" role="button" aria-label="Detalhes e Significado da Data Hebraica">
               <div class="settings-card-left">
-                <i class="fa-solid fa-calendar-day settings-icon" data-icon="calendarDay"></i>
+                <i class="fa-solid fa-calendar-day settings-icon" data-icon="calendarDay" aria-hidden="true"></i>
                 <div class="settings-card-text">
-                  <span class="settings-card-title" id="card-hdate"><span class="skeleton-line"
-                      style="display: inline-block; width: 60%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc" id="card-hdate-subtitle"><span class="skeleton-line"
-                      style="display: inline-block; width: 40%; height: 11px; border-radius: 3px;"></span></span>
+                  <span class="settings-card-title" id="card-hdate"><span
+                      class="skeleton-line skeleton-title-w100"></span></span>
+                  <span class="settings-card-desc" id="card-hdate-subtitle">Data Hebraica</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -302,15 +382,15 @@
               </div>
             </div>
 
-            <!-- Card Localização -->
+            <!-- 3. Localização Vigente -->
             <div class="settings-card event-card glass-panel not-ready location-trigger-btn" id="card-local-vigente"
               tabindex="0" role="button" aria-label="Alterar Cidade de Referência">
               <div class="settings-card-left">
-                <i class="fa-solid fa-location-dot settings-icon" data-icon="locationDot"></i>
+                <i class="fa-solid fa-location-dot settings-icon" data-icon="locationDot" aria-hidden="true"></i>
                 <div class="settings-card-text">
-                  <span class="settings-card-title" id="card-local"><span class="skeleton-line"
-                      style="display: inline-block; width: 65%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc">Cidade de Referência</span>
+                  <span class="settings-card-title" id="card-local"><span
+                      class="skeleton-line skeleton-title-w150"></span></span>
+                  <span class="settings-card-desc" id="card-local-subtitle">Localização Atual</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -318,16 +398,15 @@
               </div>
             </div>
 
-            <!-- Card Parashá -->
+            <!-- 4. Parashá Semanal -->
             <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-parasha-wrapper"
               tabindex="0" role="button" aria-label="Leitura e Detalhes da Parashá Semanal">
               <div class="settings-card-left">
-                <i class="fa-solid fa-scroll settings-icon" data-icon="scroll"></i>
+                <i class="fa-solid fa-scroll settings-icon" data-icon="scroll" aria-hidden="true"></i>
                 <div class="settings-card-text">
-                  <span class="settings-card-title" id="card-parasha"><span class="skeleton-line"
-                      style="display: inline-block; width: 80%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc" id="card-parasha-subtitle"><span class="skeleton-line"
-                      style="display: inline-block; width: 45%; height: 11px; border-radius: 3px;"></span></span>
+                  <span class="settings-card-title" id="card-parasha"><span
+                      class="skeleton-line skeleton-title-w140"></span></span>
+                  <span class="settings-card-desc" id="card-parasha-subtitle">Parashá Semanal</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -336,24 +415,23 @@
             </div>
           </div>
 
-          <!-- Seção: Leituras e Textos Sagrados -->
-          <div class="festival-section-header">
+          <!-- Seção Estudo Sagrado -->
+          <div class="festival-section-header" id="section-estudo-sagrado">
             <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title">Leituras e Textos Sagrados</h2>
+              <h2 class="festival-section-title">Estudo</h2>
             </div>
           </div>
 
-          <!-- Cartões de Estudo Sagrado (Todos os 4 cartões visíveis diretamente) -->
           <div class="study-cards-container event-cards-row">
-            <!-- 1. Torá -->
-            <div class="settings-card event-card glass-panel not-ready" id="card-torah-wrapper" tabindex="0"
+            <!-- 1. Torá (Chumash) -->
+            <div class="settings-card event-card glass-panel not-ready scripture-card" id="card-torah-wrapper" tabindex="0"
               role="button" aria-label="Ler a Porção da Torá">
               <div class="settings-card-left">
-                <i class="fa-solid fa-book-open settings-icon" data-icon="torah"></i>
+                <i class="fa-solid fa-book-open settings-icon" data-icon="torah" aria-hidden="true"></i>
                 <div class="settings-card-text">
-                  <span class="settings-card-title" id="card-torah"><span class="skeleton-line"
-                      style="display: inline-block; width: 60%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc" id="card-torah-subtitle">Torá • Os Cinco Livros de Moisés</span>
+                  <span class="settings-card-title" id="card-torah"><span
+                      class="skeleton-line skeleton-title-w120"></span></span>
+                  <span class="settings-card-desc" id="card-torah-subtitle">Torá</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -361,15 +439,15 @@
               </div>
             </div>
 
-            <!-- 2. Haftará -->
-            <div class="settings-card event-card glass-panel not-ready" id="card-haftara-wrapper" tabindex="0"
+            <!-- 2. Haftará (Profetas) -->
+            <div class="settings-card event-card glass-panel not-ready scripture-card" id="card-haftara-wrapper" tabindex="0"
               role="button" aria-label="Ler a Porção da Haftará">
               <div class="settings-card-left">
-                <i class="fa-solid fa-feather-pointed settings-icon" data-icon="haftara"></i>
+                <i class="fa-solid fa-feather-pointed settings-icon" data-icon="haftara" aria-hidden="true"></i>
                 <div class="settings-card-text">
-                  <span class="settings-card-title" id="card-haftara"><span class="skeleton-line"
-                      style="display: inline-block; width: 70%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc" id="card-haftara-subtitle">Haftará • Livros Proféticos (Neviim)</span>
+                  <span class="settings-card-title" id="card-haftara"><span
+                      class="skeleton-line skeleton-title-w110"></span></span>
+                  <span class="settings-card-desc" id="card-haftara-subtitle">Profetas</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -377,15 +455,15 @@
               </div>
             </div>
 
-            <!-- 3. Ketuvim -->
-            <div class="settings-card event-card glass-panel not-ready" id="card-ketuvim-wrapper" tabindex="0"
+            <!-- 3. Ketuvim (Escritos) -->
+            <div class="settings-card event-card glass-panel not-ready scripture-card" id="card-ketuvim-wrapper" tabindex="0"
               role="button" aria-label="Ler a Porção de Ketuvim">
               <div class="settings-card-left">
-                <i class="fa-solid fa-book-bookmark settings-icon" data-icon="ketuvim"></i>
+                <i class="fa-solid fa-book-bookmark settings-icon" data-icon="ketuvim" aria-hidden="true"></i>
                 <div class="settings-card-text">
-                  <span class="settings-card-title" id="card-ketuvim"><span class="skeleton-line"
-                      style="display: inline-block; width: 65%; height: 16px; border-radius: 4px;"></span></span>
-                  <span class="settings-card-desc" id="card-ketuvim-subtitle">Ketuvim • Salmos, Provérbios e Escritos</span>
+                  <span class="settings-card-title" id="card-ketuvim"><span
+                      class="skeleton-line skeleton-title-w100"></span></span>
+                  <span class="settings-card-desc" id="card-ketuvim-subtitle">Escritos</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -395,13 +473,12 @@
 
             <!-- 4. Literatura Sefaria -->
             <div class="settings-card event-card glass-panel sefaria-category-card" id="card-sefaria-single"
-              tabindex="0" role="button" aria-label="Aceder à Biblioteca Digital Sefaria" style="cursor: pointer;">
+              tabindex="0" role="button" aria-label="Aceder à Biblioteca Digital Sefaria">
               <div class="settings-card-left">
-                <i class="fa-solid fa-building-columns settings-icon" data-icon="buildingColumns"
-                  style="color: var(--accent-color);"></i>
+                <i class="fa-solid fa-building-columns settings-icon" data-icon="buildingColumns"></i>
                 <div class="settings-card-text">
                   <span class="settings-card-title">Biblioteca Digital Sefaria</span>
-                  <span class="settings-card-desc">Talmud, Midrash e Obras Clássicas</span>
+                  <span class="settings-card-desc">Debate Rabínico</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -413,57 +490,47 @@
           <!-- Seção 3: Próximas Celebrações e Festividades -->
           <div class="festival-section-header">
             <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title">Próximas Celebrações e Festividades</h2>
+              <h2 class="festival-section-title">Festas</h2>
             </div>
           </div>
           <div id="upcoming-events-grid" class="event-cards-row">
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 68%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-68p"></span><span
+                    class="skeleton-line skeleton-line-sub w-38p"></span>
                 </div>
               </div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 78%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-78p"></span><span
+                    class="skeleton-line skeleton-line-sub w-38p"></span>
                 </div>
               </div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 58%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-58p"></span><span
+                    class="skeleton-line skeleton-line-sub w-38p"></span>
                 </div>
               </div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 72%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-72p"></span><span
+                    class="skeleton-line skeleton-line-sub w-38p"></span>
                 </div>
               </div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 64%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-64p"></span><span
+                    class="skeleton-line skeleton-line-sub w-38p"></span>
                 </div>
               </div>
             </div>
@@ -472,123 +539,104 @@
           <!-- Seção 4: Apoio e Sustento do Projeto -->
           <div class="festival-section-header">
             <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title">Apoio e Sustento do Projeto</h2>
+              <h2 class="festival-section-title">Sustento</h2>
             </div>
           </div>
           <div id="home-products-grid" class="event-cards-row">
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 68%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-68p"></span><span
+                    class="skeleton-line skeleton-line-sub w-38p"></span>
                 </div>
               </div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 78%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-78p"></span><span
+                    class="skeleton-line skeleton-line-sub w-38p"></span>
                 </div>
               </div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 58%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-58p"></span><span
+                    class="skeleton-line skeleton-line-sub w-38p"></span>
                 </div>
               </div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 72%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 38%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-72p"></span><span
+                    class="skeleton-line skeleton-line-sub w-38p"></span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- ==========================================
-             ABA 2: CALENDÁRIO (CALENDÁRIO MENSAL INTERATIVO & FESTAS)
-             ========================================== -->
-        <section id="view-festivals" class="app-tab-view" role="region" aria-label="Calendário">
 
-          <!-- Cabeçalho Unificado e Dinâmico de Festividades -->
-          <div class="festival-section-header" id="header-biblical" style="margin-top: 18px">
-            <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title" id="calendar-festivals-title">Sagradas Convocinas da Torá (Moadim)</h2>
-            </div>
-          </div>
+        <!-- ==========================================
+             ABA 2: MOADIM (SANTAS CONVOCAÇÕES & FESTAS)
+             ========================================== -->
+        <section id="view-festivals" class="app-tab-view" role="region" aria-label="Moadim & Festas de Israel">
 
           <!-- 1. Lista de Festas Bíblicas da Torá -->
+          <div class="festival-section-header" id="header-biblical">
+            <div class="festival-section-title-wrap">
+              <h2 class="festival-section-title" id="calendar-festivals-title">Festas</h2>
+            </div>
+          </div>
           <div id="tanakh-festivals-list" class="event-cards-row">
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 70%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-70p"></span><span
+                    class="skeleton-line skeleton-line-sub w-35p"></span>
                 </div>
               </div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 80%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-80p"></span><span
+                    class="skeleton-line skeleton-line-sub w-35p"></span>
                 </div>
               </div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 60%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-60p"></span><span
+                    class="skeleton-line skeleton-line-sub w-35p"></span>
                 </div>
               </div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 75%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-75p"></span><span
+                    class="skeleton-line skeleton-line-sub w-35p"></span>
                 </div>
               </div>
             </div>
             <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
               <div class="settings-card-left">
-                <div class="skeleton-line"
-                  style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-right: 12px;"></div>
-                <div class="settings-card-text" style="width: 100%;"><span class="skeleton-line"
-                    style="display: block; width: 65%; height: 16px; border-radius: 4px; margin-bottom: 4px;"></span><span
-                    class="skeleton-line" style="display: block; width: 35%; height: 11px; border-radius: 3px;"></span>
+                <div class="skeleton-line skeleton-icon-dot"></div>
+                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-65p"></span><span
+                    class="skeleton-line skeleton-line-sub w-35p"></span>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- 2. Lista de Festas Rabínicas -->
-          <div class="festival-section-header" id="header-rabbinic" style="margin-top: 18px;">
+          <div class="festival-section-header" id="header-rabbinic">
             <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title">Festividades Históricas e Dias de Jejum</h2>
+              <h2 class="festival-section-title">Tradições</h2>
               <span class="festival-section-badge" id="rabbinic-count-badge">Tradição e Memória</span>
             </div>
           </div>
@@ -600,7 +648,7 @@
              ABA 3: INFORMAÇÕES, METODOLOGIA & CONFORMIDADE
              ========================================== -->
         <section id="view-privacy" class="app-tab-view" role="region" aria-label="Informações e Guia do Projeto">
-          <div id="privacy-content-container" style="display: contents;"></div>
+          <div id="privacy-content-container"></div>
         </section>
 
       </main>
@@ -609,19 +657,19 @@
     <!-- ==========================================
          MOBILE ONLY: NATIVE IOS EDGE-TO-EDGE TAB BAR (3 TABS)
          ========================================== -->
-    <nav class="app-floating-tabbar glass-panel mobile-only-tabbar" role="navigation" aria-label="Navegação Principal do Telemóvel">
-      <button class="app-tab-btn active" data-tab="hoje" id="tab-hoje" aria-label="Hoje • Visão Geral e Horários do Dia">
-        <div class="tab-icon-wrap"><i class="fa-solid fa-sun" data-icon="sun"></i></div>
+    <nav class="app-floating-tabbar mobile-only-tabbar" role="navigation" aria-label="Navegação Principal do Telemóvel">
+      <a href="#hoje" class="app-tab-btn active" data-tab="hoje" id="tab-hoje" aria-label="Hoje • Visão Geral e Horários do Dia">
+        <div class="tab-icon-wrap"><i class="fa-solid fa-sun" data-icon="sun" aria-hidden="true"></i></div>
         <span>Hoje</span>
-      </button>
-      <button class="app-tab-btn" data-tab="calendar" id="tab-calendar" aria-label="Festas • Calendário Bíblico e Comemorações">
-        <div class="tab-icon-wrap"><i class="fa-solid fa-menorah" data-icon="menorah"></i></div>
-        <span>Festas</span>
-      </button>
-      <button class="app-tab-btn" data-tab="privacy" id="tab-privacy" aria-label="Guia • Metodologia, Fontes e Sobre o Projeto">
-        <div class="tab-icon-wrap"><i class="fa-solid fa-book-open" data-icon="bookOpen"></i></div>
+      </a>
+      <a href="#moadim" class="app-tab-btn" data-tab="calendar" id="tab-calendar" aria-label="Moadim • Festas de Israel e Calendário">
+        <div class="tab-icon-wrap"><i class="fa-solid fa-menorah" data-icon="menorah" aria-hidden="true"></i></div>
+        <span>Moadim</span>
+      </a>
+      <a href="#guia" class="app-tab-btn" data-tab="privacy" id="tab-privacy" aria-label="Guia • Metodologia, Fontes e Conformidade">
+        <div class="tab-icon-wrap"><i class="fa-solid fa-compass" data-icon="compass" aria-hidden="true"></i></div>
         <span>Guia</span>
-      </button>
+      </a>
     </nav>
 
   </div>
@@ -631,14 +679,13 @@
        ========================================== -->
 
   <!-- 1. Zmanim Table Modal -->
-  <div id="zmanim-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="zmanim-modal-title"
-    style="display: none;">
+  <div id="zmanim-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="zmanim-modal-title">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
-        <h2 id="zmanim-modal-title" class="reading-title"></h2>
+        <h2 id="zmanim-modal-title" class="reading-title">Horários Litúrgicos</h2>
         <button id="close-zmanim-modal-btn" class="modal-close-btn" aria-label="Fechar janela">
-          <i class="fa-solid fa-xmark" data-icon="close"></i>
+          <i class="fa-solid fa-xmark" data-icon="close" aria-hidden="true"></i>
         </button>
       </div>
       <div id="zmanim-modal-body" class="reading-body"></div>
@@ -646,15 +693,14 @@
   </div>
 
   <!-- 2. Location Search Modal (Ultra-Accessible) -->
-  <div id="location-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Escolher Cidade de Referência"
-    style="display: none;">
+  <div id="location-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-label="Escolher Cidade de Referência">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="search-container">
-        <input type="text" id="location-search-input" class="modal-input" placeholder="Pesquisar cidade..."
+        <input type="text" id="location-search-input" class="modal-input" placeholder="Pesquisar..."
           autocomplete="off" aria-label="Pesquisar cidade de referência" />
         <button id="close-location-btn" class="modal-close-btn" aria-label="Fechar janela">
-          <i class="fa-solid fa-xmark" data-icon="close"></i>
+          <i class="fa-solid fa-xmark" data-icon="close" aria-hidden="true"></i>
         </button>
       </div>
       <div class="reading-body">
@@ -664,14 +710,13 @@
   </div>
 
   <!-- 12. Scripture Reading Modal -->
-  <div id="reading-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="reading-modal-title"
-    style="display: none;">
+  <div id="reading-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="reading-modal-title">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
-        <h2 id="reading-modal-title" class="reading-title">-</h2>
+        <h2 id="reading-modal-title" class="reading-title">Leitura das Escrituras</h2>
         <button id="close-reading-btn" class="modal-close-btn" aria-label="Fechar janela">
-          <i class="fa-solid fa-xmark" data-icon="close"></i>
+          <i class="fa-solid fa-xmark" data-icon="close" aria-hidden="true"></i>
         </button>
       </div>
       <div id="reading-modal-body" class="reading-body"></div>
@@ -679,17 +724,16 @@
   </div>
 
   <!-- 13. Info Modal -->
-  <div id="info-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="info-modal-title"
-    style="display: none;">
+  <div id="info-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
-        <h2 id="info-modal-title" class="reading-title">-</h2>
-        <button id="back-info-btn" class="modal-back-btn" aria-label="Voltar" style="display: none;">
-          <i class="fa-solid fa-chevron-left" data-icon="chevronLeft"></i>
+        <h2 id="info-modal-title" class="reading-title">Informações e Estudos</h2>
+        <button id="back-info-btn" class="modal-back-btn is-hidden" aria-label="Voltar">
+          <i class="fa-solid fa-chevron-left" data-icon="chevronLeft" aria-hidden="true"></i>
         </button>
         <button id="close-info-btn" class="modal-close-btn" aria-label="Fechar janela">
-          <i class="fa-solid fa-xmark" data-icon="close"></i>
+          <i class="fa-solid fa-xmark" data-icon="close" aria-hidden="true"></i>
         </button>
       </div>
       <div id="info-modal-body" class="reading-body"></div>
@@ -697,17 +741,16 @@
   </div>
 
   <!-- 14. Sefaria Random Reading Modal -->
-  <div id="sefaria-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="sefaria-modal-title"
-    style="display: none;">
+  <div id="sefaria-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="sefaria-modal-title">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
         <div>
-          <h2 id="sefaria-modal-title" class="reading-title">-</h2>
-          <span id="sefaria-modal-subtitle" class="reading-meta" style="display: none;"></span>
+          <h2 id="sefaria-modal-title" class="reading-title">Biblioteca Digital Sefaria</h2>
+          <span id="sefaria-modal-subtitle" class="reading-meta is-hidden"></span>
         </div>
         <button id="close-sefaria-modal-btn" class="modal-close-btn" aria-label="Fechar janela">
-          <i class="fa-solid fa-xmark" data-icon="close"></i>
+          <i class="fa-solid fa-xmark" data-icon="close" aria-hidden="true"></i>
         </button>
       </div>
       <div id="sefaria-modal-body" class="reading-body"></div>
@@ -715,24 +758,23 @@
   </div>
 
   <!-- 15. Day Details Modal (Calendário Interativo) -->
-  <div id="day-details-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="day-details-title"
-    style="display: none;">
+  <div id="day-details-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="day-details-title">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
         <div>
-          <h2 id="day-details-title" class="reading-title">-</h2>
-          <span id="day-details-subtitle" class="reading-meta" style="color: var(--accent-color); font-weight: 600;"></span>
+          <h2 id="day-details-title" class="reading-title">Detalhes do Dia</h2>
+          <span id="day-details-subtitle" class="reading-meta"></span>
         </div>
         <button id="close-day-details-btn" class="modal-close-btn" aria-label="Fechar janela">
-          <i class="fa-solid fa-xmark" data-icon="close"></i>
+          <i class="fa-solid fa-xmark" data-icon="close" aria-hidden="true"></i>
         </button>
       </div>
       <div id="day-details-body" class="reading-body"></div>
     </div>
   </div>
 
-  <script type="module" src="js/main.js?v=3.4.4"></script>
+  <script type="module" src="js/main.js?v=3.7.9"></script>
 </body>
 
 </html>

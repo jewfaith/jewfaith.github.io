@@ -17,7 +17,7 @@ Construído sob a filosofia **Offline-First**, o sistema opera com total autonom
 ### 1. Nova Aba "Hoje" (Conteúdo Essencial Above the Fold)
 * **Hero Card do Dia**:
   * **Data Hebraica & Gregoriana**: Exibição da data bíblica correspondente e data civil em destaque.
-  * **Saudação Dinâmica**: Saudações hebraicas em tempo real de acordo com a hora haláchica (*Boker Tov*, *Tzoharayim Tovim*, *Erev Tov*, *Shabbat Shalom*, *Chag Sameach*).
+  * **Saudação Dinâmica**: Saudações hebraicas em tempo real de acordo com a hora haláchica (*Boker Tov*, *Tzoharayim Tovim*, *Laila Tov*, *Shabbat Shalom*, *Chag Sameach*).
   * **Horários Litúrgicos Rápidos**: Mini-barra com *Sha'ah Zmanit* calculada e botão de ação direta para abrir a tabela de Zmanim completa.
   * **Seletor Rápido de Cidade**: Localização ativa com alteração instantânea.
 * **Parashá Semanal**: Acesso direto à leitura da semana com resumo e notas textuais.
@@ -58,7 +58,7 @@ Construído sob a filosofia **Offline-First**, o sistema opera com total autonom
   * *Shemini Atzeret* (Oitavo Dia de Reunião Solene)
 
 ### 5. Observância Sagrada Automatizada
-* **Janela Haláchica de Resguardo**: Bloqueio automático de botões de apoio e comércio durante o tempo sagrado, iniciando **2 horas antes** da festa solene (*Erev Yom Tov*) e estendendo-se até **2 horas após** a sua conclusão (*Motzei Yom Tov*).
+* **Observância Sagrada**: Bloqueio automático de botões de apoio e comércio durante o tempo sagrado de Shabat e das festas solenes da Torá até à conclusão (*Havdalá / Motzei*).
 
 ### 6. Motor de Telemetria Google HEART & Testes A/B
 * Medição de UX com respeito à privacidade:
