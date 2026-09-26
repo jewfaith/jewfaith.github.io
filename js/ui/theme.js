@@ -4,7 +4,7 @@ import { getSelectedLocation } from '../services/locationService.js';
 
 let autoReloadTimeout = null;
 
-const OFFSET_MS = 15 * 60 * 1000; // 15min twilight transition buffer
+const OFFSET_MS = 0; // Transição exata ao nascer e ao pôr do sol, sem buffer de atraso ou antecipação
 
 export function getSavedThemePreference() {
     const saved = getPersistentSetting('yisrael_theme', null);
@@ -28,8 +28,8 @@ function getSolarTimes() {
     return {
         sunrise,
         sunset,
-        morningStart: sunrise - OFFSET_MS,
-        nightStart: sunset - OFFSET_MS
+        morningStart: sunrise,
+        nightStart: sunset
     };
 }
 

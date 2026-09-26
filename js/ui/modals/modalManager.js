@@ -198,6 +198,7 @@ export function closeModalSafely(modal, skipHistory = false) {
 
     modal.classList.add('is-closing');
     if (content) {
+        content.style.transform = '';
         content.classList.add('is-closing');
     }
 
@@ -221,6 +222,7 @@ export function closeModalSafely(modal, skipHistory = false) {
             content.classList.remove('is-closing');
             content.classList.remove('is-dragging');
             content.classList.remove('is-snapback');
+            content.style.transform = '';
         }
         if (modal.id === 'info-modal') {
             modal.classList.remove('has-kofi-embed');
@@ -269,6 +271,7 @@ export function closeModalDirectly(modal) {
         content.classList.remove('is-closing');
         content.classList.remove('is-dragging');
         content.classList.remove('is-snapback');
+        content.style.transform = '';
     }
     try {
         sessionStorage.removeItem('openReadingModalRef');
@@ -389,6 +392,7 @@ export function initModalGestures() {
                 if (e.cancelable) {
                     e.preventDefault();
                 }
+                content.style.transform = `translate3d(0, ${dy}px, 0)`;
             }
         };
 
@@ -403,10 +407,15 @@ export function initModalGestures() {
             const velocity = dy / (elapsed || 1);
 
             content.classList.remove('is-dragging');
-            if (dy > 60 || velocity > 0.3) {
+            if (dy > 70 || velocity > 0.35) {
+                content.style.transform = '';
                 closeModalSafely(overlay);
             } else {
+                content.style.transform = '';
                 content.classList.add('is-snapback');
+                setTimeout(() => {
+                    content.classList.remove('is-snapback');
+                }, 240);
             }
             isDraggingDown = false;
             canDragFromHere = false;
@@ -415,7 +424,11 @@ export function initModalGestures() {
         const onTouchCancel = () => {
             if (isDraggingDown) {
                 content.classList.remove('is-dragging');
+                content.style.transform = '';
                 content.classList.add('is-snapback');
+                setTimeout(() => {
+                    content.classList.remove('is-snapback');
+                }, 240);
                 isDraggingDown = false;
             }
             canDragFromHere = false;

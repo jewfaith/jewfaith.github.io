@@ -12,6 +12,7 @@ import { renderFestivalsView } from '../ui/festivalsView.js';
 import { updateSolarPosition } from '../ui/solarArc.js';
 import { normalizeHebcalEvents } from '../domain/eventMapper.js';
 import { hebcalFetch } from '../api/hebcal.js';
+import { FESTIVAL_DURATION_MS } from '../domain/halacha.js';
 
 let originalBackup = null;
 
@@ -50,7 +51,7 @@ function buildMonthEvents(simCategory, dayIndex, now, hYear = 5787) {
             name,
             category: cat,
             time,
-            endTime: time + dayMs,
+            endTime: time + FESTIVAL_DURATION_MS,
             isBiblical,
             isTraditional: !isBiblical,
             raw: {
@@ -197,7 +198,7 @@ export function simulateFestival(nameOrDisable, opt = 1) {
                 name: 'Yom Shabbat',
                 category: 'parashat',
                 time: now - 3600 * 1000,
-                endTime: now + 24 * 3600 * 1000,
+                endTime: (now - 3600 * 1000) + FESTIVAL_DURATION_MS,
                 isBiblical: true,
                 isTraditional: false,
                 raw: {

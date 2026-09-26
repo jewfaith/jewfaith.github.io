@@ -1,5 +1,6 @@
 import { state } from '../state.js';
 import { renderSupportCards } from './components/supportCard.js';
+import { FESTIVAL_DURATION_MS, FESTIVAL_ANTICIPATION_MS } from '../domain/halacha.js';
 
 export function stopTimers() {
     if (state.timerInterval) {
@@ -14,8 +15,8 @@ export const GREGORIAN_MONTHS_PT = [
 ];
 
 export function formatTimeRemaining(diffMs, startTimestamp = null) {
-    // Se faltar menos de 3 minutos (ou já estiver no período do festival): exibe "Em Curso"
-    if (diffMs < 3 * 60 * 1000) {
+    // 2 minutos e 50 segundos restantes ou menos: coloca como "Em Curso"
+    if (diffMs <= FESTIVAL_ANTICIPATION_MS) {
         return 'Em Curso';
     }
 
@@ -42,20 +43,15 @@ export function formatTimeRemaining(diffMs, startTimestamp = null) {
 
     const totalMinutes = Math.floor(diffMs / (60 * 1000));
 
-    // Se faltar menos de 70 horas, mas pelo menos 1h32m (92 minutos): exibe horas (h)
-    // Nas horas, arredonda para cima a partir de 31 minutos (xh31m = x + 1)
+    // Se faltar pelo menos 1h32m (92 minutos): exibe horas (h) com arredondamento a partir de 31m (sempre >= 2h)
     if (totalMinutes >= 92) {
         const baseHours = Math.floor(totalMinutes / 60);
         const remMinutes = totalMinutes % 60;
         const displayHours = remMinutes >= 31 ? baseHours + 1 : baseHours;
-
-        if (displayHours >= 2) {
-            return `Faltam ${pad(displayHours)}h`;
-        }
-        return `Falta 01h`;
+        return `Faltam ${pad(displayHours)}h`;
     }
 
-    // Se faltar menos de 1h32m (e a partir de 3 minutos): exibe minutos (m) e não hora
+    // Menos de 1h32m (e acima de 2m 50s): exibe em minutos (m) e nunca "Falta 01h"
     return `Faltam ${pad(totalMinutes)}m`;
 }
 
@@ -97,10 +93,10 @@ export function startTimers() {
             const endAttr = Number(timer.getAttribute('data-end'));
             const endTimestamp = (!isNaN(endAttr) && endAttr > 0)
                 ? endAttr
-                : (startTimestamp + (24 * 60 * 60 * 1000));
+                : (startTimestamp + FESTIVAL_DURATION_MS);
 
-            // Transição para "Em Curso" a partir de menos de 3 minutos antes do início
-            const startTime = startTimestamp - (3 * 60 * 1000);
+            // Transição para "Em Curso" a partir de 2 minutos e 50 segundos restantes
+            const startTime = startTimestamp - FESTIVAL_ANTICIPATION_MS;
             const diffToStart = startTimestamp - now;
 
             let nextUpdateForThisTimer = minNextUpdate;
@@ -113,8 +109,22 @@ export function startTimers() {
                 nextUpdateForThisTimer = Math.max(500, endTimestamp - now + 500);
             } else if (now > endTimestamp) {
                 const card = timer.closest('.event-card');
-                if (card && typeof card.remove === 'function') {
-                    card.remove();
+                if (card && typeof card.remove === 'function' && !card.dataset.isRemoving) {
+                    card.dataset.isRemoving = 'true';
+                    card.style.transition = 'opacity 0.22s ease, transform 0.22s ease, max-height 0.22s ease, margin 0.22s ease, padding 0.22s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.96)';
+                    card.style.maxHeight = `${card.offsetHeight}px`;
+                    void card.offsetHeight;
+                    card.style.maxHeight = '0px';
+                    card.style.marginTop = '0px';
+                    card.style.marginBottom = '0px';
+                    card.style.paddingTop = '0px';
+                    card.style.paddingBottom = '0px';
+                    card.style.overflow = 'hidden';
+                    setTimeout(() => {
+                        try { card.remove(); } catch (e) { }
+                    }, 230);
                 }
 
                 anyExpired = true;
@@ -123,12 +133,11 @@ export function startTimers() {
 
                 newText = formatTimeRemaining(diffToStart, startTimestamp);
 
-                if (diffToStart <= 5 * 60 * 1000) {
-                    nextUpdateForThisTimer = Math.max(500, diffToStart - (3 * 60 * 1000));
-                } else {
-                    let ms = diffToStart % 60000;
-                    nextUpdateForThisTimer = ms > 0 ? ms : 60000;
-                }
+                // Agenda a transição para "Em Curso" no momento exato em que faltarem 2 minutos e 50 segundos
+                const timeToOngoing = diffToStart - FESTIVAL_ANTICIPATION_MS;
+                const msToNextMinute = diffToStart % 60000;
+                const regularStep = msToNextMinute > 0 ? msToNextMinute : 60000;
+                nextUpdateForThisTimer = Math.min(regularStep, timeToOngoing > 0 ? timeToOngoing : regularStep);
             }
 
             if (timer.textContent !== newText) {

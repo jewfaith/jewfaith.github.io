@@ -266,6 +266,9 @@ export async function triggerSmartUpdate(reason = 'manual') {
         if (state.currentSunsetTime > 0) {
             lastSunsetStatus = Date.now() >= state.currentSunsetTime;
         }
+        try {
+            renderZmanimTable();
+        } catch (e) {}
     }
 }
 

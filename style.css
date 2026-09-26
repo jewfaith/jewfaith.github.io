@@ -356,6 +356,8 @@ body.modal-open {
     filter: blur(80px);
     opacity: 0.65;
     animation: celestial-float 18s ease-in-out infinite alternate;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
 }
 
 .orb-1 {
@@ -389,15 +391,15 @@ body.modal-open {
 
 @keyframes celestial-float {
     0% {
-        transform: translate(0, 0) scale(1);
+        transform: translate3d(0, 0, 0) scale(1);
     }
 
     50% {
-        transform: translate(30px, -20px) scale(1.08);
+        transform: translate3d(30px, -20px, 0) scale(1.08);
     }
 
     100% {
-        transform: translate(-20px, 25px) scale(0.96);
+        transform: translate3d(-20px, 25px, 0) scale(0.96);
     }
 }
 
@@ -536,6 +538,8 @@ body.modal-open {
     user-select: none;
     position: relative;
     overflow: hidden;
+    transition: transform 0.16s cubic-bezier(0.25, 1, 0.5, 1), background 0.16s ease, box-shadow 0.16s ease;
+    will-change: transform;
 }
 
 .event-card:active {
@@ -619,11 +623,12 @@ body.modal-open {
     flex-direction: column;
     gap: 0;
     width: 100%;
-    animation: tab-fade-in 0.22s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .app-tab-view.active {
     display: flex;
+    animation: tab-fade-in 0.22s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: opacity, transform;
 }
 
 @keyframes tab-fade-in {
@@ -827,7 +832,6 @@ body.modal-open {
         gap: 3px;
         padding: 4px 2px 2px;
         background: transparent;
-
         border-radius: 14px;
         color: var(--text-muted);
         cursor: pointer;
@@ -835,6 +839,8 @@ body.modal-open {
         touch-action: manipulation;
         -webkit-tap-highlight-color: transparent;
         font-family: 'Poppins', var(--font-family), sans-serif;
+        transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), color 0.15s ease;
+        will-change: transform;
     }
 
     :root[data-theme="day"] .app-tab-btn {
@@ -913,6 +919,18 @@ body.modal-open {
         }
     }
 
+    @keyframes ios-bottom-sheet-slide-up {
+        from {
+            transform: translate3d(0, 100%, 0);
+            opacity: 0.8;
+        }
+
+        to {
+            transform: translate3d(0, 0, 0);
+            opacity: 1;
+        }
+    }
+
     .modal-content,
     .reading-modal-content {
         width: 100% !important;
@@ -966,6 +984,14 @@ body.modal-open {
 
     .modal-overlay.is-closing {
         opacity: 0 !important;
+        transition: opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    }
+
+    .modal-content.is-closing,
+    .reading-modal-content.is-closing {
+        transform: translate3d(0, 100%, 0) !important;
+        opacity: 0 !important;
+        transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.2s ease !important;
     }
 }
 
@@ -1225,6 +1251,12 @@ body.modal-open {
         text-align: left;
         width: 100%;
         box-sizing: border-box;
+        transition: background 0.16s ease, color 0.16s ease, transform 0.14s cubic-bezier(0.25, 1, 0.5, 1);
+        will-change: transform;
+    }
+
+    .desktop-nav-btn:active {
+        transform: scale(0.98);
     }
 
     .desktop-nav-btn.active {
@@ -1297,6 +1329,8 @@ body.modal-open {
         font-size: 11.5px;
         font-weight: 600;
         font-family: 'Poppins', var(--font-family), sans-serif;
+        transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), background 0.15s ease, color 0.15s ease;
+        will-change: transform;
     }
 
     .desktop-mode-pill:active {
@@ -1440,20 +1474,25 @@ body.modal-open {
     @keyframes desktop-drawer-slide-in {
         from {
             opacity: 0;
+            transform: translate3d(36px, 0, 0);
         }
 
         to {
             opacity: 1;
+            transform: translate3d(0, 0, 0);
         }
     }
 
     .modal-overlay.is-closing {
         opacity: 0 !important;
+        transition: opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
     }
 
     .modal-content.is-closing,
     .reading-modal-content.is-closing {
         opacity: 0 !important;
+        transform: translate3d(36px, 0, 0) !important;
+        transition: opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1), transform 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
     }
 }
 
@@ -2358,6 +2397,8 @@ body.modal-open {
     background: var(--card-bg-start);
     gap: 12px;
     box-sizing: border-box;
+    transition: transform 0.16s cubic-bezier(0.25, 1, 0.5, 1), background 0.16s ease, box-shadow 0.16s ease;
+    will-change: transform;
 }
 
 .settings-card:active {
@@ -2752,6 +2793,16 @@ i.settings-icon {
 
     100% {
         background-position: -200% 0;
+    }
+}
+
+@keyframes skeleton-pulse {
+    0%, 100% {
+        opacity: 0.45;
+    }
+
+    50% {
+        opacity: 0.85;
     }
 }
 

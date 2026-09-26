@@ -6,6 +6,8 @@ import { getPersistentSetting } from '../utils/persistence.js';
 import { HEBREW_MONTHS_PT } from '../domain/constants.js';
 import { getLocationDateParts } from '../domain/formatters.js';
 import { getHebrewDateFromGregorian } from '../domain/biblicalCalendar.js';
+import { FESTIVAL_DURATION_MS } from '../domain/halacha.js';
+import { GREGORIAN_MONTHS_PT } from './timers.js';
 
 export function openZmanimModal(options = {}) {
     const modal = document.getElementById('zmanim-modal');
@@ -40,7 +42,7 @@ export function initZmanimModal() {
         try {
             renderZmanimTable();
         } catch (e) {}
-    }, 60 * 1000);
+    }, 5000);
 }
 
 function fmt(isoStr, tz = null) {
@@ -131,9 +133,12 @@ export function generateZmanimTableHTML() {
     const todayStr = locParts.dateStr;
     const activeEvents = (state.unifiedEvents || []).filter(e => {
         if (!e) return false;
-        const evDate = e.raw?.date ? e.raw.date.split('T')[0] : (e.time ? new Date(e.time).toISOString().split('T')[0] : '');
-        const evEnd = e.endTime || (e.time ? e.time + 24 * 60 * 60 * 1000 : 0);
-        return evDate === todayStr || (e.time && nowMs >= e.time && nowMs <= evEnd);
+        const evEnd = e.endTime || (e.time ? e.time + FESTIVAL_DURATION_MS : 0);
+        if (e.time) {
+            return nowMs >= e.time && nowMs <= evEnd;
+        }
+        const evDate = e.raw?.date ? e.raw.date.split('T')[0] : '';
+        return evDate === todayStr;
     });
 
     const isRoshChodesh = (hDay === 1 || hDay === 30) || activeEvents.some(e => e.category === 'roshchodesh' || e.name?.toLowerCase().includes('rosh chodesh'));
@@ -233,12 +238,11 @@ export function generateZmanimTableHTML() {
     ];
 
     // ═══════════════════════════════════════════════════════
-    // ORAÇÕES ESPECIAIS (AGENDADAS POR DATA/HORA + VISÍVEIS POR 8H APÓS O TÉRMINO DO EVENTO)
+    // ORAÇÕES ESPECIAIS (AGENDADAS DINAMICAMENTE NO CICLO DE 24H)
     // ═══════════════════════════════════════════════════════
 
     const DAY_MS = 24 * 60 * 60 * 1000;
-    const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
-    const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
+    const ONE_HOUR_MS = 60 * 60 * 1000;
 
     function buildSpecialPrayersForDay(dayOffset) {
         const offsetMs = dayOffset * DAY_MS;
@@ -341,7 +345,7 @@ export function generateZmanimTableHTML() {
                 desc: 'Leitura da Torá',
                 key: 'torahReading',
                 val: dSunriseMs + Math.round(3.5 * shaahZmanitMs),
-                eventEndMs: dSunriseMs + Math.round(6.0 * shaahZmanitMs),
+                eventEndMs: dSunriseMs + Math.round(3.75 * shaahZmanitMs),
                 icon: ICONS.book,
                 isSpecialDay: true
             });
@@ -354,7 +358,7 @@ export function generateZmanimTableHTML() {
                 desc: 'Salmos de louvor',
                 key: 'hallel',
                 val: dSunriseMs + Math.round(3.25 * shaahZmanitMs),
-                eventEndMs: dSunriseMs + Math.round(6.0 * shaahZmanitMs),
+                eventEndMs: dSunriseMs + Math.round(3.5 * shaahZmanitMs),
                 icon: ICONS.sun,
                 isSpecialDay: true
             });
@@ -367,7 +371,7 @@ export function generateZmanimTableHTML() {
                 desc: 'Súplica solene',
                 key: 'avinuMalkeinu',
                 val: dSunriseMs + Math.round(3.6 * shaahZmanitMs),
-                eventEndMs: dSunsetMs,
+                eventEndMs: dSunriseMs + Math.round(4.0 * shaahZmanitMs),
                 icon: ICONS.star,
                 isSpecialDay: true
             });
@@ -380,7 +384,7 @@ export function generateZmanimTableHTML() {
                 desc: 'Bênção sacerdotal',
                 key: 'birkatKohanim',
                 val: dSunriseMs + Math.round(3.75 * shaahZmanitMs),
-                eventEndMs: dSunriseMs + Math.round(7.0 * shaahZmanitMs),
+                eventEndMs: dSunriseMs + Math.round(4.0 * shaahZmanitMs),
                 icon: ICONS.handsPraying,
                 isSpecialDay: true
             });
@@ -393,7 +397,7 @@ export function generateZmanimTableHTML() {
                 desc: 'Oração adicional',
                 key: 'musaf',
                 val: dSunriseMs + Math.round(4.0 * shaahZmanitMs),
-                eventEndMs: dSunriseMs + Math.round(7.0 * shaahZmanitMs),
+                eventEndMs: dSunriseMs + Math.round(4.75 * shaahZmanitMs),
                 icon: ICONS.hourglass,
                 isSpecialDay: true,
                 highlight: true
@@ -407,7 +411,7 @@ export function generateZmanimTableHTML() {
                 desc: 'Toque do Shofar',
                 key: 'shofar',
                 val: dSunriseMs + Math.round(4.2 * shaahZmanitMs),
-                eventEndMs: dSunsetMs,
+                eventEndMs: dSunriseMs + Math.round(4.75 * shaahZmanitMs),
                 icon: ICONS.bell,
                 isSpecialDay: true,
                 highlight: true
@@ -421,7 +425,7 @@ export function generateZmanimTableHTML() {
                 desc: 'Prece pelas chuvas',
                 key: 'geshem',
                 val: dSunriseMs + Math.round(4.5 * shaahZmanitMs),
-                eventEndMs: dSunsetMs,
+                eventEndMs: dSunriseMs + Math.round(5.0 * shaahZmanitMs),
                 icon: ICONS.cloudSun,
                 isSpecialDay: true
             });
@@ -434,7 +438,7 @@ export function generateZmanimTableHTML() {
                 desc: 'Prece pelo orvalho',
                 key: 'tal',
                 val: dSunriseMs + Math.round(4.6 * shaahZmanitMs),
-                eventEndMs: dSunsetMs,
+                eventEndMs: dSunriseMs + Math.round(5.1 * shaahZmanitMs),
                 icon: ICONS.cloudSun,
                 isSpecialDay: true
             });
@@ -447,7 +451,7 @@ export function generateZmanimTableHTML() {
                 desc: 'Leitura de Ester',
                 key: 'megilah',
                 val: dSunriseMs + Math.round(3.0 * shaahZmanitMs),
-                eventEndMs: dSunsetMs,
+                eventEndMs: dSunriseMs + Math.round(4.25 * shaahZmanitMs),
                 icon: ICONS.book,
                 isSpecialDay: true,
                 highlight: true
@@ -593,48 +597,62 @@ export function generateZmanimTableHTML() {
         return items.map(it => ({ ...it, dayOffset }));
     }
 
-    // Avalia ontem (-1), hoje (0) e amanhã (+1) para garantir:
-    // 1. Visibilidade exata durante as 8 horas após o término do evento (mesmo quando cruza a meia-noite).
-    // 2. Exibição antecipada das orações especiais previstas para o ciclo atual de 24h.
-    // 3. Desaparecimento total após 8 horas do término do evento associado.
+    function isSpecialPrayerActiveOrUpcoming(item) {
+        const startMs = toMs(item.val);
+        const endMs = toMs(item.eventEndMs) || startMs;
+        if (!startMs || !endMs) return false;
+
+        const isDaytime = startMs >= sunriseMs && startMs < sunsetMs;
+        const timeUntilStart = startMs - nowMs;
+        const timeSinceEnd = nowMs - endMs;
+
+        // 1. Oração especial prevista para hoje (dayOffset === 0)
+        if (item.dayOffset === 0) {
+            // Se ainda não começou hoje, é futura e válida
+            if (timeUntilStart > 0) return true;
+            // Se está em curso hoje
+            if (nowMs >= startMs && nowMs <= endMs) {
+                // Após o pôr do sol, nenhuma oração diurna permanece ativa
+                if (isDaytime && nowMs >= sunsetMs) return false;
+                return true;
+            }
+            // Tolerância de 1h antes de passar para o próximo dia:
+            if (timeSinceEnd <= ONE_HOUR_MS) {
+                if (isDaytime && nowMs >= sunsetMs) return false;
+                return true;
+            }
+            return false;
+        }
+
+        // 2. Oração especial prevista para o dia seguinte (dayOffset === 1)
+        if (item.dayOffset === 1) {
+            // Válida para o ciclo contínuo se estiver agendada para as próximas 24 horas
+            return timeUntilStart > 0 && timeUntilStart <= DAY_MS;
+        }
+
+        return false;
+    }
+
     const candidateSpecialPrayers = [
-        ...buildSpecialPrayersForDay(-1),
         ...buildSpecialPrayersForDay(0),
         ...buildSpecialPrayersForDay(1)
     ];
 
     const specialByKey = new Map();
     candidateSpecialPrayers.forEach(item => {
+        if (!isSpecialPrayerActiveOrUpcoming(item)) return;
+
         const startMs = toMs(item.val);
         const endMs = toMs(item.eventEndMs) || startMs;
-        if (!startMs || !endMs) return;
-
-        const elapsedSinceEventEnd = nowMs - endMs;
-        const timeUntilStart = startMs - nowMs;
-
-        // Regra estrita: após 8 horas do término do evento associado, desaparece completamente
-        if (elapsedSinceEventEnd > EIGHT_HOURS_MS) {
-            return;
-        }
-
-        // Apenas exibe se já estiver a decorrer / dentro das 8h pós-término,
-        // ou se estiver prevista para acontecer hoje (dayOffset === 0) ou nas próximas 18h do ciclo solar
-        const isCurrentlyActiveOrWithin8h = nowMs >= startMs && elapsedSinceEventEnd <= EIGHT_HOURS_MS;
-        const isScheduledSoon = timeUntilStart > 0 && (item.dayOffset === 0 || timeUntilStart <= 18 * 60 * 60 * 1000);
-
-        if (!isCurrentlyActiveOrWithin8h && !isScheduledSoon) {
-            return;
-        }
 
         const existing = specialByKey.get(item.key);
         if (!existing) {
             specialByKey.set(item.key, { ...item, rawMs: startMs, endMs });
         } else {
-            // Prioriza a instância ativa/em retenção de 8h ou a mais próxima do momento atual
-            const existingActive = nowMs >= existing.rawMs && (nowMs - existing.endMs) <= EIGHT_HOURS_MS;
-            if (isCurrentlyActiveOrWithin8h && !existingActive) {
+            // Se já existe uma instância (ex: de hoje e de amanhã), prioriza a de hoje se ainda estiver ativa/recente
+            if (item.dayOffset === 0 && existing.dayOffset !== 0) {
                 specialByKey.set(item.key, { ...item, rawMs: startMs, endMs });
-            } else if (!existingActive && Math.abs(startMs - nowMs) < Math.abs(existing.rawMs - nowMs)) {
+            } else if (existing.dayOffset !== 0 && Math.abs(startMs - nowMs) < Math.abs(existing.rawMs - nowMs)) {
                 specialByKey.set(item.key, { ...item, rawMs: startMs, endMs });
             }
         }
@@ -644,10 +662,13 @@ export function generateZmanimTableHTML() {
 
     const rawItems = [...rawDailyItems, ...specialPrayersItems];
 
-    // Regra temporal haláchica:
-    // - Para zmanim diários regulares: se já passou há mais de 2h, projeta para o próximo ciclo (amanhã).
-    // - Para orações especiais: permanecem visíveis exatamente durante 8h após o término do evento associado e depois desaparecem completamente.
+    // Regra temporal haláchica contínua de 24 horas:
+    // - Para zmanim diários regulares: tolerância de 1 hora (nowMs - baseMs >= ONE_HOUR_MS)
+    //   antes de passar para a data e o horário do dia seguinte.
+    // - Para orações especiais: exibem-se no seu tempo canónico ativo (ou com 1h de tolerância) ou no novo dia.
     const processedItems = [];
+    const todayParts = getLocationDateParts(nowMs, activeTz);
+
     rawItems.forEach(item => {
         let baseMs = toMs(item.rawMs || item.val);
         if (!baseMs) return;
@@ -656,12 +677,8 @@ export function generateZmanimTableHTML() {
         let isPushedForward = false;
 
         if (item.isSpecialDay) {
-            const eventEndMs = toMs(item.endMs || item.eventEndMs) || baseMs;
-            if ((nowMs - eventEndMs) > EIGHT_HOURS_MS) {
-                return;
-            }
             isPushedForward = item.dayOffset === 1;
-        } else if ((nowMs - baseMs) >= TWO_HOURS_MS) {
+        } else if ((nowMs - baseMs) >= ONE_HOUR_MS) {
             isPushedForward = true;
             let nextMs = null;
             if (zTom && item.key && zTom[item.key]) {
@@ -673,19 +690,38 @@ export function generateZmanimTableHTML() {
             rawMs = nextMs;
         }
 
-        const formattedTime = fmt(new Date(rawMs).toISOString());
+        const formattedTime = fmt(new Date(rawMs).toISOString(), activeTz);
         if (formattedTime === '--h --m' || formattedTime === '--:--') return;
+
+        const targetParts = getLocationDateParts(rawMs, activeTz);
+        const isNextDay = isPushedForward || (targetParts.dateStr !== todayParts.dateStr);
+        const gregorianDayStr = `${targetParts.day} de ${GREGORIAN_MONTHS_PT[targetParts.month - 1]}`;
+
+        let itemHdateStr = '';
+        if (isNextDay) {
+            try {
+                const hDateNext = getHebrewDateFromGregorian(targetParts.year, targetParts.month, targetParts.day);
+                if (hDateNext?.hd && hDateNext?.hm) {
+                    itemHdateStr = `${hDateNext.hd} ${HEBREW_MONTHS_PT[hDateNext.hm] || hDateNext.hm}`;
+                }
+            } catch (e) {}
+        }
+
+        const descText = formattedTime;
 
         processedItems.push({
             ...item,
             rawMs,
             time: formattedTime,
-            isTomorrow: isPushedForward
+            isTomorrow: isNextDay,
+            itemHdateStr,
+            gregorianDayStr,
+            descText
         });
     });
 
     // Ordenação cronológica contínua do ciclo de 24 horas:
-    // Os itens vigentes/próximos surgem no topo e os que passaram há mais de 2h ficam no fim da lista
+    // Os itens vigentes/próximos surgem no topo rigorosamente ordenados por data e horário
     processedItems.sort((a, b) => (a.rawMs || 0) - (b.rawMs || 0));
 
     let currentZmanItem = null;
@@ -1294,7 +1330,7 @@ export function generateZmanimTableHTML() {
         }
     };
 
-    const createZmanDescriptionHTML = (label, desc, time, isTomorrow) => {
+    const createZmanDescriptionHTML = (label, desc, time, gregorianDayStr) => {
         const itemData = ZMANIM_KNOWLEDGE[label] || ZMANIM_KNOWLEDGE[label.replace('Plag Mincha', 'Plag HaMincha')] || {
             paragraphs: [
                 `${label} - ${desc} é um dos momentos sagrados do ciclo litúrgico diário calculado com precisão astronómica para ${locName}.`,
@@ -1305,8 +1341,19 @@ export function generateZmanimTableHTML() {
         const paragraphs = itemData.paragraphs || (Array.isArray(itemData) ? itemData : []);
         const prayer = itemData.prayer;
 
+        const naturalTimeText = `${gregorianDayStr} às ${time} em ${locName}`;
+
+        const timeHeaderCard = `
+            <div class="info-modal-card">
+                <div class="info-modal-value info-val-fluid">
+                    ${naturalTimeText}
+                </div>
+            </div>
+        `;
+
         return `
             <div class="levels-container zmanim-modal-levels">
+                ${timeHeaderCard}
                 ${paragraphs.map(description => `
                     <div class="info-modal-card">
                         <div class="info-modal-value info-val-fluid">
@@ -1336,10 +1383,11 @@ export function generateZmanimTableHTML() {
             <ul class="legend-list zmanim-modal-list" id="zmanim-list-items">
                 ${processedItems.map(item => {
                     const desc = formatTwoWords(item.desc);
-                    const infoHtml = createZmanDescriptionHTML(item.label, desc, item.time, item.isTomorrow);
+                    const infoHtml = createZmanDescriptionHTML(item.label, desc, item.time, item.gregorianDayStr);
                     const safeInfoHtml = infoHtml.replace(/"/g, '&quot;');
                     const safeLabel = item.label.replace(/"/g, '&quot;');
-                    const descText = item.time;
+                    const descText = item.descText || item.time;
+                    const ariaDayText = item.gregorianDayStr;
 
                     return `
                         <li class="settings-card event-card glass-panel info-trigger"
@@ -1347,7 +1395,7 @@ export function generateZmanimTableHTML() {
                             data-info-html="${safeInfoHtml}"
                             tabindex="0"
                             role="button"
-                            aria-label="${safeLabel}: ${desc} às ${descText}">
+                            aria-label="${safeLabel}: ${desc}, ${ariaDayText} às ${item.time}">
                             <div class="settings-card-left">
                                 <i class="${item.icon} settings-icon"></i>
                                 <div class="settings-card-text">

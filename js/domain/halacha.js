@@ -23,7 +23,10 @@ export function pickReading(arr, dayIndex) {
     return arr[Math.min(dayIndex, arr.length - 1)];
 }
 
-export function getFestivalSpan(events, now, twentyFourHoursMs, cat) {
+export const FESTIVAL_DURATION_MS = (24 * 60 + 5) * 60 * 1000; // 24 horas e 5 minutos (tempo total + 5m)
+export const FESTIVAL_ANTICIPATION_MS = (2 * 60 + 50) * 1000; // 2 minutos e 50 segundos (170.000 ms)
+
+export function getFestivalSpan(events, now, festivalDurationMs = FESTIVAL_DURATION_MS, cat) {
     const evts = events
         .filter(e => e.category === cat)
         .sort((a, b) => a.time - b.time);
@@ -49,7 +52,7 @@ export function getFestivalSpan(events, now, twentyFourHoursMs, cat) {
     // Encontra o cluster ativo no tempo atual
     for (const cluster of clusters) {
         const start = cluster[0].time;
-        const end = cluster[cluster.length - 1].time + twentyFourHoursMs;
+        const end = cluster[cluster.length - 1].time + festivalDurationMs;
         if (now >= start && now < end) {
             let dayIndex = 0;
             for (let i = 0; i < cluster.length; i++) {
@@ -67,9 +70,9 @@ export function getFestivalSpan(events, now, twentyFourHoursMs, cat) {
     return null;
 }
 
-export function findActiveFestival(events, now, twentyFourHoursMs, cats) {
+export function findActiveFestival(events, now, festivalDurationMs = FESTIVAL_DURATION_MS, cats) {
     for (const cat of cats) {
-        const span = getFestivalSpan(events, now, twentyFourHoursMs, cat);
+        const span = getFestivalSpan(events, now, festivalDurationMs, cat);
         // getFestivalSpan já valida se "now" está dentro do intervalo start/end
         if (span) {
             return { ...span.evt, dayIndex: span.dayIndex };
@@ -90,9 +93,11 @@ export function getNextShabbatEvent(now = Date.now(), sunsetTime = null, tz = 'A
         sunsetM = sParts.minute;
     }
 
+    const shabbatDurationMs = FESTIVAL_DURATION_MS;
+
     let daysUntilFriday = (5 - day + 7) % 7;
     const thisFridaySunset = localTimeToUtc(parts.year, parts.month, parts.day + daysUntilFriday, sunsetH, sunsetM, 0, tz);
-    const thisSaturdayEnd = thisFridaySunset + (25 * 60 * 60 * 1000);
+    const thisSaturdayEnd = thisFridaySunset + shabbatDurationMs;
 
     let shabbatStart = thisFridaySunset;
     let shabbatEnd = thisSaturdayEnd;
@@ -102,7 +107,7 @@ export function getNextShabbatEvent(now = Date.now(), sunsetTime = null, tz = 'A
         shabbatEnd = thisSaturdayEnd;
     } else if (day === 6) {
         const prevFridaySunset = localTimeToUtc(parts.year, parts.month, parts.day - 1, sunsetH, sunsetM, 0, tz);
-        const saturdayEnd = prevFridaySunset + (25 * 60 * 60 * 1000);
+        const saturdayEnd = prevFridaySunset + shabbatDurationMs;
 
         if (now <= saturdayEnd) {
             shabbatStart = prevFridaySunset;
@@ -110,7 +115,7 @@ export function getNextShabbatEvent(now = Date.now(), sunsetTime = null, tz = 'A
         } else {
             const nextFridaySunset = localTimeToUtc(parts.year, parts.month, parts.day + 6, sunsetH, sunsetM, 0, tz);
             shabbatStart = nextFridaySunset;
-            shabbatEnd = nextFridaySunset + (25 * 60 * 60 * 1000);
+            shabbatEnd = nextFridaySunset + shabbatDurationMs;
         }
     }
 
@@ -277,9 +282,9 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
     } catch (e) { }
 
     const candleOffsetMs = candleOffsetMin * 60 * 1000;
-    const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+    const FIVE_MINUTES_MS = 5 * 60 * 1000;
 
-    // 2. Determinar o estado do Shabat (início com o acendimento das velas e término pós-Havdalá)
+    // 2. Determinar o estado do Shabat (início com o acendimento das velas e término após tempo total + 5 minutos)
     let shabbatState = {
         isRest: false,
         isShabbatStrict: false,
@@ -301,48 +306,22 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
                 subType: 'shabbat',
                 title: 'Yom Shabbat',
                 greeting: 'Shabbat Shalom',
-                reason: 'Em observância às leis sagradas do Shabat, transações financeiras e pagamentos digitais encontram-se pausados até à Havdalá.'
+                reason: 'Em observância às leis sagradas do Shabat, transações financeiras e pagamentos digitais encontram-se pausados.'
             };
         }
     } else if (dayOfWeek === 6) {
-        // Sábado: Shabat pleno e resguardo pós-Havdalá (2 horas)
+        // Sábado: Shabat pleno até o tempo total + 5 minutos após o início ao pôr do sol
         const satSunset = localTimeToUtc(parts.year, parts.month, parts.day, sunsetH, sunsetM, 0, tz);
-        const havdalahTime = satSunset + (45 * 60 * 1000);
-        const motzeiShabbatBufferEnd = havdalahTime + TWO_HOURS_MS;
+        const shabbatEndTime = satSunset + FIVE_MINUTES_MS;
 
-        if (now < havdalahTime) {
+        if (now < shabbatEndTime) {
             shabbatState = {
                 isRest: true,
                 isShabbatStrict: true,
                 subType: 'shabbat',
                 title: 'Yom Shabbat',
                 greeting: 'Shabbat Shalom',
-                reason: 'Em observância às leis sagradas do Shabat, transações financeiras e pagamentos digitais encontram-se pausados até à Havdalá.'
-            };
-        } else if (now <= motzeiShabbatBufferEnd) {
-            shabbatState = {
-                isRest: true,
-                isShabbatStrict: false,
-                subType: 'motzei_shabbat',
-                title: 'Motzei Shabat',
-                greeting: 'Shavua Tov',
-                reason: 'Em virtude da conclusão do Shabat (Motzei Shabat), as doações permanecem pausadas.'
-            };
-        }
-    } else if (dayOfWeek === 0) {
-        // Domingo de madrugada: resguardo pós-Havdalá do sábado (2 horas)
-        const prevSatSunset = localTimeToUtc(parts.year, parts.month, parts.day - 1, sunsetH, sunsetM, 0, tz);
-        const havdalahTime = prevSatSunset + (45 * 60 * 1000);
-        const motzeiShabbatBufferEnd = havdalahTime + TWO_HOURS_MS;
-
-        if (now <= motzeiShabbatBufferEnd) {
-            shabbatState = {
-                isRest: true,
-                isShabbatStrict: false,
-                subType: 'motzei_shabbat',
-                title: 'Motzei Shabat',
-                greeting: 'Shavua Tov',
-                reason: 'Em virtude da conclusão do Shabat (Motzei Shabat), as doações permanecem pausadas.'
+                reason: 'Em observância às leis sagradas do Shabat, transações financeiras e pagamentos digitais encontram-se pausados.'
             };
         }
     }
@@ -355,13 +334,11 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
             if (!isTorahSolemnRestEvent(ev)) continue;
 
             const startTime = ev.time ? (ev.time - candleOffsetMs) : 0;
-            const durationMs = 25.5 * 60 * 60 * 1000; // ~25 horas e meia desde a entrada até à saída das estrelas
+            const durationMs = FESTIVAL_DURATION_MS; // Termina após o tempo total + 5 minutos (24h e 5m)
             const endTime = ev.endTime || (ev.time ? ev.time + durationMs : 0);
 
             if (startTime > 0) {
-                const bufferEndTime = endTime + TWO_HOURS_MS;
-
-                if (now >= startTime && now <= bufferEndTime) {
+                if (now >= startTime && now <= endTime) {
                     const rawName = ev.name || 'Yom Tov';
                     const baseName = rawName.replace(/^(Erev|Motzei)\s+/i, '');
                     const fullTitle = isShabbat ? `${baseName} & Shabat` : baseName;
@@ -373,17 +350,7 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
                     if (isShabbat) {
                         greeting = isKippur ? 'Gmar Chatimah Tovah & Shabbat Shalom' : 'Shabbat Shalom & Chag Sameach';
                     }
-                    let reason = '';
-
-                    if (now > endTime) {
-                        subType = 'motzei_yomtov';
-                        title = `Motzei ${fullTitle}`;
-                        greeting = isKippur ? 'Gmar Chatimah Tovah' : 'Shavua Tov / Chag Sameach';
-                        reason = `Em virtude da conclusão de ${fullTitle} (resguardo de 2 horas após o término da data sagrada), as contribuições permanecem pausadas.`;
-                    } else {
-                        subType = 'yomtov';
-                        reason = `Em respeito à santidade de ${fullTitle}, as contribuições encontram-se pausadas.`;
-                    }
+                    const reason = `Em respeito à santidade de ${fullTitle}, as contribuições encontram-se pausadas.`;
 
                     return {
                         isRest: true,
@@ -404,7 +371,6 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
         const m = (hdate.hm || '').toLowerCase();
 
         let isYomTovDate = false;
-        let isMotzeiYomTov = false;
         let festivalName = 'Yom Tov';
 
         const checkYomTovDates = (ytDays, name) => {
@@ -412,12 +378,12 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
                 isYomTovDate = true;
                 festivalName = name;
             } else if (d === (ytDays[ytDays.length - 1] + 1)) {
+                // Ao pôr do sol a data hebraica vira para d+1; mantém ativo por tempo total + 5 minutos adicionais (24h e 5 minutos no total)
                 const todaySunset = localTimeToUtc(parts.year, parts.month, parts.day, sunsetH, sunsetM, 0, tz);
                 const lastSunset = now >= todaySunset ? todaySunset : (todaySunset - 24 * 60 * 60 * 1000);
-                const havdalahApproxMs = lastSunset + (45 * 60 * 1000);
-                const twoHoursAfterHavdalah = havdalahApproxMs + TWO_HOURS_MS;
-                if (now <= twoHoursAfterHavdalah) {
-                    isMotzeiYomTov = true;
+                const fiveMinutesAfterSunset = lastSunset + FIVE_MINUTES_MS;
+                if (now <= fiveMinutesAfterSunset) {
+                    isYomTovDate = true;
                     festivalName = name;
                 }
             }
@@ -425,34 +391,26 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
 
         if (m.includes('nisan')) {
             checkYomTovDates([15], 'Pessach');
-            if (!isYomTovDate && !isMotzeiYomTov) checkYomTovDates([21], 'Chag Matzot');
+            if (!isYomTovDate) checkYomTovDates([21], 'Chag Matzot');
         } else if (m.includes('sivan')) {
             checkYomTovDates([6], 'Shavuot');
         } else if (m.includes('tishrei')) {
             checkYomTovDates([1], 'Yom Teruah');
-            if (!isYomTovDate && !isMotzeiYomTov) checkYomTovDates([10], 'Yom Kippur');
-            if (!isYomTovDate && !isMotzeiYomTov) checkYomTovDates([15], 'Chag Sukkot');
-            if (!isYomTovDate && !isMotzeiYomTov) checkYomTovDates([22], 'Shemini Atzeret');
+            if (!isYomTovDate) checkYomTovDates([10], 'Yom Kippur');
+            if (!isYomTovDate) checkYomTovDates([15], 'Chag Sukkot');
+            if (!isYomTovDate) checkYomTovDates([22], 'Shemini Atzeret');
         }
 
-        if (isYomTovDate || isMotzeiYomTov) {
+        if (isYomTovDate) {
             const fullTitle = isShabbat ? `${festivalName} & Shabat` : festivalName;
             const isKippur = festivalName === 'Yom Kippur';
-            let subType = isMotzeiYomTov ? 'motzei_yomtov' : 'yomtov';
-            let title = isMotzeiYomTov ? `Motzei ${fullTitle}` : fullTitle;
+            let subType = 'yomtov';
+            let title = fullTitle;
             let greeting = isKippur ? 'Gmar Chatimah Tovah' : 'Chag Sameach';
             if (isShabbat) {
                 greeting = isKippur ? 'Gmar Chatimah Tovah & Shabbat Shalom' : 'Shabbat Shalom & Chag Sameach';
-            } else if (isMotzeiYomTov) {
-                greeting = isKippur ? 'Gmar Chatimah Tovah' : 'Shavua Tov / Chag Sameach';
             }
-
-            let reason = '';
-            if (isMotzeiYomTov) {
-                reason = `Em virtude da conclusão de ${fullTitle} (resguardo de 2 horas após o término da data sagrada), as contribuições permanecem pausadas.`;
-            } else {
-                reason = `Em respeito à santidade de ${fullTitle}, as contribuições financeiras encontram-se pausadas.`;
-            }
+            const reason = `Em respeito à santidade de ${fullTitle}, as contribuições financeiras encontram-se pausadas.`;
 
             return {
                 isRest: true,
@@ -537,6 +495,7 @@ export function calculateOfflineZmanim(date = new Date(), lat = 31.7683, lon = 3
     const candleOffsetMin = isIsrael ? 40 : 18;
 
     return {
+        chatzotNight: new Date(chatzotMs + 12 * 3600 * 1000).toISOString(),
         alotHaShachar: new Date(sunriseMs - 72 * 60 * 1000).toISOString(),
         misheyakir: new Date(sunriseMs - 45 * 60 * 1000).toISOString(),
         sunrise: new Date(sunriseMs).toISOString(),
@@ -544,7 +503,10 @@ export function calculateOfflineZmanim(date = new Date(), lat = 31.7683, lon = 3
         sofZmanTfilla: new Date(sunriseMs + 4 * shaahZmanitMs).toISOString(),
         chatzot: new Date(chatzotMs).toISOString(),
         minchaGedola: new Date(chatzotMs + 0.5 * shaahZmanitMs).toISOString(),
+        minchaKetana: new Date(sunriseMs + 9.5 * shaahZmanitMs).toISOString(),
+        plagHaMincha: new Date(sunsetMs - 1.25 * shaahZmanitMs).toISOString(),
         sunset: new Date(sunsetMs).toISOString(),
+        beinHaShmashos: new Date(sunsetMs).toISOString(),
         tzeit7083deg: new Date(sunsetMs + 42 * 60 * 1000).toISOString(),
         tzeit85deg: new Date(sunsetMs + 50 * 60 * 1000).toISOString(),
         candleLighting: new Date(sunsetMs - candleOffsetMin * 60 * 1000).toISOString(),

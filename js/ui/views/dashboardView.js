@@ -7,7 +7,7 @@
 
 import { state } from '../../state.js';
 import { applySolarTheme } from '../theme.js';
-import { findActiveFestival, transliterateTorah, pickReading, getNextShabbatEvent } from '../../domain/halacha.js';
+import { findActiveFestival, transliterateTorah, pickReading, getNextShabbatEvent, FESTIVAL_DURATION_MS } from '../../domain/halacha.js';
 import {
     FESTIVAL_CATS,
     FESTIVAL_TORAH_READINGS,
@@ -454,10 +454,9 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
     // Atualiza os cartões de literatura judaica com a transição sincronizada ao pôr do sol
     applyDailyReadingsToCards(new Date(), sunsetTime);
     const now = new Date().getTime();
-    const twentyFourHoursMs = 24 * 60 * 60 * 1000;
 
     const upcomingParasha = events.find(e =>
-        e.raw.category === 'parashat' && (e.time + twentyFourHoursMs) > now
+        e.raw.category === 'parashat' && (e.time + FESTIVAL_DURATION_MS) > now
     );
     const elParasha = document.getElementById('card-parasha');
     const elParashaSubtitle = document.getElementById('card-parasha-subtitle');
@@ -466,7 +465,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
     const elKetuvim = document.getElementById('card-ketuvim');
     const elDate = document.getElementById('card-hdate');
 
-    const activeFestival = findActiveFestival(events, now, twentyFourHoursMs, FESTIVAL_CATS);
+    const activeFestival = findActiveFestival(events, now, FESTIVAL_DURATION_MS, FESTIVAL_CATS);
 
     // Determinação dos 3 estados no card de leitura para períodos festivos:
     // 1. "Keriat HaMoed" (dias solenes/Yom Tov bíblico da Torá)
@@ -552,7 +551,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         elParashaSubtitle.textContent = festivalReadingState ? 'Leitura Festiva' : 'Parashá Semanal';
     }
 
-    const nearFestival = findActiveFestival(events, now, twentyFourHoursMs, Object.keys(FESTIVAL_TORAH_READINGS));
+    const nearFestival = findActiveFestival(events, now, FESTIVAL_DURATION_MS, Object.keys(FESTIVAL_TORAH_READINGS));
 
     const elParashaWrapper = document.getElementById('card-parasha-wrapper');
     if (elParashaWrapper && elParasha) {
@@ -884,7 +883,6 @@ export function renderEvents() {
     if (!grid) return;
 
     const now = new Date().getTime();
-    const twentyFourHoursMs = 24 * 60 * 60 * 1000;
 
     function formatTitle(name) {
         return formatTwoWordTitle(name);
@@ -941,7 +939,7 @@ export function renderEvents() {
 
     const validEvents = (state.unifiedEvents || []).filter(evt => {
         if (!evt || !evt.name) return false;
-        if ((evt.time + twentyFourHoursMs) < now) return false;
+        if ((evt.time + FESTIVAL_DURATION_MS) < now) return false;
         if (evt.category === 'parashat' || evt.category === 'omer') return false;
         if (evt.name.includes('laOmer')) return false;
 
@@ -1059,7 +1057,7 @@ export function renderEvents() {
                 <i class="${iconClass} settings-icon"></i>
                 <div class="settings-card-text">
                     <span class="settings-card-title">${twoWordTitle}</span>
-                    <span class="settings-card-desc timer-countdown" data-time="${evt.time || ''}" data-end="${evt.endTime || (evt.time ? evt.time + 24 * 60 * 60 * 1000 : '')}" data-month="${evt.month || ''}">${initialCountdown}</span>
+                    <span class="settings-card-desc timer-countdown${initialCountdown === 'Em Curso' ? ' ongoing' : ''}" data-time="${evt.time || ''}" data-end="${evt.endTime || (evt.time ? evt.time + FESTIVAL_DURATION_MS : '')}" data-month="${evt.month || ''}">${initialCountdown}</span>
                 </div>
             </div>
             <div class="card-arrow-action" aria-hidden="true">

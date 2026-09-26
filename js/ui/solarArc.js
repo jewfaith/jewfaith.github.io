@@ -1,7 +1,7 @@
 import { state } from '../state.js';
 import { ICONS } from './icons.js';
 import { getSelectedLocation, JERUSALEM_COORDS } from '../services/locationService.js';
-import { checkSacredRestStatus } from '../domain/halacha.js';
+import { checkSacredRestStatus, FESTIVAL_DURATION_MS } from '../domain/halacha.js';
 
 export function initSolarArc() {
     renderSolarArcWidget();
@@ -190,11 +190,10 @@ export function updateShaahZmanitCardPosition() {
 
     // 2. Se não estiver em Shabat/Yom Tov estrito, avalia festivais bíblicos adicionais no calendário
     if (!isFestivalActiveOrRecent && state.unifiedEvents && state.unifiedEvents.length) {
-        const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
         for (const ev of state.unifiedEvents) {
             if (!ev || !ev.time || !ev.isBiblical || ev.category === 'parashat' || ev.category === 'roshchodesh') continue;
-            const evEnd = ev.endTime || (ev.time + 24 * 60 * 60 * 1000);
-            if (now >= ev.time && now <= (evEnd + TWO_HOURS_MS)) {
+            const evEnd = ev.endTime || (ev.time + FESTIVAL_DURATION_MS);
+            if (now >= ev.time && now <= evEnd) {
                 isFestivalActiveOrRecent = true;
                 break;
             }

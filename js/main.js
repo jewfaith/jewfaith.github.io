@@ -28,6 +28,7 @@ import { getHebrewDateFromGregorian } from './domain/biblicalCalendar.js';
 import { calculateOfflineZmanim } from './domain/halacha.js';
 import { getLocationDateParts } from './domain/formatters.js';
 import { updateSolarPosition } from './ui/solarArc.js';
+import { renderZmanimTable } from './ui/zmanimTable.js';
 import { initSimulator } from './utils/simulator.js';
 import { initTelemetryService } from './services/telemetryService.js';
 import { initConsoleControl } from './services/consoleControl.js';
@@ -64,25 +65,40 @@ function loadOfflineCache(defaultLocName = null, defaultIsIsrael = null) {
     state.locationName = activeLoc.name;
     state.userCityName = (activeLoc.primaryText || activeLoc.name.split(',')[0] || 'Jerusalém').trim();
 
+    const locParts = getLocationDateParts(Date.now(), activeLoc.tz);
+    const offlineZmanim = calculateOfflineZmanim(new Date(), activeLoc.lat, activeLoc.lon, activeLoc.tz, fallbackIsIsrael);
+    const offlineTomorrowZmanim = calculateOfflineZmanim(new Date(Date.now() + 86400000), activeLoc.lat, activeLoc.lon, activeLoc.tz, fallbackIsIsrael);
+    const offlineSunset = offlineZmanim?.sunset ? new Date(offlineZmanim.sunset).getTime() : 0;
+    const isNowAfterSunset = offlineSunset > 0 && Date.now() >= offlineSunset;
+
     try {
         const offlineDataRaw = localStorage.getItem('hebcal_offline_cache');
         if (offlineDataRaw) {
             const data = JSON.parse(offlineDataRaw);
             if (data.events && data.events.length > 0) {
                 state.unifiedEvents = data.events;
-                state.currentZmanim = data.zmanim || null;
-                state.tomorrowZmanim = data.tomorrowZmanim || null;
-                state.currentSunsetTime = data.sunset || 0;
-                state.currentHdate = data.hdate || null;
+                state.currentZmanim = data.zmanim || offlineZmanim;
+                state.tomorrowZmanim = data.tomorrowZmanim || offlineTomorrowZmanim;
+                state.currentSunsetTime = data.sunset || offlineSunset;
+
+                // Transição imediata: se já passou o pôr do sol, atualiza imediatamente para a data do novo dia
+                let effectiveHdate = data.hdate;
+                if (isNowAfterSunset) {
+                    const nextParts = getLocationDateParts(Date.now() + 86400000, activeLoc.tz);
+                    effectiveHdate = getHebrewDateFromGregorian(nextParts.year, nextParts.month, nextParts.day) || effectiveHdate;
+                }
+                state.currentHdate = effectiveHdate || null;
+
                 updateUIBlocks(
                     data.events,
-                    data.hdate || { hd: 15, hm: 'Av'},
+                    effectiveHdate || { hd: 15, hm: 'Av'},
                     data.locName || fallbackLocName,
-                    data.sunset || 0,
+                    state.currentSunsetTime,
                     data.isIsrael ?? fallbackIsIsrael
                 );
                 renderFestivalsView();
                 updateSolarPosition();
+                renderZmanimTable();
                 return true;
             }
         }
@@ -90,11 +106,8 @@ function loadOfflineCache(defaultLocName = null, defaultIsIsrael = null) {
         console.warn('[OfflineCache] Erro ao ler cache local:', e);
     }
     // Fallback resiliente e autônomo 100% offline (matemática exata Rambam e Gra para Jerusalém ou localização ativa)
-    const locParts = getLocationDateParts(Date.now(), activeLoc.tz);
-    const offlineHdate = getHebrewDateFromGregorian(locParts.year, locParts.month, locParts.day);
-    const offlineZmanim = calculateOfflineZmanim(new Date(), activeLoc.lat, activeLoc.lon, activeLoc.tz, fallbackIsIsrael);
-    const offlineTomorrowZmanim = calculateOfflineZmanim(new Date(Date.now() + 86400000), activeLoc.lat, activeLoc.lon, activeLoc.tz, fallbackIsIsrael);
-    const offlineSunset = offlineZmanim?.sunset ? new Date(offlineZmanim.sunset).getTime() : 0;
+    const targetParts = isNowAfterSunset ? getLocationDateParts(Date.now() + 86400000, activeLoc.tz) : locParts;
+    const offlineHdate = getHebrewDateFromGregorian(targetParts.year, targetParts.month, targetParts.day);
 
     state.currentHdate = offlineHdate;
     state.currentZmanim = offlineZmanim;
@@ -105,6 +118,7 @@ function loadOfflineCache(defaultLocName = null, defaultIsIsrael = null) {
     updateUIBlocks(state.unifiedEvents, offlineHdate, fallbackLocName, offlineSunset, fallbackIsIsrael);
     renderFestivalsView();
     updateSolarPosition();
+    renderZmanimTable();
     return true;
 }
 
@@ -207,7 +221,7 @@ async function updateDashboard(options = {}) {
             state.tomorrowZmanim = calculateOfflineZmanim(new Date(Date.now() + 86400000), lat, lon, tzid, isIsrael);
         }
 
-        const isAfterSunset = sunsetTime > 0 && Date.now() > sunsetTime;
+        const isAfterSunset = sunsetTime > 0 && Date.now() >= sunsetTime;
         const converterUrl = `https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${day}&g2h=1&strict=1${isAfterSunset ? '&gs=on' : ''}`;
 
         const [hdateData, hebcalData] = await Promise.all([
@@ -215,7 +229,13 @@ async function updateDashboard(options = {}) {
             hebcalPromise
         ]);
 
-        const fallbackHdate = getHebrewDateFromGregorian(year, month, day);
+        let fallbackHdate;
+        if (isAfterSunset) {
+            const nextParts = getLocationDateParts(Date.now() + 24 * 60 * 60 * 1000, tzid);
+            fallbackHdate = getHebrewDateFromGregorian(nextParts.year, nextParts.month, nextParts.day);
+        } else {
+            fallbackHdate = getHebrewDateFromGregorian(year, month, day);
+        }
         const resolvedHdate = hdateData || fallbackHdate;
 
         if (hebcalData?.items) {
@@ -252,6 +272,7 @@ async function updateDashboard(options = {}) {
     await minDelayPromise;
     renderEvents();
     renderFestivalsView();
+    renderZmanimTable();
 
     setTimeout(() => document.body.classList.add('loaded'), 50);
 
@@ -262,6 +283,7 @@ async function updateDashboard(options = {}) {
         }
         renderEvents();
         renderFestivalsView(true);
+        renderZmanimTable();
     }).catch(() => {});
 
     // Gestão temporal centralizada no smartUpdater.js para evitar timers duplicados
