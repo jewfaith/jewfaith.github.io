@@ -19,7 +19,7 @@
     // Funções globais do simulador litúrgico disponíveis instantaneamente
     function simulate(f, opt) {
       if (window._simFn) return window._simFn(f, opt);
-      return import('./js/utils/simulator.js?v=3.4.4').then(function (m) {
+      return import('./js/utils/simulator.js?v=4.0.2').then(function (m) {
         window._simFn = function (fest, options) {
           if (typeof fest === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(fest.trim())) {
             return m.simulateDate(fest.trim());
@@ -33,7 +33,7 @@
     }
     function resetSimulation() {
       if (window._simReset) return window._simReset();
-      return import('./js/utils/simulator.js?v=3.4.4').then(function (m) {
+      return import('./js/utils/simulator.js?v=4.0.2').then(function (m) {
         window._simReset = m.resetSimulation;
         return window._simReset();
       }).catch(function (err) {
@@ -42,7 +42,7 @@
     }
     function simulationHelp() {
       if (window._simHelp) return window._simHelp();
-      return import('./js/utils/simulator.js?v=3.4.4').then(function (m) {
+      return import('./js/utils/simulator.js?v=4.0.2').then(function (m) {
         window._simHelp = m.simulationHelp;
         return window._simHelp();
       });
@@ -50,7 +50,7 @@
     window.simulate = simulate;
     window.simulateFestival = simulate;
     window.simulateDate = function (d) {
-      return import('./js/utils/simulator.js?v=3.4.4').then(function (m) {
+      return import('./js/utils/simulator.js?v=4.0.2').then(function (m) {
         return m.simulateDate(d);
       }).catch(function (err) {
         console.error('[Simulador] Erro ao simular data:', err);
@@ -221,7 +221,7 @@
   </script>
 
   <!-- Resource Hints & Typography: Poppins, Cinzel & Font Awesome 6 -->
-  <link rel="preload" href="style.css?v=3.8.5" as="style" />
+  <link rel="preload" href="style.css?v=4.0.6" as="style" />
   <link rel="preload" href="icon.webp" as="image" type="image/webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -236,7 +236,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="style.css?v=3.8.5" />
+  <link rel="stylesheet" href="style.css?v=4.0.6" />
 
   <!-- Umami Analytics (Cookieless, Privacy-First, RGPD & LGPD Compliant) -->
   <script id="umami-script" defer src="https://cloud.umami.is/script.js"
@@ -347,7 +347,7 @@
              ========================================== -->
         <section id="view-reading" class="app-tab-view active" role="region" aria-label="Hoje">
 
-          <!-- Os 4 Cartões Mestres Diários -->
+          <!-- Os 2 Cartões Mestres Diários -->
           <div class="primary-cards-stack event-cards-row">
             <!-- 1. Horários Litúrgicos (Zmanim) / Sha'ah Zmanit -->
             <div id="solar-arc-container">
@@ -366,23 +366,7 @@
               </div>
             </div>
 
-            <!-- 2. Data Hebraica -->
-            <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-hdate-wrapper"
-              tabindex="0" role="button" aria-label="Detalhes e Significado da Data Hebraica">
-              <div class="settings-card-left">
-                <i class="fa-solid fa-calendar-day settings-icon" data-icon="calendarDay" aria-hidden="true"></i>
-                <div class="settings-card-text">
-                  <span class="settings-card-title" id="card-hdate"><span
-                      class="skeleton-line skeleton-title-w100"></span></span>
-                  <span class="settings-card-desc" id="card-hdate-subtitle">Data Hebraica</span>
-                </div>
-              </div>
-              <div class="card-arrow-action" aria-hidden="true">
-                <i class="fa-solid fa-arrow-right"></i>
-              </div>
-            </div>
-
-            <!-- 3. Localização Vigente -->
+            <!-- 2. Localização Vigente -->
             <div class="settings-card event-card glass-panel not-ready location-trigger-btn" id="card-local-vigente"
               tabindex="0" role="button" aria-label="Alterar Cidade de Referência">
               <div class="settings-card-left">
@@ -391,22 +375,6 @@
                   <span class="settings-card-title" id="card-local"><span
                       class="skeleton-line skeleton-title-w150"></span></span>
                   <span class="settings-card-desc" id="card-local-subtitle">Localização Atual</span>
-                </div>
-              </div>
-              <div class="card-arrow-action" aria-hidden="true">
-                <i class="fa-solid fa-arrow-right"></i>
-              </div>
-            </div>
-
-            <!-- 4. Parashá Semanal -->
-            <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-parasha-wrapper"
-              tabindex="0" role="button" aria-label="Leitura e Detalhes da Parashá Semanal">
-              <div class="settings-card-left">
-                <i class="fa-solid fa-scroll settings-icon" data-icon="scroll" aria-hidden="true"></i>
-                <div class="settings-card-text">
-                  <span class="settings-card-title" id="card-parasha"><span
-                      class="skeleton-line skeleton-title-w140"></span></span>
-                  <span class="settings-card-desc" id="card-parasha-subtitle">Parashá Semanal</span>
                 </div>
               </div>
               <div class="card-arrow-action" aria-hidden="true">
@@ -423,7 +391,23 @@
           </div>
 
           <div class="study-cards-container event-cards-row">
-            <!-- 1. Torá (Chumash) -->
+            <!-- 1. Ciclo Anual (Parashá Semanal / Leitura Festiva) -->
+            <div class="settings-card event-card glass-panel not-ready scripture-card info-trigger" id="card-parasha-wrapper"
+              tabindex="0" role="button" aria-label="Leitura e Detalhes do Ciclo Anual">
+              <div class="settings-card-left">
+                <i class="fa-solid fa-scroll settings-icon" data-icon="scroll" aria-hidden="true"></i>
+                <div class="settings-card-text">
+                  <span class="settings-card-title" id="card-parasha"><span
+                      class="skeleton-line skeleton-title-w140"></span></span>
+                  <span class="settings-card-desc" id="card-parasha-subtitle">Ciclo Anual</span>
+                </div>
+              </div>
+              <div class="card-arrow-action" aria-hidden="true">
+                <i class="fa-solid fa-arrow-right"></i>
+              </div>
+            </div>
+
+            <!-- 2. Torá (Chumash) -->
             <div class="settings-card event-card glass-panel not-ready scripture-card" id="card-torah-wrapper" tabindex="0"
               role="button" aria-label="Ler a Porção da Torá">
               <div class="settings-card-left">
@@ -490,7 +474,7 @@
           <!-- Seção 3: Próximas Celebrações e Festividades -->
           <div class="festival-section-header">
             <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title">Festas</h2>
+              <h2 class="festival-section-title">Próximas Festas</h2>
             </div>
           </div>
           <div id="upcoming-events-grid" class="event-cards-row">
@@ -536,46 +520,6 @@
             </div>
           </div>
 
-          <!-- Seção 4: Apoio e Sustento do Projeto -->
-          <div class="festival-section-header">
-            <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title">Sustento</h2>
-            </div>
-          </div>
-          <div id="home-products-grid" class="event-cards-row">
-            <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
-              <div class="settings-card-left">
-                <div class="skeleton-line skeleton-icon-dot"></div>
-                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-68p"></span><span
-                    class="skeleton-line skeleton-line-sub w-38p"></span>
-                </div>
-              </div>
-            </div>
-            <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
-              <div class="settings-card-left">
-                <div class="skeleton-line skeleton-icon-dot"></div>
-                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-78p"></span><span
-                    class="skeleton-line skeleton-line-sub w-38p"></span>
-                </div>
-              </div>
-            </div>
-            <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
-              <div class="settings-card-left">
-                <div class="skeleton-line skeleton-icon-dot"></div>
-                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-58p"></span><span
-                    class="skeleton-line skeleton-line-sub w-38p"></span>
-                </div>
-              </div>
-            </div>
-            <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
-              <div class="settings-card-left">
-                <div class="skeleton-line skeleton-icon-dot"></div>
-                <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-72p"></span><span
-                    class="skeleton-line skeleton-line-sub w-38p"></span>
-                </div>
-              </div>
-            </div>
-          </div>
         </section>
 
 
@@ -584,10 +528,41 @@
              ========================================== -->
         <section id="view-festivals" class="app-tab-view" role="region" aria-label="Moadim & Festas de Israel">
 
+          <!-- Cartões Mestres: Data Hebraica & Apoio Voluntário -->
+          <div class="primary-cards-stack event-cards-row">
+            <!-- 1. Data Hebraica -->
+            <div class="settings-card event-card glass-panel not-ready info-trigger" id="card-hdate-wrapper"
+              tabindex="0" role="button" aria-label="Detalhes e Significado da Data Hebraica">
+              <div class="settings-card-left">
+                <i class="fa-solid fa-calendar-day settings-icon" data-icon="calendarDay" aria-hidden="true"></i>
+                <div class="settings-card-text">
+                  <span class="settings-card-title" id="card-hdate"><span
+                      class="skeleton-line skeleton-title-w100"></span></span>
+                  <span class="settings-card-desc" id="card-hdate-subtitle">Data Hebraica</span>
+                </div>
+              </div>
+              <div class="card-arrow-action" aria-hidden="true">
+                <i class="fa-solid fa-arrow-right"></i>
+              </div>
+            </div>
+
+            <!-- 2. Apoio Voluntário -->
+            <div id="home-products-grid" class="event-cards-row">
+              <div class="settings-card event-card glass-panel skeleton-card not-ready" aria-hidden="true">
+                <div class="settings-card-left">
+                  <div class="skeleton-line skeleton-icon-dot"></div>
+                  <div class="settings-card-text skeleton-text-container"><span class="skeleton-line skeleton-line-title w-68p"></span><span
+                      class="skeleton-line skeleton-line-sub w-38p"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- 1. Lista de Festas Bíblicas da Torá -->
           <div class="festival-section-header" id="header-biblical">
             <div class="festival-section-title-wrap">
-              <h2 class="festival-section-title" id="calendar-festivals-title">Festas</h2>
+              <h2 class="festival-section-title" id="calendar-festivals-title">Festas Bíblicas</h2>
             </div>
           </div>
           <div id="tanakh-festivals-list" class="event-cards-row">
@@ -679,7 +654,7 @@
        ========================================== -->
 
   <!-- 1. Zmanim Table Modal -->
-  <div id="zmanim-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="zmanim-modal-title">
+  <div id="zmanim-modal" class="modal-overlay is-hidden" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="zmanim-modal-title">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
@@ -693,7 +668,7 @@
   </div>
 
   <!-- 2. Location Search Modal (Ultra-Accessible) -->
-  <div id="location-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-label="Escolher Cidade de Referência">
+  <div id="location-modal" class="modal-overlay is-hidden" style="display: none;" role="dialog" aria-modal="true" aria-label="Escolher Cidade de Referência">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="search-container">
@@ -710,7 +685,7 @@
   </div>
 
   <!-- 12. Scripture Reading Modal -->
-  <div id="reading-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="reading-modal-title">
+  <div id="reading-modal" class="modal-overlay is-hidden" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="reading-modal-title">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
@@ -724,12 +699,12 @@
   </div>
 
   <!-- 13. Info Modal -->
-  <div id="info-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+  <div id="info-modal" class="modal-overlay is-hidden" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
         <h2 id="info-modal-title" class="reading-title">Informações e Estudos</h2>
-        <button id="back-info-btn" class="modal-back-btn is-hidden" aria-label="Voltar">
+        <button id="back-info-btn" class="modal-back-btn is-hidden" style="display: none;" aria-label="Voltar">
           <i class="fa-solid fa-chevron-left" data-icon="chevronLeft" aria-hidden="true"></i>
         </button>
         <button id="close-info-btn" class="modal-close-btn" aria-label="Fechar janela">
@@ -741,7 +716,7 @@
   </div>
 
   <!-- 14. Sefaria Random Reading Modal -->
-  <div id="sefaria-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="sefaria-modal-title">
+  <div id="sefaria-modal" class="modal-overlay is-hidden" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="sefaria-modal-title">
     <div class="modal-content glass-panel reading-modal-content">
       <div class="ios-sheet-grabber"></div>
       <div class="reading-header">
@@ -757,24 +732,7 @@
     </div>
   </div>
 
-  <!-- 15. Day Details Modal (Calendário Interativo) -->
-  <div id="day-details-modal" class="modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="day-details-title">
-    <div class="modal-content glass-panel reading-modal-content">
-      <div class="ios-sheet-grabber"></div>
-      <div class="reading-header">
-        <div>
-          <h2 id="day-details-title" class="reading-title">Detalhes do Dia</h2>
-          <span id="day-details-subtitle" class="reading-meta"></span>
-        </div>
-        <button id="close-day-details-btn" class="modal-close-btn" aria-label="Fechar janela">
-          <i class="fa-solid fa-xmark" data-icon="close" aria-hidden="true"></i>
-        </button>
-      </div>
-      <div id="day-details-body" class="reading-body"></div>
-    </div>
-  </div>
-
-  <script type="module" src="js/main.js?v=3.7.9"></script>
+  <script type="module" src="js/main.js?v=4.0.6"></script>
 </body>
 
 </html>

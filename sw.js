@@ -5,7 +5,7 @@
  * Garante funcionamento integral mesmo sem ligação à internet.
  */
 
-const SW_VERSION = 'yisrael-date-v3.9.7';
+const SW_VERSION = 'yisrael-date-v4.0.6';
 const APP_SHELL_CACHE = `app-shell-${SW_VERSION}`;
 
 const PRECACHE_ASSETS = [
@@ -14,6 +14,12 @@ const PRECACHE_ASSETS = [
     './404.html',
     './style.css',
     './manifest.json',
+    './data/calendar-diaspora.json',
+    './data/calendar-israel.json',
+    './data/sefaria-pt-catalog.json',
+    './data/parashat-readings.json',
+    './data/umami.json',
+    './data/manifest.json',
     './icon.webp',
     './icon-192.png',
     './icon.png',
@@ -43,7 +49,6 @@ const PRECACHE_ASSETS = [
     './js/services/telemetryService.js',
     './js/ui/appNavigation.js',
     './js/ui/components/homeProducts.js',
-    './js/ui/components/interactiveCalendar.js',
     './js/ui/components/shareModal.js',
     './js/ui/components/skeleton.js',
     './js/ui/components/supportCard.js',
@@ -56,9 +61,7 @@ const PRECACHE_ASSETS = [
     './js/ui/modals/modalManager.js',
     './js/ui/modals/readingModal.js',
     './js/ui/modals/sefariaModal.js',
-    './js/ui/modals/welcomeModal.js',
     './js/ui/pcDisplayManager.js',
-    './js/ui/premiumView.js',
     './js/ui/privacyView.js',
     './js/ui/solarArc.js',
     './js/ui/theme.js',
@@ -86,22 +89,6 @@ self.addEventListener('install', (event) => {
                     )
                 );
             }
-            // Em caso de nova versão, migra recursos da cache anterior que não tenham mudado
-            try {
-                const keys = await caches.keys();
-                for (const key of keys) {
-                    if (key !== APP_SHELL_CACHE) {
-                        const oldCache = await caches.open(key);
-                        const oldKeys = await oldCache.keys();
-                        for (const req of oldKeys) {
-                            const matched = await oldCache.match(req);
-                            if (matched && !(await cache.match(req))) {
-                                await cache.put(req, matched);
-                            }
-                        }
-                    }
-                }
-            } catch (e) { }
         }).then(() => self.skipWaiting())
     );
 });

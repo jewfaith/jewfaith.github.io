@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-09-29T12:05:39.405Z",
+  "configured": false,
+  "stats": {
+    "pageviews": 0,
+    "visitors": 0,
+    "visits": 0,
+    "bounces": 0,
+    "totaltime": 0
+  },
+  "countries": [],
+  "note": "Estatísticas centralizadas ativadas. Aguarda configuração do secret UMAMI_API_KEY."
+}

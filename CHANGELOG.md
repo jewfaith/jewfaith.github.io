@@ -3,6 +3,21 @@
 Todas as alterações notáveis neste projeto serão documentadas neste ficheiro.
 O formato é baseado no padrão [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
+## [4.0.2] - 2026-09-29
+
+### 🧹 Otimização de Produção e Limpeza Integral de Código Morto
+- **Remoção de Código Morto**:
+  - Eliminado módulo obsoleto `js/ui/premiumView.js` e funções no-op em `js/ui/modals/welcomeModal.js`.
+  - Removido `welcomeModal.js` da lista de pré-carregamento do Service Worker (`sw.js`).
+  - Removidas funções legadas não referenciadas (`openPremiumGatedModal`, `reopenModals` em `modals.js`, `openSupportOptionsModal`, `getSupportOptionsModalHtml` em `supportCard.js`, e aliases de geolocalização).
+- **Redução Significativa de Folhas de Estilos (`style.css`)**:
+  - Removidos mais de 1.250 linhas (~26 KB) de regras CSS não utilizadas (antigo Date Converter, Living Background com orbs, módulos herdados de Berachot, Tehilim, calendário legado, Shabbat Hub e bússola Mizrach).
+- **Saneamento de Assets e Ficheiros Temporários**:
+  - Removido asset órfão `qr-code.svg`.
+  - Eliminados ficheiros de teste e artefactos transitórios do diretório do projeto.
+- **Unificação de Cache-Busting**:
+  - Query strings de cache de produção unificadas em `v4.0.2` em `index.html`, `404.html`, `sw.js` e scripts de diagnóstico.
+
 ## [3.3.1] - 2026-09-19
 
 ### 📖 Literatura Judaica — Rotação ao Pôr do Sol

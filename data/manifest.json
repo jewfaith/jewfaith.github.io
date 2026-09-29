@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-09-29T19:09:06.738Z",
+  "sources": {
+    "calendarDiaspora": {
+      "file": "data/calendar-diaspora.json",
+      "status": "ok",
+      "eventsCount": 366
+    },
+    "calendarIsrael": {
+      "file": "data/calendar-israel.json",
+      "status": "ok",
+      "eventsCount": 376
+    },
+    "sefariaCatalog": {
+      "file": "data/sefaria-pt-catalog.json",
+      "status": "ok",
+      "worksCount": 68
+    },
+    "parashatReadings": {
+      "file": "data/parashat-readings.json",
+      "status": "ok",
+      "readingsCount": 27
+    },
+    "umamiAnalytics": {
+      "file": "data/umami.json",
+      "status": "ok",
+      "configured": false
+    }
+  }
+}

@@ -1,0 +1,430 @@
+{
+  "generatedAt": "2026-09-29T19:09:06.724Z",
+  "totalWorks": 68,
+  "catalog": {
+    "Mishnah": [
+      {
+        "title": "Mishnat Eretz Yisrael on Pirkei Avot",
+        "url": "/Mishnat_Eretz_Yisrael_on_Pirkei_Avot,_Introduction?ven=portuguese%7CMishnat+Eretz+Yisrael+em+Pirkei+Avot%2C+Introdu%C3%A7%C3%A3o+%5Bpt%5D&lang=bi",
+        "versionTitle": "Mishnat Eretz Yisrael em Pirkei Avot, Introdução [pt]",
+        "subCategory": "Mishnah > Modern Commentary on Mishnah"
+      },
+      {
+        "title": "A New Israeli Commentary on Pirkei Avot",
+        "url": "/A_New_Israeli_Commentary_on_Pirkei_Avot,_Introduction?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Modern Commentary on Mishnah"
+      },
+      {
+        "title": "Derekh Chayyim",
+        "url": "/Derekh_Chayyim,_Introduction?ven=portuguese%7CDerekh+Chayyim+em++portugu%C3%AAs+%5Bpt%5D&lang=bi",
+        "versionTitle": "Derekh Chayyim em  português [pt]",
+        "subCategory": "Mishnah > Acharonim on Mishnah"
+      },
+      {
+        "title": "Mishnah Berakhot",
+        "url": "/Mishnah_Berakhot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Zeraim"
+      },
+      {
+        "title": "Mishnah Peah",
+        "url": "/Mishnah_Peah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Zeraim"
+      },
+      {
+        "title": "Mishnah Demai",
+        "url": "/Mishnah_Demai.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Zeraim"
+      },
+      {
+        "title": "Mishnah Kilayim",
+        "url": "/Mishnah_Kilayim.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Zeraim"
+      },
+      {
+        "title": "Mishnah Sheviit",
+        "url": "/Mishnah_Sheviit.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Zeraim"
+      },
+      {
+        "title": "Mishnah Terumot",
+        "url": "/Mishnah_Terumot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Zeraim"
+      },
+      {
+        "title": "Mishnah Maasrot",
+        "url": "/Mishnah_Maasrot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Zeraim"
+      },
+      {
+        "title": "Mishnah Maaser Sheni",
+        "url": "/Mishnah_Maaser_Sheni.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Zeraim"
+      },
+      {
+        "title": "Mishnah Challah",
+        "url": "/Mishnah_Challah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Zeraim"
+      },
+      {
+        "title": "Mishnah Orlah",
+        "url": "/Mishnah_Orlah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Zeraim"
+      },
+      {
+        "title": "Mishnah Bikkurim",
+        "url": "/Mishnah_Bikkurim.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Zeraim"
+      },
+      {
+        "title": "Mishnah Shabbat",
+        "url": "/Mishnah_Shabbat.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Eruvin",
+        "url": "/Mishnah_Eruvin.1?ven=portuguese%7CTranslated+by+A.Yossef+Stopa%2C+2023+%5Bpt%5D&lang=bi",
+        "versionTitle": "Translated by A.Yossef Stopa, 2023 [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Pesachim",
+        "url": "/Mishnah_Pesachim.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Shekalim",
+        "url": "/Mishnah_Shekalim.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Yoma",
+        "url": "/Mishnah_Yoma.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Sukkah",
+        "url": "/Mishnah_Sukkah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Beitzah",
+        "url": "/Mishnah_Beitzah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Rosh Hashanah",
+        "url": "/Mishnah_Rosh_Hashanah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Ta'anit",
+        "url": "/Mishnah_Ta'anit.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Megillah",
+        "url": "/Mishnah_Megillah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Moed Katan",
+        "url": "/Mishnah_Moed_Katan.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Chagigah",
+        "url": "/Mishnah_Chagigah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Moed"
+      },
+      {
+        "title": "Mishnah Yevamot",
+        "url": "/Mishnah_Yevamot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nashim"
+      },
+      {
+        "title": "Mishnah Ketubot",
+        "url": "/Mishnah_Ketubot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nashim"
+      },
+      {
+        "title": "Mishnah Nedarim",
+        "url": "/Mishnah_Nedarim.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nashim"
+      },
+      {
+        "title": "Mishnah Nazir",
+        "url": "/Mishnah_Nazir.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nashim"
+      },
+      {
+        "title": "Mishnah Sotah",
+        "url": "/Mishnah_Sotah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nashim"
+      },
+      {
+        "title": "Mishnah Gittin",
+        "url": "/Mishnah_Gittin.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nashim"
+      },
+      {
+        "title": "Mishnah Kiddushin",
+        "url": "/Mishnah_Kiddushin.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nashim"
+      },
+      {
+        "title": "Mishnah Bava Kamma",
+        "url": "/Mishnah_Bava_Kamma.1?ven=portuguese%7C%5Bpt-br%5D&lang=bi",
+        "versionTitle": "[pt-br]",
+        "subCategory": "Mishnah > Seder Nezikin"
+      },
+      {
+        "title": "Mishnah Bava Metzia",
+        "url": "/Mishnah_Bava_Metzia.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nezikin"
+      },
+      {
+        "title": "Mishnah Bava Batra",
+        "url": "/Mishnah_Bava_Batra.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nezikin"
+      },
+      {
+        "title": "Mishnah Sanhedrin",
+        "url": "/Mishnah_Sanhedrin.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nezikin"
+      },
+      {
+        "title": "Mishnah Makkot",
+        "url": "/Mishnah_Makkot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nezikin"
+      },
+      {
+        "title": "Mishnah Shevuot",
+        "url": "/Mishnah_Shevuot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nezikin"
+      },
+      {
+        "title": "Mishnah Eduyot",
+        "url": "/Mishnah_Eduyot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nezikin"
+      },
+      {
+        "title": "Mishnah Avodah Zarah",
+        "url": "/Mishnah_Avodah_Zarah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nezikin"
+      },
+      {
+        "title": "Pirkei Avot",
+        "url": "/Pirkei_Avot.1?ven=portuguese%7C%C3%89tica+dos+Pais%2C+Tradu%C3%A7%C3%A3o+por+Bruno+Manuel+dos+Anjos+Marques+Albano%2C+2023+%5Bpt%5D&lang=bi",
+        "versionTitle": "Ética dos Pais, Tradução por Bruno Manuel dos Anjos Marques Albano, 2023 [pt]",
+        "subCategory": "Mishnah > Seder Nezikin"
+      },
+      {
+        "title": "Mishnah Horayot",
+        "url": "/Mishnah_Horayot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Nezikin"
+      },
+      {
+        "title": "Mishnah Zevachim",
+        "url": "/Mishnah_Zevachim.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Kodashim"
+      },
+      {
+        "title": "Mishnah Chullin",
+        "url": "/Mishnah_Chullin.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Kodashim"
+      },
+      {
+        "title": "Mishnah Bekhorot",
+        "url": "/Mishnah_Bekhorot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Kodashim"
+      },
+      {
+        "title": "Mishnah Arakhin",
+        "url": "/Mishnah_Arakhin.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Kodashim"
+      },
+      {
+        "title": "Mishnah Temurah",
+        "url": "/Mishnah_Temurah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Kodashim"
+      },
+      {
+        "title": "Mishnah Keritot",
+        "url": "/Mishnah_Keritot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Kodashim"
+      },
+      {
+        "title": "Mishnah Meilah",
+        "url": "/Mishnah_Meilah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Kodashim"
+      },
+      {
+        "title": "Mishnah Tamid",
+        "url": "/Mishnah_Tamid.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Kodashim"
+      },
+      {
+        "title": "Mishnah Middot",
+        "url": "/Mishnah_Middot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Kodashim"
+      },
+      {
+        "title": "Mishnah Kinnim",
+        "url": "/Mishnah_Kinnim.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Kodashim"
+      },
+      {
+        "title": "Mishnah Mikvaot",
+        "url": "/Mishnah_Mikvaot.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Mishnah > Seder Tahorot"
+      }
+    ],
+    "Talmud": [
+      {
+        "title": "Berakhot",
+        "url": "/Berakhot.2a?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Talmud > Bavli"
+      },
+      {
+        "title": "Shabbat",
+        "url": "/Shabbat.2a?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Talmud > Bavli"
+      },
+      {
+        "title": "Yevamot",
+        "url": "/Yevamot.2a?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Talmud > Bavli"
+      }
+    ],
+    "Halakhah": [
+      {
+        "title": "Shulchan Arukh, Introduction",
+        "url": "/Shulchan_Arukh,_Introduction?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Halakhah > Shulchan Arukh"
+      },
+      {
+        "title": "Shulchan Arukh, Orach Chayim",
+        "url": "/Shulchan_Arukh,_Orach_Chayim.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Halakhah > Shulchan Arukh"
+      },
+      {
+        "title": "Ben Ish Hai",
+        "url": "/Ben_Ish_Hai,_Introduction?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Halakhah > Uncategorized"
+      }
+    ],
+    "Tosefta": [],
+    "Midrash": [
+      {
+        "title": "Sifrei Zuta; Midrashah shel Lod",
+        "url": "/Sifrei_Zuta;_Midrashah_shel_Lod,_Preface?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Midrash > Modern Texts"
+      },
+      {
+        "title": "Bereshit Rabbah",
+        "url": "/Bereshit_Rabbah.1?ven=portuguese%7CMidrash+Rabbah+-+Portuguese+%5Bpt%5D&lang=bi",
+        "versionTitle": "Midrash Rabbah - Portuguese [pt]",
+        "subCategory": "Midrash > Aggadah"
+      },
+      {
+        "title": "Mekhilta DeRabbi Shimon Ben Yochai",
+        "url": "/Mekhilta_DeRabbi_Shimon_Ben_Yochai.3?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Midrash > Halakhah"
+      },
+      {
+        "title": "Mekhilta DeRabbi Yishmael",
+        "url": "/Mekhilta_DeRabbi_Yishmael,_Tractate_Pischa.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Midrash > Halakhah"
+      }
+    ],
+    "Musar": [],
+    "Jewish Thought": [],
+    "Chasidut": [
+      {
+        "title": "Tiferet Yosef",
+        "url": "/Tiferet_Yosef,_Rosh_Hashanah?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Chasidut > Izhbitz"
+      }
+    ],
+    "Kabbalah": [
+      {
+        "title": "Sefer Etz Chaim",
+        "url": "/Sefer_Etz_Chaim,_Shaar_HaKlalim.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Kabbalah > Arizal and Chaim Vital"
+      },
+      {
+        "title": "Sefer Yetzirah",
+        "url": "/Sefer_Yetzirah.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Kabbalah > Sefer Yetzirah"
+      },
+      {
+        "title": "Zohar",
+        "url": "/Zohar,_Introduction.1?ven=portuguese%7CPublicado+em+5784%2C+Saymon+Pires+da+Silva+%5Bpt%5D&lang=bi",
+        "versionTitle": "Publicado em 5784, Saymon Pires da Silva [pt]",
+        "subCategory": "Kabbalah > Zohar"
+      }
+    ],
+    "Responsa": []
+  }
+}
