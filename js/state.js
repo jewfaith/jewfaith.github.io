@@ -15,6 +15,7 @@ export const state = {
     currentZmanim: null,
     tomorrowZmanim: null,
     sunsetTimeout: null,
+    isAfterSunset: false,
     // Opcional: estado do tema solar
     theme: {
         current: 'day',          // 'day' | 'afternoon' | 'night'

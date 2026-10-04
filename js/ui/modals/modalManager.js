@@ -212,16 +212,22 @@ export function closeModalSafely(modal, skipHistory = false) {
         sessionStorage.removeItem('openInfoModalTitle');
     } catch (e) { }
 
-    const backBtn = document.getElementById('back-info-btn');
-    if (backBtn) {
-        backBtn.classList.add('is-hidden');
-        backBtn.style.display = 'none';
+    if (modal.id === 'info-modal') {
+        const backBtn = document.getElementById('back-info-btn');
+        if (backBtn) {
+            backBtn.classList.remove('is-active');
+            backBtn.classList.add('is-hidden');
+            backBtn.style.display = 'none';
+        }
+        const closeBtn = document.getElementById('close-info-btn');
+        if (closeBtn) {
+            closeBtn.classList.remove('is-hidden');
+            closeBtn.style.display = 'inline-flex';
+        }
     }
-    const closeBtn = document.getElementById('close-info-btn');
-    if (closeBtn) {
-        closeBtn.classList.remove('is-hidden');
-        closeBtn.style.display = '';
-    }
+
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const closeDuration = prefersReducedMotion ? 10 : 230;
 
     setTimeout(() => {
         modal.classList.remove('is-open');
@@ -241,7 +247,10 @@ export function closeModalSafely(modal, skipHistory = false) {
             frames.forEach(f => {
                 try { f.src = 'about:blank'; } catch (e) { }
             });
-            import('./infoModal.js').then(m => m.clearKofiTimers?.()).catch(() => { });
+            import('./infoModal.js').then(m => {
+                m.clearKofiTimers?.();
+                m.resetInfoModalState?.();
+            }).catch(() => { });
         }
         if (currentActiveModal === modal) {
             currentActiveModal = null;
@@ -265,7 +274,7 @@ export function closeModalSafely(modal, skipHistory = false) {
                 } catch (e) { }
             }
         }
-    }, 200);
+    }, closeDuration);
 }
 
 /**
@@ -276,18 +285,21 @@ export function closeModalDirectly(modal) {
     modal.classList.remove('is-open');
     modal.classList.add('is-hidden');
     modal.classList.remove('is-closing');
-    modal.classList.remove('has-kofi-embed');
-    modal.classList.remove('has-back-nav');
-    modal.style.display = 'none';
-    const backBtn = document.getElementById('back-info-btn');
-    if (backBtn) {
-        backBtn.classList.add('is-hidden');
-        backBtn.style.display = 'none';
-    }
-    const closeBtn = document.getElementById('close-info-btn');
-    if (closeBtn) {
-        closeBtn.classList.remove('is-hidden');
-        closeBtn.style.display = '';
+    if (modal.id === 'info-modal') {
+        modal.classList.remove('has-kofi-embed');
+        modal.classList.remove('has-back-nav');
+        const backBtn = document.getElementById('back-info-btn');
+        if (backBtn) {
+            backBtn.classList.remove('is-active');
+            backBtn.classList.add('is-hidden');
+            backBtn.style.display = 'none';
+        }
+        const closeBtn = document.getElementById('close-info-btn');
+        if (closeBtn) {
+            closeBtn.classList.remove('is-hidden');
+            closeBtn.style.display = 'inline-flex';
+        }
+        import('./infoModal.js').then(m => m.resetInfoModalState?.()).catch(() => { });
     }
     const content = modal.querySelector('.modal-content, .reading-modal-content');
     if (content) {

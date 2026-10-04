@@ -214,7 +214,6 @@ body {
 button,
 [role="button"],
 .app-tab-btn,
-.desktop-nav-btn,
 .event-card,
 .settings-card,
 .modal-close-btn,
@@ -321,6 +320,15 @@ body.modal-open {
     outline-offset: 0 !important;
 }
 
+#info-modal.has-back-nav #back-info-btn,
+#info-modal.has-back-nav .modal-back-btn {
+    display: inline-flex !important;
+}
+
+#info-modal.has-back-nav #close-info-btn {
+    display: none !important;
+}
+
 .modal-back-btn:focus,
 .modal-back-btn:focus-visible {
     outline: none !important;
@@ -377,15 +385,6 @@ body.modal-open {
     width: 28px;
     height: 28px;
     border-radius: 8px;
-    object-fit: cover;
-    display: block;
-    flex-shrink: 0;
-}
-
-.sidebar-brand-img {
-    width: 32px;
-    height: 32px;
-    border-radius: 9px;
     object-fit: cover;
     display: block;
     flex-shrink: 0;
@@ -582,14 +581,6 @@ body.modal-open {
    ========================================================================== */
 
 @media (max-width: 767px) {
-
-    /* Hide Desktop Elements on Mobile */
-    .desktop-sidebar,
-    .desktop-workspace-header,
-    .privacy-view-nav-header.desktop-only {
-        display: none !important;
-    }
-
     .app-layout {
         position: relative;
         z-index: 1;
@@ -841,7 +832,7 @@ body.modal-open {
         box-sizing: border-box;
     }
 
-    .modal-overlay.is-open:not(.is-hidden):not(.is-closing) {
+    .modal-overlay.is-open:not(.is-hidden) {
         display: flex !important;
         justify-content: center;
         align-items: flex-end;
@@ -923,14 +914,14 @@ body.modal-open {
 
     .modal-overlay.is-closing {
         opacity: 0 !important;
-        transition: opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
+        transition: opacity 0.22s cubic-bezier(0.25, 1, 0.5, 1) !important;
     }
 
     .modal-content.is-closing,
     .reading-modal-content.is-closing {
         transform: translate3d(0, 100%, 0) !important;
         opacity: 0 !important;
-        transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.2s ease !important;
+        transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.22s ease !important;
     }
 }
 
@@ -1037,12 +1028,11 @@ body.modal-open {
     display: none !important;
 }
 
-.modal-overlay.is-open:not(.is-hidden):not(.is-closing) {
+.modal-overlay.is-open:not(.is-hidden) {
     display: flex !important;
 }
 
 .modal-overlay.is-hidden,
-.modal-overlay.is-closing,
 .modal-overlay[style*="display: none"],
 .modal-overlay[style*="display:none"],
 .modal-overlay.hidden {
@@ -1071,427 +1061,10 @@ body:not(.loaded) #info-modal {
     display: none !important;
 }
 
-#info-modal.has-back-nav .modal-back-btn:not(.is-hidden),
+#info-modal.has-back-nav .modal-back-btn,
+#info-modal.has-back-nav #back-info-btn,
 .modal-back-btn.is-active:not(.is-hidden) {
     display: inline-flex !important;
-}
-
-/* ==========================================================================
-   8. PC / DESKTOP / MAC STUDIO LAYOUT (>= 768px) • MACOS GLASS STUDIO
-   ========================================================================== */
-
-@media (min-width: 768px) {
-
-    /* Hide Mobile Elements on PC */
-    .mobile-only-header {
-        display: none !important;
-    }
-
-    .mobile-only-tabbar,
-    .app-floating-tabbar {
-        display: none !important;
-    }
-
-    .ios-sheet-grabber {
-        display: none !important;
-    }
-
-    .privacy-view-nav-header.mobile-only {
-        display: none !important;
-    }
-
-    html,
-    body {
-        min-height: 100vh;
-    }
-
-    .app-layout {
-        position: relative;
-        z-index: 1;
-        width: 100%;
-        max-width: 1220px;
-        margin: 0 auto;
-        min-height: 100vh;
-        height: 100vh;
-        max-height: 100vh;
-        display: flex;
-        flex-direction: row;
-        gap: 28px;
-        padding: 24px 30px;
-        box-sizing: border-box;
-    }
-
-    .desktop-sidebar {
-        position: sticky;
-        top: 24px;
-        width: 260px;
-        min-width: 260px;
-        height: calc(100vh - 48px) !important;
-        max-height: calc(100vh - 48px) !important;
-        flex-shrink: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 22px 18px 18px;
-        border-radius: 24px;
-        box-sizing: border-box;
-        background: linear-gradient(180deg, var(--card-bg-start) 0%, var(--card-bg-end) 100%);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        overflow-y: auto;
-        scrollbar-width: none;
-    }
-
-    .desktop-sidebar::-webkit-scrollbar {
-        display: none;
-    }
-
-    .sidebar-top {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-    }
-
-    .sidebar-brand-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 4px 4px 16px;
-        border-bottom: 1px solid var(--card-border-color);
-    }
-
-    .sidebar-brand-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        flex-shrink: 0;
-        object-fit: cover;
-    }
-
-    :root[data-theme="day"] .sidebar-brand-icon {
-        border-color: rgba(140, 83, 27, 0.18);
-    }
-
-    .sidebar-brand-text {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        min-width: 0;
-    }
-
-    .sidebar-brand-text .app-brand-title {
-        font-family: 'Poppins', var(--font-heading), sans-serif;
-        font-size: 1.22rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        margin: 0;
-        color: var(--text-primary);
-        line-height: 1.15;
-    }
-
-    .sidebar-brand-subtitle {
-        font-family: 'Poppins', sans-serif;
-        font-size: 11px;
-        font-weight: 600;
-        color: var(--text-muted);
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-    }
-
-    .sidebar-nav {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin: 16px 0;
-        flex: 1;
-    }
-
-    .desktop-nav-btn {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        min-height: 44px;
-        padding: 0 12px;
-        border-radius: 13px;
-        background: transparent;
-        color: var(--text-muted);
-        font-family: 'Poppins', var(--font-family), sans-serif;
-        font-size: 13.5px;
-        font-weight: 600;
-        cursor: pointer;
-        text-align: left;
-        width: 100%;
-        box-sizing: border-box;
-        transition: background 0.16s ease, color 0.16s ease, transform 0.14s cubic-bezier(0.25, 1, 0.5, 1);
-        will-change: transform;
-    }
-
-    .desktop-nav-btn:active {
-        transform: scale(0.98);
-    }
-
-    .desktop-nav-btn.active {
-        background: var(--card-bg-start);
-        color: var(--accent-color);
-        font-weight: 700;
-        border-color: var(--card-border-hover);
-    }
-
-    .nav-icon-wrap {
-        width: 32px;
-        height: 32px;
-        border-radius: 10px;
-        background: var(--modal-input-bg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    .desktop-nav-btn.active .nav-icon-wrap {
-        background: var(--accent-bg);
-    }
-
-    .nav-icon-wrap i {
-        font-size: 14px;
-        color: var(--text-muted);
-    }
-
-    .desktop-nav-btn.active .nav-icon-wrap i {
-        color: var(--accent-color);
-    }
-
-    .nav-btn-label {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .sidebar-footer {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        padding-top: 16px;
-        border-top: 1px solid var(--card-border-color);
-    }
-
-    .desktop-mode-pill-group {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 3px;
-        background: var(--modal-input-bg);
-        padding: 3px;
-        border-radius: 14px;
-
-        box-sizing: border-box;
-        width: 100%;
-    }
-
-    .desktop-mode-pill {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        min-height: 32px;
-        padding: 0 6px;
-        border-radius: 10px;
-        background: transparent;
-        color: var(--text-muted);
-        cursor: pointer;
-        font-size: 11.5px;
-        font-weight: 600;
-        font-family: 'Poppins', var(--font-family), sans-serif;
-        transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), background 0.15s ease, color 0.15s ease;
-        will-change: transform;
-    }
-
-    .desktop-mode-pill:active {
-        transform: scale(0.95);
-    }
-
-    .desktop-mode-pill i {
-        font-size: 11.5px;
-    }
-
-    .desktop-mode-pill.active {
-        background: var(--card-bg-start);
-        color: var(--accent-color);
-        border-color: var(--card-border-hover);
-        font-weight: 700;
-    }
-
-    /* Main Spatial Workspace on Desktop */
-    .app-main-area {
-        flex: 1;
-        min-width: 0;
-        height: 100% !important;
-        max-height: 100% !important;
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-        padding-top: 0 !important;
-        padding-right: 12px;
-        padding-bottom: 40px;
-        scrollbar-gutter: stable;
-        scrollbar-width: thin;
-        scrollbar-color: var(--card-border-hover) transparent;
-    }
-
-    .app-main-area::-webkit-scrollbar {
-        width: 7px;
-    }
-
-    .app-main-area::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .app-main-area::-webkit-scrollbar-thumb {
-        background: var(--card-border-color);
-        border-radius: 999px;
-    }
-
-    .desktop-workspace-header {
-        display: none !important;
-    }
-
-    .app-content-views {
-        width: 100%;
-        max-width: 540px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .dashboard-glance-grid,
-    .event-cards-row,
-    #tanakh-festivals-list,
-    #rabbinic-festivals-list,
-    #month-festivals-list,
-    .festivals-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .festival-section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 2px;
-        margin-top: 40px;
-        margin-bottom: 10px;
-    }
-
-    .festival-section-title {
-        font-size: 0.98rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        letter-spacing: -0.015em;
-        line-height: 1.3;
-        margin: 0;
-    }
-
-    /* MODO PAINEL EXCLUSIVO NO COMPUTADOR (SIDE DRAWER À DIREITA) */
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        z-index: 1000005;
-        padding: 16px 20px 16px 0;
-        box-sizing: border-box;
-    }
-
-    .modal-overlay.is-open:not(.is-hidden):not(.is-closing) {
-        display: flex !important;
-        justify-content: flex-end;
-        align-items: stretch;
-        animation: desktop-drawer-overlay-in 0.22s ease;
-    }
-
-    .modal-content,
-    .reading-modal-content {
-        width: 540px !important;
-        max-width: calc(100vw - 320px) !important;
-        height: 100% !important;
-        max-height: 100% !important;
-        border-radius: 26px !important;
-        padding: 24px 28px !important;
-        background: var(--modal-bg) !important;
-        animation: desktop-drawer-slide-in 0.26s cubic-bezier(0.25, 1, 0.5, 1) !important;
-        display: flex !important;
-        flex-direction: column !important;
-        overflow: hidden !important;
-        box-sizing: border-box !important;
-        will-change: transform, opacity;
-        transform: translateZ(0);
-        backface-visibility: hidden;
-    }
-
-    @keyframes desktop-drawer-overlay-in {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
-    }
-
-    @keyframes desktop-drawer-slide-in {
-        from {
-            opacity: 0;
-            transform: translate3d(36px, 0, 0);
-        }
-
-        to {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
-        }
-    }
-
-    .modal-overlay.is-closing {
-        opacity: 0 !important;
-        transition: opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
-    }
-
-    .modal-content.is-closing,
-    .reading-modal-content.is-closing {
-        opacity: 0 !important;
-        transform: translate3d(36px, 0, 0) !important;
-        transition: opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1), transform 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
-    }
-}
-
-/* Breakpoint adicional para telas grandes (>= 1440px) */
-@media (min-width: 1440px) {
-    .app-layout {
-        max-width: 1340px;
-        gap: 32px;
-        padding: 28px 36px;
-    }
-}
-
-/* Breakpoint adicional para telas médias / iPad landscape (768px a 1023px) */
-@media (min-width: 768px) and (max-width: 1023px) {
-    .app-layout {
-        max-width: 100%;
-        gap: 16px;
-        padding: 16px 20px;
-    }
-
-    .desktop-sidebar {
-        width: 220px !important;
-        min-width: 220px !important;
-        padding: 18px 14px !important;
-    }
 }
 
 /* ==========================================================================
@@ -2234,23 +1807,6 @@ i.settings-icon {
     background: var(--accent-bg);
 }
 
-.desktop-settings-pill {
-    width: 100%;
-    height: 38px;
-    border-radius: 12px;
-    background: var(--modal-input-bg);
-
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: var(--font-size-xs);
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 8px;
-}
-
 /* Scripture Reader */
 .verses-container {
     display: flex;
@@ -2684,14 +2240,6 @@ body.loaded .event-card.not-ready {
     margin-top: 0 !important;
 }
 
-@media (min-width: 768px) {
-    .festival-section-header {
-        margin-top: 40px;
-        margin-bottom: 10px;
-        padding: 0 2px;
-    }
-}
-
 .festival-section-title-wrap {
     display: flex;
     align-items: center;
@@ -2705,13 +2253,6 @@ body.loaded .event-card.not-ready {
     letter-spacing: -0.015em;
     line-height: 1.3;
     margin: 0;
-}
-
-@media (min-width: 768px) {
-    .festival-section-title {
-        font-size: 0.98rem;
-        letter-spacing: -0.015em;
-    }
 }
 
 .festival-section-badge {
@@ -3141,15 +2682,6 @@ body.loaded .event-card.not-ready {
     z-index: 20;
 }
 
-@media (min-width: 768px) {
-    .system-error-block {
-        gap: 14px;
-        margin: 0 0 16px 0;
-        padding: 14px 18px;
-        border-radius: 18px;
-    }
-}
-
 .system-error-block.is-visible {
     opacity: 1;
 }
@@ -3517,24 +3049,6 @@ body.loaded .app-page-loader {
     overflow: hidden !important;
 }
 
-@media (min-width: 769px) {
-    #info-modal.has-kofi-embed {
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 16px !important;
-    }
-
-    #info-modal.has-kofi-embed .modal-content,
-    #info-modal.has-kofi-embed .reading-modal-content {
-        width: min(840px, 94vw) !important;
-        max-width: min(840px, 94vw) !important;
-        height: min(920px, 95vh) !important;
-        max-height: min(920px, 95vh) !important;
-        border-radius: 24px !important;
-        padding: 18px 24px 20px !important;
-    }
-}
-
 #info-modal.has-kofi-embed .reading-header {
     flex-shrink: 0 !important;
     margin-bottom: 6px !important;
@@ -3845,7 +3359,7 @@ body.loaded .app-page-loader {
 .event-card,
 .settings-card,
 .scripture-card,
-.glass-panel:not(#system-error-block):not(.mobile-only-header):not(.modal-content):not(.reading-modal-content),
+.glass-panel:not(#system-error-block):not(.mobile-only-header):not(.modal-content):not(.reading-modal-content):not(.pc-block-card),
 .beracha-card,
 .shabbat-hero-card,
 .shabbat-blessing-card,
@@ -3872,7 +3386,7 @@ body.loaded .app-page-loader {
 :root[data-theme="day"] .event-card,
 :root[data-theme="day"] .settings-card,
 :root[data-theme="day"] .scripture-card,
-:root[data-theme="day"] .glass-panel:not(#system-error-block):not(.mobile-only-header):not(.modal-content):not(.reading-modal-content),
+:root[data-theme="day"] .glass-panel:not(#system-error-block):not(.mobile-only-header):not(.modal-content):not(.reading-modal-content):not(.pc-block-card),
 :root[data-theme="day"] .beracha-card,
 :root[data-theme="day"] .shabbat-hero-card,
 :root[data-theme="day"] .shabbat-blessing-card,
@@ -4625,15 +4139,12 @@ body.redirect-body {
 }
 
 /* Normalização de Links Semânticos de Navegação e Marca (Sem Sublinhado) */
-a.sidebar-brand-wrapper,
 a.mobile-brand-group,
-a.desktop-nav-btn,
 a.app-tab-btn {
     text-decoration: none !important;
     color: inherit;
 }
 
-.sidebar-brand-wrapper picture,
 .mobile-brand-group picture,
 .redirect-card picture {
     display: inline-flex;
@@ -4685,7 +4196,7 @@ body.modal-open {
 
 .mobile-theme-btn::after,
 .modal-close-btn::after,
-.modal-back-btn::after::after {
+.modal-back-btn::after {
     content: "";
     position: absolute;
     inset: -6px;
@@ -4749,7 +4260,7 @@ body.modal-open {
 #info-modal.has-back-nav .modal-back-btn:not(.is-hidden),
 .modal-back-btn.is-active:not(.is-hidden),
 .mobile-theme-btn:not(.is-hidden),
-.cal-nav-btn:not(.is-hidden):not(.is-hidden),
+.cal-nav-btn:not(.is-hidden),
 .system-error-item-icon:not(.is-hidden),
 .wifi-required-icon-wrap:not(.is-hidden),
 .thematic-star-loader:not(.is-hidden) {
@@ -4772,7 +4283,7 @@ body.modal-open {
 .modal-close-btn i::before,
 .modal-back-btn i::before,
 .mobile-theme-btn i::before,
-.cal-nav-btn i::before i::before,
+.cal-nav-btn i::before,
 .thematic-star-loader i::before {
     line-height: 1 !important;
     display: block;
@@ -4858,4 +4369,186 @@ body.modal-open {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-}
+}
+
+/* ==========================================================================
+   BLOQUEIO TOTAL NO COMPUTADOR (PC)
+   Esta aplicação é de utilização exclusiva em dispositivos móveis (smartphones).
+   No PC, o funcionamento é terminantemente desativado.
+   ========================================================================== */
+#pc-block-screen {
+    display: none !important;
+}
+
+@media (min-width: 768px) {
+    #pc-block-screen {
+        display: flex !important;
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background: radial-gradient(circle at 50% 25%, #131722 0%, #07090e 100%) !important;
+        backdrop-filter: blur(32px) !important;
+        -webkit-backdrop-filter: blur(32px) !important;
+        z-index: 2147483647 !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 24px !important;
+        box-sizing: border-box !important;
+        pointer-events: all !important;
+        overflow: hidden !important;
+    }
+
+    .app-layout,
+    .modal-overlay,
+    .app-floating-tabbar,
+    .mobile-only-header,
+    #app-page-loader {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    html, body {
+        overflow: hidden !important;
+        height: 100% !important;
+        max-height: 100vh !important;
+        background: #07090e !important;
+    }
+}
+
+html.is-pc-blocked #pc-block-screen {
+    display: flex !important;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: radial-gradient(circle at 50% 25%, #131722 0%, #07090e 100%) !important;
+    backdrop-filter: blur(32px) !important;
+    -webkit-backdrop-filter: blur(32px) !important;
+    z-index: 2147483647 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px !important;
+    box-sizing: border-box !important;
+    pointer-events: all !important;
+    overflow: hidden !important;
+}
+
+html.is-pc-blocked .app-layout,
+html.is-pc-blocked .modal-overlay,
+html.is-pc-blocked .app-floating-tabbar,
+html.is-pc-blocked .mobile-only-header,
+html.is-pc-blocked #app-page-loader {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+html.is-pc-blocked,
+html.is-pc-blocked body {
+    overflow: hidden !important;
+    height: 100% !important;
+    max-height: 100vh !important;
+    background: #07090e !important;
+}
+
+.pc-block-card {
+    max-width: 440px !important;
+    width: 100% !important;
+    padding: 40px 32px !important;
+    border-radius: 28px !important;
+    text-align: center !important;
+    background: rgba(22, 27, 44, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08) inset !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 16px !important;
+    animation: pcBlockFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-sizing: border-box !important;
+}
+
+@keyframes pcBlockFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.pc-block-badge {
+    width: 72px !important;
+    height: 72px !important;
+    border-radius: 22px !important;
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.18), rgba(56, 189, 248, 0.18)) !important;
+    border: 1px solid rgba(234, 179, 8, 0.35) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 32px !important;
+    color: #eab308 !important;
+    box-shadow: 0 10px 30px rgba(234, 179, 8, 0.18) !important;
+    margin-bottom: 4px !important;
+}
+
+.pc-block-brand {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: rgba(255, 255, 255, 0.65) !important;
+    letter-spacing: 1.5px !important;
+    text-transform: uppercase !important;
+}
+
+.pc-block-brand img {
+    border-radius: 10px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.pc-block-title {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    margin: 4px 0 0 !important;
+    line-height: 1.3 !important;
+    letter-spacing: -0.3px !important;
+}
+
+.pc-block-desc {
+    font-size: 14.5px !important;
+    line-height: 1.6 !important;
+    color: #cbd5e1 !important;
+    margin: 0 !important;
+}
+
+.pc-block-hint {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    color: #94a3b8 !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    padding: 14px 18px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    margin-top: 4px !important;
+}
+
+.pc-block-url-container {
+    margin-top: 4px !important;
+    padding: 8px 18px !important;
+    border-radius: 100px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #38bdf8 !important;
+    user-select: all !important;
+}
+

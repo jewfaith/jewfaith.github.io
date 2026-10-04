@@ -52,12 +52,6 @@ export async function openReadingModal(ref, cardTitle, options = {}) {
 
         titleEl.textContent = (cardTitle && cardTitle.trim()) ? cardTitle.trim() : (ref || 'Leitura Sagrada');
 
-        if (isCache) {
-            console.log(`[Scripture] Leitura servida da cache: ${translation} • ${ref}`);
-        } else {
-            console.log(`[Scripture] Leitura carregada via API: ${translation} • ${ref}`);
-        }
-
         let html = '<div class="verses-container">';
         let currentSectionBook = null;
         const hasMultipleBooks = new Set(verses.map(v => v.bookName).filter(Boolean)).size > 1;

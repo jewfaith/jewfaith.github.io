@@ -6,7 +6,7 @@ import { getPersistentSetting } from '../utils/persistence.js';
 import { HEBREW_MONTHS_PT } from '../domain/constants.js';
 import { getLocationDateParts } from '../domain/formatters.js';
 import { getHebrewDateFromGregorian } from '../domain/biblicalCalendar.js';
-import { FESTIVAL_DURATION_MS, calculateOfflineZmanim } from '../domain/halacha.js';
+import { FESTIVAL_DURATION_MS, FESTIVAL_ANTICIPATION_MS, calculateOfflineZmanim } from '../domain/halacha.js';
 import { GREGORIAN_MONTHS_PT } from './timers.js';
 
 export function openZmanimModal(options = {}) {
@@ -15,9 +15,8 @@ export function openZmanimModal(options = {}) {
     const bodyEl = document.getElementById('zmanim-modal-body');
     if (!modal || !titleEl || !bodyEl) return;
 
-    const cardTitle = options.cardTitle ||
-        document.getElementById('solar-hero-city-title')?.textContent?.trim() ||
-        "Sha'ah Zmanit";
+    const fallbackTitle = document.getElementById('solar-hero-city-title')?.textContent?.trim() || 'Sha\'ah Zmanit';
+    const cardTitle = options.cardTitle || fallbackTitle;
     titleEl.textContent = cardTitle;
     bodyEl.innerHTML = generateZmanimTableHTML();
     bodyEl.scrollTop = 0;
@@ -69,8 +68,9 @@ export function renderZmanimTable() {
     const zmanimModal = document.getElementById('zmanim-modal');
     if (zmanimModal && zmanimModal.classList.contains('is-open') && !zmanimModal.classList.contains('is-hidden')) {
         const titleEl = document.getElementById('zmanim-modal-title');
+        const heroTitle = document.getElementById('solar-hero-city-title')?.textContent?.trim() || 'Sha\'ah Zmanit';
         if (titleEl && (!titleEl.textContent || titleEl.textContent === 'Zmanim')) {
-            titleEl.textContent = document.getElementById('solar-hero-city-title')?.textContent?.trim() || "Sha'ah Zmanit";
+            titleEl.textContent = heroTitle;
         }
         const bodyEl = document.getElementById('zmanim-modal-body');
         if (bodyEl) {
@@ -114,12 +114,21 @@ export function generateZmanimTableHTML() {
     const activeTz = activeLoc.tz || 'Asia/Jerusalem';
     const nowMs = Date.now();
     const locParts = getLocationDateParts(nowMs, activeTz);
-    const dayOfWeek = locParts.dayOfWeek;
+    const todayHdate = getHebrewDateFromGregorian(locParts.year, locParts.month, locParts.day);
+    const isAfterSunset = state.isAfterSunset || (
+        state.currentHdate && todayHdate && (
+            Number(state.currentHdate.hd) !== Number(todayHdate.hd) ||
+            state.currentHdate.hm !== todayHdate.hm
+        )
+    );
+    const halachicParts = isAfterSunset ? getLocationDateParts(nowMs + 24 * 60 * 60 * 1000, activeTz) : locParts;
+    const dayOfWeek = halachicParts.dayOfWeek;
     const isFriday = dayOfWeek === 5;
     const isSaturday = dayOfWeek === 6;
     const isMonday = dayOfWeek === 1;
     const isThursday = dayOfWeek === 4;
 
+    const isIsrael = state.userLocation?.isIsrael === true;
     const hdate = state.currentHdate || {};
     const hDay = hdate.hd ? Number(hdate.hd) : null;
     const rawHMonth = hdate.hm || '';
@@ -138,12 +147,13 @@ export function generateZmanimTableHTML() {
     const isShevat = canonicalMonth === 'Shevat' || rawHMonth === "Sh'vat" || rawHMonth === 'Shvat';
     const isAdar = canonicalMonth === 'Adar' || canonicalMonth === 'Adar I' || canonicalMonth === 'Adar II' || rawHMonth.includes('Adar');
 
-    const todayStr = locParts.dateStr;
+    const todayStr = halachicParts.dateStr;
     const activeEvents = (state.unifiedEvents || []).filter(e => {
         if (!e) return false;
         const evEnd = e.endTime || (e.time ? e.time + FESTIVAL_DURATION_MS : 0);
         if (e.time) {
-            return nowMs >= e.time && nowMs <= evEnd;
+            const evStart = e.startTime || (e.time - FESTIVAL_ANTICIPATION_MS);
+            return nowMs >= evStart && nowMs < evEnd;
         }
         const evDate = e.raw?.date ? e.raw.date.split('T')[0] : '';
         return evDate === todayStr;
@@ -151,19 +161,20 @@ export function generateZmanimTableHTML() {
 
     const isRoshChodesh = (hDay === 1 || hDay === 30) || activeEvents.some(e => e.category === 'roshchodesh' || e.name?.toLowerCase().includes('rosh chodesh'));
     const isYomKippur = (isEtanimTishrei && hDay === 10) || activeEvents.some(e => e.category === 'yomkippur' || e.name?.toLowerCase().includes('kippur'));
-    const isYomTeruah = (isEtanimTishrei && hDay === 1) || activeEvents.some(e => e.category === 'yomteruah' || e.name?.toLowerCase().includes('teruah') || e.name?.toLowerCase().includes('rosh hashana'));
-    const isPesach = (isAvivNisan && hDay !== null && hDay >= 15 && hDay <= 21) || activeEvents.some(e => e.category === 'pesach' || e.category === 'matzot');
-    const isShavuot = (isSivan && hDay === 6) || activeEvents.some(e => e.category === 'shavuot');
+    const isYomTeruah = (isEtanimTishrei && (hDay === 1 || hDay === 2)) || activeEvents.some(e => e.category === 'yomteruah' || e.name?.toLowerCase().includes('teruah') || e.name?.toLowerCase().includes('rosh hashana'));
+    const isPesach = (isAvivNisan && hDay !== null && hDay >= 15 && (isIsrael ? hDay <= 21 : hDay <= 22)) || activeEvents.some(e => e.category === 'pesach' || e.category === 'matzot');
+    const isShavuot = (isSivan && (isIsrael ? hDay === 6 : (hDay === 6 || hDay === 7))) || activeEvents.some(e => e.category === 'shavuot');
     const isSukkot = (isEtanimTishrei && hDay !== null && hDay >= 15 && hDay <= 21) || activeEvents.some(e => e.category === 'sukkot');
     const isSheminiAtzeret = (isEtanimTishrei && hDay === 22) || activeEvents.some(e => e.category === 'sheminiatzeret');
+    const isSimchatTorah = (isEtanimTishrei && (isIsrael ? hDay === 22 : hDay === 23)) || activeEvents.some(e => e.category === 'simchattorah');
     const isChanukah = (isKislev && hDay !== null && hDay >= 25) || (isTevet && hDay !== null && hDay <= 2) || activeEvents.some(e => e.category === 'chanukah');
-    const isCholHaMoed = (isAvivNisan && hDay !== null && hDay >= 16 && hDay <= 20) ||
-                         (isEtanimTishrei && hDay !== null && hDay >= 16 && hDay <= 21) ||
+    const isCholHaMoed = (isAvivNisan && hDay !== null && (isIsrael ? (hDay >= 16 && hDay <= 20) : (hDay >= 17 && hDay <= 20))) ||
+                         (isEtanimTishrei && hDay !== null && (isIsrael ? (hDay >= 16 && hDay <= 21) : (hDay >= 17 && hDay <= 21))) ||
                          activeEvents.some(e => e.name?.toLowerCase().includes('chol hamoed'));
-    const isYomTov = (isAvivNisan && (hDay === 15 || hDay === 21)) ||
-                     (isSivan && hDay === 6) ||
-                     (isEtanimTishrei && (hDay === 1 || hDay === 10 || hDay === 15 || hDay === 22)) ||
-                     activeEvents.some(e => e.raw?.yomtov === true || (e.isBiblical && ['yomteruah', 'yomkippur', 'sheminiatzeret', 'shavuot', 'matzot', 'sukkot'].includes(e.category)));
+    const isYomTov = activeEvents.some(e => e.raw?.yomtov === true || (e.isBiblical && ['yomteruah', 'yomkippur', 'sheminiatzeret', 'shavuot', 'matzot', 'sukkot'].includes(e.category))) ||
+                     (isAvivNisan && (isIsrael ? (hDay === 15 || hDay === 21) : (hDay === 15 || hDay === 16 || hDay === 21 || hDay === 22))) ||
+                     (isSivan && (isIsrael ? hDay === 6 : (hDay === 6 || hDay === 7))) ||
+                     (isEtanimTishrei && (isIsrael ? (hDay === 1 || hDay === 2 || hDay === 10 || hDay === 15 || hDay === 22) : (hDay === 1 || hDay === 2 || hDay === 10 || hDay === 15 || hDay === 16 || hDay === 22 || hDay === 23)));
     const isFastDay = (isEtanimTishrei && (hDay === 3 || hDay === 10)) ||
                       (isTevet && hDay === 10) ||
                       (isAdar && hDay === 13) ||
@@ -254,8 +265,8 @@ export function generateZmanimTableHTML() {
 
     function buildSpecialPrayersForDay(dayOffset) {
         const offsetMs = dayOffset * DAY_MS;
-        const targetNowMs = nowMs + offsetMs;
-        const dayLocParts = getLocationDateParts(targetNowMs, activeTz);
+        const targetBaseMs = (isAfterSunset ? (nowMs + DAY_MS) : nowMs) + offsetMs;
+        const dayLocParts = getLocationDateParts(targetBaseMs, activeTz);
         const dow = dayLocParts.dayOfWeek;
         const dIsFriday = dow === 5;
         const dIsSaturday = dow === 6;

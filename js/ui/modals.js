@@ -123,7 +123,8 @@ export function initModals(updateDashboardCallback) {
             }
 
             // Se for clicado dentro de #zmanim-modal, preserva retorno ao modal pai
-            const parentModal = infoTrigger.closest('#zmanim-modal');
+            const parentModal = infoTrigger.closest('#zmanim-modal') ||
+                (document.getElementById('zmanim-modal')?.classList.contains('is-open') ? document.getElementById('zmanim-modal') : null);
             const returnToModalId = parentModal ? parentModal.id : null;
 
             closeOtherModalsOnDesktop('info-modal');
@@ -140,11 +141,9 @@ export function initModals(updateDashboardCallback) {
         if (zmanimTrigger) {
             event.preventDefault();
             event.stopPropagation();
-            const zmanimCardTitle = zmanimTrigger.querySelector('.settings-card-title, .card-title')?.textContent?.trim() ||
-                document.getElementById('solar-hero-city-title')?.textContent?.trim() ||
-                "Sha'ah Zmanit";
+            const cardTitle = zmanimTrigger.querySelector('.settings-card-title')?.textContent?.trim() || 'Sha\'ah Zmanit';
             closeOtherModalsOnDesktop('zmanim-modal');
-            openZmanimModal({ cardTitle: zmanimCardTitle });
+            openZmanimModal({ cardTitle });
             return;
         }
 

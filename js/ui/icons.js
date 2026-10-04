@@ -41,6 +41,8 @@ export const ICONS = {
     star: 'fa-solid fa-star',
     crown: 'fa-solid fa-crown',
     pcDrawer: 'fa-solid fa-layer-group',
+    mobile: 'fa-solid fa-mobile-screen-button',
+    mobileScreenButton: 'fa-solid fa-mobile-screen-button',
     shuffle: 'fa-solid fa-shuffle',
 
     // 3. Leituras Bíblicas & Estudo Sagrado

@@ -224,7 +224,6 @@ export function renderSuggestions(results = [], options = {}) {
             let locObj = null;
 
             if (resItem.isDeviceGpsAction) {
-                console.log('[Location] Utilizador solicitou localização precisa por GPS');
                 const descEl = li.querySelector('.settings-card-desc');
                 if (descEl) descEl.textContent = 'Sinal GPS';
 
@@ -236,7 +235,6 @@ export function renderSuggestions(results = [], options = {}) {
                     return;
                 }
             } else if (resItem.isJerusalemAction) {
-                console.log('[Location] Localidade selecionada: Jerusalém');
                 locObj = {
                     lat: 31.7683,
                     lon: 35.2137,
@@ -249,7 +247,6 @@ export function renderSuggestions(results = [], options = {}) {
             } else if (resItem.lat && resItem.lon) {
                 const cleanSecondary = (secondaryText || '').replace(' • Recente', '').replace(' • Seleção rápida', '');
                 const selectedName = resItem.fullName || (cleanSecondary ? `${primaryText}, ${cleanSecondary}` : primaryText);
-                console.log(`[Location] Localidade rápida selecionada: ${selectedName}`);
                 locObj = {
                     lat: resItem.lat,
                     lon: resItem.lon,
@@ -265,7 +262,6 @@ export function renderSuggestions(results = [], options = {}) {
                 const isIl = resItem.item.address && (resItem.item.address.country_code === 'il' || resItem.item.address.country === 'Israel');
                 const tz = isIl ? 'Asia/Jerusalem' : Intl.DateTimeFormat().resolvedOptions().timeZone;
                 const selectedName = `${primaryText}, ${secondaryText}`;
-                console.log(`[Location] Localidade pesquisada selecionada: ${selectedName}`);
                 locObj = {
                     lat,
                     lon,

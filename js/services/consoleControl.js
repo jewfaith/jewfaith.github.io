@@ -613,5 +613,5 @@ export function initConsoleControl(updateDashboardCb = null) {
         };
     } catch (e) { }
 
-    printWelcomeBanner();
+    window.banner = printWelcomeBanner;
 }

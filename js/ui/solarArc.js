@@ -1,7 +1,6 @@
 import { state } from '../state.js';
 import { ICONS } from './icons.js';
-import { getSelectedLocation, JERUSALEM_COORDS } from '../services/locationService.js';
-import { checkSacredRestStatus, FESTIVAL_DURATION_MS, calculateOfflineZmanim } from '../domain/halacha.js';
+import { checkSacredRestStatus, FESTIVAL_DURATION_MS, FESTIVAL_ANTICIPATION_MS, calculateOfflineZmanim } from '../domain/halacha.js';
 
 export function initSolarArc() {
     renderSolarArcWidget();
@@ -51,13 +50,14 @@ export function updateSolarPosition() {
 
     let z = (state.currentZmanim && state.currentZmanim.sunrise && state.currentZmanim.sunset) ? state.currentZmanim : null;
     if (!z && !isPolarLatitude && !isNaN(lat) && !isNaN(lon)) {
-        z = calculateOfflineZmanim(now, lat, lon, tz, isIsrael);
+        const targetDate = state.isAfterSunset ? new Date(nowMs + 86400000) : now;
+        z = calculateOfflineZmanim(targetDate, lat, lon, tz, isIsrael);
     }
 
     if (!z || !z.sunrise || !z.sunset) {
         if (isPolarLatitude) {
             const HERO_TITLE = "Sha'ah Zmanit";
-            const HERO_DESC = "Latitude Polar (Sol Extremo)";
+            const HERO_DESC = "Horários Litúrgicos (Sol Extremo)";
             if (cityTitle) {
                 cityTitle.textContent = HERO_TITLE;
                 cityTitle.title = "Sha'ah Zmanit • Região Polar Extrema";
@@ -78,7 +78,8 @@ export function updateSolarPosition() {
         }
 
         // Para latitudes comuns sem dados solares disponíveis, recorre ao padrão haláchico de Jerusalém
-        z = calculateOfflineZmanim(now, 31.7683, 35.2137, 'Asia/Jerusalem', true);
+        const targetDate = state.isAfterSunset ? new Date(nowMs + 86400000) : now;
+        z = calculateOfflineZmanim(targetDate, 31.7683, 35.2137, 'Asia/Jerusalem', true);
     }
 
     let sunriseMs = new Date(z.sunrise).getTime();
@@ -219,8 +220,9 @@ export function updateShaahZmanitCardPosition() {
     if (!isFestivalActiveOrRecent && state.unifiedEvents && state.unifiedEvents.length) {
         for (const ev of state.unifiedEvents) {
             if (!ev || !ev.time || !ev.isBiblical || ev.category === 'parashat' || ev.category === 'roshchodesh') continue;
+            const evStart = ev.startTime || (ev.time ? ev.time - FESTIVAL_ANTICIPATION_MS : 0);
             const evEnd = ev.endTime || (ev.time + FESTIVAL_DURATION_MS);
-            if (now >= ev.time && now <= evEnd) {
+            if (now >= evStart && now < evEnd) {
                 isFestivalActiveOrRecent = true;
                 break;
             }

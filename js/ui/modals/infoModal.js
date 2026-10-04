@@ -5,7 +5,7 @@
  * (push/pop view), botão voltar e sincronização com o histórico do navegador.
  */
 
-import { closeModalSafely, checkModalsActive, openModalElement } from './modalManager.js';
+import { closeModalSafely, closeModalDirectly, checkModalsActive, openModalElement } from './modalManager.js';
 import { ensureTwoWords } from '../../domain/formatters.js';
 
 let infoModalStack = [];
@@ -13,6 +13,25 @@ let returnToModalId = null;
 
 export function getInfoModalStackLength() {
     return infoModalStack.length + (returnToModalId ? 1 : 0);
+}
+
+export function resetInfoModalState() {
+    infoModalStack = [];
+    returnToModalId = null;
+    clearKofiTimers();
+    const modal = document.getElementById('info-modal');
+    if (modal) modal.classList.remove('has-back-nav');
+    const backBtn = document.getElementById('back-info-btn');
+    if (backBtn) {
+        backBtn.classList.remove('is-active');
+        backBtn.classList.add('is-hidden');
+        backBtn.style.display = 'none';
+    }
+    const closeBtn = document.getElementById('close-info-btn');
+    if (closeBtn) {
+        closeBtn.classList.remove('is-hidden');
+        closeBtn.style.display = 'inline-flex';
+    }
 }
 
 let activeKofiTimers = [];
@@ -91,17 +110,6 @@ export function openInfoModal(titleText, htmlContent, options = {}) {
     returnToModalId = options.returnToModalId || null;
     infoModalStack = [{ title: titleText, html: htmlContent }];
 
-    const showBack = !!returnToModalId;
-    modal.classList.toggle('has-back-nav', showBack);
-    if (backBtn) {
-        backBtn.classList.toggle('is-hidden', !showBack);
-        backBtn.style.display = showBack ? 'inline-flex' : 'none';
-    }
-    if (closeBtn) {
-        closeBtn.classList.toggle('is-hidden', showBack);
-        closeBtn.style.display = showBack ? 'none' : 'inline-flex';
-    }
-
     titleEl.textContent = (titleText && titleText.trim()) ? titleText.trim() : 'Informação Sagrada';
     bodyEl.innerHTML = htmlContent;
     bodyEl.scrollTop = 0;
@@ -111,6 +119,18 @@ export function openInfoModal(titleText, htmlContent, options = {}) {
     modal.classList.toggle('has-kofi-embed', hasKofi);
 
     openModalElement(modal, 'informacoes', options);
+
+    const showBack = !!returnToModalId;
+    modal.classList.toggle('has-back-nav', showBack);
+    if (backBtn) {
+        backBtn.classList.toggle('is-hidden', !showBack);
+        backBtn.classList.toggle('is-active', showBack);
+        backBtn.style.display = showBack ? 'inline-flex' : 'none';
+    }
+    if (closeBtn) {
+        closeBtn.classList.toggle('is-hidden', showBack);
+        closeBtn.style.display = showBack ? 'none' : 'inline-flex';
+    }
 
     if (typeof sessionStorage !== 'undefined') {
         try {
@@ -178,13 +198,16 @@ export function popInfoModalView() {
         if (typeof document !== 'undefined') {
             const parentId = returnToModalId;
             returnToModalId = null;
-            closeModalSafely(document.getElementById('info-modal'), { skipUrlSync: !!parentId });
+            infoModalStack = [];
             if (parentId) {
+                closeModalDirectly(document.getElementById('info-modal'));
                 const parentEl = document.getElementById(parentId);
                 if (parentEl) {
-                    const slug = parentId === 'zmanim-modal' ? 'horarios' : '';
+                    const slug = parentId === 'zmanim-modal' ? 'zmanim' : '';
                     openModalElement(parentEl, slug);
                 }
+            } else {
+                closeModalSafely(document.getElementById('info-modal'));
             }
         }
         return;

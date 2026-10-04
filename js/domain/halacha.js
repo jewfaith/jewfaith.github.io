@@ -23,8 +23,28 @@ export function pickReading(arr, dayIndex) {
     return arr[Math.min(dayIndex, arr.length - 1)];
 }
 
-export const FESTIVAL_DURATION_MS = (24 * 60 + 5) * 60 * 1000; // 24 horas e 5 minutos (tempo total + 5m)
-export const FESTIVAL_ANTICIPATION_MS = (2 * 60 + 50) * 1000; // 2 minutos e 50 segundos (170.000 ms)
+// A festa termina exatamente 24 horas + 1 minuto após o pôr do sol que iniciou a festa (86.460.000 ms)
+export const FESTIVAL_DURATION_MS = (24 * 60 + 1) * 60 * 1000;
+export const FESTIVAL_ANTICIPATION_MS = (2 * 60 + 30) * 1000; // 2 minutos e 30 segundos (150.000 ms)
+
+/**
+ * Retorna o timestamp de término exato de uma festa:
+ * Exatamente 24 horas + 1 minuto após o pôr do sol de início.
+ */
+export function getFestivalEndTime(startTimeMs) {
+    if (!startTimeMs || isNaN(startTimeMs)) return 0;
+    return Number(startTimeMs) + FESTIVAL_DURATION_MS;
+}
+
+/**
+ * Determina de forma centralizada e sem arredondamentos se uma celebração está ativa.
+ * A festa inicia 2 minutos e 30 segundos antes do pôr do sol e termina exatamente 24h + 1m após o pôr do sol.
+ */
+export function isFestivalActive(startTimeMs, nowMs = Date.now(), endTimeMs = null) {
+    if (!startTimeMs || isNaN(startTimeMs)) return false;
+    const end = (endTimeMs && !isNaN(endTimeMs)) ? Number(endTimeMs) : (Number(startTimeMs) + FESTIVAL_DURATION_MS);
+    return nowMs >= (Number(startTimeMs) - FESTIVAL_ANTICIPATION_MS) && nowMs < end;
+}
 
 export function getFestivalSpan(events, now, festivalDurationMs = FESTIVAL_DURATION_MS, cat) {
     const evts = events
@@ -51,12 +71,12 @@ export function getFestivalSpan(events, now, festivalDurationMs = FESTIVAL_DURAT
 
     // Encontra o cluster ativo no tempo atual
     for (const cluster of clusters) {
-        const start = cluster[0].time;
+        const start = cluster[0].time - FESTIVAL_ANTICIPATION_MS;
         const end = cluster[cluster.length - 1].time + festivalDurationMs;
         if (now >= start && now < end) {
             let dayIndex = 0;
             for (let i = 0; i < cluster.length; i++) {
-                if (now >= cluster[i].time) dayIndex = i;
+                if (now >= (cluster[i].time - FESTIVAL_ANTICIPATION_MS)) dayIndex = i;
             }
             return {
                 start,
@@ -126,6 +146,7 @@ export function getNextShabbatEvent(now = Date.now(), sunsetTime = null, tz = 'A
         isBiblical: true,
         isTraditional: false,
         time: shabbatStart,
+        startTime: shabbatStart - FESTIVAL_ANTICIPATION_MS,
         endTime: shabbatEnd,
         raw: {
             hdate: 'Sétimo Dia'
@@ -140,10 +161,29 @@ export function getNextShabbatEvent(now = Date.now(), sunsetTime = null, tz = 'A
  * Rejeita categoricamente tradições rabínicas posteriores (como o 2º dia de Rosh Hashaná,
  * Simchat Torah, 2º dias da Diáspora, Chanuká e Purim) e dias intermediários de Chol HaMoed.
  */
-export function isTorahSolemnRestEvent(ev) {
-    if (!ev || !ev.isBiblical) return false;
+export function isTorahSolemnRestEvent(ev, isIsrael = false) {
+    if (!ev) return false;
 
-    const TORAH_YOM_TOV_CATS = ['yomteruah', 'yomkippur', 'sheminiatzeret', 'shavuot', 'matzot', 'sukkot'];
+    // Simchat Torah NÃO é festa da Torá (é celebração e tradição rabínica posterior)
+    if (ev.category === 'simchattorah' || (ev.name && ev.name.toLowerCase().includes('simchat'))) {
+        return false;
+    }
+
+    // Dias tradicionais/rabínicos NÃO são dias solenes ordenados na Torá
+    if (ev.isTraditional === true && ev.isBiblical === false) {
+        return false;
+    }
+
+    // Reconhece marcação canônica de Yom Tov fornecida pelo Hebcal apenas para festas da Torá
+    if (ev.raw?.yomtov === true && ev.isBiblical !== false) {
+        const rawTitle = (ev.raw?.title || ev.name || '').toLowerCase();
+        if (rawTitle.includes('simchat') || rawTitle.includes('simchas')) {
+            return false;
+        }
+        return true;
+    }
+
+    const TORAH_YOM_TOV_CATS = ['yomteruah', 'roshhashana', 'yomkippur', 'sheminiatzeret', 'shavuot', 'matzot', 'sukkot'];
     if (!TORAH_YOM_TOV_CATS.includes(ev.category)) return false;
 
     let hDay = null;
@@ -154,9 +194,9 @@ export function isTorahSolemnRestEvent(ev) {
 
     const titleLower = (ev.raw?.title || ev.name || '').toLowerCase();
 
-    // 1. Yom Teruah: estritamente 1 de Tishrei/Etanim (Lev 23:24)
-    if (ev.category === 'yomteruah') {
-        return hDay === 1 || hDay === null;
+    // 1. Yom Teruah / Rosh Hashana: 1 e 2 de Tishrei/Etanim (em Israel e na Diáspora)
+    if (ev.category === 'yomteruah' || ev.category === 'roshhashana') {
+        return hDay === 1 || hDay === 2 || hDay === null;
     }
 
     // 2. Yom Kippur: estritamente 10 de Tishrei/Etanim (Lev 23:27)
@@ -164,32 +204,30 @@ export function isTorahSolemnRestEvent(ev) {
         return hDay === 10 || hDay === null;
     }
 
-    // 3. Shemini Atzeret: estritamente 22 de Tishrei/Etanim (Lev 23:36)
+    // 3. Shemini Atzeret: 22 de Tishrei/Etanim (Lev 23:36) - Esta é a verdadeira festa solene da Torá
     if (ev.category === 'sheminiatzeret') {
         return hDay === 22 || hDay === null;
     }
 
-    // 4. Yom Shavuot: estritamente 6 de Sivan (Lev 23:21) - 1 único dia
+    // 4. Yom Shavuot: 6 de Sivan em Israel; 6 e 7 de Sivan na Diáspora
     if (ev.category === 'shavuot') {
-        return hDay === 6 || hDay === null;
+        return isIsrael ? (hDay === 6 || hDay === null) : (hDay === 6 || hDay === 7 || hDay === null);
     }
 
-    // 5. Chag Matzot: estritamente o 1º dia (15 Aviv) e o 7º dia (21 Aviv) (Lev 23:7-8).
-    // Os dias 16 a 20 são Chol HaMoed; o 8º dia (22) é rabínico da Diáspora.
+    // 5. Chag Matzot: 15 e 21 Aviv em Israel; 15, 16, 21 e 22 Aviv na Diáspora
     if (ev.category === 'matzot') {
         if (hDay !== null) {
-            return hDay === 15 || hDay === 21;
+            return isIsrael ? (hDay === 15 || hDay === 21) : (hDay === 15 || hDay === 16 || hDay === 21 || hDay === 22);
         }
-        return (titleLower.includes('pesach i') && !titleLower.includes('pesach ii')) || titleLower.includes('pesach vii');
+        return titleLower.includes('pesach i') || titleLower.includes('pesach vii') || (!isIsrael && (titleLower.includes('pesach ii') || titleLower.includes('pesach viii')));
     }
 
-    // 6. Chag Sukkot: estritamente o 1º dia (15 Etanim/Tishrei) (Lev 23:35).
-    // Os dias 16 a 21 são Chol HaMoed; o 2º dia da Diáspora não é ordenança da Torá.
+    // 7. Chag Sukkot: 15 Tishrei em Israel; 15 e 16 Tishrei na Diáspora
     if (ev.category === 'sukkot') {
         if (hDay !== null) {
-            return hDay === 15;
+            return isIsrael ? (hDay === 15) : (hDay === 15 || hDay === 16);
         }
-        return titleLower.includes('sukkot i') && !titleLower.includes('sukkot ii');
+        return titleLower.includes('sukkot i') || (!isIsrael && titleLower.includes('sukkot ii'));
     }
 
     return false;
@@ -282,9 +320,9 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
     } catch (e) { }
 
     const candleOffsetMs = candleOffsetMin * 60 * 1000;
-    const FIVE_MINUTES_MS = 5 * 60 * 1000;
+    const ONE_MINUTE_MS = 60 * 1000;
 
-    // 2. Determinar o estado do Shabat (início com o acendimento das velas e término após tempo total + 5 minutos)
+    // 2. Determinar o estado do Shabat (início com o acendimento das velas e término exatamente às 24h + 1m)
     let shabbatState = {
         isRest: false,
         isShabbatStrict: false,
@@ -310,9 +348,9 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
             };
         }
     } else if (dayOfWeek === 6) {
-        // Sábado: Shabat pleno até o tempo total + 5 minutos após o início ao pôr do sol
+        // Sábado: Shabat pleno até exatamente 24 horas + 1 minuto após o início ao pôr do sol
         const satSunset = localTimeToUtc(parts.year, parts.month, parts.day, sunsetH, sunsetM, 0, tz);
-        const shabbatEndTime = satSunset + FIVE_MINUTES_MS;
+        const shabbatEndTime = satSunset + ONE_MINUTE_MS;
 
         if (now < shabbatEndTime) {
             shabbatState = {
@@ -328,17 +366,18 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
 
     const isShabbat = shabbatState.isShabbatStrict;
 
-    // 3. Verificação de Yom Tov (Festas bíblicas da Torá com Issur Melachá segundo Vayikra 23)
+    // 3. Verificação de Yom Tov (Festas bíblicas e canónicas da Torá com Issur Melachá)
+    let hadMatchingYomTovEvent = false;
     if (events && events.length) {
         for (const ev of events) {
-            if (!isTorahSolemnRestEvent(ev)) continue;
+            if (!isTorahSolemnRestEvent(ev, isIsrael)) continue;
 
             const startTime = ev.time ? (ev.time - candleOffsetMs) : 0;
-            const durationMs = FESTIVAL_DURATION_MS; // Termina após o tempo total + 5 minutos (24h e 5m)
+            const durationMs = FESTIVAL_DURATION_MS; // Exatamente 24h e 1 minuto
             const endTime = ev.endTime || (ev.time ? ev.time + durationMs : 0);
 
             if (startTime > 0) {
-                if (now >= startTime && now <= endTime) {
+                if (now >= startTime && now < endTime) {
                     const rawName = ev.name || 'Yom Tov';
                     const baseName = rawName.replace(/^(Erev|Motzei)\s+/i, '');
                     const fullTitle = isShabbat ? `${baseName} & Shabat` : baseName;
@@ -361,12 +400,17 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
                         reason
                     };
                 }
+
+                // Se o evento pertencia ao período recente mas já ultrapassou endTime, evita ressurreição via fallback
+                if (now >= endTime && (now - endTime) < 24 * 60 * 60 * 1000) {
+                    hadMatchingYomTovEvent = true;
+                }
             }
         }
     }
 
     // 4. Verificação determinística pela Data Hebraica (fallback resiliente e offline)
-    if (hdate && hdate.hd && hdate.hm) {
+    if (!hadMatchingYomTovEvent && hdate && hdate.hd && hdate.hm) {
         const d = parseInt(hdate.hd, 10);
         const m = (hdate.hm || '').toLowerCase();
 
@@ -374,31 +418,38 @@ export function checkSacredRestStatus(now = Date.now(), events = [], hdate = nul
         let festivalName = 'Yom Tov';
 
         const checkYomTovDates = (ytDays, name) => {
+            const todaySunset = localTimeToUtc(parts.year, parts.month, parts.day, sunsetH, sunsetM, 0, tz);
+            const exactEndTime = todaySunset + ONE_MINUTE_MS;
+
             if (ytDays.includes(d)) {
+                // No último dia da celebração, se já passou do pôr do sol + 1 minuto, a festa terminou
+                if (d === ytDays[ytDays.length - 1] && now >= exactEndTime) {
+                    return;
+                }
                 isYomTovDate = true;
                 festivalName = name;
             } else if (d === (ytDays[ytDays.length - 1] + 1)) {
-                // Ao pôr do sol a data hebraica vira para d+1; mantém ativo por tempo total + 5 minutos adicionais (24h e 5 minutos no total)
-                const todaySunset = localTimeToUtc(parts.year, parts.month, parts.day, sunsetH, sunsetM, 0, tz);
+                // A festa termina exatamente 24 horas + 1 minuto após o pôr do sol de início
                 const lastSunset = now >= todaySunset ? todaySunset : (todaySunset - 24 * 60 * 60 * 1000);
-                const fiveMinutesAfterSunset = lastSunset + FIVE_MINUTES_MS;
-                if (now <= fiveMinutesAfterSunset) {
+                const prevExactEndTime = lastSunset + ONE_MINUTE_MS;
+                if (now < prevExactEndTime) {
                     isYomTovDate = true;
                     festivalName = name;
                 }
             }
         };
 
-        if (m.includes('nisan')) {
-            checkYomTovDates([15], 'Pessach');
-            if (!isYomTovDate) checkYomTovDates([21], 'Chag Matzot');
+        if (m.includes('nisan') || m.includes('aviv')) {
+            checkYomTovDates(isIsrael ? [15] : [15, 16], 'Pessach');
+            if (!isYomTovDate) checkYomTovDates(isIsrael ? [21] : [21, 22], 'Chag Matzot');
         } else if (m.includes('sivan')) {
-            checkYomTovDates([6], 'Shavuot');
-        } else if (m.includes('tishrei')) {
-            checkYomTovDates([1], 'Yom Teruah');
+            checkYomTovDates(isIsrael ? [6] : [6, 7], 'Shavuot');
+        } else if (m.includes('tishrei') || m.includes('etanim')) {
+            checkYomTovDates([1, 2], 'Yom Teruah');
             if (!isYomTovDate) checkYomTovDates([10], 'Yom Kippur');
-            if (!isYomTovDate) checkYomTovDates([15], 'Chag Sukkot');
-            if (!isYomTovDate) checkYomTovDates([22], 'Shemini Atzeret');
+            if (!isYomTovDate) checkYomTovDates(isIsrael ? [15] : [15, 16], 'Chag Sukkot');
+            if (!isYomTovDate) checkYomTovDates(isIsrael ? [22] : [22], 'Shemini Atzeret');
+            if (!isYomTovDate && !isIsrael) checkYomTovDates([23], 'Shemini Atzeret (Diáspora)');
         }
 
         if (isYomTovDate) {
@@ -495,7 +546,7 @@ export function calculateOfflineZmanim(date = new Date(), lat = 31.7683, lon = 3
     const candleOffsetMin = isIsrael ? 40 : 18;
 
     return {
-        chatzotNight: new Date(chatzotMs + 12 * 3600 * 1000).toISOString(),
+        chatzotNight: new Date(chatzotMs - 12 * 3600 * 1000).toISOString(),
         alotHaShachar: new Date(sunriseMs - 72 * 60 * 1000).toISOString(),
         misheyakir: new Date(sunriseMs - 45 * 60 * 1000).toISOString(),
         sunrise: new Date(sunriseMs).toISOString(),

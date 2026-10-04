@@ -8,6 +8,7 @@
  */
 
 import { HEBREW_MONTHS_PT } from './constants.js';
+import { FESTIVAL_DURATION_MS, FESTIVAL_ANTICIPATION_MS } from './halacha.js';
 
 export const BIBLICAL_MAPPING = {
     'Parashat': { name: 'Parashat' },
@@ -86,8 +87,19 @@ const MINOR_FASTS = ['asarabtevet', 'tzomtammuz', 'tzomgedaliah', "ta'anit esthe
 /**
  * Converte itens brutos da API Hebcal em eventos normalizados com validação haláchica.
  */
-export function normalizeHebcalEvents(items, sunsetTime = 0) {
+export function normalizeHebcalEvents(items, sunsetTime = 0, isIsrael = null) {
     if (!Array.isArray(items)) return [];
+
+    let detectedIsrael = isIsrael;
+    if (detectedIsrael === null || detectedIsrael === undefined) {
+        if (typeof state !== 'undefined' && state?.userLocation?.isIsrael !== undefined) {
+            detectedIsrael = state.userLocation.isIsrael;
+        } else {
+            const hasIsraelMarkers = items.some(i => (i.link && i.link.includes('i=on')) || (i.title && (i.title.includes("(CH''M)") || i.title.includes("(CH’’M)"))));
+            const hasDiasporaMarkers = items.some(i => i.title === 'Pesach VIII' || i.title === 'Shavuot II');
+            detectedIsrael = hasIsraelMarkers && !hasDiasporaMarkers;
+        }
+    }
 
     const defaultSunsetH = sunsetTime ? new Date(sunsetTime).getHours() : 18;
     const defaultSunsetM = sunsetTime ? new Date(sunsetTime).getMinutes() : 0;
@@ -123,6 +135,153 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
             return [];
         }
 
+        // 1. Shemini Atzeret & Simchat Torah (Tratamento haláchico para Israel e Diáspora)
+        if (cleanTitle.includes('Shmini Atzeret') || cleanTitle.includes('Shemini Atzeret')) {
+            const results = [{
+                name: 'Shemini Atzeret',
+                time: dateObj.getTime(),
+                endTime: dateObj.getTime() + FESTIVAL_DURATION_MS,
+                category: 'sheminiatzeret',
+                rawCategory: item.category,
+                isBiblical: true,
+                isTraditional: false,
+                raw: item
+            }];
+
+            // Em Israel, Simchat Torá coincide e é celebrada no mesmo dia (22 Tishrei) que Shemini Atzeret
+            if (detectedIsrael) {
+                results.push({
+                    name: 'Simchat Torah',
+                    time: dateObj.getTime(),
+                    endTime: dateObj.getTime() + FESTIVAL_DURATION_MS,
+                    category: 'simchattorah',
+                    rawCategory: item.category,
+                    isBiblical: false,
+                    isTraditional: true,
+                    raw: item
+                });
+            }
+            return results;
+        }
+
+        // 2. Shavuot (6 Sivan em Israel; 6 e 7 Sivan na Diáspora)
+        if (cleanTitle.includes('Shavuot')) {
+            if (cleanTitle.includes('Erev')) return [];
+            const isDay2 = cleanTitle.includes('II');
+            return [{
+                name: 'Yom Shavuot',
+                time: dateObj.getTime(),
+                endTime: dateObj.getTime() + FESTIVAL_DURATION_MS,
+                category: 'shavuot',
+                rawCategory: item.category,
+                isBiblical: !isDay2,
+                isTraditional: isDay2,
+                raw: item
+            }];
+        }
+
+        // 3. Pesach e Chag Matzot (7 dias em Israel; 8 dias na Diáspora)
+        if (cleanTitle.includes('Pesach')) {
+            if (cleanTitle.includes('Erev')) {
+                return [{
+                    name: 'Yom Pessach',
+                    time: dateObj.getTime(),
+                    endTime: dateObj.getTime() + FESTIVAL_DURATION_MS,
+                    category: 'pesach',
+                    rawCategory: item.category,
+                    isBiblical: true,
+                    isTraditional: false,
+                    raw: item
+                }];
+            }
+            if (cleanTitle.includes('Sheni')) {
+                return [{
+                    name: 'Pessach Sheni',
+                    time: dateObj.getTime(),
+                    endTime: dateObj.getTime() + FESTIVAL_DURATION_MS,
+                    category: 'pesachsheni',
+                    rawCategory: item.category,
+                    isBiblical: true,
+                    isTraditional: false,
+                    raw: item
+                }];
+            }
+
+            const isDay8 = cleanTitle.includes('VIII') || cleanTitle.includes('Day 8') || cleanTitle.includes('Pesach 8');
+            const isDay2 = cleanTitle.includes('Pesach II') && !cleanTitle.includes('CH');
+            const isTraditionalYomTov = !detectedIsrael && (isDay8 || isDay2);
+
+            return [{
+                name: 'Chag Matzot',
+                time: dateObj.getTime(),
+                endTime: dateObj.getTime() + FESTIVAL_DURATION_MS,
+                category: 'matzot',
+                rawCategory: item.category,
+                isBiblical: !isTraditionalYomTov,
+                isTraditional: isTraditionalYomTov,
+                raw: item
+            }];
+        }
+
+        // 4. Sukkot (7 dias em Israel; 2º dia é Yom Tov Sheni na Diáspora)
+        if (cleanTitle.includes('Sukkot')) {
+            if (cleanTitle.includes('Erev')) return [];
+            const isDay2 = cleanTitle.includes('Sukkot II') && !cleanTitle.includes('CH');
+            const isTraditionalYomTov = !detectedIsrael && isDay2;
+
+            return [{
+                name: 'Chag Sukkot',
+                time: dateObj.getTime(),
+                endTime: dateObj.getTime() + FESTIVAL_DURATION_MS,
+                category: 'sukkot',
+                rawCategory: item.category,
+                isBiblical: !isTraditionalYomTov,
+                isTraditional: isTraditionalYomTov,
+                raw: item
+            }];
+        }
+
+        // 5. Yom Teruah / Rosh Hashana (1 e 2 Tishrei em Israel e na Diáspora)
+        if (cleanTitle.includes('Rosh Hashana') || cleanTitle.includes('Rosh Hashanah')) {
+            if (!cleanTitle.includes('LaBehemot') && !cleanTitle.includes('LaIlanot')) {
+                if (cleanTitle.includes('II')) {
+                    return [{
+                        name: 'Rosh Hashana',
+                        time: dateObj.getTime(),
+                        endTime: dateObj.getTime() + FESTIVAL_DURATION_MS,
+                        category: 'roshhashana',
+                        rawCategory: item.category,
+                        isBiblical: false,
+                        isTraditional: true,
+                        raw: item
+                    }];
+                }
+                const rawHdate = item.hdate || '1 Tishrei';
+                const rawMonthPart = rawHdate.split(' ').slice(1, -1).join(' ') || 'Tishrei';
+                const canonicalMonth = HEBREW_MONTHS_PT[rawMonthPart] || rawMonthPart;
+                return [
+                    { name: 'Yom Teruah', time: dateObj.getTime(), endTime: dateObj.getTime() + FESTIVAL_DURATION_MS, category: 'yomteruah', rawCategory: item.category, isBiblical: true, isTraditional: false, raw: item },
+                    { name: 'Rosh Chodesh', time: dateObj.getTime(), endTime: dateObj.getTime() + FESTIVAL_DURATION_MS, category: 'roshchodesh', rawCategory: 'roshchodesh', isBiblical: true, isTraditional: false, raw: { ...item, title: `Rosh Chodesh ${canonicalMonth}`, category: 'roshchodesh', hdate: rawHdate } },
+                    { name: 'Rosh Hashana', time: dateObj.getTime(), endTime: dateObj.getTime() + FESTIVAL_DURATION_MS, category: 'roshhashana', rawCategory: item.category, isBiblical: false, isTraditional: true, raw: item }
+                ];
+            }
+        }
+
+        // 6. Yom Kippur
+        if (cleanTitle.includes('Yom Kippur')) {
+            if (cleanTitle.includes('Erev')) return [];
+            return [{
+                name: 'Yom Kippur',
+                time: dateObj.getTime(),
+                endTime: dateObj.getTime() + FESTIVAL_DURATION_MS,
+                category: 'yomkippur',
+                rawCategory: item.category,
+                isBiblical: true,
+                isTraditional: false,
+                raw: item
+            }];
+        }
+
         let itemName = item.title;
         let isBiblical = false;
         let isTraditional = false;
@@ -130,39 +289,6 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
 
         for (const key in BIBLICAL_MAPPING) {
             if (cleanTitle.includes(key)) {
-                if (key === 'Sukkot' && cleanTitle.includes('Erev')) {
-                    continue;
-                }
-                if (key === 'Yom Kippur' && cleanTitle.includes('Erev')) {
-                    continue;
-                }
-                if (key === 'Shavuot' && (cleanTitle.includes('II') || cleanTitle.includes('Erev'))) {
-                    continue;
-                }
-                if (key === 'Rosh Hashana' && (cleanTitle.includes('LaBehemot') || cleanTitle.includes('LaIlanot'))) {
-                    continue;
-                }
-                // As festas da Torá só duram os dias que a Torá manda (Chag Matzot dura estritamente 7 dias, excluindo o 8º dia da Diáspora)
-                if (key === 'Pesach' && (cleanTitle.includes('Day 8') || cleanTitle.includes('VIII') || cleanTitle.includes('Pesach 8'))) {
-                    continue;
-                }
-
-                if (key === 'Rosh Hashana') {
-                    if (cleanTitle.includes('II')) {
-                        return [
-                            { name: 'Rosh Hashana', time: dateObj.getTime(), category: 'roshhashana', rawCategory: item.category, isBiblical: false, isTraditional: true, raw: item }
-                        ];
-                    }
-                    const rawHdate = item.hdate || '1 Tishrei';
-                    const rawMonthPart = rawHdate.split(' ').slice(1, -1).join(' ') || 'Tishrei';
-                    const canonicalMonth = HEBREW_MONTHS_PT[rawMonthPart] || rawMonthPart;
-                    return [
-                        { name: 'Yom Teruah', time: dateObj.getTime(), category: 'yomteruah', rawCategory: item.category, isBiblical: true, isTraditional: false, raw: item },
-                        { name: 'Rosh Chodesh', time: dateObj.getTime(), category: 'roshchodesh', rawCategory: 'roshchodesh', isBiblical: true, isTraditional: false, raw: { ...item, title: `Rosh Chodesh ${canonicalMonth}`, category: 'roshchodesh', hdate: rawHdate } },
-                        { name: 'Rosh Hashana', time: dateObj.getTime(), category: 'roshhashana', rawCategory: item.category, isBiblical: false, isTraditional: true, raw: item }
-                    ];
-                }
-
                 itemName = BIBLICAL_MAPPING[key].name;
                 isBiblical = true;
                 customCategory = key.toLowerCase().replace(/ /g, '');
@@ -170,17 +296,11 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
                 if (key === 'Parashat') {
                     itemName = 'Yom Shabbat';
                     customCategory = 'parashat';
-                } else if (key.includes('Atzeret')) {
-                    itemName = 'Shemini Atzeret';
-                    customCategory = 'sheminiatzeret';
                 } else if (key === 'Rosh Chodesh') {
                     if (item.hdate && !item.hdate.startsWith('1 ')) return [];
                     const isAviv = item.hdate && (item.hdate.includes('Nisan') || item.hdate.includes('Aviv'));
                     itemName = isAviv ? 'Rosh Chodashim' : 'Rosh Chodesh';
                     customCategory = 'roshchodesh';
-                } else if (key === 'Pesach') {
-                    customCategory = cleanTitle.includes('Erev') ? 'pesach' : 'matzot';
-                    itemName = cleanTitle.includes('Erev') ? 'Yom Pessach' : 'Chag Matzot';
                 } else if (key === 'Omer') {
                     const match = cleanTitle.match(/\d+/);
                     if (match) itemName = `${match[0]} laOmer`;
@@ -226,6 +346,7 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
         const results = [{
             name: itemName,
             time: dateObj.getTime(),
+            endTime: dateObj.getTime() + FESTIVAL_DURATION_MS,
             category: customCategory,
             rawCategory: item.category,
             isBiblical,
@@ -233,9 +354,7 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
             raw: item
         }];
 
-        // Vezot HaBerachah é a porção conclusiva da Torá (Devarim 33:1 - 34:12), lida em Simchat Torá
-        // (que em Israel coincide com Shemini Atzeret). Emitimos o evento com category: 'parashat' para garantir
-        // a continuidade correta do ciclo da Torá entre Ha'azinu e Bereshit.
+        // Vezot HaBerachah lida em Simchat Torá na Diáspora
         const hasVezotReading = (item.leyning && item.leyning.torah && item.leyning.torah.includes('Deuteronomy 33:1')) ||
             (cleanTitle.includes('Simchat') && !cleanTitle.includes('Erev'));
 
@@ -243,6 +362,7 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
             results.push({
                 name: 'Yom Shabbat',
                 time: dateObj.getTime(),
+                endTime: dateObj.getTime() + FESTIVAL_DURATION_MS,
                 category: 'parashat',
                 rawCategory: 'parashat',
                 isBiblical: true,
@@ -251,7 +371,7 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
                     title: 'Vezot HaBerachah',
                     date: item.date,
                     category: 'parashat',
-                    leyning: {
+                    leyning: item.leyning || {
                         torah: 'Deuteronomy 33:1-34:12',
                         haftarah: (item.leyning && item.leyning.haftarah) ? item.leyning.haftarah : 'Joshua 1:1-18'
                     }
@@ -260,5 +380,8 @@ export function normalizeHebcalEvents(items, sunsetTime = 0) {
         }
 
         return results;
-    }).sort((a, b) => a.time - b.time);
+    }).map(e => ({
+        ...e,
+        startTime: e.startTime || (e.time ? e.time - FESTIVAL_ANTICIPATION_MS : 0)
+    })).sort((a, b) => a.time - b.time);
 }

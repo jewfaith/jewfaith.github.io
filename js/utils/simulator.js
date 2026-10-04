@@ -328,7 +328,7 @@ export async function simulateDate(isoDateStr) {
             if (fallbackZ?.sunset) sunsetTime = new Date(fallbackZ.sunset).getTime();
         }
 
-        const events = hebcalData?.items ? normalizeHebcalEvents(hebcalData.items, sunsetTime) : [];
+        const events = hebcalData?.items ? normalizeHebcalEvents(hebcalData.items, sunsetTime, loc.isIsrael) : [];
 
         state.isSimulation = true;
         state.simulatedGregorianDate = `${dateStr}T12:00:00`;
@@ -393,7 +393,7 @@ export function resetSimulation() {
  */
 export function simulationHelp() {
     console.group(
-        '%c YISRAEL DATE %c Festas Bíblicas para Simulação %c v4.0.6 ',
+        '%c YISRAEL DATE %c Festas Bíblicas para Simulação %c v4.0.7 ',
         'background: #1e293b; color: #d4af37; font-weight: 700; font-size: 11px; padding: 2px 7px; border-radius: 3px 0 0 3px; font-family: monospace;',
         'background: #0f172a; color: #f1f5f9; font-weight: 600; font-size: 11px; padding: 2px 8px; border-left: 1px solid #334155;',
         'background: #0f172a; color: #10b981; font-weight: 600; font-size: 11px; padding: 2px 7px; border-radius: 0 3px 3px 0; border-left: 1px solid #334155; font-family: monospace;'

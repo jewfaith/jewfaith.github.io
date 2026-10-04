@@ -113,6 +113,9 @@ export const FESTIVAL_TORAH_READINGS = {
         'Devarim 14:22 - 16:17',
         'Devarim 33:1 - 34:12'
     ],
+    'simchattorah': [
+        'Devarim 33:1 - 34:12'
+    ]
 };
 
 export const FESTIVAL_HAFTARA_READINGS = {
@@ -153,6 +156,9 @@ export const FESTIVAL_HAFTARA_READINGS = {
         'I Melachim 8:54-66',
         'Yehoshua 1:1-18'
     ],
+    'simchattorah': [
+        'Yehoshua 1:1-18'
+    ]
 };
 
 export const KETUVIM_BOOKS = [
@@ -181,7 +187,8 @@ export const FESTIVAL_TEHILIM = {
     roshhashana: ['Tehilim 24', 'Tehilim 27', 'Tehilim 47', 'Tehilim 81', 'Tehilim 93', 'Tehilim 98', 'Tehilim 130'],
     yomkippur: ['Tehilim 25', 'Tehilim 32', 'Tehilim 51', 'Tehilim 86', 'Tehilim 103', 'Tehilim 130'],
     sukkot: ['Tehilim 27', 'Tehilim 42', 'Tehilim 43', 'Tehilim 84', 'Tehilim 113', 'Tehilim 114', 'Tehilim 115', 'Tehilim 116', 'Tehilim 117', 'Tehilim 118'],
-    sheminiatzeret: ['Tehilim 8', 'Tehilim 19', 'Tehilim 104', 'Tehilim 119']
+    sheminiatzeret: ['Tehilim 8', 'Tehilim 19', 'Tehilim 104', 'Tehilim 119'],
+    simchattorah: ['Tehilim 19', 'Tehilim 119']
 };
 
 export const FESTIVAL_TEHILIM_NUMBERS = [

@@ -73,20 +73,6 @@ export function initThemeSwitcher() {
     };
 
     document.getElementById('mobile-theme-toggle-btn')?.addEventListener('click', toggleTheme);
-    document.getElementById('desktop-theme-toggle-btn')?.addEventListener('click', toggleTheme);
-
-    // Seletores de pílula específicos para PC: Auto, Light, Dark
-    const pillGroup = document.getElementById('pc-theme-mode-selector');
-    if (pillGroup) {
-        pillGroup.addEventListener('click', (e) => {
-            const btn = e.target.closest('.desktop-theme-pill');
-            if (!btn) return;
-            const chosen = btn.getAttribute('data-theme-mode');
-            if (chosen) {
-                setThemeMode(chosen);
-            }
-        });
-    }
 
     if (typeof window !== 'undefined') {
         window.setThemeMode = setThemeMode;

@@ -446,6 +446,8 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         if (m.includes('nisan') || m.includes('aviv')) {
             if (d === 15 || d === 21) {
                 festivalReadingState = 'Keriat HaMoed';
+            } else if (d === 16 && !isIsrael) {
+                festivalReadingState = 'Chutz laAretz';
             } else if (d >= 16 && d <= 20) {
                 festivalReadingState = 'Chol HaMoed';
             } else if (d === 22 && !isIsrael) {
@@ -460,12 +462,14 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         } else if (m.includes('tishrei') || m.includes('etanim')) {
             if (d === 1) {
                 festivalReadingState = 'Keriat HaMoed';
-            } else if (d === 2 && !isIsrael) {
-                festivalReadingState = 'Chutz laAretz';
+            } else if (d === 2) {
+                festivalReadingState = !isIsrael ? 'Chutz laAretz' : 'Keriat HaMoed';
             } else if (d === 10) {
                 festivalReadingState = 'Keriat HaMoed';
             } else if (d === 15) {
                 festivalReadingState = 'Keriat HaMoed';
+            } else if (d === 16 && !isIsrael) {
+                festivalReadingState = 'Chutz laAretz';
             } else if (d >= 16 && d <= 21) {
                 festivalReadingState = 'Chol HaMoed';
             } else if (d === 22) {
@@ -480,10 +484,12 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         const idx = activeFestival.dayIndex;
         if (activeFestival.category === 'matzot') {
             if (idx === 0 || idx === 6) festivalReadingState = 'Keriat HaMoed';
+            else if (idx === 1 && !isIsrael) festivalReadingState = 'Chutz laAretz';
             else if (idx >= 1 && idx <= 5) festivalReadingState = 'Chol HaMoed';
             else if (idx >= 7 && !isIsrael) festivalReadingState = 'Chutz laAretz';
         } else if (activeFestival.category === 'sukkot') {
             if (idx === 0) festivalReadingState = 'Keriat HaMoed';
+            else if (idx === 1 && !isIsrael) festivalReadingState = 'Chutz laAretz';
             else if (idx >= 1 && idx <= 6) festivalReadingState = 'Chol HaMoed';
         } else if (activeFestival.category === 'shavuot') {
             if (idx === 0) festivalReadingState = 'Keriat HaMoed';
@@ -492,7 +498,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
             if (idx === 0) festivalReadingState = 'Keriat HaMoed';
             else if (idx >= 1 && !isIsrael) festivalReadingState = 'Chutz laAretz';
         } else if (activeFestival.category === 'simchattorah') {
-            if (!isIsrael) festivalReadingState = 'Chutz laAretz';
+            festivalReadingState = isIsrael ? 'Keriat HaMoed' : 'Chutz laAretz';
         } else if (['pesach', 'yomteruah', 'yomkippur'].includes(activeFestival.category)) {
             festivalReadingState = 'Keriat HaMoed';
         }
@@ -526,8 +532,9 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
         let haftaraRef = '';
 
         if (nearFestival) {
-            torahRef = pickReading(FESTIVAL_TORAH_READINGS[nearFestival.category], nearFestival.dayIndex) || '';
-            haftaraRef = pickReading(FESTIVAL_HAFTARA_READINGS[nearFestival.category], nearFestival.dayIndex) || '';
+            torahRef = nearFestival.raw?.leyning?.torah || pickReading(FESTIVAL_TORAH_READINGS[nearFestival.category], nearFestival.dayIndex) || '';
+            const hOptions = [nearFestival.raw?.leyning?.haftarah, nearFestival.raw?.leyning?.haftarah_sephardic].filter(Boolean);
+            haftaraRef = (hOptions[0] || '').split(' | ')[0].trim() || pickReading(FESTIVAL_HAFTARA_READINGS[nearFestival.category], nearFestival.dayIndex) || '';
         } else if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning) {
             const ley = upcomingParasha.raw.leyning;
             torahRef = ley.torah || '';
@@ -573,7 +580,7 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
     if (elTorah) {
         let tRef = '';
         if (nearFestival) {
-            tRef = pickReading(FESTIVAL_TORAH_READINGS[nearFestival.category], nearFestival.dayIndex) || '';
+            tRef = nearFestival.raw?.leyning?.torah || pickReading(FESTIVAL_TORAH_READINGS[nearFestival.category], nearFestival.dayIndex) || '';
         } else if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning) {
             tRef = upcomingParasha.raw.leyning.torah || '';
         }
@@ -592,7 +599,8 @@ export function updateUIBlocks(events, hdate, locationName, sunsetTime, isIsrael
     if (elHaftara) {
         let hRef = '';
         if (nearFestival) {
-            hRef = pickReading(FESTIVAL_HAFTARA_READINGS[nearFestival.category], nearFestival.dayIndex) || '';
+            const hOptions = [nearFestival.raw?.leyning?.haftarah, nearFestival.raw?.leyning?.haftarah_sephardic].filter(Boolean);
+            hRef = (hOptions[0] || '').split(' | ')[0].trim() || pickReading(FESTIVAL_HAFTARA_READINGS[nearFestival.category], nearFestival.dayIndex) || '';
         } else if (upcomingParasha && upcomingParasha.raw && upcomingParasha.raw.leyning) {
             const ley = upcomingParasha.raw.leyning;
             const hOptions = [ley.haftarah, ley.haftarah_sephardic, ley.haftarah_chabad, ley.haftarah_teiman, ley.haftarah_itali].filter(Boolean);
@@ -902,7 +910,8 @@ export function renderEvents() {
 
     const validEvents = (state.unifiedEvents || []).filter(evt => {
         if (!evt || !evt.name) return false;
-        if ((evt.time + FESTIVAL_DURATION_MS) < now) return false;
+        const evEnd = evt.endTime || (evt.time ? evt.time + FESTIVAL_DURATION_MS : 0);
+        if (evEnd <= now) return false;
         if (evt.category === 'parashat' || evt.category === 'omer') return false;
         if (evt.name.includes('laOmer')) return false;
 
@@ -1011,8 +1020,9 @@ export function renderEvents() {
         card.setAttribute('data-info-html', infoHtml);
         card.setAttribute('aria-label', twoWordTitle);
 
+        const eventEnd = evt.endTime || (evt.time ? evt.time + FESTIVAL_DURATION_MS : 0);
         const initialCountdown = evt.time
-            ? formatTimeRemaining(evt.time - now, evt.time)
+            ? (now >= eventEnd ? '' : formatTimeRemaining(evt.time - now, evt.time))
             : (evt.month ? `Em ${evt.month}` : `Em ${GREGORIAN_MONTHS_PT[new Date().getMonth()]}`);
 
         card.innerHTML = `

@@ -35,7 +35,8 @@ import { initSimulator } from './utils/simulator.js';
 import { initTelemetryService } from './services/telemetryService.js';
 import { initConsoleControl } from './services/consoleControl.js';
 
-// Bloqueio global de drag/arraste em todo o site
+// Bloqueio prioritário de PC e drag/arraste
+try { initPcDisplayManager(); } catch (e) {}
 document.addEventListener('dragstart', (e) => e.preventDefault(), false);
 
 // Garantia absoluta de desfaçamento do ecrã de carregamento: qualquer exceção liberta o layout
@@ -62,7 +63,6 @@ if ('serviceWorker' in navigator) {
 
     navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data && event.data.type === 'SW_VERSION_UPDATED') {
-            console.log('[PWA] Nova versão instalada em segundo plano:', event.data.version);
             // Se houver nova versão, limpa qualquer resquício de cache corrompido
             try {
                 if (window.caches) {
@@ -88,10 +88,14 @@ function loadOfflineCache(defaultLocName = null, defaultIsIsrael = null) {
     state.userCityName = (activeLoc.primaryText || activeLoc.name.split(',')[0] || 'Jerusalém').trim();
 
     const locParts = getLocationDateParts(Date.now(), activeLoc.tz);
-    const offlineZmanim = calculateOfflineZmanim(new Date(), activeLoc.lat, activeLoc.lon, activeLoc.tz, fallbackIsIsrael);
-    const offlineTomorrowZmanim = calculateOfflineZmanim(new Date(Date.now() + 86400000), activeLoc.lat, activeLoc.lon, activeLoc.tz, fallbackIsIsrael);
-    const offlineSunset = offlineZmanim?.sunset ? new Date(offlineZmanim.sunset).getTime() : 0;
+    const offlineTodayZmanim = calculateOfflineZmanim(new Date(), activeLoc.lat, activeLoc.lon, activeLoc.tz, fallbackIsIsrael);
+    const offlineSunset = offlineTodayZmanim?.sunset ? new Date(offlineTodayZmanim.sunset).getTime() : 0;
     const isNowAfterSunset = offlineSunset > 0 && Date.now() >= offlineSunset;
+    state.isAfterSunset = isNowAfterSunset;
+
+    const targetDate = isNowAfterSunset ? new Date(Date.now() + 86400000) : new Date();
+    const offlineTargetZmanim = isNowAfterSunset ? calculateOfflineZmanim(targetDate, activeLoc.lat, activeLoc.lon, activeLoc.tz, fallbackIsIsrael) : offlineTodayZmanim;
+    const offlineTomorrowZmanim = calculateOfflineZmanim(new Date(targetDate.getTime() + 86400000), activeLoc.lat, activeLoc.lon, activeLoc.tz, fallbackIsIsrael);
 
     try {
         const offlineDataRaw = localStorage.getItem('hebcal_offline_cache');
@@ -99,15 +103,20 @@ function loadOfflineCache(defaultLocName = null, defaultIsIsrael = null) {
             const data = JSON.parse(offlineDataRaw);
             if (data.events && data.events.length > 0) {
                 state.unifiedEvents = data.events;
-                state.currentZmanim = data.zmanim || offlineZmanim;
-                state.tomorrowZmanim = data.tomorrowZmanim || offlineTomorrowZmanim;
-                state.currentSunsetTime = data.sunset || offlineSunset;
 
-                // Transição imediata: se já passou o pôr do sol, atualiza imediatamente para a data do novo dia
+                // Mesma lógica da Data Hebraica para os Horários Litúrgicos:
+                // Transição imediata: se já passou o pôr do sol, atualiza imediatamente para o novo dia
                 let effectiveHdate = data.hdate;
                 if (isNowAfterSunset) {
                     const nextParts = getLocationDateParts(Date.now() + 86400000, activeLoc.tz);
                     effectiveHdate = getHebrewDateFromGregorian(nextParts.year, nextParts.month, nextParts.day) || effectiveHdate;
+                    state.currentZmanim = data.tomorrowZmanim || offlineTargetZmanim;
+                    state.tomorrowZmanim = offlineTomorrowZmanim;
+                    state.currentSunsetTime = state.currentZmanim?.sunset ? new Date(state.currentZmanim.sunset).getTime() : (offlineSunset + 86400000);
+                } else {
+                    state.currentZmanim = data.zmanim || offlineTargetZmanim;
+                    state.tomorrowZmanim = data.tomorrowZmanim || offlineTomorrowZmanim;
+                    state.currentSunsetTime = data.sunset || offlineSunset;
                 }
                 state.currentHdate = effectiveHdate || null;
 
@@ -132,12 +141,12 @@ function loadOfflineCache(defaultLocName = null, defaultIsIsrael = null) {
     const offlineHdate = getHebrewDateFromGregorian(targetParts.year, targetParts.month, targetParts.day);
 
     state.currentHdate = offlineHdate;
-    state.currentZmanim = offlineZmanim;
+    state.currentZmanim = offlineTargetZmanim;
     state.tomorrowZmanim = offlineTomorrowZmanim;
-    state.currentSunsetTime = offlineSunset;
+    state.currentSunsetTime = offlineTargetZmanim?.sunset ? new Date(offlineTargetZmanim.sunset).getTime() : offlineSunset;
     state.unifiedEvents = state.unifiedEvents || [];
 
-    updateUIBlocks(state.unifiedEvents, offlineHdate, fallbackLocName, offlineSunset, fallbackIsIsrael);
+    updateUIBlocks(state.unifiedEvents, offlineHdate, fallbackLocName, state.currentSunsetTime, fallbackIsIsrael);
     renderFestivalsView();
     updateSolarPosition();
     renderZmanimTable();
@@ -223,42 +232,47 @@ async function updateDashboard(options = {}) {
 
         const [zmanimData, tomorrowZmanimData] = await Promise.all([zmanimPromise, tomorrowZmanimPromise]);
 
-        let sunsetTime = 0;
-        if (zmanimData?.times) {
-            state.currentZmanim = zmanimData.times;
-            sunsetTime = zmanimData.times.sunset ? new Date(zmanimData.times.sunset).getTime() : 0;
-            state.currentSunsetTime = sunsetTime;
-            updateSolarPosition();
+        let todaySunsetTime = 0;
+        if (zmanimData?.times?.sunset) {
+            todaySunsetTime = new Date(zmanimData.times.sunset).getTime();
         } else {
             const fallbackZmanim = calculateOfflineZmanim(new Date(), lat, lon, tzid, isIsrael);
-            if (fallbackZmanim) {
-                state.currentZmanim = fallbackZmanim;
-                sunsetTime = fallbackZmanim.sunset ? new Date(fallbackZmanim.sunset).getTime() : 0;
-                state.currentSunsetTime = sunsetTime;
-                updateSolarPosition();
+            if (fallbackZmanim?.sunset) {
+                todaySunsetTime = new Date(fallbackZmanim.sunset).getTime();
             }
         }
-        if (tomorrowZmanimData?.times) {
-            state.tomorrowZmanim = tomorrowZmanimData.times;
-        } else {
-            state.tomorrowZmanim = calculateOfflineZmanim(new Date(Date.now() + 86400000), lat, lon, tzid, isIsrael);
-        }
 
-        const isAfterSunset = sunsetTime > 0 && Date.now() >= sunsetTime;
+        const isAfterSunset = todaySunsetTime > 0 && Date.now() >= todaySunsetTime;
+        state.isAfterSunset = isAfterSunset;
 
-        // 3. Conversão de data hebraica instantânea: algoritmo matemático Rambam (0ms, 100% offline, zero requests externas)
+        // 3. Mesma lógica para Data Hebraica e Horários Litúrgicos:
+        // Ao pôr do sol, ambos avançam sincronizados para o novo dia bíblico/judaico
         let resolvedHdate;
+        let activeZmanim;
+        let upcomingZmanim;
+        let activeSunsetTime;
+
         if (isAfterSunset) {
-            const nextParts = getLocationDateParts(Date.now() + 24 * 60 * 60 * 1000, tzid);
-            resolvedHdate = getHebrewDateFromGregorian(nextParts.year, nextParts.month, nextParts.day);
+            resolvedHdate = getHebrewDateFromGregorian(tomorrowParts.year, tomorrowParts.month, tomorrowParts.day);
+            activeZmanim = tomorrowZmanimData?.times || calculateOfflineZmanim(new Date(Date.now() + 86400000), lat, lon, tzid, isIsrael);
+            upcomingZmanim = calculateOfflineZmanim(new Date(Date.now() + 2 * 86400000), lat, lon, tzid, isIsrael);
+            activeSunsetTime = activeZmanim?.sunset ? new Date(activeZmanim.sunset).getTime() : (todaySunsetTime + 86400000);
         } else {
             resolvedHdate = getHebrewDateFromGregorian(year, month, day);
+            activeZmanim = zmanimData?.times || calculateOfflineZmanim(new Date(), lat, lon, tzid, isIsrael);
+            upcomingZmanim = tomorrowZmanimData?.times || calculateOfflineZmanim(new Date(Date.now() + 86400000), lat, lon, tzid, isIsrael);
+            activeSunsetTime = todaySunsetTime;
         }
+
+        state.currentZmanim = activeZmanim;
+        state.tomorrowZmanim = upcomingZmanim;
+        state.currentSunsetTime = activeSunsetTime;
+        updateSolarPosition();
 
         const hebcalData = await calendarPromise;
 
         if (hebcalData?.items) {
-            state.unifiedEvents = normalizeHebcalEvents(hebcalData.items, sunsetTime);
+            state.unifiedEvents = normalizeHebcalEvents(hebcalData.items, activeSunsetTime, isIsrael);
 
             // Guardar no Cache Local
             try {
@@ -266,7 +280,7 @@ async function updateDashboard(options = {}) {
                     events: state.unifiedEvents,
                     hdate: resolvedHdate,
                     locName: locationName,
-                    sunset: sunsetTime,
+                    sunset: activeSunsetTime,
                     isIsrael,
                     zmanim: state.currentZmanim,
                     tomorrowZmanim: state.tomorrowZmanim,
@@ -277,8 +291,7 @@ async function updateDashboard(options = {}) {
             }
 
             state.currentHdate = resolvedHdate;
-            state.currentSunsetTime = sunsetTime;
-            updateUIBlocks(state.unifiedEvents, resolvedHdate, locationName, sunsetTime, isIsrael);
+            updateUIBlocks(state.unifiedEvents, resolvedHdate, locationName, activeSunsetTime, isIsrael);
             updateSolarPosition();
         } else {
             loadOfflineCache(locationName, isIsrael);

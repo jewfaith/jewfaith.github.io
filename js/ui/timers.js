@@ -15,7 +15,7 @@ export const GREGORIAN_MONTHS_PT = [
 ];
 
 export function formatTimeRemaining(diffMs, startTimestamp = null) {
-    // 2 minutos e 50 segundos restantes ou menos: coloca como "Em Curso"
+    // 2 minutos e 30 segundos restantes ou menos: coloca como "Em Curso"
     if (diffMs <= FESTIVAL_ANTICIPATION_MS) {
         return 'Em Curso';
     }
@@ -51,7 +51,7 @@ export function formatTimeRemaining(diffMs, startTimestamp = null) {
         return `Faltam ${pad(displayHours)}h`;
     }
 
-    // Menos de 1h32m (e acima de 2m 50s): exibe em minutos (m) e nunca "Falta 01h"
+    // Menos de 1h32m (e acima de 2m 30s): exibe em minutos (m) e nunca "Falta 01h"
     return `Faltam ${pad(totalMinutes)}m`;
 }
 
@@ -95,19 +95,19 @@ export function startTimers() {
                 ? endAttr
                 : (startTimestamp + FESTIVAL_DURATION_MS);
 
-            // Transição para "Em Curso" a partir de 2 minutos e 50 segundos restantes
+            // Transição para "Em Curso" a partir de 2 minutos e 30 segundos restantes
             const startTime = startTimestamp - FESTIVAL_ANTICIPATION_MS;
             const diffToStart = startTimestamp - now;
 
             let nextUpdateForThisTimer = minNextUpdate;
             let newText = timer.textContent;
-            const isOngoing = now >= startTime && now <= endTimestamp;
+            const isOngoing = now >= startTime && now < endTimestamp;
 
             if (isOngoing) {
                 newText = 'Em Curso';
                 timer.classList.add('ongoing');
                 nextUpdateForThisTimer = Math.max(500, endTimestamp - now + 500);
-            } else if (now > endTimestamp) {
+            } else if (now >= endTimestamp) {
                 const card = timer.closest('.event-card');
                 if (card && typeof card.remove === 'function' && !card.dataset.isRemoving) {
                     card.dataset.isRemoving = 'true';
@@ -133,7 +133,7 @@ export function startTimers() {
 
                 newText = formatTimeRemaining(diffToStart, startTimestamp);
 
-                // Agenda a transição para "Em Curso" no momento exato em que faltarem 2 minutos e 50 segundos
+                // Agenda a transição para "Em Curso" no momento exato em que faltarem 2 minutos e 30 segundos
                 const timeToOngoing = diffToStart - FESTIVAL_ANTICIPATION_MS;
                 const msToNextMinute = diffToStart % 60000;
                 const regularStep = msToNextMinute > 0 ? msToNextMinute : 60000;
