@@ -1,13 +1,18 @@
 import { renderPrivacyView } from './privacyView.js';
 import { renderFestivalsView } from './festivalsView.js';
+import { applyDailyReadingsToCards } from '../services/sefariaService.js';
+import { updateTraditionsDailyCard } from './views/readingsView.js';
 import { trackMicroAction } from '../utils/umamiMonitor.js';
 import { trackHeartEvent, trackFeatureAdoption } from '../services/telemetryService.js';
 
 const TAB_HASH_MAP = {
     'hoje': 'hoje',
-    'reading': 'hoje',
-    'tora': 'hoje',
-    'torah': 'hoje',
+    'leituras': 'leituras',
+    'reading': 'leituras',
+    'readings': 'leituras',
+    'tanakh': 'leituras',
+    'tora': 'leituras',
+    'torah': 'leituras',
     'calendar': 'moadim',
     'festivals': 'moadim',
     'moadim': 'moadim',
@@ -22,7 +27,6 @@ const HASH_TAB_MAP = {
     'today': 'hoje',
     'inicio': 'hoje',
     'início': 'hoje',
-    'reading': 'hoje',
     'data': 'hoje',
     'zmanim': 'hoje',
     'horarios': 'hoje',
@@ -34,20 +38,29 @@ const HASH_TAB_MAP = {
     'login': 'hoje',
     'perfil': 'hoje',
 
-    // 2. Estudo Sagrado & Leituras (redirecionam para 'hoje' com scroll suave até à seção de estudo)
-    'tora': 'hoje',
-    'torá': 'hoje',
-    'torah': 'hoje',
-    'chumash': 'hoje',
-    'parasha': 'hoje',
-    'parashá': 'hoje',
-    'haftara': 'hoje',
-    'haftará': 'hoje',
-    'ketuvim': 'hoje',
-    'sefaria': 'hoje',
-    'tanakh': 'hoje',
-    'estudo': 'hoje',
-    'leituras': 'hoje',
+    // 2. Aba Leituras (Tanakh & Tradições)
+    'leituras': 'leituras',
+    'leitura': 'leituras',
+    'reading': 'leituras',
+    'readings': 'leituras',
+    'tanakh': 'leituras',
+    'tanak': 'leituras',
+    'escrituras': 'leituras',
+    'tora': 'leituras',
+    'torá': 'leituras',
+    'torah': 'leituras',
+    'chumash': 'leituras',
+    'parasha': 'leituras',
+    'parashá': 'leituras',
+    'haftara': 'leituras',
+    'haftará': 'leituras',
+    'ketuvim': 'leituras',
+    'sefaria': 'leituras',
+    'estudo': 'leituras',
+    'tradicoes': 'leituras',
+    'tradições': 'leituras',
+    'tradicao': 'leituras',
+    'tradição': 'leituras',
 
     // 3. Aba Moadim & Festas
     'moadim': 'calendar',
@@ -113,11 +126,17 @@ const DESKTOP_HEADER_METADATA = {
         docTitle: 'Yisrael Date • Calendário Hebraico, Torá e Horários Zmanim',
         desc: 'Acompanhamento diário essencial, Zmanim astronómicos e síntese litúrgica'
     },
+    'leituras': {
+        tag: 'Escrituras & Tradições',
+        title: 'Leituras • Tanakh & Tradições',
+        docTitle: 'Leituras do Tanakh e Tradições | Yisrael Date',
+        desc: 'Leitura integral do Tanakh (Torá, Nevi\'im, Ketuvim) e literatura rabínica tradicional'
+    },
     'reading': {
-        tag: 'Tempo Presente',
-        title: 'Hoje • Tempo Presente',
-        docTitle: 'Yisrael Date • Calendário Hebraico, Torá e Horários Zmanim',
-        desc: 'Acompanhamento diário essencial, Zmanim astronómicos e síntese litúrgica'
+        tag: 'Escrituras & Tradições',
+        title: 'Leituras • Tanakh & Tradições',
+        docTitle: 'Leituras do Tanakh e Tradições | Yisrael Date',
+        desc: 'Leitura integral do Tanakh (Torá, Nevi\'im, Ketuvim) e literatura rabínica tradicional'
     },
     'calendar': {
         tag: 'Ciclo Litúrgico',
@@ -174,14 +193,21 @@ export function switchTab(targetTab, updateUrl = true, smoothScroll = true, user
 
     // Normaliza nome da aba para compatibilidade canónica
     let canonicalTab = targetTab;
-    let scrollToStudy = false;
-    if (targetTab === 'reading') canonicalTab = 'hoje';
-    else if (targetTab === 'torah' || targetTab === 'tora') {
-        canonicalTab = 'hoje';
-        scrollToStudy = true;
+    let scrollToTraditions = false;
+    let scrollToTanakh = false;
+    if (targetTab === 'reading' || targetTab === 'leituras' || targetTab === 'tanakh') {
+        canonicalTab = 'leituras';
+    } else if (targetTab === 'torah' || targetTab === 'tora' || targetTab === 'chumash' || targetTab === 'parasha' || targetTab === 'parashá' || targetTab === 'haftara' || targetTab === 'ketuvim') {
+        canonicalTab = 'leituras';
+        scrollToTanakh = true;
+    } else if (targetTab === 'tradicoes' || targetTab === 'tradições' || targetTab === 'sefaria') {
+        canonicalTab = 'leituras';
+        scrollToTraditions = true;
+    } else if (targetTab === 'festivals' || targetTab === 'moadim') {
+        canonicalTab = 'calendar';
+    } else if (targetTab === 'guia') {
+        canonicalTab = 'privacy';
     }
-    else if (targetTab === 'festivals' || targetTab === 'moadim') canonicalTab = 'calendar';
-    else if (targetTab === 'guia') canonicalTab = 'privacy';
 
     trackMicroAction('tab_change', { tab: targetTab });
     trackHeartEvent('tab_view', { tab: targetTab, userGesture });
@@ -195,7 +221,8 @@ export function switchTab(targetTab, updateUrl = true, smoothScroll = true, user
     allTabButtons.forEach(b => {
         const bTab = b.getAttribute('data-tab');
         const isActive = (bTab === canonicalTab) ||
-                         (canonicalTab === 'hoje' && (bTab === 'reading' || bTab === 'hoje')) ||
+                         (canonicalTab === 'hoje' && bTab === 'hoje') ||
+                         (canonicalTab === 'leituras' && (bTab === 'leituras' || bTab === 'reading')) ||
                          (canonicalTab === 'calendar' && (bTab === 'festivals' || bTab === 'moadim' || bTab === 'calendar')) ||
                          (canonicalTab === 'privacy' && (bTab === 'guia' || bTab === 'privacy' || bTab === 'mais'));
         b.classList.toggle('active', isActive);
@@ -205,13 +232,14 @@ export function switchTab(targetTab, updateUrl = true, smoothScroll = true, user
     // Alterna a exibição das abas (suporta tanto IDs novos como IDs legados)
     tabViews.forEach(view => {
         const isTarget = (view.id === `view-${canonicalTab}`) ||
-                         (canonicalTab === 'hoje' && (view.id === 'view-reading' || view.id === 'view-hoje')) ||
+                         (canonicalTab === 'hoje' && (view.id === 'view-hoje' || view.id === 'view-reading')) ||
+                         (canonicalTab === 'leituras' && (view.id === 'view-leituras')) ||
                          (canonicalTab === 'calendar' && (view.id === 'view-festivals' || view.id === 'view-calendar' || view.id === 'view-moadim')) ||
                          (canonicalTab === 'privacy' && (view.id === 'view-privacy' || view.id === 'view-guia'));
         view.classList.toggle('active', isTarget);
     });
 
-    // Atualiza a URL na barra de endereço (#hoje, #tora, #moadim, #guia)
+    // Atualiza a URL na barra de endereço (#hoje, #leituras, #moadim, #guia)
     const hashName = TAB_HASH_MAP[targetTab] || TAB_HASH_MAP[canonicalTab] || 'hoje';
     if (updateUrl && typeof window !== 'undefined') {
         try {
@@ -224,11 +252,18 @@ export function switchTab(targetTab, updateUrl = true, smoothScroll = true, user
     }
 
     // Rola para a seção ou topo suavemente ao alternar de aba
-    if (scrollToStudy && typeof window !== 'undefined') {
+    if (scrollToTraditions && typeof window !== 'undefined') {
         setTimeout(() => {
-            const studySection = document.getElementById('section-estudo-sagrado') || document.getElementById('card-torah-wrapper');
-            if (studySection) {
-                studySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const tradSection = document.getElementById('section-tradicoes-leituras') || document.getElementById('card-sefaria-single');
+            if (tradSection) {
+                tradSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 60);
+    } else if (scrollToTanakh && typeof window !== 'undefined') {
+        setTimeout(() => {
+            const tanakhSection = document.getElementById('section-tanakh-leituras') || document.getElementById('card-torah-wrapper');
+            if (tanakhSection) {
+                tanakhSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }, 60);
     } else if (smoothScroll && typeof window !== 'undefined') {
@@ -258,6 +293,10 @@ export function switchTab(targetTab, updateUrl = true, smoothScroll = true, user
         renderPrivacyView();
     } else if (canonicalTab === 'calendar') {
         renderFestivalsView();
+    } else if (canonicalTab === 'leituras') {
+        updateTraditionsDailyCard();
+    } else if (canonicalTab === 'hoje') {
+        applyDailyReadingsToCards();
     }
 }
 

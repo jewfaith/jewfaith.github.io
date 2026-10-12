@@ -221,7 +221,7 @@
   </script>
 
   <!-- Resource Hints & Typography: Poppins, Cinzel & Font Awesome 6 -->
-  <link rel="preload" href="style.css?v=4.0.7" as="style" />
+  <link rel="preload" href="style.css?v=4.2.3" as="style" />
   <link rel="preload" href="icon.webp" as="image" type="image/webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -236,7 +236,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="style.css?v=4.0.7" />
+  <link rel="stylesheet" href="style.css?v=4.2.3" />
 
   <!-- Umami Analytics (Cookieless, Privacy-First, RGPD & LGPD Compliant) -->
   <script id="umami-script" defer src="https://cloud.umami.is/script.js"
@@ -257,25 +257,10 @@
        ========================================== -->
   <div id="pc-block-screen" class="pc-block-overlay" aria-modal="true" role="alertdialog" aria-labelledby="pc-block-title" aria-describedby="pc-block-desc">
     <div class="pc-block-card">
-      <div class="pc-block-badge">
-        <i class="fa-solid fa-mobile-screen-button" data-icon="mobile" aria-hidden="true"></i>
-      </div>
-      <div class="pc-block-brand">
-        <picture>
-          <source srcset="./icon.webp" type="image/webp" />
-          <img src="./icon.png" alt="Logótipo do Yisrael Date" width="32" height="32" decoding="async" />
-        </picture>
-        <span>Yisrael Date</span>
-      </div>
-      <h1 id="pc-block-title" class="pc-block-title">Disponível Apenas no Telemóvel</h1>
-      <p id="pc-block-desc" class="pc-block-desc">
-        Esta aplicação foi concebida exclusivamente para utilização em dispositivos móveis (smartphones). O funcionamento em computadores (PC) está desativado.
-      </p>
-      <div class="pc-block-hint">
-        <span>Aceda através do navegador do seu smartphone para utilizar os horários litúrgicos e o calendário bíblico.</span>
-      </div>
+      <h1 id="pc-block-title" class="pc-block-title">Yisrael Date</h1>
+      <p id="pc-block-desc" class="pc-block-desc">Esta aplicação só está disponível para smartphones. Para a utilizares, acede através do teu telemóvel, Obrigado! 😁</p>
       <div class="pc-block-url-container">
-        <span class="pc-block-url" id="pc-block-current-url">jewfaith.github.io</span>
+        <span class="pc-block-url" id="pc-block-current-url"></span>
       </div>
     </div>
   </div>
@@ -321,7 +306,7 @@
         <!-- ==========================================
              ABA 1: HOJE (DASHBOARD EDITORIAL & ZMANIM)
              ========================================== -->
-        <section id="view-reading" class="app-tab-view active" role="region" aria-label="Hoje">
+        <section id="view-hoje" class="app-tab-view active" role="region" aria-label="Hoje">
 
           <!-- Os 2 Cartões Mestres Diários -->
           <div class="primary-cards-stack event-cards-row">
@@ -399,7 +384,7 @@
               </div>
             </div>
 
-            <!-- 2. Haftará (Profetas) -->
+            <!-- 3. Haftará (Profetas) -->
             <div class="settings-card event-card glass-panel not-ready scripture-card" id="card-haftara-wrapper" tabindex="0"
               role="button" aria-label="Ler a Porção da Haftará">
               <div class="settings-card-left">
@@ -415,7 +400,7 @@
               </div>
             </div>
 
-            <!-- 3. Ketuvim (Escritos) -->
+            <!-- 4. Ketuvim (Escritos) -->
             <div class="settings-card event-card glass-panel not-ready scripture-card" id="card-ketuvim-wrapper" tabindex="0"
               role="button" aria-label="Ler a Porção de Ketuvim">
               <div class="settings-card-left">
@@ -431,7 +416,7 @@
               </div>
             </div>
 
-            <!-- 4. Literatura Sefaria -->
+            <!-- 5. Literatura Sefaria -->
             <div class="settings-card event-card glass-panel sefaria-category-card" id="card-sefaria-single"
               tabindex="0" role="button" aria-label="Aceder à Biblioteca Digital Sefaria">
               <div class="settings-card-left">
@@ -496,6 +481,54 @@
             </div>
           </div>
 
+        </section>
+
+
+        <!-- ==========================================
+             ABA 2: LEITURAS (PESQUISA & FLUXO DE VERSÍCULOS)
+             ========================================== -->
+        <section id="view-leituras" class="app-tab-view" role="region" aria-label="Leituras do Tanakh e Tradições">
+
+          <!-- Divisória Visual de Pesquisa (Card com Seletores Empilhados) -->
+          <div class="readings-search-card glass-panel">
+            <div class="readings-search-header">
+              <div class="readings-search-title">
+                <span>Pesquisa</span>
+              </div>
+              <span class="readings-search-title">Tanakh & Tradições</span>
+            </div>
+
+            <!-- Seletores Verticais (Um em baixo do outro) -->
+            <div class="readings-selectors-stack">
+              <div class="readings-select-shell readings-work-shell">
+                <select id="readings-book-select" class="readings-dropdown" aria-label="Selecionar Livro ou Obra"></select>
+                <div class="readings-chevron-box" aria-hidden="true">
+                  <i class="fa-solid fa-chevron-down"></i>
+                </div>
+              </div>
+
+              <div class="readings-select-shell readings-chapter-shell">
+                <select id="readings-chapter-select" class="readings-dropdown" aria-label="Selecionar Perek ou Seção"></select>
+                <div class="readings-chevron-box" aria-hidden="true">
+                  <i class="fa-solid fa-chevron-down"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Divisória Separadora de Leitura -->
+          <div class="readings-stream-divider" aria-hidden="true">
+            <span class="readings-stream-divider-line"></span>
+            <span class="readings-stream-divider-badge">
+              <span id="readings-current-badge-text"></span>
+            </span>
+            <span class="readings-stream-divider-line"></span>
+          </div>
+
+          <!-- Fluxo Contínuo de Cards de Versículos / Parágrafos -->
+          <div id="readings-verses-stream" class="readings-verses-stream" role="feed" aria-busy="false">
+            <!-- Versículos renderizados diretamente como cards individuais -->
+          </div>
         </section>
 
 
@@ -606,12 +639,16 @@
     </div>
 
     <!-- ==========================================
-         MOBILE ONLY: NATIVE IOS EDGE-TO-EDGE TAB BAR (3 TABS)
+         MOBILE ONLY: NATIVE IOS EDGE-TO-EDGE TAB BAR (4 TABS)
          ========================================== -->
     <nav class="app-floating-tabbar mobile-only-tabbar" role="navigation" aria-label="Navegação Principal do Telemóvel">
       <a href="#hoje" class="app-tab-btn active" data-tab="hoje" id="tab-hoje" aria-label="Hoje • Visão Geral e Horários do Dia">
         <div class="tab-icon-wrap"><i class="fa-solid fa-sun" data-icon="sun" aria-hidden="true"></i></div>
         <span>Hoje</span>
+      </a>
+      <a href="#leituras" class="app-tab-btn" data-tab="leituras" id="tab-leituras" aria-label="Leituras • Tanakh e Tradições">
+        <div class="tab-icon-wrap"><i class="fa-solid fa-book-open" data-icon="bookOpen" aria-hidden="true"></i></div>
+        <span>Leituras</span>
       </a>
       <a href="#moadim" class="app-tab-btn" data-tab="calendar" id="tab-calendar" aria-label="Moadim • Festas de Israel e Calendário">
         <div class="tab-icon-wrap"><i class="fa-solid fa-menorah" data-icon="menorah" aria-hidden="true"></i></div>
@@ -708,7 +745,7 @@
     </div>
   </div>
 
-  <script type="module" src="js/main.js?v=4.0.7"></script>
+  <script type="module" src="js/main.js?v=4.2.3"></script>
 </body>
 
 </html>

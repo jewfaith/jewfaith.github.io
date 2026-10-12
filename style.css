@@ -718,7 +718,6 @@ body.modal-open {
         display: flex;
         flex-direction: column;
         padding-top: calc(56px + env(safe-area-inset-top, 0px));
-        padding-bottom: calc(76px + env(safe-area-inset-bottom, 12px));
     }
 
     .app-tab-view {
@@ -740,8 +739,8 @@ body.modal-open {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        padding: 6px 12px max(8px, env(safe-area-inset-bottom, 8px));
+        gap: clamp(4px, 1.5vw, 8px);
+        padding: 6px clamp(4px, 2vw, 12px) max(8px, env(safe-area-inset-bottom, 8px));
         box-sizing: border-box;
         background: var(--app-bar-bg);
         backdrop-filter: var(--app-bar-blur);
@@ -794,7 +793,7 @@ body.modal-open {
     }
 
     .app-tab-btn span {
-        font-size: 11px;
+        font-size: clamp(10px, 2.7vw, 11px);
         font-weight: 500;
         letter-spacing: -0.01em;
         line-height: 1.15;
@@ -1830,7 +1829,7 @@ i.settings-icon {
     text-align: left;
     line-height: 1.65;
     color: var(--text-primary);
-    font-size: var(--scripture-font-size, var(--font-size-sm));
+    font-size: var(--font-size-base);
     user-select: none;
     width: 100%;
     padding-right: 0;
@@ -4481,37 +4480,6 @@ html.is-pc-blocked body {
     }
 }
 
-.pc-block-badge {
-    width: 72px !important;
-    height: 72px !important;
-    border-radius: 22px !important;
-    background: linear-gradient(135deg, rgba(234, 179, 8, 0.18), rgba(56, 189, 248, 0.18)) !important;
-    border: 1px solid rgba(234, 179, 8, 0.35) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 32px !important;
-    color: #eab308 !important;
-    box-shadow: 0 10px 30px rgba(234, 179, 8, 0.18) !important;
-    margin-bottom: 4px !important;
-}
-
-.pc-block-brand {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    font-size: 13px !important;
-    font-weight: 700 !important;
-    color: rgba(255, 255, 255, 0.65) !important;
-    letter-spacing: 1.5px !important;
-    text-transform: uppercase !important;
-}
-
-.pc-block-brand img {
-    border-radius: 10px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
-}
-
 .pc-block-title {
     font-size: 22px !important;
     font-weight: 800 !important;
@@ -4528,17 +4496,6 @@ html.is-pc-blocked body {
     margin: 0 !important;
 }
 
-.pc-block-hint {
-    font-size: 13px !important;
-    line-height: 1.5 !important;
-    color: #94a3b8 !important;
-    background: rgba(255, 255, 255, 0.04) !important;
-    padding: 14px 18px !important;
-    border-radius: 16px !important;
-    border: 1px solid rgba(255, 255, 255, 0.07) !important;
-    margin-top: 4px !important;
-}
-
 .pc-block-url-container {
     margin-top: 4px !important;
     padding: 8px 18px !important;
@@ -4551,4 +4508,519 @@ html.is-pc-blocked body {
     color: #38bdf8 !important;
     user-select: all !important;
 }
-
+
+/* ==========================================================================
+   ABA DE LEITURAS (DIVISÓRIA DE PESQUISA & FLUXO DE VERSÍCULOS)
+   ========================================================================== */
+
+/* Divisória / Painel Visual Dedicado para Pesquisa */
+.readings-search-card {
+    position: relative !important;
+    z-index: 35 !important;
+    width: 100% !important;
+    border-radius: 18px !important;
+    padding: 16px 16px 18px !important;
+    margin-bottom: 16px !important;
+    box-sizing: border-box !important;
+    background: rgba(18, 22, 28, 0.85) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+:root[data-theme="day"] .readings-search-card {
+    background: rgba(255, 252, 248, 0.94) !important;
+    border-color: rgba(147, 84, 20, 0.24) !important;
+    box-shadow: 0 4px 18px rgba(120, 90, 60, 0.08) !important;
+}
+
+.readings-search-card.has-dropdown-open {
+    z-index: 99999 !important;
+}
+
+/* Cabeçalho da Divisória de Pesquisa */
+.readings-search-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 12px !important;
+    padding: 0 2px !important;
+}
+
+.readings-search-title {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    color: #58A6FF !important;
+    letter-spacing: 0.3px !important;
+}
+
+:root[data-theme="day"] .readings-search-title {
+    color: #8C531B !important;
+}
+
+.readings-search-icon {
+    font-size: 13px !important;
+    opacity: 0.9 !important;
+}
+
+.readings-search-badge {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 3px 10px !important;
+    border-radius: 999px !important;
+    background: rgba(56, 139, 253, 0.12) !important;
+    color: #58A6FF !important;
+    border: 1px solid rgba(56, 139, 253, 0.25) !important;
+    letter-spacing: 0.2px !important;
+}
+
+:root[data-theme="day"] .readings-search-badge {
+    background: rgba(147, 84, 20, 0.1) !important;
+    color: #8C531B !important;
+    border-color: rgba(147, 84, 20, 0.25) !important;
+}
+
+/* Seletores Verticais Empilhados (Um em baixo do outro) */
+.readings-selectors-stack {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+}
+
+/* Divisória Separadora entre Pesquisa e Texto */
+.readings-stream-divider {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin: 4px 0 18px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.readings-stream-divider-line {
+    flex: 1 !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent) !important;
+}
+
+:root[data-theme="day"] .readings-stream-divider-line {
+    background: linear-gradient(90deg, transparent, rgba(147, 84, 20, 0.22), transparent) !important;
+}
+
+.readings-stream-divider-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    color: #8b949e !important;
+    letter-spacing: 0.7px !important;
+    padding: 5px 14px !important;
+    border-radius: 999px !important;
+    background: rgba(22, 27, 34, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+:root[data-theme="day"] .readings-stream-divider-badge {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(147, 84, 20, 0.2) !important;
+    color: #6D4C1B !important;
+    box-shadow: 0 2px 6px rgba(120, 90, 60, 0.06) !important;
+}
+
+.readings-stream-divider-badge i {
+    font-size: 11px !important;
+    color: var(--accent-color) !important;
+}
+
+/* Shell / Container Visual do Dropdown (iOS Glass Box) */
+.readings-select-shell {
+    position: relative !important;
+    z-index: 25 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 48px !important;
+    border-radius: 14px !important;
+    background: rgba(22, 27, 34, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.readings-select-shell.is-open {
+    z-index: 99999 !important;
+}
+
+:root[data-theme="day"] .readings-select-shell {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border-color: rgba(147, 84, 20, 0.25) !important;
+    box-shadow: 0 2px 8px rgba(120, 90, 60, 0.06) !important;
+}
+
+.readings-select-shell:hover {
+    border-color: rgba(56, 139, 253, 0.4) !important;
+    background: rgba(26, 32, 40, 0.9) !important;
+}
+
+:root[data-theme="day"] .readings-select-shell:hover {
+    background: #FFFFFF !important;
+    border-color: rgba(147, 84, 20, 0.45) !important;
+}
+
+/* Ocultação do Select Nativo quando Custom Select está ativo */
+.custom-select-native-hidden {
+    position: absolute !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    z-index: -1 !important;
+}
+
+/* Botão Acionador (Trigger) do Dropdown Customizado */
+.custom-select-trigger {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 48px !important;
+    padding: 0 36px 0 14px !important;
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-primary) !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    font-family: inherit !important;
+    text-align: left !important;
+    cursor: pointer !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+:root[data-theme="day"] .custom-select-trigger {
+    color: #231B15 !important;
+}
+
+.custom-select-trigger-text {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+/* Fallback do Dropdown <select> Nativo */
+.readings-dropdown {
+    display: block !important;
+    width: 100% !important;
+    height: 48px !important;
+    padding: 0 36px 0 14px !important;
+    background: transparent !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    font-family: inherit !important;
+    cursor: pointer !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    box-sizing: border-box !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+}
+
+:root[data-theme="day"] .readings-dropdown {
+    color: #231B15 !important;
+}
+
+/* Indicador Chevron Personalizado */
+.readings-chevron-box {
+    position: absolute !important;
+    right: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    pointer-events: none !important;
+    width: 22px !important;
+    height: 22px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: var(--accent-color) !important;
+    font-size: 11px !important;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease !important;
+    opacity: 0.85 !important;
+}
+
+.readings-select-shell:focus-within .readings-chevron-box,
+.readings-select-shell.is-open .readings-chevron-box {
+    transform: translateY(-50%) rotate(180deg) !important;
+    opacity: 1 !important;
+    color: var(--accent-color) !important;
+}
+
+/* Popover Flutuante Customizado (Substitui o menu do SO) */
+.custom-select-popover {
+
+    position: absolute !important;
+    top: calc(100% + 6px) !important;
+    left: 0 !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-height: 280px !important;
+    border-radius: 14px !important;
+    background: rgba(18, 22, 28, 0.98) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border: 1px solid rgba(56, 139, 253, 0.32) !important;
+    box-shadow: 0 16px 44px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+    z-index: 19999 !important;
+    padding: 6px !important;
+    box-sizing: border-box !important;
+    animation: customSelectFadeIn 0.16s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.custom-select-popover.is-hidden {
+    display: none !important;
+}
+
+.readings-work-shell .custom-select-popover,
+.readings-chapter-shell .custom-select-popover {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    min-width: 100% !important;
+}
+
+:root[data-theme="day"] .custom-select-popover {
+    background: rgba(255, 252, 248, 0.98) !important;
+    border: 1px solid rgba(147, 84, 20, 0.28) !important;
+    box-shadow: 0 14px 36px rgba(120, 90, 60, 0.18), 0 2px 8px rgba(120, 90, 60, 0.08) !important;
+}
+
+@keyframes customSelectFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.custom-select-options-scroller {
+    max-height: 268px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    padding-right: 2px !important;
+    box-sizing: border-box !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+/* Barra de rolagem 100% invisível (deslize livre e limpo sem barra visível) */
+.custom-select-options-scroller::-webkit-scrollbar,
+.custom-select-popover::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+}
+
+/* Grupos Litúrgicos (Torah, Nevi'im, Ketuvim, Mishnah, etc.) */
+.custom-select-optgroup {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.custom-select-optgroup:not(:first-child) {
+    border-top: none !important;
+}
+
+.custom-select-optgroup-header {
+    display: none !important;
+}
+
+/* Opções Individuais */
+.custom-select-option {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 10px 14px !important;
+    min-height: 42px !important;
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    color: var(--text-primary) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    transition: all 0.12s ease !important;
+    box-sizing: border-box !important;
+    user-select: none !important;
+}
+
+:root[data-theme="day"] .custom-select-option {
+    color: #231B15 !important;
+}
+
+.custom-select-option:hover {
+    background: rgba(56, 139, 253, 0.12) !important;
+    color: #58A6FF !important;
+}
+
+:root[data-theme="day"] .custom-select-option:hover {
+    background: rgba(147, 84, 20, 0.08) !important;
+    color: #7A420B !important;
+}
+
+.custom-select-option:active {
+    transform: scale(0.99) !important;
+}
+
+.custom-select-option.is-selected {
+    background: rgba(56, 139, 253, 0.20) !important;
+    color: #58A6FF !important;
+    font-weight: 700 !important;
+}
+
+:root[data-theme="day"] .custom-select-option.is-selected {
+    background: rgba(147, 84, 20, 0.15) !important;
+    color: #5D3004 !important;
+    font-weight: 700 !important;
+}
+
+.custom-select-option-text {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    flex: 1 !important;
+}
+
+.custom-select-check {
+    display: none !important;
+}
+
+.custom-select-option.is-selected .custom-select-check {
+    display: none !important;
+}
+
+/* Estilos de optgroup e option do menu nativo (caso fallback) */
+.readings-dropdown optgroup {
+    background-color: #12161f !important;
+    color: var(--accent-color) !important;
+    font-weight: 700 !important;
+    font-size: 12.5px !important;
+    letter-spacing: 0.5px !important;
+    padding: 8px 10px !important;
+}
+
+:root[data-theme="day"] .readings-dropdown optgroup {
+    background-color: #F3ECE1 !important;
+    color: #8C531B !important;
+}
+
+.readings-dropdown option {
+    background-color: #161b22 !important;
+    color: #E6EDF3 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    padding: 10px 14px !important;
+}
+
+:root[data-theme="day"] .readings-dropdown option {
+    background-color: #FFFDF9 !important;
+    color: #231B15 !important;
+}
+
+/* Fluxo Contínuo de Cards de Versículos */
+.readings-verses-stream {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    animation: tab-fade-in 0.22s ease-out !important;
+}
+
+/* Card Individual de Cada Versículo */
+.readings-verse-card {
+    width: 100% !important;
+    padding: 16px 18px !important;
+    border-radius: 14px !important;
+    background: rgba(22, 27, 34, 0.78) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18) !important;
+    box-sizing: border-box !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.12s ease !important;
+}
+
+:root[data-theme="day"] .readings-verse-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(147, 84, 20, 0.18) !important;
+    box-shadow: 0 3px 12px rgba(120, 90, 60, 0.06) !important;
+}
+
+.readings-verse-body {
+    font-size: var(--font-size-base) !important;
+    line-height: 1.62 !important;
+    color: var(--text-primary) !important;
+    font-family: inherit !important;
+    margin: 0 !important;
+    word-break: break-word !important;
+}
+
+:root[data-theme="day"] .readings-verse-body {
+    color: #231B15 !important;
+}
+
+.readings-verse-num {
+    font-weight: 800 !important;
+    font-size: 15px !important;
+    color: var(--text-primary) !important;
+    margin-right: 8px !important;
+    letter-spacing: 0.2px !important;
+    display: inline !important;
+}
+
+:root[data-theme="day"] .readings-verse-num {
+    color: #231B15 !important;
+}
+
+.readings-verse-text {
+    color: var(--text-primary) !important;
+    display: inline !important;
+}
+
+:root[data-theme="day"] .readings-verse-text {
+    color: #231B15 !important;
+}
+
+/* Fallback de botões ou grids legado */
+.readings-submit-btn,
+.readings-chapters-quick-wrap,
+.readings-reader-container {
+    display: none !important;
+}
+
+
+

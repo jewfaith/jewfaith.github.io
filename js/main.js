@@ -19,6 +19,7 @@ import { applyEstimatedTheme } from './ui/theme.js';
 import { initStoragePersistence, getPersistentSetting } from './utils/persistence.js';
 import { initSmartUpdater } from './utils/smartUpdater.js';
 import { initAppNavigation } from './ui/appNavigation.js';
+import { initReadingsView } from './ui/views/readingsView.js';
 import { applyIconsToDOM } from './ui/icons.js';
 import { initPcDisplayManager } from './ui/pcDisplayManager.js';
 import { HEBREW_MONTHS_PT, loadFestivalDescriptions } from './domain/constants.js';
@@ -347,6 +348,7 @@ try { initThemeSwitcher(); } catch (e) { console.warn(e); }
 try { initShareListeners(); } catch (e) { console.warn(e); }
 try { initPcDisplayManager(); } catch (e) { console.warn(e); }
 try { initAppNavigation(); } catch (e) { console.warn(e); }
+try { initReadingsView(); } catch (e) { console.warn(e); }
 try { initModals(updateDashboard); } catch (e) { console.warn(e); }
 try { initUmamiMonitor(); } catch (e) { console.warn(e); }
 try { initTelemetryService(); } catch (e) { console.warn(e); }
